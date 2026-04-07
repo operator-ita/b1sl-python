@@ -1,0 +1,709 @@
+"""
+sap_metadata_generator.generator
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Main entry point for SDK code generation.
+"""
+from __future__ import annotations
+import sys
+import re
+import keyword
+from pathlib import Path
+from typing import Any
+
+# Add project root to sys.path to resolve absolute imports from this script's directory
+project_root = Path(__file__).resolve().parent.parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
+
+try:
+    from scripts.sap_metadata_generator.parser import MetadataParser, SAPEntityType, SAPComplexType, SAPEnumType, ParsedMetadata
+    from scripts.sap_metadata_generator.mapper import map_edm_type
+    from scripts.sap_metadata_generator.resolver import build_dependency_graph, topological_sort, detect_cycles
+except ImportError:
+    # Fallback for standalone execution if scripts/__init__.py is missing or root not in path
+    from parser import MetadataParser, SAPEntityType, SAPComplexType, SAPEnumType, ParsedMetadata
+    from mapper import map_edm_type
+    from resolver import build_dependency_graph, topological_sort, detect_cycles
+
+# Standard Domain Groups
+DOMAIN_MAP = {
+    "Sales": ["Order", "Invoice", "Delivery", "Quotation", "CreditMemo", "DownPayment", "Return", "BlanketAgreement", "ServiceCall", "Contract"],
+    "Purchasing": ["PurchaseOrder", "PurchaseInvoice", "PurchaseDelivery", "PurchaseQuotation", "PurchaseCreditMemo", "PurchaseDownPayment", "PurchaseReturn", "PurchaseBlanketAgreement", "LandedCost"],
+    "Inventory": ["Item", "Warehouse", "StockTransfer", "InventoryCounting", "InventoryPosting", "InventoryOpeningBalance", "InventoryTransferRequest", "CycleCountDetermination", "MaterialRevaluation"],
+    "BusinessPartners": ["BusinessPartner", "CustomerGroup", "VendorGroup", "ContactEmployee", "Activity"],
+    "Finance": ["JournalEntry", "ChartOfAccount", "ProfitCenter", "CostCenter", "VatGroup", "Currency", "ExchangeRate", "FixedAsset", "AssetClass", "WithholdingTax"],
+    "Production": ["ProductionOrder", "ProductTree", "Resource", "IssueForProduction", "ReceiptFromProduction"],
+}
+
+
+def get_domain(name: str) -> str:
+    for domain, prefixes in DOMAIN_MAP.items():
+        if any(name.startswith(p) for p in prefixes):
+            return domain.lower()
+    return "general"
+
+
+class SDKGenerator:
+    def __init__(self, metadata: ParsedMetadata, output_base: Path):
+        self.metadata = metadata
+        self.output_base = output_base
+        self.enum_names = set(metadata.enums.keys())
+        self.complex_names = set(metadata.complex_types.keys())
+        self.overrides_base = self.output_base.parent / "_overrides"
+
+    def _has_override(self, domain: str, class_name: str) -> bool:
+        """Checks if a class has a manual override in the _overrides directory."""
+        override_file = self.overrides_base / f"{domain}.py"
+        if not override_file.exists():
+            return False
+        
+        # Simple check for 'class ClassName' in the file
+        content = override_file.read_text()
+        return f"class {class_name}" in content
+
+    def _ensure_dirs(self):
+        # 1. Models Output base (src/b1sl/b1sl/models/_generated)
+        # 2. Resources Output base (src/b1sl/b1sl/resources/_generated)
+        # 3. Fields Output base (src/b1sl/b1sl/fields/_generated)
+        self.res_output_base = self.output_base.parent.parent / "resources" / "_generated"
+        self.fields_output_base = self.output_base.parent.parent / "fields" / "_generated"
+        
+        print(f"  - Ensuring clean build directories...")
+        
+        for base in [self.output_base, self.res_output_base, self.fields_output_base]:
+             base.mkdir(parents=True, exist_ok=True)
+             (base / "__init__.py").touch()
+             # Clean all .py files except __init__.py
+             for f in base.glob("**/*.py"):
+                 if f.name != "__init__.py":
+                     f.unlink()
+
+        # Ensure model subdirs for entities
+        (self.output_base / "entities").mkdir(exist_ok=True)
+        (self.output_base / "entities" / "__init__.py").touch()
+        
+        # Ensure fields subdirs
+        (self.fields_output_base / "entities").mkdir(exist_ok=True)
+        (self.fields_output_base / "entities" / "__init__.py").touch()
+
+    def generate_enums(self):
+        enums_file = self.output_base / "enums.py"
+        lines = [
+            "from __future__ import annotations",
+            "from enum import Enum, StrEnum",
+            ""
+        ]
+        for name, enum in self.metadata.enums.items():
+            lines.append(f"class {name}(StrEnum):")
+            if not enum.members:
+                lines.append("    pass")
+            for member in enum.members:
+                lines.append(f"    {member.name} = '{member.name}'")
+            lines.append("")
+        enums_file.write_text("\n".join(lines))
+
+    def generate_complex_types(self):
+        ct_file = self.output_base / "complex_types.py"
+        lines = [
+            "# Generated by scripts/sap_metadata_generator",
+            "from __future__ import annotations",
+            "from typing import Any",
+            "from pydantic import Field as PydanticField",
+            "from b1sl.b1sl.models.base import B1Model, SapBool",
+            "from .enums import *",
+            ""
+        ]
+        for name, ct in self.metadata.complex_types.items():
+            lines.append(f"class {name}(B1Model):")
+            if not ct.properties:
+                lines.append("    pass")
+            for prop in ct.properties:
+                py_type, _ = map_edm_type(prop.edm_type, self.enum_names, self.complex_names)
+                
+                # Convert SAP PascalCase to Python snake_case
+                py_name = self._to_snake(prop.name)
+                
+                # Shadowing check (if after conversion it matches a type name)
+                if py_name in (py_type, "Any", "List", "Optional", "dict", "list", "str", "int", "float", "bool", "none"):
+                    py_name = f"{py_name}_"
+
+                lines.append(f"    {py_name}: {py_type} | None = PydanticField(None, alias='{prop.name}')")
+            lines.append("")
+        ct_file.write_text("\n".join(lines))
+
+    def generate_entities(self):
+        domains: dict[str, list[SAPEntityType]] = {}
+        for entity in self.metadata.entities.values():
+            domain = get_domain(entity.name)
+            domains.setdefault(domain, []).append(entity)
+
+        for domain, entities in domains.items():
+            entity_file = self.output_base / "entities" / f"{domain}.py"
+            lines = [
+                "from __future__ import annotations",
+                "from typing import Any, TYPE_CHECKING",
+                "from pydantic import Field as PydanticField",
+                "from b1sl.b1sl.models.base import B1Model, SapBool",
+                "from ..enums import *",
+                "from ..complex_types import *"
+            ]
+            
+            # Identify external dependencies for TYPE_CHECKING
+            external_domains = set()
+            for entity in entities:
+                for nav in entity.nav_properties:
+                    if nav.target_type in self.metadata.entities:
+                        target_domain = get_domain(nav.target_type)
+                        if target_domain != domain:
+                            external_domains.add(target_domain)
+
+            # Need TYPE_CHECKING for circular references
+            lines.append("if TYPE_CHECKING:")
+            lines.append("    from .._types import *")
+            for ext in sorted(external_domains):
+                lines.append(f"    from .{ext} import *")
+            lines.append("")
+
+            for entity in entities:
+                lines.append(f"class {entity.name}(B1Model):")
+                lines.append(f"    \"\"\"SAP {entity.name} Entity\"\"\"")
+                if not entity.properties and not entity.nav_properties:
+                    lines.append("    pass")
+                
+                # Sorted Properties: Keys first
+                props = sorted(entity.properties, key=lambda x: x.name not in entity.key_properties)
+                for prop in props:
+                    py_type, _ = map_edm_type(prop.edm_type, self.enum_names, self.complex_names)
+                    
+                    # Convert SAP PascalCase to Python snake_case
+                    py_name = self._to_snake(prop.name)
+                    
+                    # Shadowing check (if after conversion it matches a type name)
+                    if py_name in (py_type, "Any", "List", "Optional", "dict", "str", "int", "float", "bool", "none"):
+                        py_name = f"{py_name}_"
+
+                    lines.append(f"    {py_name}: {py_type} | None = PydanticField(None, alias='{prop.name}')")
+                
+                # Nav Properties
+                for nav in entity.nav_properties:
+                    if nav.target_type in self.metadata.entities:
+                        # Convert SAP PascalCase to Python snake_case for nav names
+                        py_nav_name = self._to_snake(nav.name)
+                        
+                        # Use actual class name for navigation properties
+                        if nav.multiplicity == "*":
+                            t = f"list[{nav.target_type}]"
+                        else:
+                            t = f"{nav.target_type}"
+
+                        lines.append(f"    {py_nav_name}: {t} | None = PydanticField(None, alias='{nav.name}')")
+                
+                lines.append("")
+
+            
+            entity_file.write_text("\n".join(lines))
+
+    def generate_fields(self):
+        """Generate StrEnum classes for all entities and complex types to provide autocomplete constants."""
+        
+        # 1. Generate Complex Types
+        complex_types_file = self.fields_output_base / "complex_types.py"
+        lines_ct = [
+            "# Generated by scripts/sap_metadata_generator",
+            "from __future__ import annotations",
+            "from enum import StrEnum",
+            ""
+        ]
+        
+        for name, ct in sorted(self.metadata.complex_types.items()):
+            lines_ct.append(f"class {name}Fields(StrEnum):")
+            if not ct.properties:
+                lines_ct.append("    pass")
+            else:
+                seen_ct = set()
+                for prop in ct.properties:
+                    py_name = self._to_snake(prop.name)
+                    if py_name in keyword.kwlist:
+                        py_name = f"{py_name}_"
+                    if py_name in seen_ct: continue
+                    seen_ct.add(py_name)
+                    lines_ct.append(f"    {py_name} = '{prop.name}'")
+            lines_ct.append("")
+            
+        complex_types_file.write_text("\n".join(lines_ct))
+        
+        # 2. Generate Entities grouped by domain
+        domains: dict[str, list[SAPEntityType]] = {}
+        for entity in self.metadata.entities.values():
+            domain = get_domain(entity.name)
+            domains.setdefault(domain, []).append(entity)
+
+        for domain, entities in domains.items():
+            fields_file = self.fields_output_base / "entities" / f"{domain}.py"
+            lines = [
+                "from __future__ import annotations",
+                "from enum import StrEnum",
+                ""
+            ]
+            for entity in sorted(entities, key=lambda x: x.name):
+                lines.append(f"class {entity.name}Fields(StrEnum):")
+                # Record all unique fields (properties + nav)
+                seen = set()
+                
+                all_props = entity.properties + entity.nav_properties
+                if not all_props:
+                    lines.append("    pass")
+                
+                for prop in all_props:
+                    py_name = self._to_snake(prop.name)
+                    if py_name in keyword.kwlist:
+                        py_name = f"{py_name}_"
+                    
+                    if py_name in seen: continue
+                    seen.add(py_name)
+                    
+                    lines.append(f"    {py_name} = '{prop.name}'")
+                lines.append("")
+            
+            fields_file.write_text("\n".join(lines))
+
+        # 3. Generate the fields facade (__init__.py in fields)
+        facade_file = self.fields_output_base.parent / "__init__.py"
+        lines = [
+            "# Generated by scripts/sap_metadata_generator",
+            "from __future__ import annotations",
+            ""
+        ]
+        
+        # Import Complex Types
+        for ct_name in sorted(self.metadata.complex_types.keys()):
+            lines.append(f"from ._generated.complex_types import {ct_name}Fields as {ct_name}")
+            
+        # Import Entities
+        for entity_name in sorted(self.metadata.entities.keys()):
+            domain = get_domain(entity_name)
+            lines.append(f"from ._generated.entities.{domain} import {entity_name}Fields as {entity_name}")
+        
+        all_types = sorted(list(self.metadata.entities.keys()) + list(self.metadata.complex_types.keys()))
+        
+        lines += ["", "__all__ = ["]
+        for name in all_types:
+            lines.append(f'    "{name}",')
+        lines.append("]")
+        
+        facade_file.write_text("\n".join(lines))
+
+
+    def generate_types_arbitrator(self):
+        types_file = self.output_base / "_types.py"
+        lines = [
+            "# AUTO-GENERATED — do not edit by hand.",
+            "from __future__ import annotations",
+            "from .enums import *",
+            "from .complex_types import *",
+            "from .entities import *",
+        ]
+        
+        types_file.write_text("\n".join(lines))
+
+    def _to_snake(self, name: str) -> str:
+        import re
+        import keyword
+        # Handle cases like CamelCase -> camel_case and BOE -> boe
+        s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+        s2 = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+        # Clean up multiple underscores
+        snake = re.sub('_+', '_', s2)
+        
+        # Protect Python keywords
+        if keyword.iskeyword(snake) or snake in ("none", "true", "false"):
+            return f"{snake}_"
+        return snake
+
+    def generate_resources(self):
+        # We process both standard entity sets and dedicated (functional) services
+        all_targets = list(self.metadata.entity_sets.items()) + list(self.metadata.dedicated_services.items())
+        
+        for name, es in all_targets:
+            snake_name = self._to_snake(name)
+            res_file = self.res_output_base / f"{snake_name}.py"
+            
+            # Is it a standard entity set or a dedicated functional service?
+            is_functional = es.entity_type == "None"
+            
+            lines = [
+                "from __future__ import annotations",
+                "from typing import TYPE_CHECKING, Any",
+                "from b1sl.b1sl.resources.base import GenericResource",
+                ""
+            ]
+
+            lines.append("if TYPE_CHECKING:")
+            lines.append("    from ...models._generated._types import *")
+            lines.append("")
+
+            model_generic = f'"{es.entity_type}"' if not is_functional else "Any"
+            # Avoid redundant names like AccountsServiceService
+            if name.endswith("Service"):
+                class_name = name
+            else:
+                class_name = f"{name}Service"
+                
+            lines.append(f"class {class_name}(GenericResource[{model_generic}]):")
+            if es.description:
+                lines.append(f"    \"\"\"{es.description}\"\"\"")
+            
+            lines.append(f"    endpoint = \"{name}\"")
+            lines.append(f"    ")
+            lines.append(f"    def __init__(self, adapter):")
+            if not is_functional:
+                lines.append(f"        from ...models._generated._types import {es.entity_type}")
+                lines.append(f"        self.model = {es.entity_type}")
+            else:
+                lines.append(f"        self.model = None")
+            lines.append(f"        super().__init__(adapter)")
+            lines.append("")
+
+            # Action Methods (Combined: specific to set + bound to type)
+            all_actions = list(es.actions)
+            if not is_functional:
+                seen_actions = {a.name for a in all_actions}
+                for act in self.metadata.raw_actions:
+                    if act.is_bound and act.bound_type == es.entity_type and act.name not in seen_actions:
+                        all_actions.append(act)
+                        seen_actions.add(act.name)
+
+            if all_actions:
+                lines.append("    # --- Actions ---")
+                lines.append("")
+                for act in sorted(all_actions, key=lambda x: x.name):
+                    # Clean prefix (e.g. AccountsService_X -> X)
+                    disp_name = act.name
+                    if "_" in act.name:
+                        parts = act.name.split("_")
+                        # If the prefix is exactly the service name or its root
+                        possible_prefixes = [name, name.replace("Service", "")]
+                        if any(p == parts[0] or f"{p}Service" == parts[0] for p in possible_prefixes):
+                             disp_name = "_".join(parts[1:])
+                    
+                    act_snake = self._to_snake(disp_name)
+                    
+                    # Enrichment lookup
+                    ref_info = self.metadata.reference_cache.get(name, {}).get("methods", {}).get(act.name, {})
+                    verb = ref_info.get("verb", "POST")
+                    desc = ref_info.get("description", "")
+                    example = ref_info.get("example")
+
+                    # For Dedicated Services methods, if it's NOT bound, we use the raw act.name as endpoint
+                    if act.is_bound:
+                        lines.append(f"    def {act_snake}(self, key: Any) -> Any:")
+                        lines.append(f"        \"\"\"{verb} {name}(key)/{act.name}")
+                        if desc: 
+                            lines.append(f"        {desc}")
+                        lines.append("        \"\"\"")
+                        lines.append(f"        return self._action(key, \"{act.name}\")")
+                    else:
+                        # Unbound action path
+                        if is_functional:
+                            # Dedicated Service: direct call
+                            path_expr = f"{act.name}"
+                        else:
+                            # EntitySet Action: call via endpoint
+                            path_expr = f"{{self.endpoint}}/{act.name}"
+
+                        lines.append(f"    def {act_snake}(self, payload: dict | None = None) -> Any:")
+                        lines.append(f"        \"\"\"{verb} {path_expr}")
+                        if desc: 
+                            lines.append(f"        {desc}")
+                        if example:
+                            lines.append("")
+                            lines.append("        Example:")
+                            lines.append("        ```json")
+                            for ex_line in example.splitlines():
+                                lines.append(f"        {ex_line}")
+                            lines.append("        ```")
+                        lines.append("        \"\"\"")
+                        lines.append(f"        return self._adapter.post(f\"{path_expr}\", data=payload)")
+                    lines.append("")
+
+            # Function Methods
+            all_functions = list(es.functions)
+            if not is_functional:
+                seen_functions = {f.name for f in all_functions}
+                for func in self.metadata.raw_functions:
+                    if func.is_bound and func.bound_type == es.entity_type and func.name not in seen_functions:
+                        all_functions.append(func)
+                        seen_functions.add(func.name)
+
+            if all_functions:
+                lines.append("    # --- Functions ---")
+                lines.append("")
+                for func in sorted(all_functions, key=lambda x: x.name):
+                    # Clean prefix (e.g. AccrualTypesService_GetX -> GetX)
+                    disp_name = func.name
+                    if "_" in func.name:
+                        parts = func.name.split("_")
+                        possible_prefixes = [name, name.replace("Service", "")]
+                        if any(p == parts[0] or f"{p}Service" == parts[0] for p in possible_prefixes):
+                             disp_name = "_".join(parts[1:])
+                    
+                    func_snake = self._to_snake(disp_name)
+                    
+                    # Enrichment lookup
+                    ref_info = self.metadata.reference_cache.get(name, {}).get("methods", {}).get(func.name, {})
+                    verb = ref_info.get("verb", "GET")
+                    desc = ref_info.get("description", "")
+
+                    if func.is_bound:
+                        lines.append(f"    def {func_snake}(self, key: Any, params: dict | None = None) -> Any:")
+                        lines.append(f"        \"\"\"{verb} {name}(key)/{func.name}(params)")
+                        if desc: 
+                            lines.append(f"        {desc}")
+                        lines.append("        \"\"\"")
+                        lines.append(f"        return self._function(\"{func.name}\", params, key=key)")
+                    else:
+                        if is_functional:
+                            path_expr = f"{func.name}"
+                        else:
+                            path_expr = f"{{self.endpoint}}/{func.name}"
+
+                        lines.append(f"    def {func_snake}(self, params: dict | None = None) -> Any:")
+                        lines.append(f"        \"\"\"{verb} {path_expr}(params)")
+                        if desc: 
+                            lines.append(f"        {desc}")
+                        lines.append("        \"\"\"")
+                        lines.append(f"        return self._function(f\"{path_expr}\", params)")
+                    lines.append("")
+
+            res_file.write_text("\n".join(lines))
+
+    def generate_client_mixin(self):
+        mixin_file = self.res_output_base / "client_mixin.py"
+        import_lines = [
+            "# AUTO-GENERATED — do not edit by hand.",
+            "from __future__ import annotations",
+            "from b1sl.b1sl.adapter_protocol import RestAdapterProtocol",
+            "",
+            "# Resource imports"
+        ]
+        
+        # Combine standard entity sets and dedicated functional services
+        all_targets = sorted(list(self.metadata.entity_sets.keys()) + list(self.metadata.dedicated_services.keys()))
+        
+        property_lines = [
+            "",
+            "class B1ClientMixin:",
+            "    _adapter: RestAdapterProtocol",
+            ""
+        ]
+
+        for name in all_targets:
+            snake_name = self._to_snake(name)
+            if name.endswith("Service"):
+                base_class_name = name
+            else:
+                base_class_name = f"{name}Service"
+            
+            # Use unique alias for each import to avoid collisions
+            unique_alias = f"_{snake_name}_cls"
+            import_lines.append(f"from b1sl.b1sl.resources._generated.{snake_name} import {base_class_name} as {unique_alias}")
+
+            prop_name = snake_name
+            property_lines.append(f"    @property")
+            property_lines.append(f"    def {prop_name}(self) -> {unique_alias}:")
+            property_lines.append(f"        \"\"\"Service Layer Endpoint: /{name}\"\"\"")
+            property_lines.append(f"        if not hasattr(self, \"_{prop_name}\") or self._{prop_name} is None:")
+            property_lines.append(f"            self._{prop_name} = {unique_alias}(self._adapter)")
+            property_lines.append(f"        return self._{prop_name}")
+            property_lines.append("")
+        mixin_file.write_text("\n".join(import_lines + property_lines))
+
+    def generate_entities_init(self):
+        """Generates src/b1sl/b1sl/models/_generated/entities/__init__.py with rebuild logic."""
+        init_file = self.output_base / "entities" / "__init__.py"
+        
+        domains = sorted(set(get_domain(e.name) for e in self.metadata.entities.values()))
+        
+        lines = [
+            "# AUTO-GENERATED — do not edit by hand.",
+            "from __future__ import annotations",
+            ""
+        ]
+        
+        # 1. Import all domain modules
+        for d in domains:
+            lines.append(f"from . import {d}")
+            
+        lines.append("")
+        
+        # 1.1 Re-export all classes for package-level access
+        for name in sorted(self.metadata.entities.keys()):
+            domain = get_domain(name)
+            lines.append(f"from .{domain} import {name}")
+
+        lines.append("")
+        lines.append("_ALL_MODELS = []")
+        
+        # 2. Collect all entity classes and build a master namespace
+        all_entities = sorted(self.metadata.entities.keys())
+        for name in all_entities:
+            domain = get_domain(name)
+            # Check if we should import from _overrides or from the domain module
+            if self._has_override(domain, name):
+                lines.append(f"from ..._overrides.{domain} import {name}")
+                lines.append(f"_ALL_MODELS.append({name})")
+            else:
+                lines.append(f"_ALL_MODELS.append({domain}.{name})")
+            
+        lines.append("")
+        
+        # 3. Model Rebuild Loop with centralized namespace
+        lines.append("# Master namespace for cross-domain resolution")
+        lines.append("_NAMESPACE = {m.__name__: m for m in _ALL_MODELS}")
+        lines.append("")
+        lines.append("# Rebuild models to resolve circular dependencies")
+        lines.append("for model in _ALL_MODELS:")
+        lines.append("    model.model_rebuild(_types_namespace=_NAMESPACE)")
+        lines.append("")
+        
+        init_file.write_text("\n".join(lines))
+
+    def generate_entities_facade(self):
+        """Generates src/b1sl/b1sl/entities/__init__.py"""
+        facade_file = self.output_base.parent.parent / "entities" / "__init__.py"
+        lines = [
+            "# AUTO-GENERATED — do not edit by hand. Run ./generate_models.sh",
+            "# Re-exports every entity model for a flat import namespace.",
+            "# Usage: from b1sl.b1sl import entities as en  →  en.Item",
+            "",
+        ]
+        
+        domains: dict[str, list[str]] = {}
+        all_entities = []
+        for entity in self.metadata.entities.values():
+            domain = get_domain(entity.name)
+            domains.setdefault(domain, []).append(entity.name)
+            all_entities.append(entity.name)
+            
+        lines.append("from b1sl.b1sl.models._generated.enums import *")
+        lines.append("from b1sl.b1sl.models._generated.complex_types import *")
+        lines.append("")
+
+        for domain, names in sorted(domains.items()):
+            # Re-export each entity explicitly as requested for better IDE tracing
+            for name in sorted(names):
+                if self._has_override(domain, name):
+                    lines.append(f"from b1sl.b1sl.models._overrides.{domain} import {name}")
+                else:
+                    lines.append(f"from b1sl.b1sl.models._generated.entities.{domain} import {name}")
+            
+        lines.append("")
+        lines.append("# --- Aliases for EntitySets (Singularized) ---")
+        
+        # Helper to singularize properly for common SAP patterns
+        def singularize(name: str) -> str:
+            if name.endswith("Collection"): return name[:-10]
+            # Handle specific known tricky suffixes
+            if name.endswith("Statuses"): return name[:-2]      # Statuses -> Status
+            if name.endswith("Status"): return name             # Already singular
+            if name.endswith("Classes"): return name[:-2]       # Classes -> Class
+            if name.endswith("Branches"): return name[:-2]      # Branches -> Branch
+            if name.endswith("Series"): return name             # Series is its own singular
+            if name.endswith("Taxes"): return name[:-2]         # Taxes -> Tax
+            if name.endswith("Searches"): return name[:-2]      # Searches -> Search
+            
+            if name.endswith("s"):
+                if name.endswith("ies"): return name[:-3] + "y"
+                return name[:-1]
+            return name
+
+        aliases = []
+        for es_name, es in sorted(self.metadata.entity_sets.items()):
+            # Only 1 clean Singularized Alias (e.g. PurchaseDeliveryNote = Document)
+            singular = singularize(es_name)
+            if singular != es.entity_type and es.entity_type in all_entities:
+                lines.append(f"{singular} = {es.entity_type}  # From: {es_name}")
+                aliases.append(singular)
+
+        lines += ["", "__all__ = ["]
+        # Export all enums too
+        for en in sorted(self.metadata.enums.keys()):
+            lines.append(f'    "{en}",')
+        # Export all complex types too
+        for ct in sorted(self.metadata.complex_types.keys()):
+            lines.append(f'    "{ct}",')
+        # Export all entities
+        for name in sorted(all_entities):
+            lines.append(f'    "{name}",')
+        # Export all aliases
+        for name in sorted(aliases):
+             lines.append(f'    "{name}",')
+        lines.append("]")
+        
+        lines.append("")
+        lines.append("# Master namespace for cross-domain resolution")
+        lines.append("_NAMESPACE = {")
+        for name in sorted(all_entities):
+            lines.append(f'    "{name}": {name},')
+        for name in sorted(aliases):
+             lines.append(f'    "{name}": {name},')
+        lines.append("}")
+        lines.append("")
+        lines.append("# Rebuild models to resolve forward references")
+        lines.append("for name in _NAMESPACE:")
+        lines.append("    model = _NAMESPACE[name]")
+        lines.append("    if hasattr(model, \"model_rebuild\"):")
+        lines.append("        model.model_rebuild(_types_namespace=_NAMESPACE)")
+        
+        # ensure entities directory exists inside src/b1sl/b1sl/
+        facade_file.parent.mkdir(parents=True, exist_ok=True)
+        facade_file.write_text("\n".join(lines))
+
+    def run(self):
+        print("🚀 Starting Generation Pipeline...")
+        self._ensure_dirs()
+        print("  - Generating Enums...")
+        self.generate_enums()
+        print("  - Generating Complex Types...")
+        self.generate_complex_types()
+        print("  - Generating Entities...")
+        self.generate_entities()
+        print("  - Generating Entities Init (Rebuild)...")
+        self.generate_entities_init()
+        print("  - Generating Fields...")
+        self.generate_fields()
+        print("  - Generating Types Arbitrator...")
+        self.generate_types_arbitrator()
+        print("  - Generating Resources...")
+        self.generate_resources()
+        print("  - Generating Client Mixin...")
+        self.generate_client_mixin()
+        print("  - Generating Entities Facade...")
+        self.generate_entities_facade()
+        print("✨ Done!")
+
+
+def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="SAP B1 SDK Master Generator")
+    parser.add_argument("xml", help="Path to metadata XML")
+    parser.add_argument("out", help="Output directory")
+    parser.add_argument("--service-doc", help="Path to service_document.json", default=None)
+    parser.add_argument("--ref-cache", help="Path to reference_cache.json", default=None)
+    
+    args = parser.parse_args()
+
+    xml_path = Path(args.xml)
+    output_dir = Path(args.out)
+    
+    metadata_parser = MetadataParser(xml_path)
+    metadata = metadata_parser.parse(
+        service_doc_path=args.service_doc,
+        ref_cache_path=args.ref_cache
+    )
+    
+    gen = SDKGenerator(metadata, output_dir)
+    gen.run()
+
+if __name__ == "__main__":
+    main()

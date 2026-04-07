@@ -1,0 +1,15 @@
+{
+    "@odata.context": "https://sap-server.example.com:50000/b1s/v2/$metadata",
+    "value": [
+        {
+            "name": "BusinessPartners",
+            "kind": "EntitySet",
+            "url": "BusinessPartners"
+        },
+        {
+            "name": "Items",
+            "kind": "EntitySet",
+            "url": "Items"
+        }
+    ]
+}

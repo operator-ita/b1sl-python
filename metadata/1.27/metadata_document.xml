@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:DataServices>
+        <Schema Namespace="SAPB1" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityType Name="BusinessPartner">
+                <Key>
+                    <PropertyRef Name="CardCode"/>
+                </Key>
+                <Property Name="CardCode" Type="Edm.String" Nullable="false"/>
+                <Property Name="CardName" Type="Edm.String"/>
+                <Property Name="CardType" Type="SAPB1.BoCardTypes"/>
+                <Property Name="CurrentAccountBalance" Type="Edm.Double"/>
+            </EntityType>
+            <EntityType Name="Item">
+                <Key>
+                    <PropertyRef Name="ItemCode"/>
+                </Key>
+                <Property Name="ItemCode" Type="Edm.String" Nullable="false"/>
+                <Property Name="ItemName" Type="Edm.String"/>
+            </EntityType>
+            <EnumType Name="BoCardTypes">
+                <Member Name="cCustomer" Value="0"/>
+                <Member Name="cSupplier" Value="1"/>
+                <Member Name="cLid" Value="2"/>
+            </EnumType>
+            <EntityContainer Name="ServiceLayer">
+                <EntitySet Name="BusinessPartners" EntityType="SAPB1.BusinessPartner"/>
+                <EntitySet Name="Items" EntityType="SAPB1.Item"/>
+            </EntityContainer>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

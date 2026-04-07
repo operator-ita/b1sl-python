@@ -1,0 +1,97 @@
+"""
+Refactored ServiceCall Master Guide
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Demonstrates the 3 styles of interaction supported by the SDK:
+1. Pythonic (using F constants) - THE PREFERRED WAY
+2. Hybrid (Mixed F and Strings) - For UDFs
+3. SAP-Pure (Raw Strings)        - For copy-pasting API docs
+"""
+import sys
+from pathlib import Path
+# Add project roots to sys.path for standalone script execution
+sys.path.append(str(Path(__file__).parent.parent / "src"))
+sys.path.append(str(Path(__file__).parent))
+
+from b1sl.b1sl import fields as F
+from b1sl.b1sl.resources.base import ODataQuery
+from utils import use_sap_b1
+
+def main():
+    with use_sap_b1("ServiceCall Interaction Patterns") as runner:
+        client = runner.client
+        
+        # 0. DYNAMIC ID DISCOVERY
+        runner.info("Fetching latest ServiceCall ID...")
+        latest = client.service_calls.list(ODataQuery(
+            select=[F.ServiceCall.service_call_id], 
+            orderby=f"{F.ServiceCall.service_call_id} desc", 
+            top=1
+        ))
+        
+        if not latest:
+            runner.error("No calls found. Using fallback ID 106611.")
+            TEST_ID = 106611
+        else:
+            TEST_ID = latest[0].service_call_id
+            runner.success(f"Discovered TEST_ID: {TEST_ID}")
+
+        # PATTERN 1: PYTHONIC MODE (THE GOLD STANDARD)
+        runner.header("Pattern 1: Pythonic (F Constants)")
+        runner.info("Best for Type Safety and IDE Autocomplete.")
+        
+        sc_f = client.service_calls.get(
+            TEST_ID,
+            select=[F.ServiceCall.subject, F.ServiceCall.customer_code],
+            expand={
+                F.ServiceCall.business_partner: [F.BusinessPartner.card_code],
+                F.ServiceCall.item:             [F.Item.item_code, F.Item.item_name]
+            }
+        )
+        
+        bp_code = sc_f.business_partner.card_code if sc_f.business_partner else "N/A"
+        runner.result("Subject", sc_f.subject)
+        runner.result("BP Code", bp_code)
+        runner.result("Item Name", sc_f.item.item_name if sc_f.item else "N/A")
+
+        # PATTERN 2: HYBRID MODE (UDF SUPPORT)
+        runner.header("Pattern 2: Hybrid (F + Raw Strings)")
+        runner.info("Best for queries involving User Defined Fields (U_UDF).")
+        
+        sc_mix = client.service_calls.get(
+            TEST_ID,
+            select=[F.ServiceCall.subject, "U_OTFecha"], 
+            expand={
+                "BusinessPartner": ["CardCode"], 
+                F.ServiceCall.item: ["ItemCode", "ItemName"]
+            }
+        )
+        runner.result("Subject", sc_mix.subject)
+        runner.result("UDF 'U_OTFecha'", sc_mix.get("U_OTFecha", "None"))
+
+        # PATTERN 3: SAP-PURE STYLE (RAW ODATA)
+        runner.header("Pattern 3: SAP-Pure (Raw Strings)")
+        runner.info("Best for porting existing OData snippets directly.")
+        
+        sc_sap = client.service_calls.get(
+            TEST_ID,
+            select=["Subject", "CustomerCode"],
+            expand=["BusinessPartner($select=CardCode)", "Item($select=ItemCode,ItemName)"]
+        )
+        runner.result("Subject", sc_sap.subject)
+        runner.result("Customer", sc_sap.customer_code)
+
+        # COLLECTION PATTERN
+        runner.header("Collection Pattern (LIST + Expand)")
+        runner.info("Fetching the last 3 calls with their BusinessPartners in one request.")
+        
+        query = ODataQuery(
+            select=[F.ServiceCall.subject, F.ServiceCall.service_call_id],
+            expand={F.ServiceCall.business_partner: [F.BusinessPartner.card_code]},
+            top=3
+        )
+        for call in client.service_calls.list(query):
+             bp = call.business_partner.card_code if call.business_partner else "Unknown"
+             print(f"  [#{call.service_call_id:<8}] ({bp:<20}) {call.subject[:40]}...")
+
+if __name__ == "__main__":
+    main()

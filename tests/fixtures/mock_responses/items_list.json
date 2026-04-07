@@ -1,0 +1,15 @@
+{
+    "value": [
+        {
+            "ItemCode": "9990140071261",
+            "ItemName": "QUESO OAXACA PREMIUM",
+            "QuantityOnStock": 150.5
+        },
+        {
+            "ItemCode": "9990140071262",
+            "ItemName": "QUESO MANCHEGO",
+            "QuantityOnStock": 45.0
+        }
+    ],
+    "odata.nextLink": "Items?$skip=2"
+}

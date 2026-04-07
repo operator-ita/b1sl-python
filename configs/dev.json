@@ -1,0 +1,16 @@
+{
+    "test_data": {
+        "items": {
+            "simple": "9990140071261",
+            "batch": "BATCH-001",
+            "service": "SERV-002"
+        },
+        "customers": {
+            "retail": "C20000",
+            "wholesale": "C30000"
+        },
+        "warehouses": {
+            "main": "01"
+        }
+    }
+}
