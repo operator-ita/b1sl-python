@@ -238,7 +238,8 @@ class SDKGenerator:
                     py_name = self._to_snake(prop.name)
                     if py_name in keyword.kwlist:
                         py_name = f"{py_name}_"
-                    if py_name in seen_ct: continue
+                    if py_name in seen_ct:
+                        continue
                     seen_ct.add(py_name)
                     lines_ct.append(f"    {py_name} = '{prop.name}'")
             lines_ct.append("")
@@ -272,7 +273,8 @@ class SDKGenerator:
                     if py_name in keyword.kwlist:
                         py_name = f"{py_name}_"
 
-                    if py_name in seen: continue
+                    if py_name in seen:
+                        continue
                     seen.add(py_name)
 
                     lines.append(f"    {py_name} = '{prop.name}'")

@@ -97,7 +97,6 @@ target-version = "py311"
 extend-exclude = [
     "src/b1sl/b1sl/models/_generated",
     "src/b1sl/b1sl/resources/_generated",
-    "scripts",
 ]
 
 [tool.ruff.lint]
@@ -111,6 +110,7 @@ indent-style = "space"
 [tool.ruff.lint.extend-per-file-ignores]
 "src/b1sl/b1sl/entities/__init__.py" = ["F401", "F403", "F405"]
 "examples/**" = ["E402", "F841"]
+"scripts/**" = ["E701", "F401"]
 
 [tool.pyright]
 include = ["src", "scripts"]

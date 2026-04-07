@@ -41,12 +41,14 @@ class SAPReferenceParser:
             try:
                 # 1. Service Name (h2)
                 h2 = res.find('h2')
-                if not h2: continue
+                if not h2:
+                    continue
                 service_name = h2.get_text(strip=True)
 
                 # 2. Service Description
                 methods_div = res.find('div', class_='methods')
-                if not methods_div: continue
+                if not methods_div:
+                    continue
 
                 desc_p = methods_div.find('p')
                 service_desc = desc_p.get_text(strip=True) if desc_p else ""
@@ -58,7 +60,8 @@ class SAPReferenceParser:
                     path_span = method_div.find('span', class_='path')
                     verb_span = method_div.find('span', class_='http_method')
 
-                    if not path_span or not verb_span: continue
+                    if not path_span or not verb_span:
+                        continue
 
                     method_name = path_span.get_text(strip=True)
                     http_verb = verb_span.get_text(strip=True)
