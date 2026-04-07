@@ -1,19 +1,22 @@
 import sys
 from pathlib import Path
+
 # Add project roots to sys.path for standalone script execution
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 sys.path.append(str(Path(__file__).parent))
 
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
-from fastapi import FastAPI, Depends, HTTPException
+
+from fastapi import Depends, FastAPI, HTTPException
+
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
     pass
 from b1sl.b1sl import AsyncB1Client, B1Environment
-from b1sl.b1sl.base_adapter import ObservabilityConfig, HookContext
+from b1sl.b1sl.base_adapter import HookContext, ObservabilityConfig
 
 # 1. Configuración Global (desde .env)
 # Utiliza B1Environment para cargar las variables del sistema (como en Item.py)

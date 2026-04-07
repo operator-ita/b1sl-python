@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class PurchaseCreditNotesService(GenericResource[Any]):
     endpoint = "PurchaseCreditNotesService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -17,12 +19,12 @@ class PurchaseCreditNotesService(GenericResource[Any]):
     def approve_and_add(self, payload: dict | None = None) -> Any:
         """POST PurchaseCreditNotesService_ApproveAndAdd
         """
-        return self._adapter.post(f"PurchaseCreditNotesService_ApproveAndAdd", data=payload)
+        return self._adapter.post("PurchaseCreditNotesService_ApproveAndAdd", data=payload)
 
     def approve_and_update(self, payload: dict | None = None) -> Any:
         """POST PurchaseCreditNotesService_ApproveAndUpdate
         """
-        return self._adapter.post(f"PurchaseCreditNotesService_ApproveAndUpdate", data=payload)
+        return self._adapter.post("PurchaseCreditNotesService_ApproveAndUpdate", data=payload)
 
     def cancel2(self, payload: dict | None = None) -> Any:
         """POST PurchaseCreditNotesService_Cancel2
@@ -38,17 +40,17 @@ class PurchaseCreditNotesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"PurchaseCreditNotesService_Cancel2", data=payload)
+        return self._adapter.post("PurchaseCreditNotesService_Cancel2", data=payload)
 
     def close_by_date(self, payload: dict | None = None) -> Any:
         """POST PurchaseCreditNotesService_CloseByDate
         """
-        return self._adapter.post(f"PurchaseCreditNotesService_CloseByDate", data=payload)
+        return self._adapter.post("PurchaseCreditNotesService_CloseByDate", data=payload)
 
     def export_e_way_bill(self, payload: dict | None = None) -> Any:
         """POST PurchaseCreditNotesService_ExportEWayBill
         """
-        return self._adapter.post(f"PurchaseCreditNotesService_ExportEWayBill", data=payload)
+        return self._adapter.post("PurchaseCreditNotesService_ExportEWayBill", data=payload)
 
     def get_approval_templates(self, payload: dict | None = None) -> Any:
         """POST PurchaseCreditNotesService_GetApprovalTemplates
@@ -71,15 +73,15 @@ class PurchaseCreditNotesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"PurchaseCreditNotesService_GetApprovalTemplates", data=payload)
+        return self._adapter.post("PurchaseCreditNotesService_GetApprovalTemplates", data=payload)
 
     def handle_approval_request(self, payload: dict | None = None) -> Any:
         """POST PurchaseCreditNotesService_HandleApprovalRequest
         Invoke the method 'HandleApprovalRequest' on this service.
         """
-        return self._adapter.post(f"PurchaseCreditNotesService_HandleApprovalRequest", data=payload)
+        return self._adapter.post("PurchaseCreditNotesService_HandleApprovalRequest", data=payload)
 
     def init_data(self, payload: dict | None = None) -> Any:
         """POST PurchaseCreditNotesService_InitData
         """
-        return self._adapter.post(f"PurchaseCreditNotesService_InitData", data=payload)
+        return self._adapter.post("PurchaseCreditNotesService_InitData", data=payload)

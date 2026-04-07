@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class ExternalCallsService(GenericResource[Any]):
     endpoint = "ExternalCallsService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -25,7 +27,7 @@ class ExternalCallsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ExternalCallsService_GetCall", data=payload)
+        return self._adapter.post("ExternalCallsService_GetCall", data=payload)
 
     def send_call(self, payload: dict | None = None) -> Any:
         """POST ExternalCallsService_SendCall
@@ -38,7 +40,7 @@ class ExternalCallsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ExternalCallsService_SendCall", data=payload)
+        return self._adapter.post("ExternalCallsService_SendCall", data=payload)
 
     def update_call(self, payload: dict | None = None) -> Any:
         """POST ExternalCallsService_UpdateCall
@@ -51,4 +53,4 @@ class ExternalCallsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ExternalCallsService_UpdateCall", data=payload)
+        return self._adapter.post("ExternalCallsService_UpdateCall", data=payload)

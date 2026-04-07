@@ -52,6 +52,21 @@ lint:
 	$(VENV)/bin/ruff check src tests
 	$(VENV)/bin/mypy src
 
+# Release automation (Pro mode)
+# Usage: make release v=0.1.x
+release: lint test
+	@if [ -z "$(v)" ]; then \
+		echo "❌ Error: Version required. Example: make release v=0.1.2"; \
+		exit 1; \
+	fi
+	@echo "🚀 Preparing release v$(v)..."
+	git add .
+	git commit -m "chore: Release v$(v) - Automated build"
+	git tag -a v$(v) -m "v$(v)"
+	@echo "📤 Pushing to GitHub (Branch main + Tags)..."
+	git push origin main --tags
+	@echo "✅ Done! GitHub Actions will handle the PyPI publication."
+
 clean:
 	@echo "🧹 Cleaning temporary files..."
 	rm -rf .pytest_cache .mypy_cache .coverage htmlcov .ruff_cache coverage.xml

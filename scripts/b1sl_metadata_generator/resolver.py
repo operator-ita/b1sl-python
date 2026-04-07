@@ -4,9 +4,10 @@ sap_metadata_generator.resolver
 Handles dependency resolution and topological sorting.
 """
 from __future__ import annotations
+
 import sys
-from pathlib import Path
 from collections import deque
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 # Add current directory to path if not present (for standalone script imports)

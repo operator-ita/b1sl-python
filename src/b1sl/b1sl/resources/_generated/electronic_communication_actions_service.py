@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class ElectronicCommunicationActionsService(GenericResource[Any]):
     endpoint = "ElectronicCommunicationActionsService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -25,7 +27,7 @@ class ElectronicCommunicationActionsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ElectronicCommunicationActionsService_AddEcmAction", data=payload)
+        return self._adapter.post("ElectronicCommunicationActionsService_AddEcmAction", data=payload)
 
     def add_ecm_action_log(self, payload: dict | None = None) -> Any:
         """POST ElectronicCommunicationActionsService_AddEcmActionLog
@@ -38,7 +40,7 @@ class ElectronicCommunicationActionsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ElectronicCommunicationActionsService_AddEcmActionLog", data=payload)
+        return self._adapter.post("ElectronicCommunicationActionsService_AddEcmActionLog", data=payload)
 
     def delete_ecm_action(self, payload: dict | None = None) -> Any:
         """POST ElectronicCommunicationActionsService_DeleteEcmAction
@@ -51,7 +53,7 @@ class ElectronicCommunicationActionsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ElectronicCommunicationActionsService_DeleteEcmAction", data=payload)
+        return self._adapter.post("ElectronicCommunicationActionsService_DeleteEcmAction", data=payload)
 
     def get_ecm_action(self, payload: dict | None = None) -> Any:
         """POST ElectronicCommunicationActionsService_GetEcmAction
@@ -64,7 +66,7 @@ class ElectronicCommunicationActionsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ElectronicCommunicationActionsService_GetEcmAction", data=payload)
+        return self._adapter.post("ElectronicCommunicationActionsService_GetEcmAction", data=payload)
 
     def get_ecm_action_by_doc(self, payload: dict | None = None) -> Any:
         """POST ElectronicCommunicationActionsService_GetEcmActionByDoc
@@ -77,7 +79,7 @@ class ElectronicCommunicationActionsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ElectronicCommunicationActionsService_GetEcmActionByDoc", data=payload)
+        return self._adapter.post("ElectronicCommunicationActionsService_GetEcmActionByDoc", data=payload)
 
     def get_ecm_action_log(self, payload: dict | None = None) -> Any:
         """POST ElectronicCommunicationActionsService_GetEcmActionLog
@@ -90,7 +92,7 @@ class ElectronicCommunicationActionsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ElectronicCommunicationActionsService_GetEcmActionLog", data=payload)
+        return self._adapter.post("ElectronicCommunicationActionsService_GetEcmActionLog", data=payload)
 
     def get_ecm_action_log_list(self, payload: dict | None = None) -> Any:
         """POST ElectronicCommunicationActionsService_GetEcmActionLogList
@@ -103,7 +105,7 @@ class ElectronicCommunicationActionsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ElectronicCommunicationActionsService_GetEcmActionLogList", data=payload)
+        return self._adapter.post("ElectronicCommunicationActionsService_GetEcmActionLogList", data=payload)
 
     def update_ecm_action(self, payload: dict | None = None) -> Any:
         """POST ElectronicCommunicationActionsService_UpdateEcmAction
@@ -116,4 +118,4 @@ class ElectronicCommunicationActionsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ElectronicCommunicationActionsService_UpdateEcmAction", data=payload)
+        return self._adapter.post("ElectronicCommunicationActionsService_UpdateEcmAction", data=payload)

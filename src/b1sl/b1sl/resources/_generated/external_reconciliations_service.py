@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class ExternalReconciliationsService(GenericResource[Any]):
     endpoint = "ExternalReconciliationsService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -28,7 +30,7 @@ class ExternalReconciliationsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ExternalReconciliationsService_CancelReconciliation", data=payload)
+        return self._adapter.post("ExternalReconciliationsService_CancelReconciliation", data=payload)
 
     def get_reconciliation(self, payload: dict | None = None) -> Any:
         """POST ExternalReconciliationsService_GetReconciliation
@@ -44,7 +46,7 @@ class ExternalReconciliationsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ExternalReconciliationsService_GetReconciliation", data=payload)
+        return self._adapter.post("ExternalReconciliationsService_GetReconciliation", data=payload)
 
     def get_reconciliation_list(self, payload: dict | None = None) -> Any:
         """POST ExternalReconciliationsService_GetReconciliationList
@@ -66,7 +68,7 @@ class ExternalReconciliationsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ExternalReconciliationsService_GetReconciliationList", data=payload)
+        return self._adapter.post("ExternalReconciliationsService_GetReconciliationList", data=payload)
 
     def reconcile(self, payload: dict | None = None) -> Any:
         """POST ExternalReconciliationsService_Reconcile
@@ -101,4 +103,4 @@ class ExternalReconciliationsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ExternalReconciliationsService_Reconcile", data=payload)
+        return self._adapter.post("ExternalReconciliationsService_Reconcile", data=payload)

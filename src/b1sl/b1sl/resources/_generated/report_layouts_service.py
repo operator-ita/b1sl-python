@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class ReportLayoutsService(GenericResource[Any]):
     endpoint = "ReportLayoutsService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -29,7 +31,7 @@ class ReportLayoutsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ReportLayoutsService_AddReportLayout", data=payload)
+        return self._adapter.post("ReportLayoutsService_AddReportLayout", data=payload)
 
     def add_report_layout_to_menu(self, payload: dict | None = None) -> Any:
         """POST ReportLayoutsService_AddReportLayoutToMenu
@@ -94,7 +96,7 @@ class ReportLayoutsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ReportLayoutsService_AddReportLayoutToMenu", data=payload)
+        return self._adapter.post("ReportLayoutsService_AddReportLayoutToMenu", data=payload)
 
     def delete_report_layout(self, payload: dict | None = None) -> Any:
         """POST ReportLayoutsService_DeleteReportLayout
@@ -109,7 +111,7 @@ class ReportLayoutsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ReportLayoutsService_DeleteReportLayout", data=payload)
+        return self._adapter.post("ReportLayoutsService_DeleteReportLayout", data=payload)
 
     def delete_report_layout_and_menu(self, payload: dict | None = None) -> Any:
         """POST ReportLayoutsService_DeleteReportLayoutAndMenu
@@ -124,7 +126,7 @@ class ReportLayoutsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ReportLayoutsService_DeleteReportLayoutAndMenu", data=payload)
+        return self._adapter.post("ReportLayoutsService_DeleteReportLayoutAndMenu", data=payload)
 
     def get_default_report(self, payload: dict | None = None) -> Any:
         """POST ReportLayoutsService_GetDefaultReport
@@ -139,7 +141,7 @@ class ReportLayoutsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ReportLayoutsService_GetDefaultReport", data=payload)
+        return self._adapter.post("ReportLayoutsService_GetDefaultReport", data=payload)
 
     def get_default_report_layout(self, payload: dict | None = None) -> Any:
         """POST ReportLayoutsService_GetDefaultReportLayout
@@ -154,7 +156,7 @@ class ReportLayoutsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ReportLayoutsService_GetDefaultReportLayout", data=payload)
+        return self._adapter.post("ReportLayoutsService_GetDefaultReportLayout", data=payload)
 
     def get_report_layout(self, payload: dict | None = None) -> Any:
         """POST ReportLayoutsService_GetReportLayout
@@ -169,7 +171,7 @@ class ReportLayoutsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ReportLayoutsService_GetReportLayout", data=payload)
+        return self._adapter.post("ReportLayoutsService_GetReportLayout", data=payload)
 
     def get_report_layout_list(self, payload: dict | None = None) -> Any:
         """POST ReportLayoutsService_GetReportLayoutList
@@ -184,7 +186,7 @@ class ReportLayoutsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ReportLayoutsService_GetReportLayoutList", data=payload)
+        return self._adapter.post("ReportLayoutsService_GetReportLayoutList", data=payload)
 
     def set_default_report(self, payload: dict | None = None) -> Any:
         """POST ReportLayoutsService_SetDefaultReport
@@ -200,7 +202,7 @@ class ReportLayoutsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ReportLayoutsService_SetDefaultReport", data=payload)
+        return self._adapter.post("ReportLayoutsService_SetDefaultReport", data=payload)
 
     def update_language_report(self, payload: dict | None = None) -> Any:
         """POST ReportLayoutsService_UpdateLanguageReport
@@ -216,7 +218,7 @@ class ReportLayoutsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ReportLayoutsService_UpdateLanguageReport", data=payload)
+        return self._adapter.post("ReportLayoutsService_UpdateLanguageReport", data=payload)
 
     def update_printer_settings(self, payload: dict | None = None) -> Any:
         """POST ReportLayoutsService_UpdatePrinterSettings
@@ -234,4 +236,4 @@ class ReportLayoutsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ReportLayoutsService_UpdatePrinterSettings", data=payload)
+        return self._adapter.post("ReportLayoutsService_UpdatePrinterSettings", data=payload)

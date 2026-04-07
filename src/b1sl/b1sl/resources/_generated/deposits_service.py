@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class DepositsService(GenericResource[Any]):
     endpoint = "DepositsService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -28,7 +30,7 @@ class DepositsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"DepositsService_CancelCheckRow", data=payload)
+        return self._adapter.post("DepositsService_CancelCheckRow", data=payload)
 
     def cancel_check_rowby_current_system_date(self, payload: dict | None = None) -> Any:
         """POST DepositsService_CancelCheckRowbyCurrentSystemDate
@@ -44,10 +46,10 @@ class DepositsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"DepositsService_CancelCheckRowbyCurrentSystemDate", data=payload)
+        return self._adapter.post("DepositsService_CancelCheckRowbyCurrentSystemDate", data=payload)
 
     def get_deposit_list(self, payload: dict | None = None) -> Any:
         """POST DepositsService_GetDepositList
         Invoke the method 'GetDepositList' on this service.
         """
-        return self._adapter.post(f"DepositsService_GetDepositList", data=payload)
+        return self._adapter.post("DepositsService_GetDepositList", data=payload)

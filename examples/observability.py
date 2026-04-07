@@ -1,6 +1,7 @@
 import asyncio
-import logging
+
 from b1sl.b1sl import HookContext, ObservabilityConfig
+
 
 # 1. Definir un Hook de ejemplo (Pilar de Telemetría)
 async def my_metrics_hook(ctx: HookContext):
@@ -33,42 +34,43 @@ async def run_example():
     # Add project roots to sys.path for standalone script execution
     sys.path.append(str(Path(__file__).parent.parent / "src"))
     sys.path.append(str(Path(__file__).parent))
-    
-    from b1sl.b1sl import B1Environment, AsyncB1Client
-    from utils import AsyncExampleRunner
+
     import httpx
     import respx
-    
+    from utils import AsyncExampleRunner
+
+    from b1sl.b1sl import AsyncB1Client, B1Environment
+
     env = B1Environment.load()
     client = AsyncB1Client(config=env.config, version="v2", observability=obs_config)
     runner = AsyncExampleRunner("Advanced Async Observability Demo", observability=obs_config)
     runner.client = client
-    
+
     # --- CONFIGURAR MOCK USANDO RESPX ---
     # Respx intercepta todas las peticiones a httpx sin importar cuándo se crea el cliente
     respx_mock = respx.mock(base_url=client._adapter.raw_base_url, assert_all_called=False)
     respx_mock.start()
-    
+
     # Mock para Login
     respx_mock.post("/Login").mock(return_value=httpx.Response(
-        200, 
+        200,
         json={"SessionId": "MOCK-SESSION-ID", "SessionTimeout": 30}
     ))
-    
+
     # Mock para Items
     async def items_side_effect(request):
         await asyncio.sleep(0.05) # Simular latencia de 50ms
         return httpx.Response(200, json={"value": []})
-        
+
     respx_mock.get("/Items").mock(side_effect=items_side_effect)
-    
+
     # Mock para Logout
     respx_mock.post("/Logout").mock(return_value=httpx.Response(200))
-    
+
     async with runner.client as b1:
         runner.header("SAP B1 Observability (Async Enterprise Pattern)")
         runner.info("Ejecutando petición asíncrona a 'Items' (MOCK)...")
-        
+
         # Al ejecutar esto, se disparará automáticamente el hook 'on_response'
         try:
             # En el cliente asíncrono, los servicios también son asíncronos

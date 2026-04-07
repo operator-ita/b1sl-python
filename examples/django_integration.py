@@ -29,9 +29,11 @@ class MockSettings:
 
 # Injecting into sys.modules so 'import django' doesn't fail
 from unittest.mock import MagicMock
+
 sys.modules['django'] = MagicMock()
 sys.modules['django.conf'] = MagicMock()
 from django.conf import settings
+
 settings.B1SL_BASE_URL = MockSettings.B1SL_BASE_URL
 settings.B1SL_USERNAME = MockSettings.B1SL_USERNAME
 settings.B1SL_PASSWORD = MockSettings.B1SL_PASSWORD
@@ -43,22 +45,23 @@ from b1sl.b1sl.adapter import get_rest_adapter
 from b1sl.b1sl.client import B1Client
 from b1sl.b1sl.config import B1Config
 
+
 def django_view_example():
     """
     Example of how you would use it in a Django View.
     """
     print("--- Django Integration Example ---")
-    
+
     # Method A: Use the legacy shared adapter (Singleton-like)
     # Useful for porting old scripts quickly.
     adapter = get_rest_adapter()
     print(f"Shared Adapter initialized for: {adapter.url}")
-    
+
     # Method B: Use the B1Client with Django Config (Recommended)
     # This is the modern, type-safe approach.
     config = B1Config.from_django_settings()
     client = B1Client(config)
-    
+
     print(f"B1Client connected to {client._adapter.url}")
     print("Successfully loaded settings from django.conf.settings!")
 

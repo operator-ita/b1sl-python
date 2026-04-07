@@ -1,11 +1,11 @@
-import os
 import logging
+import os
 import warnings
-from contextlib import contextmanager, asynccontextmanager
-from typing import Generator, AsyncGenerator
-from b1sl.b1sl import B1Client, AsyncB1Client, B1Environment, fields as F
+from contextlib import asynccontextmanager, contextmanager
+from typing import AsyncGenerator, Generator
+
+from b1sl.b1sl import AsyncB1Client, B1Client, B1Environment
 from b1sl.b1sl.testing import B1TestHelper
-from b1sl.b1sl.resources.base import ODataQuery
 
 # Suppress Pydantic warnings for examples
 try:
@@ -29,7 +29,7 @@ except ImportError:
 
 class ExampleRunner:
     """Helper class to standardize SAP B1 examples."""
-    
+
     def __init__(self, name: str, **client_kwargs):
         self.name = name
         self.env = B1Environment.load()
@@ -69,7 +69,7 @@ def use_sap_b1(example_name: str, **client_kwargs) -> Generator[ExampleRunner, N
 
 class AsyncExampleRunner(ExampleRunner):
     """Asynchronous version of ExampleRunner."""
-    
+
     def __init__(self, name: str, **client_kwargs):
         self.name = name
         self.env = B1Environment.load()

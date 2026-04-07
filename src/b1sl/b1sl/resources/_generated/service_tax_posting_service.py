@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class ServiceTaxPostingService(GenericResource[Any]):
     endpoint = "ServiceTaxPostingService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -18,7 +20,7 @@ class ServiceTaxPostingService(GenericResource[Any]):
         """POST ServiceTaxPostingService_GetTaxableDeliveries
         Invoke the method 'GetTaxableDeliveries' on this service.
         """
-        return self._adapter.post(f"ServiceTaxPostingService_GetTaxableDeliveries", data=payload)
+        return self._adapter.post("ServiceTaxPostingService_GetTaxableDeliveries", data=payload)
 
     def post_service_tax(self, payload: dict | None = None) -> Any:
         """POST ServiceTaxPostingService_PostServiceTax
@@ -33,4 +35,4 @@ class ServiceTaxPostingService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ServiceTaxPostingService_PostServiceTax", data=payload)
+        return self._adapter.post("ServiceTaxPostingService_PostServiceTax", data=payload)

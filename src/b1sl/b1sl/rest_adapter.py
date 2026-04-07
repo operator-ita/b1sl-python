@@ -1,24 +1,19 @@
 from __future__ import annotations
 
 import functools
-import logging
 import threading
 import time
 from datetime import datetime, timedelta
-from json import JSONDecodeError
-from typing import Optional
 from urllib.parse import urlencode, urlsplit
 
 import httpx
 
-from b1sl.b1sl.base_adapter import BaseRestAdapter, HookContext, ObservabilityConfig
-from b1sl.b1sl.config import B1Config
+from b1sl.b1sl.base_adapter import BaseRestAdapter, HookContext
 from b1sl.b1sl.exceptions.exceptions import (
     B1AuthError,
     B1Exception,
     B1NotFoundError,
     B1ValidationError,
-    SAPConcurrencyError,
 )
 from b1sl.b1sl.models.result import Result
 

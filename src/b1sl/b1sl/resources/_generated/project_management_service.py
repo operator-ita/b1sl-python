@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class ProjectManagementService(GenericResource[Any]):
     endpoint = "ProjectManagementService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -38,7 +40,7 @@ class ProjectManagementService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ProjectManagementService_AddSubproject", data=payload)
+        return self._adapter.post("ProjectManagementService_AddSubproject", data=payload)
 
     def delete_subproject(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementService_DeleteSubproject
@@ -53,7 +55,7 @@ class ProjectManagementService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ProjectManagementService_DeleteSubproject", data=payload)
+        return self._adapter.post("ProjectManagementService_DeleteSubproject", data=payload)
 
     def get_subproject(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementService_GetSubproject
@@ -68,7 +70,7 @@ class ProjectManagementService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ProjectManagementService_GetSubproject", data=payload)
+        return self._adapter.post("ProjectManagementService_GetSubproject", data=payload)
 
     def get_subprojects_list(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementService_GetSubprojectsList
@@ -83,7 +85,7 @@ class ProjectManagementService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ProjectManagementService_GetSubprojectsList", data=payload)
+        return self._adapter.post("ProjectManagementService_GetSubprojectsList", data=payload)
 
     def update_subproject(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementService_UpdateSubproject
@@ -101,4 +103,4 @@ class ProjectManagementService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ProjectManagementService_UpdateSubproject", data=payload)
+        return self._adapter.post("ProjectManagementService_UpdateSubproject", data=payload)

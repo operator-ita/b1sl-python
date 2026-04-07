@@ -1,9 +1,14 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING
+
+from typing import TYPE_CHECKING, Any
+
 from pydantic import Field as PydanticField
+
 from b1sl.b1sl.models.base import B1Model, SapBool
-from ..enums import *
+
 from ..complex_types import *
+from ..enums import *
+
 if TYPE_CHECKING:
     from .._types import *
     from .businesspartners import *

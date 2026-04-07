@@ -4,6 +4,8 @@ No Django dependency.
 """
 
 from datetime import timedelta
+from json import JSONDecodeError
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -16,25 +18,25 @@ from b1sl.b1sl.rest_adapter import RestAdapter
 def test_b1config_from_env_missing_vars():
     """from_env() must raise EnvironmentError listing missing variables."""
     with pytest.MonkeyPatch.context() as mp:
-        mp.delenv("SAPB1CLIENT_BASE_URL", raising=False)
-        mp.delenv("SAPB1CLIENT_USERNAME", raising=False)
-        mp.delenv("SAPB1CLIENT_PASSWORD", raising=False)
-        mp.delenv("SAPB1CLIENT_COMPANY_DB", raising=False)
+        mp.delenv("B1SL_BASE_URL", raising=False)
+        mp.delenv("B1SL_USERNAME", raising=False)
+        mp.delenv("B1SL_PASSWORD", raising=False)
+        mp.delenv("B1SL_COMPANY_DB", raising=False)
         with pytest.raises(EnvironmentError) as exc:
             B1Config.from_env()
-        assert "SAPB1CLIENT_BASE_URL" in str(exc.value)
+        assert "B1SL_BASE_URL" in str(exc.value)
 
 
 def test_b1config_from_env_success():
     """from_env() must parse all required and optional env vars."""
     with pytest.MonkeyPatch.context() as mp:
-        mp.setenv("SAPB1CLIENT_BASE_URL", "https://sap:50000/b1s/v1")
-        mp.setenv("SAPB1CLIENT_USERNAME", "manager")
-        mp.setenv("SAPB1CLIENT_PASSWORD", "secret")
-        mp.setenv("SAPB1CLIENT_COMPANY_DB", "SBODEMOUS")
-        mp.setenv("SAPB1CLIENT_TOKEN_TIMEOUT", "1800")
-        mp.setenv("SAPB1CLIENT_CONNECT_TIMEOUT", "15")
-        mp.setenv("SAPB1CLIENT_READ_TIMEOUT", "90")
+        mp.setenv("B1SL_BASE_URL", "https://sap:50000/b1s/v1")
+        mp.setenv("B1SL_USERNAME", "manager")
+        mp.setenv("B1SL_PASSWORD", "secret")
+        mp.setenv("B1SL_COMPANY_DB", "SBODEMOUS")
+        mp.setenv("B1SL_TOKEN_TIMEOUT", "1800")
+        mp.setenv("B1SL_CONNECT_TIMEOUT", "15")
+        mp.setenv("B1SL_READ_TIMEOUT", "90")
 
         config = B1Config.from_env()
 
@@ -94,9 +96,6 @@ def test_rest_adapter_timeout_defaults(minimal_config):
 
 
 # ── _parse_sap_error ─────────────────────────────────────────────────────── #
-
-from json import JSONDecodeError
-from unittest.mock import MagicMock
 
 
 def _mock_response(status: int, body=None, json_error=False):

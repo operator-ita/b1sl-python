@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class ChangeLogsService(GenericResource[Any]):
     endpoint = "ChangeLogsService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -29,7 +31,7 @@ class ChangeLogsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ChangeLogsService_GetChangeLog", data=payload)
+        return self._adapter.post("ChangeLogsService_GetChangeLog", data=payload)
 
     def get_change_log_differences(self, payload: dict | None = None) -> Any:
         """POST ChangeLogsService_GetChangeLogDifferences
@@ -48,4 +50,4 @@ class ChangeLogsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"ChangeLogsService_GetChangeLogDifferences", data=payload)
+        return self._adapter.post("ChangeLogsService_GetChangeLogDifferences", data=payload)

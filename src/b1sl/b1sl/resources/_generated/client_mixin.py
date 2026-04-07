@@ -1,497 +1,1419 @@
 # AUTO-GENERATED — do not edit by hand.
 from __future__ import annotations
+
 from b1sl.b1sl.adapter_protocol import RestAdapterProtocol
 
 # Resource imports
-from b1sl.b1sl.resources._generated.account_category import AccountCategoryService as _account_category_cls
-from b1sl.b1sl.resources._generated.account_category_service import AccountCategoryService as _account_category_service_cls
-from b1sl.b1sl.resources._generated.account_segmentation_categories import AccountSegmentationCategoriesService as _account_segmentation_categories_cls
-from b1sl.b1sl.resources._generated.account_segmentations import AccountSegmentationsService as _account_segmentations_cls
-from b1sl.b1sl.resources._generated.accounts_service import AccountsService as _accounts_service_cls
-from b1sl.b1sl.resources._generated.accrual_types import AccrualTypesService as _accrual_types_cls
-from b1sl.b1sl.resources._generated.accrual_types_service import AccrualTypesService as _accrual_types_service_cls
-from b1sl.b1sl.resources._generated.activities import ActivitiesService as _activities_cls
-from b1sl.b1sl.resources._generated.activities_service import ActivitiesService as _activities_service_cls
-from b1sl.b1sl.resources._generated.activity_locations import ActivityLocationsService as _activity_locations_cls
-from b1sl.b1sl.resources._generated.activity_recipient_lists import ActivityRecipientListsService as _activity_recipient_lists_cls
-from b1sl.b1sl.resources._generated.activity_recipient_lists_service import ActivityRecipientListsService as _activity_recipient_lists_service_cls
-from b1sl.b1sl.resources._generated.activity_statuses import ActivityStatusesService as _activity_statuses_cls
-from b1sl.b1sl.resources._generated.activity_types import ActivityTypesService as _activity_types_cls
-from b1sl.b1sl.resources._generated.additional_expenses import AdditionalExpensesService as _additional_expenses_cls
-from b1sl.b1sl.resources._generated.address_service import AddressService as _address_service_cls
-from b1sl.b1sl.resources._generated.alert_managements import AlertManagementsService as _alert_managements_cls
-from b1sl.b1sl.resources._generated.alternate_cat_num import AlternateCatNumService as _alternate_cat_num_cls
-from b1sl.b1sl.resources._generated.alternative_items_service import AlternativeItemsService as _alternative_items_service_cls
-from b1sl.b1sl.resources._generated.approval_requests import ApprovalRequestsService as _approval_requests_cls
-from b1sl.b1sl.resources._generated.approval_requests_service import ApprovalRequestsService as _approval_requests_service_cls
-from b1sl.b1sl.resources._generated.approval_stages import ApprovalStagesService as _approval_stages_cls
-from b1sl.b1sl.resources._generated.approval_stages_service import ApprovalStagesService as _approval_stages_service_cls
-from b1sl.b1sl.resources._generated.approval_templates import ApprovalTemplatesService as _approval_templates_cls
-from b1sl.b1sl.resources._generated.approval_templates_service import ApprovalTemplatesService as _approval_templates_service_cls
-from b1sl.b1sl.resources._generated.asset_capitalization import AssetCapitalizationService as _asset_capitalization_cls
-from b1sl.b1sl.resources._generated.asset_capitalization_credit_memo import AssetCapitalizationCreditMemoService as _asset_capitalization_credit_memo_cls
-from b1sl.b1sl.resources._generated.asset_capitalization_credit_memo_service import AssetCapitalizationCreditMemoService as _asset_capitalization_credit_memo_service_cls
-from b1sl.b1sl.resources._generated.asset_capitalization_service import AssetCapitalizationService as _asset_capitalization_service_cls
-from b1sl.b1sl.resources._generated.asset_classes import AssetClassesService as _asset_classes_cls
-from b1sl.b1sl.resources._generated.asset_classes_service import AssetClassesService as _asset_classes_service_cls
-from b1sl.b1sl.resources._generated.asset_depreciation_groups import AssetDepreciationGroupsService as _asset_depreciation_groups_cls
-from b1sl.b1sl.resources._generated.asset_depreciation_groups_service import AssetDepreciationGroupsService as _asset_depreciation_groups_service_cls
-from b1sl.b1sl.resources._generated.asset_groups import AssetGroupsService as _asset_groups_cls
-from b1sl.b1sl.resources._generated.asset_groups_service import AssetGroupsService as _asset_groups_service_cls
-from b1sl.b1sl.resources._generated.asset_manual_depreciation import AssetManualDepreciationService as _asset_manual_depreciation_cls
-from b1sl.b1sl.resources._generated.asset_manual_depreciation_service import AssetManualDepreciationService as _asset_manual_depreciation_service_cls
-from b1sl.b1sl.resources._generated.asset_retirement import AssetRetirementService as _asset_retirement_cls
-from b1sl.b1sl.resources._generated.asset_retirement_service import AssetRetirementService as _asset_retirement_service_cls
-from b1sl.b1sl.resources._generated.asset_transfer import AssetTransferService as _asset_transfer_cls
-from b1sl.b1sl.resources._generated.asset_transfer_service import AssetTransferService as _asset_transfer_service_cls
-from b1sl.b1sl.resources._generated.attachments2 import Attachments2Service as _attachments2_cls
-from b1sl.b1sl.resources._generated.attribute_groups import AttributeGroupsService as _attribute_groups_cls
-from b1sl.b1sl.resources._generated.attribute_groups_service import AttributeGroupsService as _attribute_groups_service_cls
-from b1sl.b1sl.resources._generated.boe_document_types import BOEDocumentTypesService as _boe_document_types_cls
-from b1sl.b1sl.resources._generated.boe_document_types_service import BOEDocumentTypesService as _boe_document_types_service_cls
-from b1sl.b1sl.resources._generated.boe_instructions import BOEInstructionsService as _boe_instructions_cls
-from b1sl.b1sl.resources._generated.boe_instructions_service import BOEInstructionsService as _boe_instructions_service_cls
-from b1sl.b1sl.resources._generated.boe_lines_service import BOELinesService as _boe_lines_service_cls
-from b1sl.b1sl.resources._generated.boe_portfolios import BOEPortfoliosService as _boe_portfolios_cls
-from b1sl.b1sl.resources._generated.boe_portfolios_service import BOEPortfoliosService as _boe_portfolios_service_cls
-from b1sl.b1sl.resources._generated.bp_fiscal_registry_id import BPFiscalRegistryIDService as _bp_fiscal_registry_id_cls
-from b1sl.b1sl.resources._generated.bp_opening_balance_service import BPOpeningBalanceService as _bp_opening_balance_service_cls
-from b1sl.b1sl.resources._generated.bp_priorities import BPPrioritiesService as _bp_priorities_cls
-from b1sl.b1sl.resources._generated.bank_charges_allocation_codes import BankChargesAllocationCodesService as _bank_charges_allocation_codes_cls
-from b1sl.b1sl.resources._generated.bank_charges_allocation_codes_service import BankChargesAllocationCodesService as _bank_charges_allocation_codes_service_cls
-from b1sl.b1sl.resources._generated.bank_pages import BankPagesService as _bank_pages_cls
-from b1sl.b1sl.resources._generated.bank_statements import BankStatementsService as _bank_statements_cls
-from b1sl.b1sl.resources._generated.bank_statements_service import BankStatementsService as _bank_statements_service_cls
+from b1sl.b1sl.resources._generated.account_category import (
+    AccountCategoryService as _account_category_cls,
+)
+from b1sl.b1sl.resources._generated.account_category_service import (
+    AccountCategoryService as _account_category_service_cls,
+)
+from b1sl.b1sl.resources._generated.account_segmentation_categories import (
+    AccountSegmentationCategoriesService as _account_segmentation_categories_cls,
+)
+from b1sl.b1sl.resources._generated.account_segmentations import (
+    AccountSegmentationsService as _account_segmentations_cls,
+)
+from b1sl.b1sl.resources._generated.accounts_service import (
+    AccountsService as _accounts_service_cls,
+)
+from b1sl.b1sl.resources._generated.accrual_types import (
+    AccrualTypesService as _accrual_types_cls,
+)
+from b1sl.b1sl.resources._generated.accrual_types_service import (
+    AccrualTypesService as _accrual_types_service_cls,
+)
+from b1sl.b1sl.resources._generated.activities import (
+    ActivitiesService as _activities_cls,
+)
+from b1sl.b1sl.resources._generated.activities_service import (
+    ActivitiesService as _activities_service_cls,
+)
+from b1sl.b1sl.resources._generated.activity_locations import (
+    ActivityLocationsService as _activity_locations_cls,
+)
+from b1sl.b1sl.resources._generated.activity_recipient_lists import (
+    ActivityRecipientListsService as _activity_recipient_lists_cls,
+)
+from b1sl.b1sl.resources._generated.activity_recipient_lists_service import (
+    ActivityRecipientListsService as _activity_recipient_lists_service_cls,
+)
+from b1sl.b1sl.resources._generated.activity_statuses import (
+    ActivityStatusesService as _activity_statuses_cls,
+)
+from b1sl.b1sl.resources._generated.activity_types import (
+    ActivityTypesService as _activity_types_cls,
+)
+from b1sl.b1sl.resources._generated.additional_expenses import (
+    AdditionalExpensesService as _additional_expenses_cls,
+)
+from b1sl.b1sl.resources._generated.address_service import (
+    AddressService as _address_service_cls,
+)
+from b1sl.b1sl.resources._generated.alert_managements import (
+    AlertManagementsService as _alert_managements_cls,
+)
+from b1sl.b1sl.resources._generated.alternate_cat_num import (
+    AlternateCatNumService as _alternate_cat_num_cls,
+)
+from b1sl.b1sl.resources._generated.alternative_items_service import (
+    AlternativeItemsService as _alternative_items_service_cls,
+)
+from b1sl.b1sl.resources._generated.approval_requests import (
+    ApprovalRequestsService as _approval_requests_cls,
+)
+from b1sl.b1sl.resources._generated.approval_requests_service import (
+    ApprovalRequestsService as _approval_requests_service_cls,
+)
+from b1sl.b1sl.resources._generated.approval_stages import (
+    ApprovalStagesService as _approval_stages_cls,
+)
+from b1sl.b1sl.resources._generated.approval_stages_service import (
+    ApprovalStagesService as _approval_stages_service_cls,
+)
+from b1sl.b1sl.resources._generated.approval_templates import (
+    ApprovalTemplatesService as _approval_templates_cls,
+)
+from b1sl.b1sl.resources._generated.approval_templates_service import (
+    ApprovalTemplatesService as _approval_templates_service_cls,
+)
+from b1sl.b1sl.resources._generated.asset_capitalization import (
+    AssetCapitalizationService as _asset_capitalization_cls,
+)
+from b1sl.b1sl.resources._generated.asset_capitalization_credit_memo import (
+    AssetCapitalizationCreditMemoService as _asset_capitalization_credit_memo_cls,
+)
+from b1sl.b1sl.resources._generated.asset_capitalization_credit_memo_service import (
+    AssetCapitalizationCreditMemoService as _asset_capitalization_credit_memo_service_cls,
+)
+from b1sl.b1sl.resources._generated.asset_capitalization_service import (
+    AssetCapitalizationService as _asset_capitalization_service_cls,
+)
+from b1sl.b1sl.resources._generated.asset_classes import (
+    AssetClassesService as _asset_classes_cls,
+)
+from b1sl.b1sl.resources._generated.asset_classes_service import (
+    AssetClassesService as _asset_classes_service_cls,
+)
+from b1sl.b1sl.resources._generated.asset_depreciation_groups import (
+    AssetDepreciationGroupsService as _asset_depreciation_groups_cls,
+)
+from b1sl.b1sl.resources._generated.asset_depreciation_groups_service import (
+    AssetDepreciationGroupsService as _asset_depreciation_groups_service_cls,
+)
+from b1sl.b1sl.resources._generated.asset_groups import (
+    AssetGroupsService as _asset_groups_cls,
+)
+from b1sl.b1sl.resources._generated.asset_groups_service import (
+    AssetGroupsService as _asset_groups_service_cls,
+)
+from b1sl.b1sl.resources._generated.asset_manual_depreciation import (
+    AssetManualDepreciationService as _asset_manual_depreciation_cls,
+)
+from b1sl.b1sl.resources._generated.asset_manual_depreciation_service import (
+    AssetManualDepreciationService as _asset_manual_depreciation_service_cls,
+)
+from b1sl.b1sl.resources._generated.asset_retirement import (
+    AssetRetirementService as _asset_retirement_cls,
+)
+from b1sl.b1sl.resources._generated.asset_retirement_service import (
+    AssetRetirementService as _asset_retirement_service_cls,
+)
+from b1sl.b1sl.resources._generated.asset_transfer import (
+    AssetTransferService as _asset_transfer_cls,
+)
+from b1sl.b1sl.resources._generated.asset_transfer_service import (
+    AssetTransferService as _asset_transfer_service_cls,
+)
+from b1sl.b1sl.resources._generated.attachments2 import (
+    Attachments2Service as _attachments2_cls,
+)
+from b1sl.b1sl.resources._generated.attribute_groups import (
+    AttributeGroupsService as _attribute_groups_cls,
+)
+from b1sl.b1sl.resources._generated.attribute_groups_service import (
+    AttributeGroupsService as _attribute_groups_service_cls,
+)
+from b1sl.b1sl.resources._generated.bank_charges_allocation_codes import (
+    BankChargesAllocationCodesService as _bank_charges_allocation_codes_cls,
+)
+from b1sl.b1sl.resources._generated.bank_charges_allocation_codes_service import (
+    BankChargesAllocationCodesService as _bank_charges_allocation_codes_service_cls,
+)
+from b1sl.b1sl.resources._generated.bank_pages import (
+    BankPagesService as _bank_pages_cls,
+)
+from b1sl.b1sl.resources._generated.bank_statements import (
+    BankStatementsService as _bank_statements_cls,
+)
+from b1sl.b1sl.resources._generated.bank_statements_service import (
+    BankStatementsService as _bank_statements_service_cls,
+)
 from b1sl.b1sl.resources._generated.banks import BanksService as _banks_cls
 from b1sl.b1sl.resources._generated.bar_codes import BarCodesService as _bar_codes_cls
-from b1sl.b1sl.resources._generated.bar_codes_service import BarCodesService as _bar_codes_service_cls
-from b1sl.b1sl.resources._generated.batch_number_details import BatchNumberDetailsService as _batch_number_details_cls
-from b1sl.b1sl.resources._generated.bill_of_exchange_transactions import BillOfExchangeTransactionsService as _bill_of_exchange_transactions_cls
-from b1sl.b1sl.resources._generated.bin_location_attributes import BinLocationAttributesService as _bin_location_attributes_cls
-from b1sl.b1sl.resources._generated.bin_location_attributes_service import BinLocationAttributesService as _bin_location_attributes_service_cls
-from b1sl.b1sl.resources._generated.bin_location_fields import BinLocationFieldsService as _bin_location_fields_cls
-from b1sl.b1sl.resources._generated.bin_location_fields_service import BinLocationFieldsService as _bin_location_fields_service_cls
-from b1sl.b1sl.resources._generated.bin_locations import BinLocationsService as _bin_locations_cls
-from b1sl.b1sl.resources._generated.bin_locations_service import BinLocationsService as _bin_locations_service_cls
-from b1sl.b1sl.resources._generated.blanket_agreements import BlanketAgreementsService as _blanket_agreements_cls
-from b1sl.b1sl.resources._generated.blanket_agreements_service import BlanketAgreementsService as _blanket_agreements_service_cls
+from b1sl.b1sl.resources._generated.bar_codes_service import (
+    BarCodesService as _bar_codes_service_cls,
+)
+from b1sl.b1sl.resources._generated.batch_number_details import (
+    BatchNumberDetailsService as _batch_number_details_cls,
+)
+from b1sl.b1sl.resources._generated.bill_of_exchange_transactions import (
+    BillOfExchangeTransactionsService as _bill_of_exchange_transactions_cls,
+)
+from b1sl.b1sl.resources._generated.bin_location_attributes import (
+    BinLocationAttributesService as _bin_location_attributes_cls,
+)
+from b1sl.b1sl.resources._generated.bin_location_attributes_service import (
+    BinLocationAttributesService as _bin_location_attributes_service_cls,
+)
+from b1sl.b1sl.resources._generated.bin_location_fields import (
+    BinLocationFieldsService as _bin_location_fields_cls,
+)
+from b1sl.b1sl.resources._generated.bin_location_fields_service import (
+    BinLocationFieldsService as _bin_location_fields_service_cls,
+)
+from b1sl.b1sl.resources._generated.bin_locations import (
+    BinLocationsService as _bin_locations_cls,
+)
+from b1sl.b1sl.resources._generated.bin_locations_service import (
+    BinLocationsService as _bin_locations_service_cls,
+)
+from b1sl.b1sl.resources._generated.blanket_agreements import (
+    BlanketAgreementsService as _blanket_agreements_cls,
+)
+from b1sl.b1sl.resources._generated.blanket_agreements_service import (
+    BlanketAgreementsService as _blanket_agreements_service_cls,
+)
+from b1sl.b1sl.resources._generated.boe_document_types import (
+    BOEDocumentTypesService as _boe_document_types_cls,
+)
+from b1sl.b1sl.resources._generated.boe_document_types_service import (
+    BOEDocumentTypesService as _boe_document_types_service_cls,
+)
+from b1sl.b1sl.resources._generated.boe_instructions import (
+    BOEInstructionsService as _boe_instructions_cls,
+)
+from b1sl.b1sl.resources._generated.boe_instructions_service import (
+    BOEInstructionsService as _boe_instructions_service_cls,
+)
+from b1sl.b1sl.resources._generated.boe_lines_service import (
+    BOELinesService as _boe_lines_service_cls,
+)
+from b1sl.b1sl.resources._generated.boe_portfolios import (
+    BOEPortfoliosService as _boe_portfolios_cls,
+)
+from b1sl.b1sl.resources._generated.boe_portfolios_service import (
+    BOEPortfoliosService as _boe_portfolios_service_cls,
+)
+from b1sl.b1sl.resources._generated.bp_fiscal_registry_id import (
+    BPFiscalRegistryIDService as _bp_fiscal_registry_id_cls,
+)
+from b1sl.b1sl.resources._generated.bp_opening_balance_service import (
+    BPOpeningBalanceService as _bp_opening_balance_service_cls,
+)
+from b1sl.b1sl.resources._generated.bp_priorities import (
+    BPPrioritiesService as _bp_priorities_cls,
+)
 from b1sl.b1sl.resources._generated.branches import BranchesService as _branches_cls
-from b1sl.b1sl.resources._generated.branches_service import BranchesService as _branches_service_cls
-from b1sl.b1sl.resources._generated.brazil_beverage_indexers import BrazilBeverageIndexersService as _brazil_beverage_indexers_cls
-from b1sl.b1sl.resources._generated.brazil_beverage_indexers_service import BrazilBeverageIndexersService as _brazil_beverage_indexers_service_cls
-from b1sl.b1sl.resources._generated.brazil_fuel_indexers import BrazilFuelIndexersService as _brazil_fuel_indexers_cls
-from b1sl.b1sl.resources._generated.brazil_fuel_indexers_service import BrazilFuelIndexersService as _brazil_fuel_indexers_service_cls
-from b1sl.b1sl.resources._generated.brazil_multi_indexers import BrazilMultiIndexersService as _brazil_multi_indexers_cls
-from b1sl.b1sl.resources._generated.brazil_numeric_indexers import BrazilNumericIndexersService as _brazil_numeric_indexers_cls
-from b1sl.b1sl.resources._generated.brazil_string_indexers import BrazilStringIndexersService as _brazil_string_indexers_cls
-from b1sl.b1sl.resources._generated.budget_distributions import BudgetDistributionsService as _budget_distributions_cls
-from b1sl.b1sl.resources._generated.budget_scenarios import BudgetScenariosService as _budget_scenarios_cls
+from b1sl.b1sl.resources._generated.branches_service import (
+    BranchesService as _branches_service_cls,
+)
+from b1sl.b1sl.resources._generated.brazil_beverage_indexers import (
+    BrazilBeverageIndexersService as _brazil_beverage_indexers_cls,
+)
+from b1sl.b1sl.resources._generated.brazil_beverage_indexers_service import (
+    BrazilBeverageIndexersService as _brazil_beverage_indexers_service_cls,
+)
+from b1sl.b1sl.resources._generated.brazil_fuel_indexers import (
+    BrazilFuelIndexersService as _brazil_fuel_indexers_cls,
+)
+from b1sl.b1sl.resources._generated.brazil_fuel_indexers_service import (
+    BrazilFuelIndexersService as _brazil_fuel_indexers_service_cls,
+)
+from b1sl.b1sl.resources._generated.brazil_multi_indexers import (
+    BrazilMultiIndexersService as _brazil_multi_indexers_cls,
+)
+from b1sl.b1sl.resources._generated.brazil_numeric_indexers import (
+    BrazilNumericIndexersService as _brazil_numeric_indexers_cls,
+)
+from b1sl.b1sl.resources._generated.brazil_string_indexers import (
+    BrazilStringIndexersService as _brazil_string_indexers_cls,
+)
+from b1sl.b1sl.resources._generated.budget_distributions import (
+    BudgetDistributionsService as _budget_distributions_cls,
+)
+from b1sl.b1sl.resources._generated.budget_scenarios import (
+    BudgetScenariosService as _budget_scenarios_cls,
+)
 from b1sl.b1sl.resources._generated.budgets import BudgetsService as _budgets_cls
-from b1sl.b1sl.resources._generated.business_partner_groups import BusinessPartnerGroupsService as _business_partner_groups_cls
-from b1sl.b1sl.resources._generated.business_partner_properties import BusinessPartnerPropertiesService as _business_partner_properties_cls
-from b1sl.b1sl.resources._generated.business_partner_properties_service import BusinessPartnerPropertiesService as _business_partner_properties_service_cls
-from b1sl.b1sl.resources._generated.business_partners import BusinessPartnersService as _business_partners_cls
-from b1sl.b1sl.resources._generated.business_partners_service import BusinessPartnersService as _business_partners_service_cls
-from b1sl.b1sl.resources._generated.business_places import BusinessPlacesService as _business_places_cls
-from b1sl.b1sl.resources._generated.campaign_response_type import CampaignResponseTypeService as _campaign_response_type_cls
-from b1sl.b1sl.resources._generated.campaign_response_type_service import CampaignResponseTypeService as _campaign_response_type_service_cls
+from b1sl.b1sl.resources._generated.business_partner_groups import (
+    BusinessPartnerGroupsService as _business_partner_groups_cls,
+)
+from b1sl.b1sl.resources._generated.business_partner_properties import (
+    BusinessPartnerPropertiesService as _business_partner_properties_cls,
+)
+from b1sl.b1sl.resources._generated.business_partner_properties_service import (
+    BusinessPartnerPropertiesService as _business_partner_properties_service_cls,
+)
+from b1sl.b1sl.resources._generated.business_partners import (
+    BusinessPartnersService as _business_partners_cls,
+)
+from b1sl.b1sl.resources._generated.business_partners_service import (
+    BusinessPartnersService as _business_partners_service_cls,
+)
+from b1sl.b1sl.resources._generated.business_places import (
+    BusinessPlacesService as _business_places_cls,
+)
+from b1sl.b1sl.resources._generated.campaign_response_type import (
+    CampaignResponseTypeService as _campaign_response_type_cls,
+)
+from b1sl.b1sl.resources._generated.campaign_response_type_service import (
+    CampaignResponseTypeService as _campaign_response_type_service_cls,
+)
 from b1sl.b1sl.resources._generated.campaigns import CampaignsService as _campaigns_cls
-from b1sl.b1sl.resources._generated.campaigns_service import CampaignsService as _campaigns_service_cls
-from b1sl.b1sl.resources._generated.cash_discounts import CashDiscountsService as _cash_discounts_cls
-from b1sl.b1sl.resources._generated.cash_discounts_service import CashDiscountsService as _cash_discounts_service_cls
-from b1sl.b1sl.resources._generated.cash_flow_line_items import CashFlowLineItemsService as _cash_flow_line_items_cls
-from b1sl.b1sl.resources._generated.cash_flow_line_items_service import CashFlowLineItemsService as _cash_flow_line_items_service_cls
-from b1sl.b1sl.resources._generated.certificate_series import CertificateSeriesService as _certificate_series_cls
-from b1sl.b1sl.resources._generated.certificate_series_service import CertificateSeriesService as _certificate_series_service_cls
-from b1sl.b1sl.resources._generated.change_logs_service import ChangeLogsService as _change_logs_service_cls
-from b1sl.b1sl.resources._generated.chart_of_accounts import ChartOfAccountsService as _chart_of_accounts_cls
-from b1sl.b1sl.resources._generated.check_lines_service import CheckLinesService as _check_lines_service_cls
-from b1sl.b1sl.resources._generated.checksfor_payment import ChecksforPaymentService as _checksfor_payment_cls
-from b1sl.b1sl.resources._generated.choose_from_list import ChooseFromListService as _choose_from_list_cls
-from b1sl.b1sl.resources._generated.closing_date_procedure import ClosingDateProcedureService as _closing_date_procedure_cls
+from b1sl.b1sl.resources._generated.campaigns_service import (
+    CampaignsService as _campaigns_service_cls,
+)
+from b1sl.b1sl.resources._generated.cash_discounts import (
+    CashDiscountsService as _cash_discounts_cls,
+)
+from b1sl.b1sl.resources._generated.cash_discounts_service import (
+    CashDiscountsService as _cash_discounts_service_cls,
+)
+from b1sl.b1sl.resources._generated.cash_flow_line_items import (
+    CashFlowLineItemsService as _cash_flow_line_items_cls,
+)
+from b1sl.b1sl.resources._generated.cash_flow_line_items_service import (
+    CashFlowLineItemsService as _cash_flow_line_items_service_cls,
+)
+from b1sl.b1sl.resources._generated.certificate_series import (
+    CertificateSeriesService as _certificate_series_cls,
+)
+from b1sl.b1sl.resources._generated.certificate_series_service import (
+    CertificateSeriesService as _certificate_series_service_cls,
+)
+from b1sl.b1sl.resources._generated.change_logs_service import (
+    ChangeLogsService as _change_logs_service_cls,
+)
+from b1sl.b1sl.resources._generated.chart_of_accounts import (
+    ChartOfAccountsService as _chart_of_accounts_cls,
+)
+from b1sl.b1sl.resources._generated.check_lines_service import (
+    CheckLinesService as _check_lines_service_cls,
+)
+from b1sl.b1sl.resources._generated.checksfor_payment import (
+    ChecksforPaymentService as _checksfor_payment_cls,
+)
+from b1sl.b1sl.resources._generated.choose_from_list import (
+    ChooseFromListService as _choose_from_list_cls,
+)
+from b1sl.b1sl.resources._generated.closing_date_procedure import (
+    ClosingDateProcedureService as _closing_date_procedure_cls,
+)
 from b1sl.b1sl.resources._generated.cockpits import CockpitsService as _cockpits_cls
-from b1sl.b1sl.resources._generated.cockpits_service import CockpitsService as _cockpits_service_cls
-from b1sl.b1sl.resources._generated.commission_groups import CommissionGroupsService as _commission_groups_cls
-from b1sl.b1sl.resources._generated.company_service import CompanyService as _company_service_cls
+from b1sl.b1sl.resources._generated.cockpits_service import (
+    CockpitsService as _cockpits_service_cls,
+)
+from b1sl.b1sl.resources._generated.commission_groups import (
+    CommissionGroupsService as _commission_groups_cls,
+)
+from b1sl.b1sl.resources._generated.company_service import (
+    CompanyService as _company_service_cls,
+)
 from b1sl.b1sl.resources._generated.contacts import ContactsService as _contacts_cls
-from b1sl.b1sl.resources._generated.contract_templates import ContractTemplatesService as _contract_templates_cls
-from b1sl.b1sl.resources._generated.correction_invoice import CorrectionInvoiceService as _correction_invoice_cls
-from b1sl.b1sl.resources._generated.correction_invoice_reversal import CorrectionInvoiceReversalService as _correction_invoice_reversal_cls
-from b1sl.b1sl.resources._generated.correction_invoice_reversal_service import CorrectionInvoiceReversalService as _correction_invoice_reversal_service_cls
-from b1sl.b1sl.resources._generated.correction_invoice_service import CorrectionInvoiceService as _correction_invoice_service_cls
-from b1sl.b1sl.resources._generated.correction_purchase_invoice import CorrectionPurchaseInvoiceService as _correction_purchase_invoice_cls
-from b1sl.b1sl.resources._generated.correction_purchase_invoice_reversal import CorrectionPurchaseInvoiceReversalService as _correction_purchase_invoice_reversal_cls
-from b1sl.b1sl.resources._generated.correction_purchase_invoice_reversal_service import CorrectionPurchaseInvoiceReversalService as _correction_purchase_invoice_reversal_service_cls
-from b1sl.b1sl.resources._generated.correction_purchase_invoice_service import CorrectionPurchaseInvoiceService as _correction_purchase_invoice_service_cls
-from b1sl.b1sl.resources._generated.cost_center_types import CostCenterTypesService as _cost_center_types_cls
-from b1sl.b1sl.resources._generated.cost_center_types_service import CostCenterTypesService as _cost_center_types_service_cls
-from b1sl.b1sl.resources._generated.cost_element_service import CostElementService as _cost_element_service_cls
-from b1sl.b1sl.resources._generated.cost_elements import CostElementsService as _cost_elements_cls
+from b1sl.b1sl.resources._generated.contract_templates import (
+    ContractTemplatesService as _contract_templates_cls,
+)
+from b1sl.b1sl.resources._generated.correction_invoice import (
+    CorrectionInvoiceService as _correction_invoice_cls,
+)
+from b1sl.b1sl.resources._generated.correction_invoice_reversal import (
+    CorrectionInvoiceReversalService as _correction_invoice_reversal_cls,
+)
+from b1sl.b1sl.resources._generated.correction_invoice_reversal_service import (
+    CorrectionInvoiceReversalService as _correction_invoice_reversal_service_cls,
+)
+from b1sl.b1sl.resources._generated.correction_invoice_service import (
+    CorrectionInvoiceService as _correction_invoice_service_cls,
+)
+from b1sl.b1sl.resources._generated.correction_purchase_invoice import (
+    CorrectionPurchaseInvoiceService as _correction_purchase_invoice_cls,
+)
+from b1sl.b1sl.resources._generated.correction_purchase_invoice_reversal import (
+    CorrectionPurchaseInvoiceReversalService as _correction_purchase_invoice_reversal_cls,
+)
+from b1sl.b1sl.resources._generated.correction_purchase_invoice_reversal_service import (
+    CorrectionPurchaseInvoiceReversalService as _correction_purchase_invoice_reversal_service_cls,
+)
+from b1sl.b1sl.resources._generated.correction_purchase_invoice_service import (
+    CorrectionPurchaseInvoiceService as _correction_purchase_invoice_service_cls,
+)
+from b1sl.b1sl.resources._generated.cost_center_types import (
+    CostCenterTypesService as _cost_center_types_cls,
+)
+from b1sl.b1sl.resources._generated.cost_center_types_service import (
+    CostCenterTypesService as _cost_center_types_service_cls,
+)
+from b1sl.b1sl.resources._generated.cost_element_service import (
+    CostElementService as _cost_element_service_cls,
+)
+from b1sl.b1sl.resources._generated.cost_elements import (
+    CostElementsService as _cost_elements_cls,
+)
 from b1sl.b1sl.resources._generated.counties import CountiesService as _counties_cls
-from b1sl.b1sl.resources._generated.counties_service import CountiesService as _counties_service_cls
+from b1sl.b1sl.resources._generated.counties_service import (
+    CountiesService as _counties_service_cls,
+)
 from b1sl.b1sl.resources._generated.countries import CountriesService as _countries_cls
-from b1sl.b1sl.resources._generated.countries_service import CountriesService as _countries_service_cls
-from b1sl.b1sl.resources._generated.credit_card_payments import CreditCardPaymentsService as _credit_card_payments_cls
-from b1sl.b1sl.resources._generated.credit_cards import CreditCardsService as _credit_cards_cls
-from b1sl.b1sl.resources._generated.credit_lines_service import CreditLinesService as _credit_lines_service_cls
-from b1sl.b1sl.resources._generated.credit_notes import CreditNotesService as _credit_notes_cls
-from b1sl.b1sl.resources._generated.credit_notes_service import CreditNotesService as _credit_notes_service_cls
-from b1sl.b1sl.resources._generated.credit_payment_methods import CreditPaymentMethodsService as _credit_payment_methods_cls
-from b1sl.b1sl.resources._generated.currencies import CurrenciesService as _currencies_cls
-from b1sl.b1sl.resources._generated.customer_equipment_cards import CustomerEquipmentCardsService as _customer_equipment_cards_cls
-from b1sl.b1sl.resources._generated.customs_declaration import CustomsDeclarationService as _customs_declaration_cls
-from b1sl.b1sl.resources._generated.customs_groups import CustomsGroupsService as _customs_groups_cls
-from b1sl.b1sl.resources._generated.cycle_count_determinations import CycleCountDeterminationsService as _cycle_count_determinations_cls
-from b1sl.b1sl.resources._generated.cycle_count_determinations_service import CycleCountDeterminationsService as _cycle_count_determinations_service_cls
-from b1sl.b1sl.resources._generated.dnf_code_setup import DNFCodeSetupService as _dnf_code_setup_cls
-from b1sl.b1sl.resources._generated.dnf_code_setup_service import DNFCodeSetupService as _dnf_code_setup_service_cls
-from b1sl.b1sl.resources._generated.dashboard_packages_service import DashboardPackagesService as _dashboard_packages_service_cls
-from b1sl.b1sl.resources._generated.deductible_tax_service import DeductibleTaxService as _deductible_tax_service_cls
-from b1sl.b1sl.resources._generated.deductible_taxes import DeductibleTaxesService as _deductible_taxes_cls
-from b1sl.b1sl.resources._generated.deduction_tax_groups import DeductionTaxGroupsService as _deduction_tax_groups_cls
-from b1sl.b1sl.resources._generated.deduction_tax_hierarchies import DeductionTaxHierarchiesService as _deduction_tax_hierarchies_cls
-from b1sl.b1sl.resources._generated.deduction_tax_sub_groups import DeductionTaxSubGroupsService as _deduction_tax_sub_groups_cls
-from b1sl.b1sl.resources._generated.deduction_tax_sub_groups_service import DeductionTaxSubGroupsService as _deduction_tax_sub_groups_service_cls
-from b1sl.b1sl.resources._generated.delivery_notes import DeliveryNotesService as _delivery_notes_cls
-from b1sl.b1sl.resources._generated.delivery_notes_service import DeliveryNotesService as _delivery_notes_service_cls
-from b1sl.b1sl.resources._generated.departments import DepartmentsService as _departments_cls
-from b1sl.b1sl.resources._generated.departments_service import DepartmentsService as _departments_service_cls
+from b1sl.b1sl.resources._generated.countries_service import (
+    CountriesService as _countries_service_cls,
+)
+from b1sl.b1sl.resources._generated.credit_card_payments import (
+    CreditCardPaymentsService as _credit_card_payments_cls,
+)
+from b1sl.b1sl.resources._generated.credit_cards import (
+    CreditCardsService as _credit_cards_cls,
+)
+from b1sl.b1sl.resources._generated.credit_lines_service import (
+    CreditLinesService as _credit_lines_service_cls,
+)
+from b1sl.b1sl.resources._generated.credit_notes import (
+    CreditNotesService as _credit_notes_cls,
+)
+from b1sl.b1sl.resources._generated.credit_notes_service import (
+    CreditNotesService as _credit_notes_service_cls,
+)
+from b1sl.b1sl.resources._generated.credit_payment_methods import (
+    CreditPaymentMethodsService as _credit_payment_methods_cls,
+)
+from b1sl.b1sl.resources._generated.currencies import (
+    CurrenciesService as _currencies_cls,
+)
+from b1sl.b1sl.resources._generated.customer_equipment_cards import (
+    CustomerEquipmentCardsService as _customer_equipment_cards_cls,
+)
+from b1sl.b1sl.resources._generated.customs_declaration import (
+    CustomsDeclarationService as _customs_declaration_cls,
+)
+from b1sl.b1sl.resources._generated.customs_groups import (
+    CustomsGroupsService as _customs_groups_cls,
+)
+from b1sl.b1sl.resources._generated.cycle_count_determinations import (
+    CycleCountDeterminationsService as _cycle_count_determinations_cls,
+)
+from b1sl.b1sl.resources._generated.cycle_count_determinations_service import (
+    CycleCountDeterminationsService as _cycle_count_determinations_service_cls,
+)
+from b1sl.b1sl.resources._generated.dashboard_packages_service import (
+    DashboardPackagesService as _dashboard_packages_service_cls,
+)
+from b1sl.b1sl.resources._generated.deductible_tax_service import (
+    DeductibleTaxService as _deductible_tax_service_cls,
+)
+from b1sl.b1sl.resources._generated.deductible_taxes import (
+    DeductibleTaxesService as _deductible_taxes_cls,
+)
+from b1sl.b1sl.resources._generated.deduction_tax_groups import (
+    DeductionTaxGroupsService as _deduction_tax_groups_cls,
+)
+from b1sl.b1sl.resources._generated.deduction_tax_hierarchies import (
+    DeductionTaxHierarchiesService as _deduction_tax_hierarchies_cls,
+)
+from b1sl.b1sl.resources._generated.deduction_tax_sub_groups import (
+    DeductionTaxSubGroupsService as _deduction_tax_sub_groups_cls,
+)
+from b1sl.b1sl.resources._generated.deduction_tax_sub_groups_service import (
+    DeductionTaxSubGroupsService as _deduction_tax_sub_groups_service_cls,
+)
+from b1sl.b1sl.resources._generated.delivery_notes import (
+    DeliveryNotesService as _delivery_notes_cls,
+)
+from b1sl.b1sl.resources._generated.delivery_notes_service import (
+    DeliveryNotesService as _delivery_notes_service_cls,
+)
+from b1sl.b1sl.resources._generated.departments import (
+    DepartmentsService as _departments_cls,
+)
+from b1sl.b1sl.resources._generated.departments_service import (
+    DepartmentsService as _departments_service_cls,
+)
 from b1sl.b1sl.resources._generated.deposits import DepositsService as _deposits_cls
-from b1sl.b1sl.resources._generated.deposits_service import DepositsService as _deposits_service_cls
-from b1sl.b1sl.resources._generated.depreciation_areas import DepreciationAreasService as _depreciation_areas_cls
-from b1sl.b1sl.resources._generated.depreciation_areas_service import DepreciationAreasService as _depreciation_areas_service_cls
-from b1sl.b1sl.resources._generated.depreciation_type_pools import DepreciationTypePoolsService as _depreciation_type_pools_cls
-from b1sl.b1sl.resources._generated.depreciation_type_pools_service import DepreciationTypePoolsService as _depreciation_type_pools_service_cls
-from b1sl.b1sl.resources._generated.depreciation_types import DepreciationTypesService as _depreciation_types_cls
-from b1sl.b1sl.resources._generated.depreciation_types_service import DepreciationTypesService as _depreciation_types_service_cls
-from b1sl.b1sl.resources._generated.determination_criterias import DeterminationCriteriasService as _determination_criterias_cls
-from b1sl.b1sl.resources._generated.determination_criterias_service import DeterminationCriteriasService as _determination_criterias_service_cls
-from b1sl.b1sl.resources._generated.dimensions import DimensionsService as _dimensions_cls
-from b1sl.b1sl.resources._generated.dimensions_service import DimensionsService as _dimensions_service_cls
-from b1sl.b1sl.resources._generated.distribution_rules import DistributionRulesService as _distribution_rules_cls
-from b1sl.b1sl.resources._generated.distribution_rules_service import DistributionRulesService as _distribution_rules_service_cls
-from b1sl.b1sl.resources._generated.down_payments import DownPaymentsService as _down_payments_cls
-from b1sl.b1sl.resources._generated.down_payments_service import DownPaymentsService as _down_payments_service_cls
+from b1sl.b1sl.resources._generated.deposits_service import (
+    DepositsService as _deposits_service_cls,
+)
+from b1sl.b1sl.resources._generated.depreciation_areas import (
+    DepreciationAreasService as _depreciation_areas_cls,
+)
+from b1sl.b1sl.resources._generated.depreciation_areas_service import (
+    DepreciationAreasService as _depreciation_areas_service_cls,
+)
+from b1sl.b1sl.resources._generated.depreciation_type_pools import (
+    DepreciationTypePoolsService as _depreciation_type_pools_cls,
+)
+from b1sl.b1sl.resources._generated.depreciation_type_pools_service import (
+    DepreciationTypePoolsService as _depreciation_type_pools_service_cls,
+)
+from b1sl.b1sl.resources._generated.depreciation_types import (
+    DepreciationTypesService as _depreciation_types_cls,
+)
+from b1sl.b1sl.resources._generated.depreciation_types_service import (
+    DepreciationTypesService as _depreciation_types_service_cls,
+)
+from b1sl.b1sl.resources._generated.determination_criterias import (
+    DeterminationCriteriasService as _determination_criterias_cls,
+)
+from b1sl.b1sl.resources._generated.determination_criterias_service import (
+    DeterminationCriteriasService as _determination_criterias_service_cls,
+)
+from b1sl.b1sl.resources._generated.dimensions import (
+    DimensionsService as _dimensions_cls,
+)
+from b1sl.b1sl.resources._generated.dimensions_service import (
+    DimensionsService as _dimensions_service_cls,
+)
+from b1sl.b1sl.resources._generated.distribution_rules import (
+    DistributionRulesService as _distribution_rules_cls,
+)
+from b1sl.b1sl.resources._generated.distribution_rules_service import (
+    DistributionRulesService as _distribution_rules_service_cls,
+)
+from b1sl.b1sl.resources._generated.dnf_code_setup import (
+    DNFCodeSetupService as _dnf_code_setup_cls,
+)
+from b1sl.b1sl.resources._generated.dnf_code_setup_service import (
+    DNFCodeSetupService as _dnf_code_setup_service_cls,
+)
+from b1sl.b1sl.resources._generated.down_payments import (
+    DownPaymentsService as _down_payments_cls,
+)
+from b1sl.b1sl.resources._generated.down_payments_service import (
+    DownPaymentsService as _down_payments_service_cls,
+)
 from b1sl.b1sl.resources._generated.drafts import DraftsService as _drafts_cls
-from b1sl.b1sl.resources._generated.drafts_service import DraftsService as _drafts_service_cls
-from b1sl.b1sl.resources._generated.dunning_letters import DunningLettersService as _dunning_letters_cls
-from b1sl.b1sl.resources._generated.dunning_terms import DunningTermsService as _dunning_terms_cls
-from b1sl.b1sl.resources._generated.dunning_terms_service import DunningTermsService as _dunning_terms_service_cls
-from b1sl.b1sl.resources._generated.dynamic_system_strings import DynamicSystemStringsService as _dynamic_system_strings_cls
-from b1sl.b1sl.resources._generated.electronic_communication_action_service import ElectronicCommunicationActionService as _electronic_communication_action_service_cls
-from b1sl.b1sl.resources._generated.electronic_communication_actions_service import ElectronicCommunicationActionsService as _electronic_communication_actions_service_cls
-from b1sl.b1sl.resources._generated.electronic_file_formats import ElectronicFileFormatsService as _electronic_file_formats_cls
-from b1sl.b1sl.resources._generated.electronic_file_formats_service import ElectronicFileFormatsService as _electronic_file_formats_service_cls
-from b1sl.b1sl.resources._generated.email_groups import EmailGroupsService as _email_groups_cls
-from b1sl.b1sl.resources._generated.email_groups_service import EmailGroupsService as _email_groups_service_cls
-from b1sl.b1sl.resources._generated.employee_id_type import EmployeeIDTypeService as _employee_id_type_cls
-from b1sl.b1sl.resources._generated.employee_id_type_service import EmployeeIDTypeService as _employee_id_type_service_cls
-from b1sl.b1sl.resources._generated.employee_position import EmployeePositionService as _employee_position_cls
-from b1sl.b1sl.resources._generated.employee_position_service import EmployeePositionService as _employee_position_service_cls
-from b1sl.b1sl.resources._generated.employee_roles_setup import EmployeeRolesSetupService as _employee_roles_setup_cls
-from b1sl.b1sl.resources._generated.employee_roles_setup_service import EmployeeRolesSetupService as _employee_roles_setup_service_cls
-from b1sl.b1sl.resources._generated.employee_status import EmployeeStatusService as _employee_status_cls
-from b1sl.b1sl.resources._generated.employee_status_service import EmployeeStatusService as _employee_status_service_cls
-from b1sl.b1sl.resources._generated.employee_transfers import EmployeeTransfersService as _employee_transfers_cls
-from b1sl.b1sl.resources._generated.employee_transfers_service import EmployeeTransfersService as _employee_transfers_service_cls
-from b1sl.b1sl.resources._generated.employees_info import EmployeesInfoService as _employees_info_cls
-from b1sl.b1sl.resources._generated.employment_category_service import EmploymentCategoryService as _employment_category_service_cls
-from b1sl.b1sl.resources._generated.employment_categorys import EmploymentCategorysService as _employment_categorys_cls
-from b1sl.b1sl.resources._generated.enhanced_discount_groups import EnhancedDiscountGroupsService as _enhanced_discount_groups_cls
-from b1sl.b1sl.resources._generated.enhanced_discount_groups_service import EnhancedDiscountGroupsService as _enhanced_discount_groups_service_cls
-from b1sl.b1sl.resources._generated.exceptional_event_service import ExceptionalEventService as _exceptional_event_service_cls
-from b1sl.b1sl.resources._generated.exceptional_events import ExceptionalEventsService as _exceptional_events_cls
-from b1sl.b1sl.resources._generated.extended_translations import ExtendedTranslationsService as _extended_translations_cls
-from b1sl.b1sl.resources._generated.extended_translations_service import ExtendedTranslationsService as _extended_translations_service_cls
-from b1sl.b1sl.resources._generated.external_calls_service import ExternalCallsService as _external_calls_service_cls
-from b1sl.b1sl.resources._generated.external_reconciliations_service import ExternalReconciliationsService as _external_reconciliations_service_cls
-from b1sl.b1sl.resources._generated.fa_account_determinations import FAAccountDeterminationsService as _fa_account_determinations_cls
-from b1sl.b1sl.resources._generated.fa_account_determinations_service import FAAccountDeterminationsService as _fa_account_determinations_service_cls
-from b1sl.b1sl.resources._generated.factoring_indicators import FactoringIndicatorsService as _factoring_indicators_cls
-from b1sl.b1sl.resources._generated.financial_years import FinancialYearsService as _financial_years_cls
-from b1sl.b1sl.resources._generated.financial_years_service import FinancialYearsService as _financial_years_service_cls
-from b1sl.b1sl.resources._generated.fiscal_printer import FiscalPrinterService as _fiscal_printer_cls
-from b1sl.b1sl.resources._generated.fiscal_printer_service import FiscalPrinterService as _fiscal_printer_service_cls
-from b1sl.b1sl.resources._generated.fixed_asset_items_service import FixedAssetItemsService as _fixed_asset_items_service_cls
-from b1sl.b1sl.resources._generated.form_preferences import FormPreferencesService as _form_preferences_cls
-from b1sl.b1sl.resources._generated.formatted_searches import FormattedSearchesService as _formatted_searches_cls
+from b1sl.b1sl.resources._generated.drafts_service import (
+    DraftsService as _drafts_service_cls,
+)
+from b1sl.b1sl.resources._generated.dunning_letters import (
+    DunningLettersService as _dunning_letters_cls,
+)
+from b1sl.b1sl.resources._generated.dunning_terms import (
+    DunningTermsService as _dunning_terms_cls,
+)
+from b1sl.b1sl.resources._generated.dunning_terms_service import (
+    DunningTermsService as _dunning_terms_service_cls,
+)
+from b1sl.b1sl.resources._generated.dynamic_system_strings import (
+    DynamicSystemStringsService as _dynamic_system_strings_cls,
+)
+from b1sl.b1sl.resources._generated.electronic_communication_action_service import (
+    ElectronicCommunicationActionService as _electronic_communication_action_service_cls,
+)
+from b1sl.b1sl.resources._generated.electronic_communication_actions_service import (
+    ElectronicCommunicationActionsService as _electronic_communication_actions_service_cls,
+)
+from b1sl.b1sl.resources._generated.electronic_file_formats import (
+    ElectronicFileFormatsService as _electronic_file_formats_cls,
+)
+from b1sl.b1sl.resources._generated.electronic_file_formats_service import (
+    ElectronicFileFormatsService as _electronic_file_formats_service_cls,
+)
+from b1sl.b1sl.resources._generated.email_groups import (
+    EmailGroupsService as _email_groups_cls,
+)
+from b1sl.b1sl.resources._generated.email_groups_service import (
+    EmailGroupsService as _email_groups_service_cls,
+)
+from b1sl.b1sl.resources._generated.employee_id_type import (
+    EmployeeIDTypeService as _employee_id_type_cls,
+)
+from b1sl.b1sl.resources._generated.employee_id_type_service import (
+    EmployeeIDTypeService as _employee_id_type_service_cls,
+)
+from b1sl.b1sl.resources._generated.employee_position import (
+    EmployeePositionService as _employee_position_cls,
+)
+from b1sl.b1sl.resources._generated.employee_position_service import (
+    EmployeePositionService as _employee_position_service_cls,
+)
+from b1sl.b1sl.resources._generated.employee_roles_setup import (
+    EmployeeRolesSetupService as _employee_roles_setup_cls,
+)
+from b1sl.b1sl.resources._generated.employee_roles_setup_service import (
+    EmployeeRolesSetupService as _employee_roles_setup_service_cls,
+)
+from b1sl.b1sl.resources._generated.employee_status import (
+    EmployeeStatusService as _employee_status_cls,
+)
+from b1sl.b1sl.resources._generated.employee_status_service import (
+    EmployeeStatusService as _employee_status_service_cls,
+)
+from b1sl.b1sl.resources._generated.employee_transfers import (
+    EmployeeTransfersService as _employee_transfers_cls,
+)
+from b1sl.b1sl.resources._generated.employee_transfers_service import (
+    EmployeeTransfersService as _employee_transfers_service_cls,
+)
+from b1sl.b1sl.resources._generated.employees_info import (
+    EmployeesInfoService as _employees_info_cls,
+)
+from b1sl.b1sl.resources._generated.employment_category_service import (
+    EmploymentCategoryService as _employment_category_service_cls,
+)
+from b1sl.b1sl.resources._generated.employment_categorys import (
+    EmploymentCategorysService as _employment_categorys_cls,
+)
+from b1sl.b1sl.resources._generated.enhanced_discount_groups import (
+    EnhancedDiscountGroupsService as _enhanced_discount_groups_cls,
+)
+from b1sl.b1sl.resources._generated.enhanced_discount_groups_service import (
+    EnhancedDiscountGroupsService as _enhanced_discount_groups_service_cls,
+)
+from b1sl.b1sl.resources._generated.exceptional_event_service import (
+    ExceptionalEventService as _exceptional_event_service_cls,
+)
+from b1sl.b1sl.resources._generated.exceptional_events import (
+    ExceptionalEventsService as _exceptional_events_cls,
+)
+from b1sl.b1sl.resources._generated.extended_translations import (
+    ExtendedTranslationsService as _extended_translations_cls,
+)
+from b1sl.b1sl.resources._generated.extended_translations_service import (
+    ExtendedTranslationsService as _extended_translations_service_cls,
+)
+from b1sl.b1sl.resources._generated.external_calls_service import (
+    ExternalCallsService as _external_calls_service_cls,
+)
+from b1sl.b1sl.resources._generated.external_reconciliations_service import (
+    ExternalReconciliationsService as _external_reconciliations_service_cls,
+)
+from b1sl.b1sl.resources._generated.fa_account_determinations import (
+    FAAccountDeterminationsService as _fa_account_determinations_cls,
+)
+from b1sl.b1sl.resources._generated.fa_account_determinations_service import (
+    FAAccountDeterminationsService as _fa_account_determinations_service_cls,
+)
+from b1sl.b1sl.resources._generated.factoring_indicators import (
+    FactoringIndicatorsService as _factoring_indicators_cls,
+)
+from b1sl.b1sl.resources._generated.financial_years import (
+    FinancialYearsService as _financial_years_cls,
+)
+from b1sl.b1sl.resources._generated.financial_years_service import (
+    FinancialYearsService as _financial_years_service_cls,
+)
+from b1sl.b1sl.resources._generated.fiscal_printer import (
+    FiscalPrinterService as _fiscal_printer_cls,
+)
+from b1sl.b1sl.resources._generated.fiscal_printer_service import (
+    FiscalPrinterService as _fiscal_printer_service_cls,
+)
+from b1sl.b1sl.resources._generated.fixed_asset_items_service import (
+    FixedAssetItemsService as _fixed_asset_items_service_cls,
+)
+from b1sl.b1sl.resources._generated.form_preferences import (
+    FormPreferencesService as _form_preferences_cls,
+)
+from b1sl.b1sl.resources._generated.formatted_searches import (
+    FormattedSearchesService as _formatted_searches_cls,
+)
 from b1sl.b1sl.resources._generated.forms1099 import Forms1099Service as _forms1099_cls
-from b1sl.b1sl.resources._generated.gl_account_advanced_rules import GLAccountAdvancedRulesService as _gl_account_advanced_rules_cls
-from b1sl.b1sl.resources._generated.gl_account_advanced_rules_service import GLAccountAdvancedRulesService as _gl_account_advanced_rules_service_cls
-from b1sl.b1sl.resources._generated.gt_is_service import GTIsService as _gt_is_service_cls
-from b1sl.b1sl.resources._generated.goods_return_request import GoodsReturnRequestService as _goods_return_request_cls
-from b1sl.b1sl.resources._generated.goods_return_request_service import GoodsReturnRequestService as _goods_return_request_service_cls
-from b1sl.b1sl.resources._generated.gov_pay_codes import GovPayCodesService as _gov_pay_codes_cls
-from b1sl.b1sl.resources._generated.gov_pay_codes_service import GovPayCodesService as _gov_pay_codes_service_cls
+from b1sl.b1sl.resources._generated.gl_account_advanced_rules import (
+    GLAccountAdvancedRulesService as _gl_account_advanced_rules_cls,
+)
+from b1sl.b1sl.resources._generated.gl_account_advanced_rules_service import (
+    GLAccountAdvancedRulesService as _gl_account_advanced_rules_service_cls,
+)
+from b1sl.b1sl.resources._generated.goods_return_request import (
+    GoodsReturnRequestService as _goods_return_request_cls,
+)
+from b1sl.b1sl.resources._generated.goods_return_request_service import (
+    GoodsReturnRequestService as _goods_return_request_service_cls,
+)
+from b1sl.b1sl.resources._generated.gov_pay_codes import (
+    GovPayCodesService as _gov_pay_codes_cls,
+)
+from b1sl.b1sl.resources._generated.gov_pay_codes_service import (
+    GovPayCodesService as _gov_pay_codes_service_cls,
+)
+from b1sl.b1sl.resources._generated.gt_is_service import (
+    GTIsService as _gt_is_service_cls,
+)
 from b1sl.b1sl.resources._generated.holidays import HolidaysService as _holidays_cls
-from b1sl.b1sl.resources._generated.house_bank_accounts import HouseBankAccountsService as _house_bank_accounts_cls
-from b1sl.b1sl.resources._generated.incoming_payments import IncomingPaymentsService as _incoming_payments_cls
+from b1sl.b1sl.resources._generated.house_bank_accounts import (
+    HouseBankAccountsService as _house_bank_accounts_cls,
+)
+from b1sl.b1sl.resources._generated.incoming_payments import (
+    IncomingPaymentsService as _incoming_payments_cls,
+)
 from b1sl.b1sl.resources._generated.india_hsn import IndiaHsnService as _india_hsn_cls
-from b1sl.b1sl.resources._generated.india_hsn_service import IndiaHsnService as _india_hsn_service_cls
-from b1sl.b1sl.resources._generated.industries import IndustriesService as _industries_cls
-from b1sl.b1sl.resources._generated.integration_packages_configure import IntegrationPackagesConfigureService as _integration_packages_configure_cls
-from b1sl.b1sl.resources._generated.integration_packages_configure_service import IntegrationPackagesConfigureService as _integration_packages_configure_service_cls
-from b1sl.b1sl.resources._generated.internal_reconciliations import InternalReconciliationsService as _internal_reconciliations_cls
-from b1sl.b1sl.resources._generated.internal_reconciliations_service import InternalReconciliationsService as _internal_reconciliations_service_cls
-from b1sl.b1sl.resources._generated.intrastat_configuration import IntrastatConfigurationService as _intrastat_configuration_cls
-from b1sl.b1sl.resources._generated.intrastat_configuration_service import IntrastatConfigurationService as _intrastat_configuration_service_cls
-from b1sl.b1sl.resources._generated.inventory_countings import InventoryCountingsService as _inventory_countings_cls
-from b1sl.b1sl.resources._generated.inventory_countings_service import InventoryCountingsService as _inventory_countings_service_cls
-from b1sl.b1sl.resources._generated.inventory_cycles import InventoryCyclesService as _inventory_cycles_cls
-from b1sl.b1sl.resources._generated.inventory_gen_entries import InventoryGenEntriesService as _inventory_gen_entries_cls
-from b1sl.b1sl.resources._generated.inventory_gen_entry_service import InventoryGenEntryService as _inventory_gen_entry_service_cls
-from b1sl.b1sl.resources._generated.inventory_gen_exit_service import InventoryGenExitService as _inventory_gen_exit_service_cls
-from b1sl.b1sl.resources._generated.inventory_gen_exits import InventoryGenExitsService as _inventory_gen_exits_cls
-from b1sl.b1sl.resources._generated.inventory_opening_balances import InventoryOpeningBalancesService as _inventory_opening_balances_cls
-from b1sl.b1sl.resources._generated.inventory_opening_balances_service import InventoryOpeningBalancesService as _inventory_opening_balances_service_cls
-from b1sl.b1sl.resources._generated.inventory_postings import InventoryPostingsService as _inventory_postings_cls
-from b1sl.b1sl.resources._generated.inventory_postings_service import InventoryPostingsService as _inventory_postings_service_cls
-from b1sl.b1sl.resources._generated.inventory_transfer_requests import InventoryTransferRequestsService as _inventory_transfer_requests_cls
-from b1sl.b1sl.resources._generated.inventory_transfer_requests_service import InventoryTransferRequestsService as _inventory_transfer_requests_service_cls
+from b1sl.b1sl.resources._generated.india_hsn_service import (
+    IndiaHsnService as _india_hsn_service_cls,
+)
+from b1sl.b1sl.resources._generated.industries import (
+    IndustriesService as _industries_cls,
+)
+from b1sl.b1sl.resources._generated.integration_packages_configure import (
+    IntegrationPackagesConfigureService as _integration_packages_configure_cls,
+)
+from b1sl.b1sl.resources._generated.integration_packages_configure_service import (
+    IntegrationPackagesConfigureService as _integration_packages_configure_service_cls,
+)
+from b1sl.b1sl.resources._generated.internal_reconciliations import (
+    InternalReconciliationsService as _internal_reconciliations_cls,
+)
+from b1sl.b1sl.resources._generated.internal_reconciliations_service import (
+    InternalReconciliationsService as _internal_reconciliations_service_cls,
+)
+from b1sl.b1sl.resources._generated.intrastat_configuration import (
+    IntrastatConfigurationService as _intrastat_configuration_cls,
+)
+from b1sl.b1sl.resources._generated.intrastat_configuration_service import (
+    IntrastatConfigurationService as _intrastat_configuration_service_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_countings import (
+    InventoryCountingsService as _inventory_countings_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_countings_service import (
+    InventoryCountingsService as _inventory_countings_service_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_cycles import (
+    InventoryCyclesService as _inventory_cycles_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_gen_entries import (
+    InventoryGenEntriesService as _inventory_gen_entries_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_gen_entry_service import (
+    InventoryGenEntryService as _inventory_gen_entry_service_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_gen_exit_service import (
+    InventoryGenExitService as _inventory_gen_exit_service_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_gen_exits import (
+    InventoryGenExitsService as _inventory_gen_exits_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_opening_balances import (
+    InventoryOpeningBalancesService as _inventory_opening_balances_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_opening_balances_service import (
+    InventoryOpeningBalancesService as _inventory_opening_balances_service_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_postings import (
+    InventoryPostingsService as _inventory_postings_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_postings_service import (
+    InventoryPostingsService as _inventory_postings_service_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_transfer_requests import (
+    InventoryTransferRequestsService as _inventory_transfer_requests_cls,
+)
+from b1sl.b1sl.resources._generated.inventory_transfer_requests_service import (
+    InventoryTransferRequestsService as _inventory_transfer_requests_service_cls,
+)
 from b1sl.b1sl.resources._generated.invoices import InvoicesService as _invoices_cls
-from b1sl.b1sl.resources._generated.invoices_service import InvoicesService as _invoices_service_cls
-from b1sl.b1sl.resources._generated.item_groups import ItemGroupsService as _item_groups_cls
-from b1sl.b1sl.resources._generated.item_properties import ItemPropertiesService as _item_properties_cls
+from b1sl.b1sl.resources._generated.invoices_service import (
+    InvoicesService as _invoices_service_cls,
+)
+from b1sl.b1sl.resources._generated.item_groups import (
+    ItemGroupsService as _item_groups_cls,
+)
+from b1sl.b1sl.resources._generated.item_properties import (
+    ItemPropertiesService as _item_properties_cls,
+)
 from b1sl.b1sl.resources._generated.items import ItemsService as _items_cls
-from b1sl.b1sl.resources._generated.journal_entries import JournalEntriesService as _journal_entries_cls
-from b1sl.b1sl.resources._generated.journal_entry_document_type_service import JournalEntryDocumentTypeService as _journal_entry_document_type_service_cls
-from b1sl.b1sl.resources._generated.journal_entry_document_types import JournalEntryDocumentTypesService as _journal_entry_document_types_cls
-from b1sl.b1sl.resources._generated.journal_vouchers_service import JournalVouchersService as _journal_vouchers_service_cls
+from b1sl.b1sl.resources._generated.journal_entries import (
+    JournalEntriesService as _journal_entries_cls,
+)
+from b1sl.b1sl.resources._generated.journal_entry_document_type_service import (
+    JournalEntryDocumentTypeService as _journal_entry_document_type_service_cls,
+)
+from b1sl.b1sl.resources._generated.journal_entry_document_types import (
+    JournalEntryDocumentTypesService as _journal_entry_document_types_cls,
+)
+from b1sl.b1sl.resources._generated.journal_vouchers_service import (
+    JournalVouchersService as _journal_vouchers_service_cls,
+)
+from b1sl.b1sl.resources._generated.knowledge_base_solutions import (
+    KnowledgeBaseSolutionsService as _knowledge_base_solutions_cls,
+)
 from b1sl.b1sl.resources._generated.kp_is import KPIsService as _kp_is_cls
-from b1sl.b1sl.resources._generated.kp_is_service import KPIsService as _kp_is_service_cls
-from b1sl.b1sl.resources._generated.knowledge_base_solutions import KnowledgeBaseSolutionsService as _knowledge_base_solutions_cls
-from b1sl.b1sl.resources._generated.landed_costs import LandedCostsService as _landed_costs_cls
-from b1sl.b1sl.resources._generated.landed_costs_codes import LandedCostsCodesService as _landed_costs_codes_cls
-from b1sl.b1sl.resources._generated.landed_costs_service import LandedCostsService as _landed_costs_service_cls
-from b1sl.b1sl.resources._generated.legal_data import LegalDataService as _legal_data_cls
-from b1sl.b1sl.resources._generated.length_measures import LengthMeasuresService as _length_measures_cls
-from b1sl.b1sl.resources._generated.license_service import LicenseService as _license_service_cls
+from b1sl.b1sl.resources._generated.kp_is_service import (
+    KPIsService as _kp_is_service_cls,
+)
+from b1sl.b1sl.resources._generated.landed_costs import (
+    LandedCostsService as _landed_costs_cls,
+)
+from b1sl.b1sl.resources._generated.landed_costs_codes import (
+    LandedCostsCodesService as _landed_costs_codes_cls,
+)
+from b1sl.b1sl.resources._generated.landed_costs_service import (
+    LandedCostsService as _landed_costs_service_cls,
+)
+from b1sl.b1sl.resources._generated.legal_data import (
+    LegalDataService as _legal_data_cls,
+)
+from b1sl.b1sl.resources._generated.length_measures import (
+    LengthMeasuresService as _length_measures_cls,
+)
+from b1sl.b1sl.resources._generated.license_service import (
+    LicenseService as _license_service_cls,
+)
 from b1sl.b1sl.resources._generated.local_era import LocalEraService as _local_era_cls
-from b1sl.b1sl.resources._generated.manufacturers import ManufacturersService as _manufacturers_cls
-from b1sl.b1sl.resources._generated.material_groups import MaterialGroupsService as _material_groups_cls
-from b1sl.b1sl.resources._generated.material_groups_service import MaterialGroupsService as _material_groups_service_cls
-from b1sl.b1sl.resources._generated.material_revaluation import MaterialRevaluationService as _material_revaluation_cls
-from b1sl.b1sl.resources._generated.material_revaluation_fifo_service import MaterialRevaluationFIFOService as _material_revaluation_fifo_service_cls
-from b1sl.b1sl.resources._generated.material_revaluation_snb_service import MaterialRevaluationSNBService as _material_revaluation_snb_service_cls
+from b1sl.b1sl.resources._generated.manufacturers import (
+    ManufacturersService as _manufacturers_cls,
+)
+from b1sl.b1sl.resources._generated.material_groups import (
+    MaterialGroupsService as _material_groups_cls,
+)
+from b1sl.b1sl.resources._generated.material_groups_service import (
+    MaterialGroupsService as _material_groups_service_cls,
+)
+from b1sl.b1sl.resources._generated.material_revaluation import (
+    MaterialRevaluationService as _material_revaluation_cls,
+)
+from b1sl.b1sl.resources._generated.material_revaluation_fifo_service import (
+    MaterialRevaluationFIFOService as _material_revaluation_fifo_service_cls,
+)
+from b1sl.b1sl.resources._generated.material_revaluation_snb_service import (
+    MaterialRevaluationSNBService as _material_revaluation_snb_service_cls,
+)
 from b1sl.b1sl.resources._generated.messages import MessagesService as _messages_cls
-from b1sl.b1sl.resources._generated.messages_service import MessagesService as _messages_service_cls
-from b1sl.b1sl.resources._generated.mobile_add_on_setting import MobileAddOnSettingService as _mobile_add_on_setting_cls
-from b1sl.b1sl.resources._generated.mobile_add_on_setting_service import MobileAddOnSettingService as _mobile_add_on_setting_service_cls
-from b1sl.b1sl.resources._generated.mobile_app_service import MobileAppService as _mobile_app_service_cls
-from b1sl.b1sl.resources._generated.multi_language_translations import MultiLanguageTranslationsService as _multi_language_translations_cls
-from b1sl.b1sl.resources._generated.ncm_codes_setup import NCMCodesSetupService as _ncm_codes_setup_cls
-from b1sl.b1sl.resources._generated.ncm_codes_setup_service import NCMCodesSetupService as _ncm_codes_setup_service_cls
+from b1sl.b1sl.resources._generated.messages_service import (
+    MessagesService as _messages_service_cls,
+)
+from b1sl.b1sl.resources._generated.mobile_add_on_setting import (
+    MobileAddOnSettingService as _mobile_add_on_setting_cls,
+)
+from b1sl.b1sl.resources._generated.mobile_add_on_setting_service import (
+    MobileAddOnSettingService as _mobile_add_on_setting_service_cls,
+)
+from b1sl.b1sl.resources._generated.mobile_app_service import (
+    MobileAppService as _mobile_app_service_cls,
+)
+from b1sl.b1sl.resources._generated.multi_language_translations import (
+    MultiLanguageTranslationsService as _multi_language_translations_cls,
+)
+from b1sl.b1sl.resources._generated.nature_of_assessees import (
+    NatureOfAssesseesService as _nature_of_assessees_cls,
+)
+from b1sl.b1sl.resources._generated.nature_of_assessees_service import (
+    NatureOfAssesseesService as _nature_of_assessees_service_cls,
+)
+from b1sl.b1sl.resources._generated.ncm_codes_setup import (
+    NCMCodesSetupService as _ncm_codes_setup_cls,
+)
+from b1sl.b1sl.resources._generated.ncm_codes_setup_service import (
+    NCMCodesSetupService as _ncm_codes_setup_service_cls,
+)
 from b1sl.b1sl.resources._generated.nf_models import NFModelsService as _nf_models_cls
-from b1sl.b1sl.resources._generated.nf_models_service import NFModelsService as _nf_models_service_cls
-from b1sl.b1sl.resources._generated.nf_tax_categories import NFTaxCategoriesService as _nf_tax_categories_cls
-from b1sl.b1sl.resources._generated.nf_tax_categories_service import NFTaxCategoriesService as _nf_tax_categories_service_cls
-from b1sl.b1sl.resources._generated.nature_of_assessees import NatureOfAssesseesService as _nature_of_assessees_cls
-from b1sl.b1sl.resources._generated.nature_of_assessees_service import NatureOfAssesseesService as _nature_of_assessees_service_cls
-from b1sl.b1sl.resources._generated.nota_fiscal_cfop import NotaFiscalCFOPService as _nota_fiscal_cfop_cls
-from b1sl.b1sl.resources._generated.nota_fiscal_cst import NotaFiscalCSTService as _nota_fiscal_cst_cls
-from b1sl.b1sl.resources._generated.nota_fiscal_usage import NotaFiscalUsageService as _nota_fiscal_usage_cls
-from b1sl.b1sl.resources._generated.occurrence_codes import OccurrenceCodesService as _occurrence_codes_cls
-from b1sl.b1sl.resources._generated.occurrence_codes_service import OccurrenceCodesService as _occurrence_codes_service_cls
+from b1sl.b1sl.resources._generated.nf_models_service import (
+    NFModelsService as _nf_models_service_cls,
+)
+from b1sl.b1sl.resources._generated.nf_tax_categories import (
+    NFTaxCategoriesService as _nf_tax_categories_cls,
+)
+from b1sl.b1sl.resources._generated.nf_tax_categories_service import (
+    NFTaxCategoriesService as _nf_tax_categories_service_cls,
+)
+from b1sl.b1sl.resources._generated.nota_fiscal_cfop import (
+    NotaFiscalCFOPService as _nota_fiscal_cfop_cls,
+)
+from b1sl.b1sl.resources._generated.nota_fiscal_cst import (
+    NotaFiscalCSTService as _nota_fiscal_cst_cls,
+)
+from b1sl.b1sl.resources._generated.nota_fiscal_usage import (
+    NotaFiscalUsageService as _nota_fiscal_usage_cls,
+)
+from b1sl.b1sl.resources._generated.occurrence_codes import (
+    OccurrenceCodesService as _occurrence_codes_cls,
+)
+from b1sl.b1sl.resources._generated.occurrence_codes_service import (
+    OccurrenceCodesService as _occurrence_codes_service_cls,
+)
 from b1sl.b1sl.resources._generated.orders import OrdersService as _orders_cls
-from b1sl.b1sl.resources._generated.orders_service import OrdersService as _orders_service_cls
-from b1sl.b1sl.resources._generated.pos_daily_summary import POSDailySummaryService as _pos_daily_summary_cls
-from b1sl.b1sl.resources._generated.packages_types import PackagesTypesService as _packages_types_cls
-from b1sl.b1sl.resources._generated.partners_setups import PartnersSetupsService as _partners_setups_cls
-from b1sl.b1sl.resources._generated.partners_setups_service import PartnersSetupsService as _partners_setups_service_cls
-from b1sl.b1sl.resources._generated.payment_blocks import PaymentBlocksService as _payment_blocks_cls
-from b1sl.b1sl.resources._generated.payment_blocks_service import PaymentBlocksService as _payment_blocks_service_cls
-from b1sl.b1sl.resources._generated.payment_calculation_service import PaymentCalculationService as _payment_calculation_service_cls
-from b1sl.b1sl.resources._generated.payment_drafts import PaymentDraftsService as _payment_drafts_cls
-from b1sl.b1sl.resources._generated.payment_reason_code_service import PaymentReasonCodeService as _payment_reason_code_service_cls
-from b1sl.b1sl.resources._generated.payment_reason_codes import PaymentReasonCodesService as _payment_reason_codes_cls
-from b1sl.b1sl.resources._generated.payment_run_export import PaymentRunExportService as _payment_run_export_cls
-from b1sl.b1sl.resources._generated.payment_terms_types import PaymentTermsTypesService as _payment_terms_types_cls
-from b1sl.b1sl.resources._generated.payment_terms_types_service import PaymentTermsTypesService as _payment_terms_types_service_cls
-from b1sl.b1sl.resources._generated.pick_lists import PickListsService as _pick_lists_cls
-from b1sl.b1sl.resources._generated.pick_lists_service import PickListsService as _pick_lists_service_cls
-from b1sl.b1sl.resources._generated.predefined_texts import PredefinedTextsService as _predefined_texts_cls
-from b1sl.b1sl.resources._generated.predefined_texts_service import PredefinedTextsService as _predefined_texts_service_cls
-from b1sl.b1sl.resources._generated.price_lists import PriceListsService as _price_lists_cls
-from b1sl.b1sl.resources._generated.product_trees import ProductTreesService as _product_trees_cls
-from b1sl.b1sl.resources._generated.production_orders import ProductionOrdersService as _production_orders_cls
-from b1sl.b1sl.resources._generated.profit_centers import ProfitCentersService as _profit_centers_cls
-from b1sl.b1sl.resources._generated.profit_centers_service import ProfitCentersService as _profit_centers_service_cls
-from b1sl.b1sl.resources._generated.project_management_configuration_service import ProjectManagementConfigurationService as _project_management_configuration_service_cls
-from b1sl.b1sl.resources._generated.project_management_service import ProjectManagementService as _project_management_service_cls
-from b1sl.b1sl.resources._generated.project_management_time_sheet import ProjectManagementTimeSheetService as _project_management_time_sheet_cls
-from b1sl.b1sl.resources._generated.project_managements import ProjectManagementsService as _project_managements_cls
+from b1sl.b1sl.resources._generated.orders_service import (
+    OrdersService as _orders_service_cls,
+)
+from b1sl.b1sl.resources._generated.packages_types import (
+    PackagesTypesService as _packages_types_cls,
+)
+from b1sl.b1sl.resources._generated.partners_setups import (
+    PartnersSetupsService as _partners_setups_cls,
+)
+from b1sl.b1sl.resources._generated.partners_setups_service import (
+    PartnersSetupsService as _partners_setups_service_cls,
+)
+from b1sl.b1sl.resources._generated.payment_blocks import (
+    PaymentBlocksService as _payment_blocks_cls,
+)
+from b1sl.b1sl.resources._generated.payment_blocks_service import (
+    PaymentBlocksService as _payment_blocks_service_cls,
+)
+from b1sl.b1sl.resources._generated.payment_calculation_service import (
+    PaymentCalculationService as _payment_calculation_service_cls,
+)
+from b1sl.b1sl.resources._generated.payment_drafts import (
+    PaymentDraftsService as _payment_drafts_cls,
+)
+from b1sl.b1sl.resources._generated.payment_reason_code_service import (
+    PaymentReasonCodeService as _payment_reason_code_service_cls,
+)
+from b1sl.b1sl.resources._generated.payment_reason_codes import (
+    PaymentReasonCodesService as _payment_reason_codes_cls,
+)
+from b1sl.b1sl.resources._generated.payment_run_export import (
+    PaymentRunExportService as _payment_run_export_cls,
+)
+from b1sl.b1sl.resources._generated.payment_terms_types import (
+    PaymentTermsTypesService as _payment_terms_types_cls,
+)
+from b1sl.b1sl.resources._generated.payment_terms_types_service import (
+    PaymentTermsTypesService as _payment_terms_types_service_cls,
+)
+from b1sl.b1sl.resources._generated.pick_lists import (
+    PickListsService as _pick_lists_cls,
+)
+from b1sl.b1sl.resources._generated.pick_lists_service import (
+    PickListsService as _pick_lists_service_cls,
+)
+from b1sl.b1sl.resources._generated.pos_daily_summary import (
+    POSDailySummaryService as _pos_daily_summary_cls,
+)
+from b1sl.b1sl.resources._generated.predefined_texts import (
+    PredefinedTextsService as _predefined_texts_cls,
+)
+from b1sl.b1sl.resources._generated.predefined_texts_service import (
+    PredefinedTextsService as _predefined_texts_service_cls,
+)
+from b1sl.b1sl.resources._generated.price_lists import (
+    PriceListsService as _price_lists_cls,
+)
+from b1sl.b1sl.resources._generated.product_trees import (
+    ProductTreesService as _product_trees_cls,
+)
+from b1sl.b1sl.resources._generated.production_orders import (
+    ProductionOrdersService as _production_orders_cls,
+)
+from b1sl.b1sl.resources._generated.profit_centers import (
+    ProfitCentersService as _profit_centers_cls,
+)
+from b1sl.b1sl.resources._generated.profit_centers_service import (
+    ProfitCentersService as _profit_centers_service_cls,
+)
+from b1sl.b1sl.resources._generated.project_management_configuration_service import (
+    ProjectManagementConfigurationService as _project_management_configuration_service_cls,
+)
+from b1sl.b1sl.resources._generated.project_management_service import (
+    ProjectManagementService as _project_management_service_cls,
+)
+from b1sl.b1sl.resources._generated.project_management_time_sheet import (
+    ProjectManagementTimeSheetService as _project_management_time_sheet_cls,
+)
+from b1sl.b1sl.resources._generated.project_managements import (
+    ProjectManagementsService as _project_managements_cls,
+)
 from b1sl.b1sl.resources._generated.projects import ProjectsService as _projects_cls
-from b1sl.b1sl.resources._generated.projects_service import ProjectsService as _projects_service_cls
-from b1sl.b1sl.resources._generated.purchase_credit_notes import PurchaseCreditNotesService as _purchase_credit_notes_cls
-from b1sl.b1sl.resources._generated.purchase_credit_notes_service import PurchaseCreditNotesService as _purchase_credit_notes_service_cls
-from b1sl.b1sl.resources._generated.purchase_delivery_notes import PurchaseDeliveryNotesService as _purchase_delivery_notes_cls
-from b1sl.b1sl.resources._generated.purchase_delivery_notes_service import PurchaseDeliveryNotesService as _purchase_delivery_notes_service_cls
-from b1sl.b1sl.resources._generated.purchase_down_payments import PurchaseDownPaymentsService as _purchase_down_payments_cls
-from b1sl.b1sl.resources._generated.purchase_down_payments_service import PurchaseDownPaymentsService as _purchase_down_payments_service_cls
-from b1sl.b1sl.resources._generated.purchase_invoices import PurchaseInvoicesService as _purchase_invoices_cls
-from b1sl.b1sl.resources._generated.purchase_invoices_service import PurchaseInvoicesService as _purchase_invoices_service_cls
-from b1sl.b1sl.resources._generated.purchase_orders import PurchaseOrdersService as _purchase_orders_cls
-from b1sl.b1sl.resources._generated.purchase_orders_service import PurchaseOrdersService as _purchase_orders_service_cls
-from b1sl.b1sl.resources._generated.purchase_quotations import PurchaseQuotationsService as _purchase_quotations_cls
-from b1sl.b1sl.resources._generated.purchase_quotations_service import PurchaseQuotationsService as _purchase_quotations_service_cls
-from b1sl.b1sl.resources._generated.purchase_request_service import PurchaseRequestService as _purchase_request_service_cls
-from b1sl.b1sl.resources._generated.purchase_requests import PurchaseRequestsService as _purchase_requests_cls
-from b1sl.b1sl.resources._generated.purchase_returns import PurchaseReturnsService as _purchase_returns_cls
-from b1sl.b1sl.resources._generated.purchase_returns_service import PurchaseReturnsService as _purchase_returns_service_cls
-from b1sl.b1sl.resources._generated.purchase_tax_invoices import PurchaseTaxInvoicesService as _purchase_tax_invoices_cls
-from b1sl.b1sl.resources._generated.qr_code_service import QRCodeService as _qr_code_service_cls
-from b1sl.b1sl.resources._generated.query_auth_groups import QueryAuthGroupsService as _query_auth_groups_cls
-from b1sl.b1sl.resources._generated.query_categories import QueryCategoriesService as _query_categories_cls
-from b1sl.b1sl.resources._generated.query_service import QueryService as _query_service_cls
+from b1sl.b1sl.resources._generated.projects_service import (
+    ProjectsService as _projects_service_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_credit_notes import (
+    PurchaseCreditNotesService as _purchase_credit_notes_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_credit_notes_service import (
+    PurchaseCreditNotesService as _purchase_credit_notes_service_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_delivery_notes import (
+    PurchaseDeliveryNotesService as _purchase_delivery_notes_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_delivery_notes_service import (
+    PurchaseDeliveryNotesService as _purchase_delivery_notes_service_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_down_payments import (
+    PurchaseDownPaymentsService as _purchase_down_payments_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_down_payments_service import (
+    PurchaseDownPaymentsService as _purchase_down_payments_service_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_invoices import (
+    PurchaseInvoicesService as _purchase_invoices_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_invoices_service import (
+    PurchaseInvoicesService as _purchase_invoices_service_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_orders import (
+    PurchaseOrdersService as _purchase_orders_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_orders_service import (
+    PurchaseOrdersService as _purchase_orders_service_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_quotations import (
+    PurchaseQuotationsService as _purchase_quotations_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_quotations_service import (
+    PurchaseQuotationsService as _purchase_quotations_service_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_request_service import (
+    PurchaseRequestService as _purchase_request_service_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_requests import (
+    PurchaseRequestsService as _purchase_requests_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_returns import (
+    PurchaseReturnsService as _purchase_returns_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_returns_service import (
+    PurchaseReturnsService as _purchase_returns_service_cls,
+)
+from b1sl.b1sl.resources._generated.purchase_tax_invoices import (
+    PurchaseTaxInvoicesService as _purchase_tax_invoices_cls,
+)
+from b1sl.b1sl.resources._generated.qr_code_service import (
+    QRCodeService as _qr_code_service_cls,
+)
+from b1sl.b1sl.resources._generated.query_auth_groups import (
+    QueryAuthGroupsService as _query_auth_groups_cls,
+)
+from b1sl.b1sl.resources._generated.query_categories import (
+    QueryCategoriesService as _query_categories_cls,
+)
+from b1sl.b1sl.resources._generated.query_service import (
+    QueryService as _query_service_cls,
+)
 from b1sl.b1sl.resources._generated.queue import QueueService as _queue_cls
-from b1sl.b1sl.resources._generated.quotations import QuotationsService as _quotations_cls
-from b1sl.b1sl.resources._generated.quotations_service import QuotationsService as _quotations_service_cls
-from b1sl.b1sl.resources._generated.recurring_transaction_service import RecurringTransactionService as _recurring_transaction_service_cls
-from b1sl.b1sl.resources._generated.relationships import RelationshipsService as _relationships_cls
-from b1sl.b1sl.resources._generated.report_filter import ReportFilterService as _report_filter_cls
-from b1sl.b1sl.resources._generated.report_filter_service import ReportFilterService as _report_filter_service_cls
-from b1sl.b1sl.resources._generated.report_layouts_service import ReportLayoutsService as _report_layouts_service_cls
-from b1sl.b1sl.resources._generated.report_types import ReportTypesService as _report_types_cls
-from b1sl.b1sl.resources._generated.report_types_service import ReportTypesService as _report_types_service_cls
-from b1sl.b1sl.resources._generated.resource_capacities import ResourceCapacitiesService as _resource_capacities_cls
-from b1sl.b1sl.resources._generated.resource_capacities_service import ResourceCapacitiesService as _resource_capacities_service_cls
-from b1sl.b1sl.resources._generated.resource_groups import ResourceGroupsService as _resource_groups_cls
-from b1sl.b1sl.resources._generated.resource_groups_service import ResourceGroupsService as _resource_groups_service_cls
-from b1sl.b1sl.resources._generated.resource_properties import ResourcePropertiesService as _resource_properties_cls
-from b1sl.b1sl.resources._generated.resource_properties_service import ResourcePropertiesService as _resource_properties_service_cls
+from b1sl.b1sl.resources._generated.quotations import (
+    QuotationsService as _quotations_cls,
+)
+from b1sl.b1sl.resources._generated.quotations_service import (
+    QuotationsService as _quotations_service_cls,
+)
+from b1sl.b1sl.resources._generated.recurring_transaction_service import (
+    RecurringTransactionService as _recurring_transaction_service_cls,
+)
+from b1sl.b1sl.resources._generated.relationships import (
+    RelationshipsService as _relationships_cls,
+)
+from b1sl.b1sl.resources._generated.report_filter import (
+    ReportFilterService as _report_filter_cls,
+)
+from b1sl.b1sl.resources._generated.report_filter_service import (
+    ReportFilterService as _report_filter_service_cls,
+)
+from b1sl.b1sl.resources._generated.report_layouts_service import (
+    ReportLayoutsService as _report_layouts_service_cls,
+)
+from b1sl.b1sl.resources._generated.report_types import (
+    ReportTypesService as _report_types_cls,
+)
+from b1sl.b1sl.resources._generated.report_types_service import (
+    ReportTypesService as _report_types_service_cls,
+)
+from b1sl.b1sl.resources._generated.resource_capacities import (
+    ResourceCapacitiesService as _resource_capacities_cls,
+)
+from b1sl.b1sl.resources._generated.resource_capacities_service import (
+    ResourceCapacitiesService as _resource_capacities_service_cls,
+)
+from b1sl.b1sl.resources._generated.resource_groups import (
+    ResourceGroupsService as _resource_groups_cls,
+)
+from b1sl.b1sl.resources._generated.resource_groups_service import (
+    ResourceGroupsService as _resource_groups_service_cls,
+)
+from b1sl.b1sl.resources._generated.resource_properties import (
+    ResourcePropertiesService as _resource_properties_cls,
+)
+from b1sl.b1sl.resources._generated.resource_properties_service import (
+    ResourcePropertiesService as _resource_properties_service_cls,
+)
 from b1sl.b1sl.resources._generated.resources import ResourcesService as _resources_cls
-from b1sl.b1sl.resources._generated.resources_service import ResourcesService as _resources_service_cls
-from b1sl.b1sl.resources._generated.retorno_codes import RetornoCodesService as _retorno_codes_cls
-from b1sl.b1sl.resources._generated.retorno_codes_service import RetornoCodesService as _retorno_codes_service_cls
-from b1sl.b1sl.resources._generated.return_request import ReturnRequestService as _return_request_cls
-from b1sl.b1sl.resources._generated.return_request_service import ReturnRequestService as _return_request_service_cls
+from b1sl.b1sl.resources._generated.resources_service import (
+    ResourcesService as _resources_service_cls,
+)
+from b1sl.b1sl.resources._generated.retorno_codes import (
+    RetornoCodesService as _retorno_codes_cls,
+)
+from b1sl.b1sl.resources._generated.retorno_codes_service import (
+    RetornoCodesService as _retorno_codes_service_cls,
+)
+from b1sl.b1sl.resources._generated.return_request import (
+    ReturnRequestService as _return_request_cls,
+)
+from b1sl.b1sl.resources._generated.return_request_service import (
+    ReturnRequestService as _return_request_service_cls,
+)
 from b1sl.b1sl.resources._generated.returns import ReturnsService as _returns_cls
-from b1sl.b1sl.resources._generated.returns_service import ReturnsService as _returns_service_cls
-from b1sl.b1sl.resources._generated.route_stages import RouteStagesService as _route_stages_cls
-from b1sl.b1sl.resources._generated.route_stages_service import RouteStagesService as _route_stages_service_cls
-from b1sl.b1sl.resources._generated.sbo_bob_service import SBOBobService as _sbo_bob_service_cls
-from b1sl.b1sl.resources._generated.sales_forecast import SalesForecastService as _sales_forecast_cls
-from b1sl.b1sl.resources._generated.sales_opportunities import SalesOpportunitiesService as _sales_opportunities_cls
-from b1sl.b1sl.resources._generated.sales_opportunity_competitors_setup import SalesOpportunityCompetitorsSetupService as _sales_opportunity_competitors_setup_cls
-from b1sl.b1sl.resources._generated.sales_opportunity_competitors_setup_service import SalesOpportunityCompetitorsSetupService as _sales_opportunity_competitors_setup_service_cls
-from b1sl.b1sl.resources._generated.sales_opportunity_interests_setup import SalesOpportunityInterestsSetupService as _sales_opportunity_interests_setup_cls
-from b1sl.b1sl.resources._generated.sales_opportunity_interests_setup_service import SalesOpportunityInterestsSetupService as _sales_opportunity_interests_setup_service_cls
-from b1sl.b1sl.resources._generated.sales_opportunity_reasons_setup import SalesOpportunityReasonsSetupService as _sales_opportunity_reasons_setup_cls
-from b1sl.b1sl.resources._generated.sales_opportunity_reasons_setup_service import SalesOpportunityReasonsSetupService as _sales_opportunity_reasons_setup_service_cls
-from b1sl.b1sl.resources._generated.sales_opportunity_sources_setup import SalesOpportunitySourcesSetupService as _sales_opportunity_sources_setup_cls
-from b1sl.b1sl.resources._generated.sales_opportunity_sources_setup_service import SalesOpportunitySourcesSetupService as _sales_opportunity_sources_setup_service_cls
-from b1sl.b1sl.resources._generated.sales_persons import SalesPersonsService as _sales_persons_cls
-from b1sl.b1sl.resources._generated.sales_stages import SalesStagesService as _sales_stages_cls
-from b1sl.b1sl.resources._generated.sales_tax_authorities import SalesTaxAuthoritiesService as _sales_tax_authorities_cls
-from b1sl.b1sl.resources._generated.sales_tax_authorities_types import SalesTaxAuthoritiesTypesService as _sales_tax_authorities_types_cls
-from b1sl.b1sl.resources._generated.sales_tax_codes import SalesTaxCodesService as _sales_tax_codes_cls
-from b1sl.b1sl.resources._generated.sales_tax_invoices import SalesTaxInvoicesService as _sales_tax_invoices_cls
+from b1sl.b1sl.resources._generated.returns_service import (
+    ReturnsService as _returns_service_cls,
+)
+from b1sl.b1sl.resources._generated.route_stages import (
+    RouteStagesService as _route_stages_cls,
+)
+from b1sl.b1sl.resources._generated.route_stages_service import (
+    RouteStagesService as _route_stages_service_cls,
+)
+from b1sl.b1sl.resources._generated.sales_forecast import (
+    SalesForecastService as _sales_forecast_cls,
+)
+from b1sl.b1sl.resources._generated.sales_opportunities import (
+    SalesOpportunitiesService as _sales_opportunities_cls,
+)
+from b1sl.b1sl.resources._generated.sales_opportunity_competitors_setup import (
+    SalesOpportunityCompetitorsSetupService as _sales_opportunity_competitors_setup_cls,
+)
+from b1sl.b1sl.resources._generated.sales_opportunity_competitors_setup_service import (
+    SalesOpportunityCompetitorsSetupService as _sales_opportunity_competitors_setup_service_cls,
+)
+from b1sl.b1sl.resources._generated.sales_opportunity_interests_setup import (
+    SalesOpportunityInterestsSetupService as _sales_opportunity_interests_setup_cls,
+)
+from b1sl.b1sl.resources._generated.sales_opportunity_interests_setup_service import (
+    SalesOpportunityInterestsSetupService as _sales_opportunity_interests_setup_service_cls,
+)
+from b1sl.b1sl.resources._generated.sales_opportunity_reasons_setup import (
+    SalesOpportunityReasonsSetupService as _sales_opportunity_reasons_setup_cls,
+)
+from b1sl.b1sl.resources._generated.sales_opportunity_reasons_setup_service import (
+    SalesOpportunityReasonsSetupService as _sales_opportunity_reasons_setup_service_cls,
+)
+from b1sl.b1sl.resources._generated.sales_opportunity_sources_setup import (
+    SalesOpportunitySourcesSetupService as _sales_opportunity_sources_setup_cls,
+)
+from b1sl.b1sl.resources._generated.sales_opportunity_sources_setup_service import (
+    SalesOpportunitySourcesSetupService as _sales_opportunity_sources_setup_service_cls,
+)
+from b1sl.b1sl.resources._generated.sales_persons import (
+    SalesPersonsService as _sales_persons_cls,
+)
+from b1sl.b1sl.resources._generated.sales_stages import (
+    SalesStagesService as _sales_stages_cls,
+)
+from b1sl.b1sl.resources._generated.sales_tax_authorities import (
+    SalesTaxAuthoritiesService as _sales_tax_authorities_cls,
+)
+from b1sl.b1sl.resources._generated.sales_tax_authorities_types import (
+    SalesTaxAuthoritiesTypesService as _sales_tax_authorities_types_cls,
+)
+from b1sl.b1sl.resources._generated.sales_tax_codes import (
+    SalesTaxCodesService as _sales_tax_codes_cls,
+)
+from b1sl.b1sl.resources._generated.sales_tax_invoices import (
+    SalesTaxInvoicesService as _sales_tax_invoices_cls,
+)
+from b1sl.b1sl.resources._generated.sbo_bob_service import (
+    SBOBobService as _sbo_bob_service_cls,
+)
 from b1sl.b1sl.resources._generated.sections import SectionsService as _sections_cls
-from b1sl.b1sl.resources._generated.sections_service import SectionsService as _sections_service_cls
-from b1sl.b1sl.resources._generated.self_credit_memo_service import SelfCreditMemoService as _self_credit_memo_service_cls
-from b1sl.b1sl.resources._generated.self_credit_memos import SelfCreditMemosService as _self_credit_memos_cls
-from b1sl.b1sl.resources._generated.self_invoice_service import SelfInvoiceService as _self_invoice_service_cls
-from b1sl.b1sl.resources._generated.self_invoices import SelfInvoicesService as _self_invoices_cls
-from b1sl.b1sl.resources._generated.serial_number_details import SerialNumberDetailsService as _serial_number_details_cls
-from b1sl.b1sl.resources._generated.series_service import SeriesService as _series_service_cls
-from b1sl.b1sl.resources._generated.service_call_origins import ServiceCallOriginsService as _service_call_origins_cls
-from b1sl.b1sl.resources._generated.service_call_origins_service import ServiceCallOriginsService as _service_call_origins_service_cls
-from b1sl.b1sl.resources._generated.service_call_problem_sub_types import ServiceCallProblemSubTypesService as _service_call_problem_sub_types_cls
-from b1sl.b1sl.resources._generated.service_call_problem_sub_types_service import ServiceCallProblemSubTypesService as _service_call_problem_sub_types_service_cls
-from b1sl.b1sl.resources._generated.service_call_problem_types import ServiceCallProblemTypesService as _service_call_problem_types_cls
-from b1sl.b1sl.resources._generated.service_call_problem_types_service import ServiceCallProblemTypesService as _service_call_problem_types_service_cls
-from b1sl.b1sl.resources._generated.service_call_solution_status import ServiceCallSolutionStatusService as _service_call_solution_status_cls
-from b1sl.b1sl.resources._generated.service_call_solution_status_service import ServiceCallSolutionStatusService as _service_call_solution_status_service_cls
-from b1sl.b1sl.resources._generated.service_call_status import ServiceCallStatusService as _service_call_status_cls
-from b1sl.b1sl.resources._generated.service_call_status_service import ServiceCallStatusService as _service_call_status_service_cls
-from b1sl.b1sl.resources._generated.service_call_types import ServiceCallTypesService as _service_call_types_cls
-from b1sl.b1sl.resources._generated.service_call_types_service import ServiceCallTypesService as _service_call_types_service_cls
-from b1sl.b1sl.resources._generated.service_calls import ServiceCallsService as _service_calls_cls
-from b1sl.b1sl.resources._generated.service_contracts import ServiceContractsService as _service_contracts_cls
-from b1sl.b1sl.resources._generated.service_groups import ServiceGroupsService as _service_groups_cls
-from b1sl.b1sl.resources._generated.service_groups_service import ServiceGroupsService as _service_groups_service_cls
-from b1sl.b1sl.resources._generated.service_tax_posting_service import ServiceTaxPostingService as _service_tax_posting_service_cls
-from b1sl.b1sl.resources._generated.shipping_types import ShippingTypesService as _shipping_types_cls
-from b1sl.b1sl.resources._generated.short_link_mappings_service import ShortLinkMappingsService as _short_link_mappings_service_cls
-from b1sl.b1sl.resources._generated.special_prices import SpecialPricesService as _special_prices_cls
+from b1sl.b1sl.resources._generated.sections_service import (
+    SectionsService as _sections_service_cls,
+)
+from b1sl.b1sl.resources._generated.self_credit_memo_service import (
+    SelfCreditMemoService as _self_credit_memo_service_cls,
+)
+from b1sl.b1sl.resources._generated.self_credit_memos import (
+    SelfCreditMemosService as _self_credit_memos_cls,
+)
+from b1sl.b1sl.resources._generated.self_invoice_service import (
+    SelfInvoiceService as _self_invoice_service_cls,
+)
+from b1sl.b1sl.resources._generated.self_invoices import (
+    SelfInvoicesService as _self_invoices_cls,
+)
+from b1sl.b1sl.resources._generated.serial_number_details import (
+    SerialNumberDetailsService as _serial_number_details_cls,
+)
+from b1sl.b1sl.resources._generated.series_service import (
+    SeriesService as _series_service_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_origins import (
+    ServiceCallOriginsService as _service_call_origins_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_origins_service import (
+    ServiceCallOriginsService as _service_call_origins_service_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_problem_sub_types import (
+    ServiceCallProblemSubTypesService as _service_call_problem_sub_types_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_problem_sub_types_service import (
+    ServiceCallProblemSubTypesService as _service_call_problem_sub_types_service_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_problem_types import (
+    ServiceCallProblemTypesService as _service_call_problem_types_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_problem_types_service import (
+    ServiceCallProblemTypesService as _service_call_problem_types_service_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_solution_status import (
+    ServiceCallSolutionStatusService as _service_call_solution_status_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_solution_status_service import (
+    ServiceCallSolutionStatusService as _service_call_solution_status_service_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_status import (
+    ServiceCallStatusService as _service_call_status_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_status_service import (
+    ServiceCallStatusService as _service_call_status_service_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_types import (
+    ServiceCallTypesService as _service_call_types_cls,
+)
+from b1sl.b1sl.resources._generated.service_call_types_service import (
+    ServiceCallTypesService as _service_call_types_service_cls,
+)
+from b1sl.b1sl.resources._generated.service_calls import (
+    ServiceCallsService as _service_calls_cls,
+)
+from b1sl.b1sl.resources._generated.service_contracts import (
+    ServiceContractsService as _service_contracts_cls,
+)
+from b1sl.b1sl.resources._generated.service_groups import (
+    ServiceGroupsService as _service_groups_cls,
+)
+from b1sl.b1sl.resources._generated.service_groups_service import (
+    ServiceGroupsService as _service_groups_service_cls,
+)
+from b1sl.b1sl.resources._generated.service_tax_posting_service import (
+    ServiceTaxPostingService as _service_tax_posting_service_cls,
+)
+from b1sl.b1sl.resources._generated.shipping_types import (
+    ShippingTypesService as _shipping_types_cls,
+)
+from b1sl.b1sl.resources._generated.short_link_mappings_service import (
+    ShortLinkMappingsService as _short_link_mappings_service_cls,
+)
+from b1sl.b1sl.resources._generated.special_prices import (
+    SpecialPricesService as _special_prices_cls,
+)
 from b1sl.b1sl.resources._generated.states import StatesService as _states_cls
-from b1sl.b1sl.resources._generated.states_service import StatesService as _states_service_cls
-from b1sl.b1sl.resources._generated.stock_takings import StockTakingsService as _stock_takings_cls
-from b1sl.b1sl.resources._generated.stock_transfer_draft_service import StockTransferDraftService as _stock_transfer_draft_service_cls
-from b1sl.b1sl.resources._generated.stock_transfer_drafts import StockTransferDraftsService as _stock_transfer_drafts_cls
-from b1sl.b1sl.resources._generated.stock_transfer_service import StockTransferService as _stock_transfer_service_cls
-from b1sl.b1sl.resources._generated.stock_transfers import StockTransfersService as _stock_transfers_cls
-from b1sl.b1sl.resources._generated.tsr_exceptional_event_service import TSRExceptionalEventService as _tsr_exceptional_event_service_cls
-from b1sl.b1sl.resources._generated.tsr_exceptional_events import TSRExceptionalEventsService as _tsr_exceptional_events_cls
-from b1sl.b1sl.resources._generated.target_groups import TargetGroupsService as _target_groups_cls
-from b1sl.b1sl.resources._generated.target_groups_service import TargetGroupsService as _target_groups_service_cls
-from b1sl.b1sl.resources._generated.tax_code_determinations import TaxCodeDeterminationsService as _tax_code_determinations_cls
-from b1sl.b1sl.resources._generated.tax_code_determinations_service import TaxCodeDeterminationsService as _tax_code_determinations_service_cls
-from b1sl.b1sl.resources._generated.tax_code_determinations_tcd import TaxCodeDeterminationsTCDService as _tax_code_determinations_tcd_cls
-from b1sl.b1sl.resources._generated.tax_code_determinations_tcd_service import TaxCodeDeterminationsTCDService as _tax_code_determinations_tcd_service_cls
-from b1sl.b1sl.resources._generated.tax_invoice_report import TaxInvoiceReportService as _tax_invoice_report_cls
-from b1sl.b1sl.resources._generated.tax_web_sites import TaxWebSitesService as _tax_web_sites_cls
-from b1sl.b1sl.resources._generated.tax_web_sites_service import TaxWebSitesService as _tax_web_sites_service_cls
+from b1sl.b1sl.resources._generated.states_service import (
+    StatesService as _states_service_cls,
+)
+from b1sl.b1sl.resources._generated.stock_takings import (
+    StockTakingsService as _stock_takings_cls,
+)
+from b1sl.b1sl.resources._generated.stock_transfer_draft_service import (
+    StockTransferDraftService as _stock_transfer_draft_service_cls,
+)
+from b1sl.b1sl.resources._generated.stock_transfer_drafts import (
+    StockTransferDraftsService as _stock_transfer_drafts_cls,
+)
+from b1sl.b1sl.resources._generated.stock_transfer_service import (
+    StockTransferService as _stock_transfer_service_cls,
+)
+from b1sl.b1sl.resources._generated.stock_transfers import (
+    StockTransfersService as _stock_transfers_cls,
+)
+from b1sl.b1sl.resources._generated.target_groups import (
+    TargetGroupsService as _target_groups_cls,
+)
+from b1sl.b1sl.resources._generated.target_groups_service import (
+    TargetGroupsService as _target_groups_service_cls,
+)
+from b1sl.b1sl.resources._generated.tax_code_determinations import (
+    TaxCodeDeterminationsService as _tax_code_determinations_cls,
+)
+from b1sl.b1sl.resources._generated.tax_code_determinations_service import (
+    TaxCodeDeterminationsService as _tax_code_determinations_service_cls,
+)
+from b1sl.b1sl.resources._generated.tax_code_determinations_tcd import (
+    TaxCodeDeterminationsTCDService as _tax_code_determinations_tcd_cls,
+)
+from b1sl.b1sl.resources._generated.tax_code_determinations_tcd_service import (
+    TaxCodeDeterminationsTCDService as _tax_code_determinations_tcd_service_cls,
+)
+from b1sl.b1sl.resources._generated.tax_invoice_report import (
+    TaxInvoiceReportService as _tax_invoice_report_cls,
+)
+from b1sl.b1sl.resources._generated.tax_web_sites import (
+    TaxWebSitesService as _tax_web_sites_cls,
+)
+from b1sl.b1sl.resources._generated.tax_web_sites_service import (
+    TaxWebSitesService as _tax_web_sites_service_cls,
+)
 from b1sl.b1sl.resources._generated.teams import TeamsService as _teams_cls
-from b1sl.b1sl.resources._generated.termination_reason import TerminationReasonService as _termination_reason_cls
-from b1sl.b1sl.resources._generated.termination_reason_service import TerminationReasonService as _termination_reason_service_cls
-from b1sl.b1sl.resources._generated.territories import TerritoriesService as _territories_cls
-from b1sl.b1sl.resources._generated.tracking_notes import TrackingNotesService as _tracking_notes_cls
-from b1sl.b1sl.resources._generated.tracking_notes_service import TrackingNotesService as _tracking_notes_service_cls
-from b1sl.b1sl.resources._generated.transaction_codes import TransactionCodesService as _transaction_codes_cls
-from b1sl.b1sl.resources._generated.transaction_codes_service import TransactionCodesService as _transaction_codes_service_cls
-from b1sl.b1sl.resources._generated.transportation_document import TransportationDocumentService as _transportation_document_cls
-from b1sl.b1sl.resources._generated.unit_of_measurement_groups import UnitOfMeasurementGroupsService as _unit_of_measurement_groups_cls
-from b1sl.b1sl.resources._generated.unit_of_measurement_groups_service import UnitOfMeasurementGroupsService as _unit_of_measurement_groups_service_cls
-from b1sl.b1sl.resources._generated.unit_of_measurements import UnitOfMeasurementsService as _unit_of_measurements_cls
-from b1sl.b1sl.resources._generated.unit_of_measurements_service import UnitOfMeasurementsService as _unit_of_measurements_service_cls
-from b1sl.b1sl.resources._generated.user_default_groups import UserDefaultGroupsService as _user_default_groups_cls
-from b1sl.b1sl.resources._generated.user_fields_md import UserFieldsMDService as _user_fields_md_cls
-from b1sl.b1sl.resources._generated.user_keys_md import UserKeysMDService as _user_keys_md_cls
-from b1sl.b1sl.resources._generated.user_languages import UserLanguagesService as _user_languages_cls
-from b1sl.b1sl.resources._generated.user_menu_service import UserMenuService as _user_menu_service_cls
-from b1sl.b1sl.resources._generated.user_objects_md import UserObjectsMDService as _user_objects_md_cls
-from b1sl.b1sl.resources._generated.user_permission_tree import UserPermissionTreeService as _user_permission_tree_cls
-from b1sl.b1sl.resources._generated.user_queries import UserQueriesService as _user_queries_cls
-from b1sl.b1sl.resources._generated.user_tables_md import UserTablesMDService as _user_tables_md_cls
+from b1sl.b1sl.resources._generated.termination_reason import (
+    TerminationReasonService as _termination_reason_cls,
+)
+from b1sl.b1sl.resources._generated.termination_reason_service import (
+    TerminationReasonService as _termination_reason_service_cls,
+)
+from b1sl.b1sl.resources._generated.territories import (
+    TerritoriesService as _territories_cls,
+)
+from b1sl.b1sl.resources._generated.tracking_notes import (
+    TrackingNotesService as _tracking_notes_cls,
+)
+from b1sl.b1sl.resources._generated.tracking_notes_service import (
+    TrackingNotesService as _tracking_notes_service_cls,
+)
+from b1sl.b1sl.resources._generated.transaction_codes import (
+    TransactionCodesService as _transaction_codes_cls,
+)
+from b1sl.b1sl.resources._generated.transaction_codes_service import (
+    TransactionCodesService as _transaction_codes_service_cls,
+)
+from b1sl.b1sl.resources._generated.transportation_document import (
+    TransportationDocumentService as _transportation_document_cls,
+)
+from b1sl.b1sl.resources._generated.tsr_exceptional_event_service import (
+    TSRExceptionalEventService as _tsr_exceptional_event_service_cls,
+)
+from b1sl.b1sl.resources._generated.tsr_exceptional_events import (
+    TSRExceptionalEventsService as _tsr_exceptional_events_cls,
+)
+from b1sl.b1sl.resources._generated.unit_of_measurement_groups import (
+    UnitOfMeasurementGroupsService as _unit_of_measurement_groups_cls,
+)
+from b1sl.b1sl.resources._generated.unit_of_measurement_groups_service import (
+    UnitOfMeasurementGroupsService as _unit_of_measurement_groups_service_cls,
+)
+from b1sl.b1sl.resources._generated.unit_of_measurements import (
+    UnitOfMeasurementsService as _unit_of_measurements_cls,
+)
+from b1sl.b1sl.resources._generated.unit_of_measurements_service import (
+    UnitOfMeasurementsService as _unit_of_measurements_service_cls,
+)
+from b1sl.b1sl.resources._generated.user_default_groups import (
+    UserDefaultGroupsService as _user_default_groups_cls,
+)
+from b1sl.b1sl.resources._generated.user_fields_md import (
+    UserFieldsMDService as _user_fields_md_cls,
+)
+from b1sl.b1sl.resources._generated.user_keys_md import (
+    UserKeysMDService as _user_keys_md_cls,
+)
+from b1sl.b1sl.resources._generated.user_languages import (
+    UserLanguagesService as _user_languages_cls,
+)
+from b1sl.b1sl.resources._generated.user_menu_service import (
+    UserMenuService as _user_menu_service_cls,
+)
+from b1sl.b1sl.resources._generated.user_objects_md import (
+    UserObjectsMDService as _user_objects_md_cls,
+)
+from b1sl.b1sl.resources._generated.user_permission_tree import (
+    UserPermissionTreeService as _user_permission_tree_cls,
+)
+from b1sl.b1sl.resources._generated.user_queries import (
+    UserQueriesService as _user_queries_cls,
+)
+from b1sl.b1sl.resources._generated.user_tables_md import (
+    UserTablesMDService as _user_tables_md_cls,
+)
 from b1sl.b1sl.resources._generated.users import UsersService as _users_cls
-from b1sl.b1sl.resources._generated.users_service import UsersService as _users_service_cls
-from b1sl.b1sl.resources._generated.value_mapping import ValueMappingService as _value_mapping_cls
-from b1sl.b1sl.resources._generated.value_mapping_communication import ValueMappingCommunicationService as _value_mapping_communication_cls
-from b1sl.b1sl.resources._generated.value_mapping_service import ValueMappingService as _value_mapping_service_cls
-from b1sl.b1sl.resources._generated.vat_groups import VatGroupsService as _vat_groups_cls
-from b1sl.b1sl.resources._generated.vendor_payments import VendorPaymentsService as _vendor_payments_cls
-from b1sl.b1sl.resources._generated.w_tax_type_code_service import WTaxTypeCodeService as _w_tax_type_code_service_cls
-from b1sl.b1sl.resources._generated.w_tax_type_codes import WTaxTypeCodesService as _w_tax_type_codes_cls
-from b1sl.b1sl.resources._generated.warehouse_locations import WarehouseLocationsService as _warehouse_locations_cls
-from b1sl.b1sl.resources._generated.warehouse_sublevel_codes import WarehouseSublevelCodesService as _warehouse_sublevel_codes_cls
-from b1sl.b1sl.resources._generated.warehouse_sublevel_codes_service import WarehouseSublevelCodesService as _warehouse_sublevel_codes_service_cls
-from b1sl.b1sl.resources._generated.warehouses import WarehousesService as _warehouses_cls
-from b1sl.b1sl.resources._generated.web_client_bookmark_tile_service import WebClientBookmarkTileService as _web_client_bookmark_tile_service_cls
-from b1sl.b1sl.resources._generated.web_client_bookmark_tiles import WebClientBookmarkTilesService as _web_client_bookmark_tiles_cls
-from b1sl.b1sl.resources._generated.web_client_dashboard_service import WebClientDashboardService as _web_client_dashboard_service_cls
-from b1sl.b1sl.resources._generated.web_client_dashboards import WebClientDashboardsService as _web_client_dashboards_cls
-from b1sl.b1sl.resources._generated.web_client_form_setting_service import WebClientFormSettingService as _web_client_form_setting_service_cls
-from b1sl.b1sl.resources._generated.web_client_form_settings import WebClientFormSettingsService as _web_client_form_settings_cls
-from b1sl.b1sl.resources._generated.web_client_launchpad_service import WebClientLaunchpadService as _web_client_launchpad_service_cls
-from b1sl.b1sl.resources._generated.web_client_launchpads import WebClientLaunchpadsService as _web_client_launchpads_cls
-from b1sl.b1sl.resources._generated.web_client_listview_filter_service import WebClientListviewFilterService as _web_client_listview_filter_service_cls
-from b1sl.b1sl.resources._generated.web_client_listview_filters import WebClientListviewFiltersService as _web_client_listview_filters_cls
-from b1sl.b1sl.resources._generated.web_client_notification_service import WebClientNotificationService as _web_client_notification_service_cls
-from b1sl.b1sl.resources._generated.web_client_notifications import WebClientNotificationsService as _web_client_notifications_cls
-from b1sl.b1sl.resources._generated.web_client_preference_service import WebClientPreferenceService as _web_client_preference_service_cls
-from b1sl.b1sl.resources._generated.web_client_preferences import WebClientPreferencesService as _web_client_preferences_cls
-from b1sl.b1sl.resources._generated.web_client_recent_activities import WebClientRecentActivitiesService as _web_client_recent_activities_cls
-from b1sl.b1sl.resources._generated.web_client_recent_activity_service import WebClientRecentActivityService as _web_client_recent_activity_service_cls
-from b1sl.b1sl.resources._generated.web_client_variant_group_service import WebClientVariantGroupService as _web_client_variant_group_service_cls
-from b1sl.b1sl.resources._generated.web_client_variant_groups import WebClientVariantGroupsService as _web_client_variant_groups_cls
-from b1sl.b1sl.resources._generated.web_client_variant_service import WebClientVariantService as _web_client_variant_service_cls
-from b1sl.b1sl.resources._generated.web_client_variants import WebClientVariantsService as _web_client_variants_cls
-from b1sl.b1sl.resources._generated.weight_measures import WeightMeasuresService as _weight_measures_cls
-from b1sl.b1sl.resources._generated.withholding_tax_codes import WithholdingTaxCodesService as _withholding_tax_codes_cls
-from b1sl.b1sl.resources._generated.witholding_tax_definition import WitholdingTaxDefinitionService as _witholding_tax_definition_cls
-from b1sl.b1sl.resources._generated.wizard_payment_methods import WizardPaymentMethodsService as _wizard_payment_methods_cls
-from b1sl.b1sl.resources._generated.workflow_task_service import WorkflowTaskService as _workflow_task_service_cls
+from b1sl.b1sl.resources._generated.users_service import (
+    UsersService as _users_service_cls,
+)
+from b1sl.b1sl.resources._generated.value_mapping import (
+    ValueMappingService as _value_mapping_cls,
+)
+from b1sl.b1sl.resources._generated.value_mapping_communication import (
+    ValueMappingCommunicationService as _value_mapping_communication_cls,
+)
+from b1sl.b1sl.resources._generated.value_mapping_service import (
+    ValueMappingService as _value_mapping_service_cls,
+)
+from b1sl.b1sl.resources._generated.vat_groups import (
+    VatGroupsService as _vat_groups_cls,
+)
+from b1sl.b1sl.resources._generated.vendor_payments import (
+    VendorPaymentsService as _vendor_payments_cls,
+)
+from b1sl.b1sl.resources._generated.w_tax_type_code_service import (
+    WTaxTypeCodeService as _w_tax_type_code_service_cls,
+)
+from b1sl.b1sl.resources._generated.w_tax_type_codes import (
+    WTaxTypeCodesService as _w_tax_type_codes_cls,
+)
+from b1sl.b1sl.resources._generated.warehouse_locations import (
+    WarehouseLocationsService as _warehouse_locations_cls,
+)
+from b1sl.b1sl.resources._generated.warehouse_sublevel_codes import (
+    WarehouseSublevelCodesService as _warehouse_sublevel_codes_cls,
+)
+from b1sl.b1sl.resources._generated.warehouse_sublevel_codes_service import (
+    WarehouseSublevelCodesService as _warehouse_sublevel_codes_service_cls,
+)
+from b1sl.b1sl.resources._generated.warehouses import (
+    WarehousesService as _warehouses_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_bookmark_tile_service import (
+    WebClientBookmarkTileService as _web_client_bookmark_tile_service_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_bookmark_tiles import (
+    WebClientBookmarkTilesService as _web_client_bookmark_tiles_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_dashboard_service import (
+    WebClientDashboardService as _web_client_dashboard_service_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_dashboards import (
+    WebClientDashboardsService as _web_client_dashboards_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_form_setting_service import (
+    WebClientFormSettingService as _web_client_form_setting_service_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_form_settings import (
+    WebClientFormSettingsService as _web_client_form_settings_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_launchpad_service import (
+    WebClientLaunchpadService as _web_client_launchpad_service_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_launchpads import (
+    WebClientLaunchpadsService as _web_client_launchpads_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_listview_filter_service import (
+    WebClientListviewFilterService as _web_client_listview_filter_service_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_listview_filters import (
+    WebClientListviewFiltersService as _web_client_listview_filters_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_notification_service import (
+    WebClientNotificationService as _web_client_notification_service_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_notifications import (
+    WebClientNotificationsService as _web_client_notifications_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_preference_service import (
+    WebClientPreferenceService as _web_client_preference_service_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_preferences import (
+    WebClientPreferencesService as _web_client_preferences_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_recent_activities import (
+    WebClientRecentActivitiesService as _web_client_recent_activities_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_recent_activity_service import (
+    WebClientRecentActivityService as _web_client_recent_activity_service_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_variant_group_service import (
+    WebClientVariantGroupService as _web_client_variant_group_service_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_variant_groups import (
+    WebClientVariantGroupsService as _web_client_variant_groups_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_variant_service import (
+    WebClientVariantService as _web_client_variant_service_cls,
+)
+from b1sl.b1sl.resources._generated.web_client_variants import (
+    WebClientVariantsService as _web_client_variants_cls,
+)
+from b1sl.b1sl.resources._generated.weight_measures import (
+    WeightMeasuresService as _weight_measures_cls,
+)
+from b1sl.b1sl.resources._generated.withholding_tax_codes import (
+    WithholdingTaxCodesService as _withholding_tax_codes_cls,
+)
+from b1sl.b1sl.resources._generated.witholding_tax_definition import (
+    WitholdingTaxDefinitionService as _witholding_tax_definition_cls,
+)
+from b1sl.b1sl.resources._generated.wizard_payment_methods import (
+    WizardPaymentMethodsService as _wizard_payment_methods_cls,
+)
+from b1sl.b1sl.resources._generated.workflow_task_service import (
+    WorkflowTaskService as _workflow_task_service_cls,
+)
+
 
 class B1ClientMixin:
     _adapter: RestAdapterProtocol

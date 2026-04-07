@@ -65,7 +65,7 @@ class B1Environment:
         # We load in non-strict mode by default to allow loading test_data even without .env
         config = B1Config.from_env(strict=strict)
         config.environment = name
-        
+
         test_data = {}
         if config_path.exists():
             with open(config_path, "r") as f:

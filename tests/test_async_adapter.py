@@ -89,7 +89,7 @@ async def test_async_rest_adapter_hydration(b1_config):
     login_mock = respx.post("https://sap-server:50000/b1s/v1/Login").mock(
         return_value=httpx.Response(200, json={"SessionId": "fresh", "SessionTimeout": 30})
     )
-    
+
     # Mock GET success using the provided session_id
     respx.get("https://sap-server:50000/b1s/v1/Items('A0001')").mock(
         return_value=httpx.Response(200, json={"ItemCode": "A0001"})
@@ -102,7 +102,7 @@ async def test_async_rest_adapter_hydration(b1_config):
     assert adapter.is_session_active is True
     assert adapter.token_expiry is None
     assert adapter.session_id == "existing-session"
-    
+
     # Verify no Login request was made yet
     assert login_mock.call_count == 0
 
@@ -110,5 +110,5 @@ async def test_async_rest_adapter_hydration(b1_config):
     result = await adapter.get("Items('A0001')")
     assert result.status_code == 200
     assert login_mock.call_count == 0  # Still no login because session worked
-    
+
     await adapter.aclose()

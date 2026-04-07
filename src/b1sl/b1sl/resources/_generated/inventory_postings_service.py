@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class InventoryPostingsService(GenericResource[Any]):
     endpoint = "InventoryPostingsService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -18,7 +20,7 @@ class InventoryPostingsService(GenericResource[Any]):
         """POST InventoryPostingsService_GetList
         Invoke the method 'GetList' on this service.
         """
-        return self._adapter.post(f"InventoryPostingsService_GetList", data=payload)
+        return self._adapter.post("InventoryPostingsService_GetList", data=payload)
 
     def set_copy_option(self, payload: dict | None = None) -> Any:
         """POST InventoryPostingsService_SetCopyOption
@@ -31,4 +33,4 @@ class InventoryPostingsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"InventoryPostingsService_SetCopyOption", data=payload)
+        return self._adapter.post("InventoryPostingsService_SetCopyOption", data=payload)

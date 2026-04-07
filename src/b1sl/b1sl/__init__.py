@@ -5,16 +5,6 @@ b1sl.b1sl — SDK for SAP B1 Service Layer (OData).
 import logging
 import warnings
 
-try:
-    from pydantic import ArbitraryTypeWarning
-
-    warnings.filterwarnings("ignore", category=ArbitraryTypeWarning, module=r"b1sl\..*")
-except ImportError:
-    warnings.filterwarnings("ignore", module=r"b1sl\..*|pydantic\..*")
-
-# Standard library pattern: prevent "No handlers could be found"
-logging.getLogger("b1sl").addHandler(logging.NullHandler())
-
 from b1sl.b1sl.async_client import AsyncB1Client
 from b1sl.b1sl.async_rest_adapter import AsyncRestAdapter
 from b1sl.b1sl.base_adapter import HookContext, ObservabilityConfig
@@ -28,6 +18,16 @@ from b1sl.b1sl.resources.base import GenericResource, ODataQuery
 from b1sl.b1sl.rest_adapter import RestAdapter
 
 try:
+    from pydantic import ArbitraryTypeWarning
+
+    warnings.filterwarnings("ignore", category=ArbitraryTypeWarning, module=r"b1sl\..*")
+except ImportError:
+    warnings.filterwarnings("ignore", module=r"b1sl\..*|pydantic\..*")
+
+# Standard library pattern: prevent "No handlers could be found"
+logging.getLogger("b1sl").addHandler(logging.NullHandler())
+
+try:
     from b1sl.b1sl import entities
 except ImportError:
     entities = None  # Before code generation
@@ -38,19 +38,19 @@ except ImportError:
     fields = None
 
 __all__ = [
-    "B1Client",
     "AsyncB1Client",
+    "B1Client",
     "B1Config",
-    "B1Env",
     "B1Environment",
-    "RestAdapter",
     "AsyncRestAdapter",
-    "GenericResource",
+    "RestAdapter",
+    "B1Env",
+    "SAPConcurrencyError",
     "AsyncGenericResource",
+    "GenericResource",
+    "ODataQuery",
     "entities",
     "fields",
-    "ODataQuery",
     "HookContext",
     "ObservabilityConfig",
-    "SAPConcurrencyError",
 ]

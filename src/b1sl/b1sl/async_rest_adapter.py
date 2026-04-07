@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import logging
 import time
 from datetime import datetime, timedelta
 from typing import Optional
@@ -9,14 +8,12 @@ from urllib.parse import urlencode
 
 import httpx
 
-from b1sl.b1sl.base_adapter import BaseRestAdapter, HookContext, ObservabilityConfig
-from b1sl.b1sl.config import B1Config
+from b1sl.b1sl.base_adapter import BaseRestAdapter, HookContext
 from b1sl.b1sl.exceptions.exceptions import (
     B1AuthError,
     B1Exception,
     B1NotFoundError,
     B1ValidationError,
-    SAPConcurrencyError,
 )
 from b1sl.b1sl.models.result import Result
 
@@ -91,7 +88,7 @@ class AsyncRestAdapter(BaseRestAdapter):
             if self._initial_session_id:
                  self._client.cookies.set("B1SESSION", self._initial_session_id)
                  self.is_session_active = True
-                 # We don't have an expiry date, so we set it to None, which 
+                 # We don't have an expiry date, so we set it to None, which
                  # forces the 401-retry logic to handle it if it's already expired.
                  self.token_expiry = None
         self._is_closed = False
@@ -115,7 +112,7 @@ class AsyncRestAdapter(BaseRestAdapter):
         if self._client:
             await self._client.aclose()
             self._client = None
-            
+
         self._is_closed = True
 
     async def __aenter__(self) -> AsyncRestAdapter:

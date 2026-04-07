@@ -8,17 +8,20 @@ from b1sl.b1sl.base_adapter import ObservabilityConfig
 from b1sl.b1sl.config import B1Config
 
 if TYPE_CHECKING:
+    from b1sl.b1sl.models._generated.entities.businesspartners import (
+        Activity,
+        BusinessPartner,
+    )
+    from b1sl.b1sl.models._generated.entities.finance import JournalEntry
+    from b1sl.b1sl.models._generated.entities.general import Document, Payment, User
+
+    # Models for typing convenience aliases
+    from b1sl.b1sl.models._generated.entities.inventory import Item
+    from b1sl.b1sl.models._generated.entities.production import ProductionOrder
+    from b1sl.b1sl.models._generated.entities.sales import ServiceCall
     from b1sl.b1sl.models.base import B1Model
     from b1sl.b1sl.resources.async_base import AsyncGenericResource
     from b1sl.b1sl.resources.udo import AsyncUDOResource
-    
-    # Models for typing convenience aliases
-    from b1sl.b1sl.models._generated.entities.inventory import Item
-    from b1sl.b1sl.models._generated.entities.businesspartners import BusinessPartner, Activity
-    from b1sl.b1sl.models._generated.entities.general import Document, Payment, User
-    from b1sl.b1sl.models._generated.entities.production import ProductionOrder
-    from b1sl.b1sl.models._generated.entities.finance import JournalEntry
-    from b1sl.b1sl.models._generated.entities.sales import ServiceCall
 
 
 class AsyncB1Client:

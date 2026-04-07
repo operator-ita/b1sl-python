@@ -4,6 +4,7 @@ sap_metadata_generator.parser
 Parses SAP B1 OData metadata.xml into intermediate structures.
 """
 from __future__ import annotations
+
 import json
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
@@ -87,7 +88,7 @@ class ParsedMetadata:
     raw_actions: list[ActionDef] = field(default_factory=list)
     raw_functions: list[FunctionDef] = field(default_factory=list)
     dedicated_services: dict[str, SAPEntitySet] = field(default_factory=dict)
-    
+
     # Enrichment and Filtering
     service_document: list[str] = field(default_factory=list) # From service_document.json
     reference_cache: dict[str, Any] = field(default_factory=dict) # From reference_cache.json
@@ -108,18 +109,18 @@ def _should_skip(name: str) -> bool:
     """Ignore user defined objects, fields and specific prefixes for a Vanilla SDK."""
     # Common prefixes to skip in a general-purpose package (both with and without underscore)
     SKIP_PREFIXES = (
-        "U_", "@", "#", "EUR", "CP_", "MRK_", "SBO_", "BEM", "CFDI", 
+        "U_", "@", "#", "EUR", "CP_", "MRK_", "SBO_", "BEM", "CFDI",
         "ERPN", "EDF", "ECM", "BIP", "KP_", "POS_", "VM_", " CEST", "CEST",
         "CRM_"
     )
-    
+
     upper_name = name.upper()
     if any(upper_name.startswith(p) for p in SKIP_PREFIXES):
         # Specific exception list: things that start with these letters but ARE SAP Standard
         # Add here if anything is wrongly skipped
         pass
         return True
-        
+
     # Also ignore anything that has _U_ in the middle (common in some developments)
     if "_U_" in name:
         return True
@@ -148,7 +149,7 @@ class MetadataParser:
             with open(service_doc_path, 'r') as f:
                 doc = json.load(f)
                 service_doc = [v["name"] for v in doc.get("value", [])]
-        
+
         ref_cache = {}
         if ref_cache_path and Path(ref_cache_path).exists():
             print(f"Loading Reference Cache enrichment: {ref_cache_path}")
@@ -156,7 +157,7 @@ class MetadataParser:
                 ref_cache = json.load(f)
 
         metadata = ParsedMetadata(service_document=service_doc, reference_cache=ref_cache)
-        
+
         path_to_parse = xml_path if xml_path else self.path
         context = ET.iterparse(path_to_parse, events=("start", "end"))
         current_entity: SAPEntityType | None = None
@@ -238,10 +239,10 @@ class MetadataParser:
                     # 2. Reject if not in the active service document (if provided)
                     if metadata.service_document and name not in metadata.service_document:
                         continue
-                    
+
                     # 3. Enrichment from reference
                     ref_info = metadata.reference_cache.get(name, {})
-                    
+
                     entity_type = elem.get("EntityType", "")
                     if name and entity_type:
                         clean_type = entity_type.split(".")[-1]
@@ -274,14 +275,14 @@ class MetadataParser:
                         param = elem.find("{*}Parameter")
                         if param is not None:
                             bound_type = param.get("Type", "").split(".")[-1]
-                    
+
                     entity_set = elem.get("EntitySet", "")
-                    
+
                     if tag.startswith("Action"):
                         act_func = ActionDef(name=name, bound_entity_set=entity_set, is_bound=is_bound, bound_type=bound_type)
                     else:
                         act_func = FunctionDef(name=name, bound_entity_set=entity_set, is_bound=is_bound, bound_type=bound_type) # type: ignore
-                    
+
                     # Group actions into 'Dedicated Services' if they follow the ServiceName_Action pattern
                     if "_" in name and not is_bound:
                         service_name = name.split("_")[0]
@@ -293,7 +294,7 @@ class MetadataParser:
 
                         target_es = None
                         # DECISION: Should we merge into EntitySet or keep as Dedicated Service?
-                        # If the service_name itself is a documented entity in reference_cache, 
+                        # If the service_name itself is a documented entity in reference_cache,
                         # we keep it separate as a Dedicated Service.
                         if service_name in metadata.reference_cache:
                             # Keep as Dedicated Service
@@ -302,7 +303,7 @@ class MetadataParser:
                              target_es = metadata.entity_sets[clean_target_name]
                         elif service_name in metadata.entity_sets:
                              target_es = metadata.entity_sets[service_name]
-                        
+
                         if target_es:
                              # Merge into existing EntitySet
                              if tag.startswith("Action"):
@@ -316,7 +317,7 @@ class MetadataParser:
                              if service_name not in metadata.dedicated_services:
                                  metadata.dedicated_services[service_name] = SAPEntitySet(
                                      name=service_name,
-                                     entity_type="None", 
+                                     entity_type="None",
                                  )
                              target_service = metadata.dedicated_services[service_name]
                              if tag.startswith("Action"):

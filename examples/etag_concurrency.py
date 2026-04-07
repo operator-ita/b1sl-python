@@ -23,10 +23,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from examples.utils import build_async_client  # type: ignore[import]
-
 from b1sl.b1sl import AsyncRestAdapter, SAPConcurrencyError
-
+from examples.utils import build_async_client  # type: ignore[import]
 
 # ════════════════════════════════════════════════════════════════════════════
 #  1. Basic ETag flow  (GET → automatic cache → PATCH with If-Match)

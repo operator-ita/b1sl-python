@@ -1,294 +1,306 @@
 # AUTO-GENERATED — do not edit by hand.
 from __future__ import annotations
 
-from . import businesspartners
-from . import finance
-from . import general
-from . import inventory
-from . import production
-from . import purchasing
-from . import sales
-
-from .general import AccountCategory
-from .general import AccountSegmentation
-from .general import AccountSegmentationCategory
-from .general import AccrualType
-from .businesspartners import Activity
-from .businesspartners import ActivityLocation
-from .businesspartners import ActivityRecipientList
-from .businesspartners import ActivityStatus
-from .businesspartners import ActivitySubject
-from .businesspartners import ActivityType
-from .general import AdditionalExpense
-from .general import AlertManagement
-from .general import AlternateCatNum
-from .general import ApprovalRequest
-from .general import ApprovalStage
-from .general import ApprovalTemplate
-from .finance import AssetClass
-from .general import AssetDepreciationGroup
-from .general import AssetDocument
-from .general import AssetGroup
-from .general import AssetRevaluation
-from .general import Attachments2
-from .general import AttributeGroup
-from .general import B1Session
-from .general import BOEDocumentType
-from .general import BOEInstruction
-from .general import BOEPortfolio
-from .general import BPFiscalRegistryID
-from .general import BPPriority
-from .general import BPVatExemptions
-from .general import Bank
-from .general import BankChargesAllocationCode
-from .general import BankPage
-from .general import BankStatement
-from .general import BarCode
-from .general import BatchNumberDetail
-from .general import BillOfExchangeTransaction
-from .general import BinLocation
-from .general import BinLocationAttribute
-from .general import BinLocationField
-from .sales import BlanketAgreement
-from .general import Branch
-from .general import BrazilBeverageIndexer
-from .general import BrazilFuelIndexer
-from .general import BrazilMultiIndexer
-from .general import BrazilNumericIndexer
-from .general import BrazilStringIndexer
-from .general import Budget
-from .general import BudgetDistribution
-from .general import BudgetScenario
-from .businesspartners import BusinessPartner
-from .businesspartners import BusinessPartnerGroup
-from .businesspartners import BusinessPartnerProperty
-from .general import BusinessPlace
-from .general import CIGCode
-from .general import CUPCode
-from .general import Campaign
-from .general import CampaignResponseType
-from .general import CashDiscount
-from .general import CashFlowLineItem
-from .general import CentralBankIndicator
-from .general import CertificateSeries
-from .finance import ChartOfAccount
-from .general import ChecksforPayment
-from .general import ChooseFromList
-from .general import ClosingDateProcedure
-from .general import Cockpit
-from .general import ColumnPreferences
-from .general import CommissionGroup
-from .general import Contact
-from .sales import ContractTemplate
-from .finance import CostCenterType
-from .general import CostElement
-from .general import Country
-from .general import County
-from .general import CreditCard
-from .general import CreditCardPayment
-from .general import CreditPaymentMethod
-from .finance import Currency
-from .general import CustomerEquipmentCard
-from .general import CustomsDeclaration
-from .general import CustomsGroup
-from .inventory import CycleCountDetermination
-from .general import DNFCodeSetup
-from .general import DeductibleTax
-from .general import DeductionTaxGroup
-from .general import DeductionTaxHierarchy
-from .general import DeductionTaxSubGroup
-from .general import DefaultElementsforCR
-from .general import Department
-from .general import Deposit
-from .general import DepreciationArea
-from .general import DepreciationType
-from .general import DepreciationTypePool
-from .general import DeterminationCriteria
-from .general import Dimension
-from .general import DistributionRule
-from .general import Document
-from .general import DunningLetter
-from .general import DunningTerm
-from .general import DynamicSystemString
-from .general import EBooks
-from .general import EWBTransporter
-from .general import ElectronicFileFormat
-from .general import EmailGroup
-from .general import EmployeeIDType
-from .general import EmployeeImage
-from .general import EmployeeInfo
-from .general import EmployeePosition
-from .general import EmployeeRoleSetup
-from .general import EmployeeStatus
-from .general import EmployeeTransfer
-from .general import EmploymentCategory
-from .general import EnhancedDiscountGroup
-from .general import ExceptionalEvent
-from .general import ExpenseTypeData
-from .general import ExportDetermination
-from .general import ExtendedTranslation
-from .general import FAAccountDetermination
-from .general import FactoringIndicator
-from .general import FinancialYear
-from .general import FiscalPrinter
-from .general import FormattedSearch
-from .general import Forms1099
-from .general import GLAccountAdvancedRule
-from .general import Gender
-from .general import GovPayCode
-from .general import Holiday
-from .general import HouseBankAccount
-from .general import IdentificationCode
-from .general import ImportDetermination
-from .general import IndiaHsn
-from .general import IndiaSacCode
-from .general import Industry
-from .general import IntegrationPackageConfigure
-from .general import InternalReconciliation
-from .general import IntrastatConfiguration
-from .inventory import InventoryCounting
-from .inventory import InventoryCountingDraft
-from .general import InventoryCycles
-from .inventory import InventoryOpeningBalance
-from .inventory import InventoryPosting
-from .inventory import Item
-from .inventory import ItemGroups
-from .inventory import ItemImage
-from .inventory import ItemProperty
-from .finance import JournalEntry
-from .finance import JournalEntryDocumentType
-from .general import KPI
-from .general import KnowledgeBaseSolution
-from .purchasing import LandedCost
-from .purchasing import LandedCostsCode
-from .general import LegalData
-from .general import LengthMeasure
-from .general import LocalEra
-from .general import Manufacturer
-from .general import MaterialGroup
-from .inventory import MaterialRevaluation
-from .general import Message
-from .general import MobileAddOnSetting
-from .general import MultiLanguageTranslation
-from .general import NCMCodeSetup
-from .general import NFModel
-from .general import NFTaxCategory
-from .general import NatureOfAssessee
-from .general import NotaFiscalCFOP
-from .general import NotaFiscalCST
-from .general import NotaFiscalUsage
-from .general import OccurenceCode
-from .general import PM_ProjectDocumentData
-from .general import PM_TimeSheetData
-from .general import POSDailySummary
-from .general import PackagesType
-from .general import PartnersSetup
-from .general import Payment
-from .general import PaymentBlock
-from .general import PaymentReasonCode
-from .general import PaymentRunExport
-from .general import PaymentTermsType
-from .general import PickList
-from .general import Picture
-from .general import PostingTemplates
-from .general import PredefinedText
-from .general import PriceList
-from .production import ProductTree
-from .production import ProductionOrder
-from .finance import ProfitCenter
-from .general import Project
-from .general import PurchaseTaxInvoice
-from .general import QueryAuthGroup
-from .general import QueryCategory
-from .general import Queue
-from .general import RecurringPostings
-from .general import Relationship
-from .general import ReportType
-from .production import Resource
-from .production import ResourceCapacity
-from .production import ResourceGroup
-from .production import ResourceProperty
-from .general import RetornoCode
-from .general import RouteStage
-from .general import SQLQuery
-from .general import SQLView
-from .general import SalesForecast
-from .general import SalesOpportunities
-from .general import SalesOpportunityCompetitorSetup
-from .general import SalesOpportunityInterestSetup
-from .general import SalesOpportunityReasonSetup
-from .general import SalesOpportunitySourceSetup
-from .general import SalesPerson
-from .general import SalesStage
-from .general import SalesTaxAuthoritiesType
-from .general import SalesTaxAuthority
-from .general import SalesTaxCode
-from .general import SalesTaxInvoice
-from .general import Section
-from .general import SerialNumberDetail
-from .sales import ServiceCall
-from .sales import ServiceCallOrigin
-from .sales import ServiceCallProblemSubType
-from .sales import ServiceCallProblemType
-from .sales import ServiceCallSolutionStatus
-from .sales import ServiceCallStatus
-from .sales import ServiceCallType
-from .general import ServiceContract
-from .general import ServiceGroup
-from .general import ShippingType
-from .general import ShortLinkMapping
-from .general import SingleUserConnection
-from .general import SpecialPrice
-from .general import State
-from .general import StockTaking
-from .inventory import StockTransfer
-from .general import TSRExceptionalEvent
-from .general import TargetGroup
-from .general import TaxCodeDetermination
-from .general import TaxCodeDeterminationTCD
-from .general import TaxExemptReason
-from .general import TaxInvoiceReport
-from .general import TaxReplStateSubData
-from .general import TaxReportFilter
-from .general import TaxWebSite
-from .general import Team
-from .general import TerminationReason
-from .general import Territory
-from .general import TrackingNote
-from .general import TransactionCode
-from .general import TransportationDocumentData
-from .general import UnitOfMeasurement
-from .general import UnitOfMeasurementGroup
-from .general import User
-from .general import UserDefaultGroup
-from .general import UserFieldMD
-from .general import UserGroup
-from .general import UserKeysMD
-from .general import UserLanguage
-from .general import UserObjectsMD
-from .general import UserPermissionTree
-from .general import UserQuery
-from .general import UserTablesMD
-from .general import ValueMappingCommunicationData
-from .finance import VatGroup
-from .general import WTDCode
-from .general import WTaxTypeCode
-from .inventory import Warehouse
-from .inventory import WarehouseLocation
-from .inventory import WarehouseSublevelCode
-from .general import WebClientBookmarkTile
-from .general import WebClientDashboard
-from .general import WebClientFormSetting
-from .general import WebClientLaunchpad
-from .general import WebClientListviewFilter
-from .general import WebClientNotification
-from .general import WebClientPreference
-from .general import WebClientRecentActivity
-from .general import WebClientVariant
-from .general import WebClientVariantGroup
-from .general import WeightMeasure
-from .finance import WithholdingTaxCode
-from .general import WizardPaymentMethod
+from . import (
+    businesspartners,
+    finance,
+    general,
+    inventory,
+    production,
+    purchasing,
+    sales,
+)
+from .businesspartners import (
+    Activity,
+    ActivityLocation,
+    ActivityRecipientList,
+    ActivityStatus,
+    ActivitySubject,
+    ActivityType,
+    BusinessPartner,
+    BusinessPartnerGroup,
+    BusinessPartnerProperty,
+)
+from .finance import (
+    AssetClass,
+    ChartOfAccount,
+    CostCenterType,
+    Currency,
+    JournalEntry,
+    JournalEntryDocumentType,
+    ProfitCenter,
+    VatGroup,
+    WithholdingTaxCode,
+)
+from .general import (
+    KPI,
+    AccountCategory,
+    AccountSegmentation,
+    AccountSegmentationCategory,
+    AccrualType,
+    AdditionalExpense,
+    AlertManagement,
+    AlternateCatNum,
+    ApprovalRequest,
+    ApprovalStage,
+    ApprovalTemplate,
+    AssetDepreciationGroup,
+    AssetDocument,
+    AssetGroup,
+    AssetRevaluation,
+    Attachments2,
+    AttributeGroup,
+    B1Session,
+    Bank,
+    BankChargesAllocationCode,
+    BankPage,
+    BankStatement,
+    BarCode,
+    BatchNumberDetail,
+    BillOfExchangeTransaction,
+    BinLocation,
+    BinLocationAttribute,
+    BinLocationField,
+    BOEDocumentType,
+    BOEInstruction,
+    BOEPortfolio,
+    BPFiscalRegistryID,
+    BPPriority,
+    BPVatExemptions,
+    Branch,
+    BrazilBeverageIndexer,
+    BrazilFuelIndexer,
+    BrazilMultiIndexer,
+    BrazilNumericIndexer,
+    BrazilStringIndexer,
+    Budget,
+    BudgetDistribution,
+    BudgetScenario,
+    BusinessPlace,
+    Campaign,
+    CampaignResponseType,
+    CashDiscount,
+    CashFlowLineItem,
+    CentralBankIndicator,
+    CertificateSeries,
+    ChecksforPayment,
+    ChooseFromList,
+    CIGCode,
+    ClosingDateProcedure,
+    Cockpit,
+    ColumnPreferences,
+    CommissionGroup,
+    Contact,
+    CostElement,
+    Country,
+    County,
+    CreditCard,
+    CreditCardPayment,
+    CreditPaymentMethod,
+    CUPCode,
+    CustomerEquipmentCard,
+    CustomsDeclaration,
+    CustomsGroup,
+    DeductibleTax,
+    DeductionTaxGroup,
+    DeductionTaxHierarchy,
+    DeductionTaxSubGroup,
+    DefaultElementsforCR,
+    Department,
+    Deposit,
+    DepreciationArea,
+    DepreciationType,
+    DepreciationTypePool,
+    DeterminationCriteria,
+    Dimension,
+    DistributionRule,
+    DNFCodeSetup,
+    Document,
+    DunningLetter,
+    DunningTerm,
+    DynamicSystemString,
+    EBooks,
+    ElectronicFileFormat,
+    EmailGroup,
+    EmployeeIDType,
+    EmployeeImage,
+    EmployeeInfo,
+    EmployeePosition,
+    EmployeeRoleSetup,
+    EmployeeStatus,
+    EmployeeTransfer,
+    EmploymentCategory,
+    EnhancedDiscountGroup,
+    EWBTransporter,
+    ExceptionalEvent,
+    ExpenseTypeData,
+    ExportDetermination,
+    ExtendedTranslation,
+    FAAccountDetermination,
+    FactoringIndicator,
+    FinancialYear,
+    FiscalPrinter,
+    FormattedSearch,
+    Forms1099,
+    Gender,
+    GLAccountAdvancedRule,
+    GovPayCode,
+    Holiday,
+    HouseBankAccount,
+    IdentificationCode,
+    ImportDetermination,
+    IndiaHsn,
+    IndiaSacCode,
+    Industry,
+    IntegrationPackageConfigure,
+    InternalReconciliation,
+    IntrastatConfiguration,
+    InventoryCycles,
+    KnowledgeBaseSolution,
+    LegalData,
+    LengthMeasure,
+    LocalEra,
+    Manufacturer,
+    MaterialGroup,
+    Message,
+    MobileAddOnSetting,
+    MultiLanguageTranslation,
+    NatureOfAssessee,
+    NCMCodeSetup,
+    NFModel,
+    NFTaxCategory,
+    NotaFiscalCFOP,
+    NotaFiscalCST,
+    NotaFiscalUsage,
+    OccurenceCode,
+    PackagesType,
+    PartnersSetup,
+    Payment,
+    PaymentBlock,
+    PaymentReasonCode,
+    PaymentRunExport,
+    PaymentTermsType,
+    PickList,
+    Picture,
+    PM_ProjectDocumentData,
+    PM_TimeSheetData,
+    POSDailySummary,
+    PostingTemplates,
+    PredefinedText,
+    PriceList,
+    Project,
+    PurchaseTaxInvoice,
+    QueryAuthGroup,
+    QueryCategory,
+    Queue,
+    RecurringPostings,
+    Relationship,
+    ReportType,
+    RetornoCode,
+    RouteStage,
+    SalesForecast,
+    SalesOpportunities,
+    SalesOpportunityCompetitorSetup,
+    SalesOpportunityInterestSetup,
+    SalesOpportunityReasonSetup,
+    SalesOpportunitySourceSetup,
+    SalesPerson,
+    SalesStage,
+    SalesTaxAuthoritiesType,
+    SalesTaxAuthority,
+    SalesTaxCode,
+    SalesTaxInvoice,
+    Section,
+    SerialNumberDetail,
+    ServiceContract,
+    ServiceGroup,
+    ShippingType,
+    ShortLinkMapping,
+    SingleUserConnection,
+    SpecialPrice,
+    SQLQuery,
+    SQLView,
+    State,
+    StockTaking,
+    TargetGroup,
+    TaxCodeDetermination,
+    TaxCodeDeterminationTCD,
+    TaxExemptReason,
+    TaxInvoiceReport,
+    TaxReplStateSubData,
+    TaxReportFilter,
+    TaxWebSite,
+    Team,
+    TerminationReason,
+    Territory,
+    TrackingNote,
+    TransactionCode,
+    TransportationDocumentData,
+    TSRExceptionalEvent,
+    UnitOfMeasurement,
+    UnitOfMeasurementGroup,
+    User,
+    UserDefaultGroup,
+    UserFieldMD,
+    UserGroup,
+    UserKeysMD,
+    UserLanguage,
+    UserObjectsMD,
+    UserPermissionTree,
+    UserQuery,
+    UserTablesMD,
+    ValueMappingCommunicationData,
+    WebClientBookmarkTile,
+    WebClientDashboard,
+    WebClientFormSetting,
+    WebClientLaunchpad,
+    WebClientListviewFilter,
+    WebClientNotification,
+    WebClientPreference,
+    WebClientRecentActivity,
+    WebClientVariant,
+    WebClientVariantGroup,
+    WeightMeasure,
+    WizardPaymentMethod,
+    WTaxTypeCode,
+    WTDCode,
+)
+from .inventory import (
+    CycleCountDetermination,
+    InventoryCounting,
+    InventoryCountingDraft,
+    InventoryOpeningBalance,
+    InventoryPosting,
+    Item,
+    ItemGroups,
+    ItemImage,
+    ItemProperty,
+    MaterialRevaluation,
+    StockTransfer,
+    Warehouse,
+    WarehouseLocation,
+    WarehouseSublevelCode,
+)
+from .production import (
+    ProductionOrder,
+    ProductTree,
+    Resource,
+    ResourceCapacity,
+    ResourceGroup,
+    ResourceProperty,
+)
+from .purchasing import LandedCost, LandedCostsCode
+from .sales import (
+    BlanketAgreement,
+    ContractTemplate,
+    ServiceCall,
+    ServiceCallOrigin,
+    ServiceCallProblemSubType,
+    ServiceCallProblemType,
+    ServiceCallSolutionStatus,
+    ServiceCallStatus,
+    ServiceCallType,
+)
 
 _ALL_MODELS = []
 _ALL_MODELS.append(general.AccountCategory)
@@ -434,6 +446,7 @@ _ALL_MODELS.append(general.InventoryCycles)
 _ALL_MODELS.append(inventory.InventoryOpeningBalance)
 _ALL_MODELS.append(inventory.InventoryPosting)
 from ..._overrides.inventory import Item
+
 _ALL_MODELS.append(Item)
 _ALL_MODELS.append(inventory.ItemGroups)
 _ALL_MODELS.append(inventory.ItemImage)

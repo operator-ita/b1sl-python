@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class DeliveryNotesService(GenericResource[Any]):
     endpoint = "DeliveryNotesService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -17,12 +19,12 @@ class DeliveryNotesService(GenericResource[Any]):
     def approve_and_add(self, payload: dict | None = None) -> Any:
         """POST DeliveryNotesService_ApproveAndAdd
         """
-        return self._adapter.post(f"DeliveryNotesService_ApproveAndAdd", data=payload)
+        return self._adapter.post("DeliveryNotesService_ApproveAndAdd", data=payload)
 
     def approve_and_update(self, payload: dict | None = None) -> Any:
         """POST DeliveryNotesService_ApproveAndUpdate
         """
-        return self._adapter.post(f"DeliveryNotesService_ApproveAndUpdate", data=payload)
+        return self._adapter.post("DeliveryNotesService_ApproveAndUpdate", data=payload)
 
     def cancel2(self, payload: dict | None = None) -> Any:
         """POST DeliveryNotesService_Cancel2
@@ -38,17 +40,17 @@ class DeliveryNotesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"DeliveryNotesService_Cancel2", data=payload)
+        return self._adapter.post("DeliveryNotesService_Cancel2", data=payload)
 
     def close_by_date(self, payload: dict | None = None) -> Any:
         """POST DeliveryNotesService_CloseByDate
         """
-        return self._adapter.post(f"DeliveryNotesService_CloseByDate", data=payload)
+        return self._adapter.post("DeliveryNotesService_CloseByDate", data=payload)
 
     def export_e_way_bill(self, payload: dict | None = None) -> Any:
         """POST DeliveryNotesService_ExportEWayBill
         """
-        return self._adapter.post(f"DeliveryNotesService_ExportEWayBill", data=payload)
+        return self._adapter.post("DeliveryNotesService_ExportEWayBill", data=payload)
 
     def get_approval_templates(self, payload: dict | None = None) -> Any:
         """POST DeliveryNotesService_GetApprovalTemplates
@@ -71,15 +73,15 @@ class DeliveryNotesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"DeliveryNotesService_GetApprovalTemplates", data=payload)
+        return self._adapter.post("DeliveryNotesService_GetApprovalTemplates", data=payload)
 
     def handle_approval_request(self, payload: dict | None = None) -> Any:
         """POST DeliveryNotesService_HandleApprovalRequest
         Invoke the method 'HandleApprovalRequest' on this service.
         """
-        return self._adapter.post(f"DeliveryNotesService_HandleApprovalRequest", data=payload)
+        return self._adapter.post("DeliveryNotesService_HandleApprovalRequest", data=payload)
 
     def init_data(self, payload: dict | None = None) -> Any:
         """POST DeliveryNotesService_InitData
         """
-        return self._adapter.post(f"DeliveryNotesService_InitData", data=payload)
+        return self._adapter.post("DeliveryNotesService_InitData", data=payload)

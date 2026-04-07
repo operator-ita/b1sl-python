@@ -3,7 +3,6 @@ sap_metadata_generator.mapper
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Maps EDM types to Python types.
 """
-from typing import Optional
 
 
 EDM_TYPE_MAP: dict[str, str] = {

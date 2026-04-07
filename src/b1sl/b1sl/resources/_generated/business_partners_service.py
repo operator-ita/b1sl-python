@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class BusinessPartnersService(GenericResource[Any]):
     endpoint = "BusinessPartnersService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -39,9 +41,9 @@ class BusinessPartnersService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"BusinessPartnersService_CreateOpenBalance", data=payload)
+        return self._adapter.post("BusinessPartnersService_CreateOpenBalance", data=payload)
 
     def init_data(self, payload: dict | None = None) -> Any:
         """POST BusinessPartnersService_InitData
         """
-        return self._adapter.post(f"BusinessPartnersService_InitData", data=payload)
+        return self._adapter.post("BusinessPartnersService_InitData", data=payload)

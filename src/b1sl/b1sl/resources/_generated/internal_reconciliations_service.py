@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class InternalReconciliationsService(GenericResource[Any]):
     endpoint = "InternalReconciliationsService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -33,7 +35,7 @@ class InternalReconciliationsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"InternalReconciliationsService_GetOpenTransactions", data=payload)
+        return self._adapter.post("InternalReconciliationsService_GetOpenTransactions", data=payload)
 
     def request_approve_cancellation(self, payload: dict | None = None) -> Any:
         """POST InternalReconciliationsService_RequestApproveCancellation
@@ -48,4 +50,4 @@ class InternalReconciliationsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"InternalReconciliationsService_RequestApproveCancellation", data=payload)
+        return self._adapter.post("InternalReconciliationsService_RequestApproveCancellation", data=payload)

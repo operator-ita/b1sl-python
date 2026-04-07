@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class UserMenuService(GenericResource[Any]):
     endpoint = "UserMenuService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -25,7 +27,7 @@ class UserMenuService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"UserMenuService_GetUserMenu", data=payload)
+        return self._adapter.post("UserMenuService_GetUserMenu", data=payload)
 
     def update_current_user_menu(self, payload: dict | None = None) -> Any:
         """POST UserMenuService_UpdateCurrentUserMenu
@@ -79,7 +81,7 @@ class UserMenuService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"UserMenuService_UpdateCurrentUserMenu", data=payload)
+        return self._adapter.post("UserMenuService_UpdateCurrentUserMenu", data=payload)
 
     def update_user_menu(self, payload: dict | None = None) -> Any:
         """POST UserMenuService_UpdateUserMenu
@@ -92,7 +94,7 @@ class UserMenuService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"UserMenuService_UpdateUserMenu", data=payload)
+        return self._adapter.post("UserMenuService_UpdateUserMenu", data=payload)
 
     # --- Functions ---
 
@@ -100,4 +102,4 @@ class UserMenuService(GenericResource[Any]):
         """POST UserMenuService_GetCurrentUserMenu(params)
         Invoke the method 'GetCurrentUserMenu' on this service.
         """
-        return self._function(f"UserMenuService_GetCurrentUserMenu", params)
+        return self._function("UserMenuService_GetCurrentUserMenu", params)

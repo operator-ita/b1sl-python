@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from enum import StrEnum
+
 
 class AccountCategoryFields(StrEnum):
     category_code = 'CategoryCode'

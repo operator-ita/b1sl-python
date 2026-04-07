@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from enum import StrEnum
+
 
 class BlanketAgreementFields(StrEnum):
     agreement_no = 'AgreementNo'

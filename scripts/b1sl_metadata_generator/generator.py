@@ -4,11 +4,11 @@ sap_metadata_generator.generator
 Main entry point for SDK code generation.
 """
 from __future__ import annotations
-import sys
-import re
+
 import keyword
+import re
+import sys
 from pathlib import Path
-from typing import Any
 
 # Add project root to sys.path to resolve absolute imports from this script's directory
 project_root = Path(__file__).resolve().parent.parent.parent
@@ -16,14 +16,27 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 try:
-    from scripts.sap_metadata_generator.parser import MetadataParser, SAPEntityType, SAPComplexType, SAPEnumType, ParsedMetadata
     from scripts.sap_metadata_generator.mapper import map_edm_type
-    from scripts.sap_metadata_generator.resolver import build_dependency_graph, topological_sort, detect_cycles
+    from scripts.sap_metadata_generator.parser import (
+        MetadataParser,
+        ParsedMetadata,
+        SAPComplexType,
+        SAPEntityType,
+        SAPEnumType,
+    )
+    from scripts.sap_metadata_generator.resolver import (
+        build_dependency_graph,
+        detect_cycles,
+        topological_sort,
+    )
 except ImportError:
     # Fallback for standalone execution if scripts/__init__.py is missing or root not in path
-    from parser import MetadataParser, SAPEntityType, SAPComplexType, SAPEnumType, ParsedMetadata
     from mapper import map_edm_type
-    from resolver import build_dependency_graph, topological_sort, detect_cycles
+    from parser import (
+        MetadataParser,
+        ParsedMetadata,
+        SAPEntityType,
+    )
 
 # Standard Domain Groups
 DOMAIN_MAP = {
@@ -56,7 +69,7 @@ class SDKGenerator:
         override_file = self.overrides_base / f"{domain}.py"
         if not override_file.exists():
             return False
-        
+
         # Simple check for 'class ClassName' in the file
         content = override_file.read_text()
         return f"class {class_name}" in content
@@ -67,9 +80,9 @@ class SDKGenerator:
         # 3. Fields Output base (src/b1sl/b1sl/fields/_generated)
         self.res_output_base = self.output_base.parent.parent / "resources" / "_generated"
         self.fields_output_base = self.output_base.parent.parent / "fields" / "_generated"
-        
-        print(f"  - Ensuring clean build directories...")
-        
+
+        print("  - Ensuring clean build directories...")
+
         for base in [self.output_base, self.res_output_base, self.fields_output_base]:
              base.mkdir(parents=True, exist_ok=True)
              (base / "__init__.py").touch()
@@ -81,7 +94,7 @@ class SDKGenerator:
         # Ensure model subdirs for entities
         (self.output_base / "entities").mkdir(exist_ok=True)
         (self.output_base / "entities" / "__init__.py").touch()
-        
+
         # Ensure fields subdirs
         (self.fields_output_base / "entities").mkdir(exist_ok=True)
         (self.fields_output_base / "entities" / "__init__.py").touch()
@@ -119,10 +132,10 @@ class SDKGenerator:
                 lines.append("    pass")
             for prop in ct.properties:
                 py_type, _ = map_edm_type(prop.edm_type, self.enum_names, self.complex_names)
-                
+
                 # Convert SAP PascalCase to Python snake_case
                 py_name = self._to_snake(prop.name)
-                
+
                 # Shadowing check (if after conversion it matches a type name)
                 if py_name in (py_type, "Any", "List", "Optional", "dict", "list", "str", "int", "float", "bool", "none"):
                     py_name = f"{py_name}_"
@@ -147,7 +160,7 @@ class SDKGenerator:
                 "from ..enums import *",
                 "from ..complex_types import *"
             ]
-            
+
             # Identify external dependencies for TYPE_CHECKING
             external_domains = set()
             for entity in entities:
@@ -169,27 +182,27 @@ class SDKGenerator:
                 lines.append(f"    \"\"\"SAP {entity.name} Entity\"\"\"")
                 if not entity.properties and not entity.nav_properties:
                     lines.append("    pass")
-                
+
                 # Sorted Properties: Keys first
                 props = sorted(entity.properties, key=lambda x: x.name not in entity.key_properties)
                 for prop in props:
                     py_type, _ = map_edm_type(prop.edm_type, self.enum_names, self.complex_names)
-                    
+
                     # Convert SAP PascalCase to Python snake_case
                     py_name = self._to_snake(prop.name)
-                    
+
                     # Shadowing check (if after conversion it matches a type name)
                     if py_name in (py_type, "Any", "List", "Optional", "dict", "str", "int", "float", "bool", "none"):
                         py_name = f"{py_name}_"
 
                     lines.append(f"    {py_name}: {py_type} | None = PydanticField(None, alias='{prop.name}')")
-                
+
                 # Nav Properties
                 for nav in entity.nav_properties:
                     if nav.target_type in self.metadata.entities:
                         # Convert SAP PascalCase to Python snake_case for nav names
                         py_nav_name = self._to_snake(nav.name)
-                        
+
                         # Use actual class name for navigation properties
                         if nav.multiplicity == "*":
                             t = f"list[{nav.target_type}]"
@@ -197,15 +210,15 @@ class SDKGenerator:
                             t = f"{nav.target_type}"
 
                         lines.append(f"    {py_nav_name}: {t} | None = PydanticField(None, alias='{nav.name}')")
-                
+
                 lines.append("")
 
-            
+
             entity_file.write_text("\n".join(lines))
 
     def generate_fields(self):
         """Generate StrEnum classes for all entities and complex types to provide autocomplete constants."""
-        
+
         # 1. Generate Complex Types
         complex_types_file = self.fields_output_base / "complex_types.py"
         lines_ct = [
@@ -214,7 +227,7 @@ class SDKGenerator:
             "from enum import StrEnum",
             ""
         ]
-        
+
         for name, ct in sorted(self.metadata.complex_types.items()):
             lines_ct.append(f"class {name}Fields(StrEnum):")
             if not ct.properties:
@@ -229,9 +242,9 @@ class SDKGenerator:
                     seen_ct.add(py_name)
                     lines_ct.append(f"    {py_name} = '{prop.name}'")
             lines_ct.append("")
-            
+
         complex_types_file.write_text("\n".join(lines_ct))
-        
+
         # 2. Generate Entities grouped by domain
         domains: dict[str, list[SAPEntityType]] = {}
         for entity in self.metadata.entities.values():
@@ -249,22 +262,22 @@ class SDKGenerator:
                 lines.append(f"class {entity.name}Fields(StrEnum):")
                 # Record all unique fields (properties + nav)
                 seen = set()
-                
+
                 all_props = entity.properties + entity.nav_properties
                 if not all_props:
                     lines.append("    pass")
-                
+
                 for prop in all_props:
                     py_name = self._to_snake(prop.name)
                     if py_name in keyword.kwlist:
                         py_name = f"{py_name}_"
-                    
+
                     if py_name in seen: continue
                     seen.add(py_name)
-                    
+
                     lines.append(f"    {py_name} = '{prop.name}'")
                 lines.append("")
-            
+
             fields_file.write_text("\n".join(lines))
 
         # 3. Generate the fields facade (__init__.py in fields)
@@ -274,23 +287,23 @@ class SDKGenerator:
             "from __future__ import annotations",
             ""
         ]
-        
+
         # Import Complex Types
         for ct_name in sorted(self.metadata.complex_types.keys()):
             lines.append(f"from ._generated.complex_types import {ct_name}Fields as {ct_name}")
-            
+
         # Import Entities
         for entity_name in sorted(self.metadata.entities.keys()):
             domain = get_domain(entity_name)
             lines.append(f"from ._generated.entities.{domain} import {entity_name}Fields as {entity_name}")
-        
+
         all_types = sorted(list(self.metadata.entities.keys()) + list(self.metadata.complex_types.keys()))
-        
+
         lines += ["", "__all__ = ["]
         for name in all_types:
             lines.append(f'    "{name}",')
         lines.append("]")
-        
+
         facade_file.write_text("\n".join(lines))
 
 
@@ -303,18 +316,17 @@ class SDKGenerator:
             "from .complex_types import *",
             "from .entities import *",
         ]
-        
+
         types_file.write_text("\n".join(lines))
 
     def _to_snake(self, name: str) -> str:
-        import re
         import keyword
         # Handle cases like CamelCase -> camel_case and BOE -> boe
         s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
         s2 = re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
         # Clean up multiple underscores
         snake = re.sub('_+', '_', s2)
-        
+
         # Protect Python keywords
         if keyword.iskeyword(snake) or snake in ("none", "true", "false"):
             return f"{snake}_"
@@ -323,14 +335,14 @@ class SDKGenerator:
     def generate_resources(self):
         # We process both standard entity sets and dedicated (functional) services
         all_targets = list(self.metadata.entity_sets.items()) + list(self.metadata.dedicated_services.items())
-        
+
         for name, es in all_targets:
             snake_name = self._to_snake(name)
             res_file = self.res_output_base / f"{snake_name}.py"
-            
+
             # Is it a standard entity set or a dedicated functional service?
             is_functional = es.entity_type == "None"
-            
+
             lines = [
                 "from __future__ import annotations",
                 "from typing import TYPE_CHECKING, Any",
@@ -348,20 +360,20 @@ class SDKGenerator:
                 class_name = name
             else:
                 class_name = f"{name}Service"
-                
+
             lines.append(f"class {class_name}(GenericResource[{model_generic}]):")
             if es.description:
                 lines.append(f"    \"\"\"{es.description}\"\"\"")
-            
+
             lines.append(f"    endpoint = \"{name}\"")
-            lines.append(f"    ")
-            lines.append(f"    def __init__(self, adapter):")
+            lines.append("    ")
+            lines.append("    def __init__(self, adapter):")
             if not is_functional:
                 lines.append(f"        from ...models._generated._types import {es.entity_type}")
                 lines.append(f"        self.model = {es.entity_type}")
             else:
-                lines.append(f"        self.model = None")
-            lines.append(f"        super().__init__(adapter)")
+                lines.append("        self.model = None")
+            lines.append("        super().__init__(adapter)")
             lines.append("")
 
             # Action Methods (Combined: specific to set + bound to type)
@@ -385,9 +397,9 @@ class SDKGenerator:
                         possible_prefixes = [name, name.replace("Service", "")]
                         if any(p == parts[0] or f"{p}Service" == parts[0] for p in possible_prefixes):
                              disp_name = "_".join(parts[1:])
-                    
+
                     act_snake = self._to_snake(disp_name)
-                    
+
                     # Enrichment lookup
                     ref_info = self.metadata.reference_cache.get(name, {}).get("methods", {}).get(act.name, {})
                     verb = ref_info.get("verb", "POST")
@@ -398,7 +410,7 @@ class SDKGenerator:
                     if act.is_bound:
                         lines.append(f"    def {act_snake}(self, key: Any) -> Any:")
                         lines.append(f"        \"\"\"{verb} {name}(key)/{act.name}")
-                        if desc: 
+                        if desc:
                             lines.append(f"        {desc}")
                         lines.append("        \"\"\"")
                         lines.append(f"        return self._action(key, \"{act.name}\")")
@@ -413,7 +425,7 @@ class SDKGenerator:
 
                         lines.append(f"    def {act_snake}(self, payload: dict | None = None) -> Any:")
                         lines.append(f"        \"\"\"{verb} {path_expr}")
-                        if desc: 
+                        if desc:
                             lines.append(f"        {desc}")
                         if example:
                             lines.append("")
@@ -446,9 +458,9 @@ class SDKGenerator:
                         possible_prefixes = [name, name.replace("Service", "")]
                         if any(p == parts[0] or f"{p}Service" == parts[0] for p in possible_prefixes):
                              disp_name = "_".join(parts[1:])
-                    
+
                     func_snake = self._to_snake(disp_name)
-                    
+
                     # Enrichment lookup
                     ref_info = self.metadata.reference_cache.get(name, {}).get("methods", {}).get(func.name, {})
                     verb = ref_info.get("verb", "GET")
@@ -457,7 +469,7 @@ class SDKGenerator:
                     if func.is_bound:
                         lines.append(f"    def {func_snake}(self, key: Any, params: dict | None = None) -> Any:")
                         lines.append(f"        \"\"\"{verb} {name}(key)/{func.name}(params)")
-                        if desc: 
+                        if desc:
                             lines.append(f"        {desc}")
                         lines.append("        \"\"\"")
                         lines.append(f"        return self._function(\"{func.name}\", params, key=key)")
@@ -469,7 +481,7 @@ class SDKGenerator:
 
                         lines.append(f"    def {func_snake}(self, params: dict | None = None) -> Any:")
                         lines.append(f"        \"\"\"{verb} {path_expr}(params)")
-                        if desc: 
+                        if desc:
                             lines.append(f"        {desc}")
                         lines.append("        \"\"\"")
                         lines.append(f"        return self._function(f\"{path_expr}\", params)")
@@ -486,10 +498,10 @@ class SDKGenerator:
             "",
             "# Resource imports"
         ]
-        
+
         # Combine standard entity sets and dedicated functional services
         all_targets = sorted(list(self.metadata.entity_sets.keys()) + list(self.metadata.dedicated_services.keys()))
-        
+
         property_lines = [
             "",
             "class B1ClientMixin:",
@@ -503,13 +515,13 @@ class SDKGenerator:
                 base_class_name = name
             else:
                 base_class_name = f"{name}Service"
-            
+
             # Use unique alias for each import to avoid collisions
             unique_alias = f"_{snake_name}_cls"
             import_lines.append(f"from b1sl.b1sl.resources._generated.{snake_name} import {base_class_name} as {unique_alias}")
 
             prop_name = snake_name
-            property_lines.append(f"    @property")
+            property_lines.append("    @property")
             property_lines.append(f"    def {prop_name}(self) -> {unique_alias}:")
             property_lines.append(f"        \"\"\"Service Layer Endpoint: /{name}\"\"\"")
             property_lines.append(f"        if not hasattr(self, \"_{prop_name}\") or self._{prop_name} is None:")
@@ -521,21 +533,21 @@ class SDKGenerator:
     def generate_entities_init(self):
         """Generates src/b1sl/b1sl/models/_generated/entities/__init__.py with rebuild logic."""
         init_file = self.output_base / "entities" / "__init__.py"
-        
+
         domains = sorted(set(get_domain(e.name) for e in self.metadata.entities.values()))
-        
+
         lines = [
             "# AUTO-GENERATED — do not edit by hand.",
             "from __future__ import annotations",
             ""
         ]
-        
+
         # 1. Import all domain modules
         for d in domains:
             lines.append(f"from . import {d}")
-            
+
         lines.append("")
-        
+
         # 1.1 Re-export all classes for package-level access
         for name in sorted(self.metadata.entities.keys()):
             domain = get_domain(name)
@@ -543,7 +555,7 @@ class SDKGenerator:
 
         lines.append("")
         lines.append("_ALL_MODELS = []")
-        
+
         # 2. Collect all entity classes and build a master namespace
         all_entities = sorted(self.metadata.entities.keys())
         for name in all_entities:
@@ -554,9 +566,9 @@ class SDKGenerator:
                 lines.append(f"_ALL_MODELS.append({name})")
             else:
                 lines.append(f"_ALL_MODELS.append({domain}.{name})")
-            
+
         lines.append("")
-        
+
         # 3. Model Rebuild Loop with centralized namespace
         lines.append("# Master namespace for cross-domain resolution")
         lines.append("_NAMESPACE = {m.__name__: m for m in _ALL_MODELS}")
@@ -565,7 +577,7 @@ class SDKGenerator:
         lines.append("for model in _ALL_MODELS:")
         lines.append("    model.model_rebuild(_types_namespace=_NAMESPACE)")
         lines.append("")
-        
+
         init_file.write_text("\n".join(lines))
 
     def generate_entities_facade(self):
@@ -577,14 +589,14 @@ class SDKGenerator:
             "# Usage: from b1sl.b1sl import entities as en  →  en.Item",
             "",
         ]
-        
+
         domains: dict[str, list[str]] = {}
         all_entities = []
         for entity in self.metadata.entities.values():
             domain = get_domain(entity.name)
             domains.setdefault(domain, []).append(entity.name)
             all_entities.append(entity.name)
-            
+
         lines.append("from b1sl.b1sl.models._generated.enums import *")
         lines.append("from b1sl.b1sl.models._generated.complex_types import *")
         lines.append("")
@@ -596,10 +608,10 @@ class SDKGenerator:
                     lines.append(f"from b1sl.b1sl.models._overrides.{domain} import {name}")
                 else:
                     lines.append(f"from b1sl.b1sl.models._generated.entities.{domain} import {name}")
-            
+
         lines.append("")
         lines.append("# --- Aliases for EntitySets (Singularized) ---")
-        
+
         # Helper to singularize properly for common SAP patterns
         def singularize(name: str) -> str:
             if name.endswith("Collection"): return name[:-10]
@@ -611,7 +623,7 @@ class SDKGenerator:
             if name.endswith("Series"): return name             # Series is its own singular
             if name.endswith("Taxes"): return name[:-2]         # Taxes -> Tax
             if name.endswith("Searches"): return name[:-2]      # Searches -> Search
-            
+
             if name.endswith("s"):
                 if name.endswith("ies"): return name[:-3] + "y"
                 return name[:-1]
@@ -639,7 +651,7 @@ class SDKGenerator:
         for name in sorted(aliases):
              lines.append(f'    "{name}",')
         lines.append("]")
-        
+
         lines.append("")
         lines.append("# Master namespace for cross-domain resolution")
         lines.append("_NAMESPACE = {")
@@ -654,7 +666,7 @@ class SDKGenerator:
         lines.append("    model = _NAMESPACE[name]")
         lines.append("    if hasattr(model, \"model_rebuild\"):")
         lines.append("        model.model_rebuild(_types_namespace=_NAMESPACE)")
-        
+
         # ensure entities directory exists inside src/b1sl/b1sl/
         facade_file.parent.mkdir(parents=True, exist_ok=True)
         facade_file.write_text("\n".join(lines))
@@ -690,18 +702,18 @@ def main():
     parser.add_argument("out", help="Output directory")
     parser.add_argument("--service-doc", help="Path to service_document.json", default=None)
     parser.add_argument("--ref-cache", help="Path to reference_cache.json", default=None)
-    
+
     args = parser.parse_args()
 
     xml_path = Path(args.xml)
     output_dir = Path(args.out)
-    
+
     metadata_parser = MetadataParser(xml_path)
     metadata = metadata_parser.parse(
         service_doc_path=args.service_doc,
         ref_cache_path=args.ref_cache
     )
-    
+
     gen = SDKGenerator(metadata, output_dir)
     gen.run()
 

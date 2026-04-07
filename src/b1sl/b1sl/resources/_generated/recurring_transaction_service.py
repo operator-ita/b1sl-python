@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
+
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -7,7 +9,7 @@ if TYPE_CHECKING:
 
 class RecurringTransactionService(GenericResource[Any]):
     endpoint = "RecurringTransactionService"
-    
+
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -28,7 +30,7 @@ class RecurringTransactionService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"RecurringTransactionService_DeleteRecurringTransactions", data=payload)
+        return self._adapter.post("RecurringTransactionService_DeleteRecurringTransactions", data=payload)
 
     def execute_recurring_transactions(self, payload: dict | None = None) -> Any:
         """POST RecurringTransactionService_ExecuteRecurringTransactions
@@ -45,13 +47,13 @@ class RecurringTransactionService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"RecurringTransactionService_ExecuteRecurringTransactions", data=payload)
+        return self._adapter.post("RecurringTransactionService_ExecuteRecurringTransactions", data=payload)
 
     def get_available_recurring_transactions(self, payload: dict | None = None) -> Any:
         """POST RecurringTransactionService_GetAvailableRecurringTransactions
         Invoke the method 'GetAvailableRecurringTransactions' on this service.
         """
-        return self._adapter.post(f"RecurringTransactionService_GetAvailableRecurringTransactions", data=payload)
+        return self._adapter.post("RecurringTransactionService_GetAvailableRecurringTransactions", data=payload)
 
     def get_recurring_transaction(self, payload: dict | None = None) -> Any:
         """POST RecurringTransactionService_GetRecurringTransaction
@@ -64,4 +66,4 @@ class RecurringTransactionService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post(f"RecurringTransactionService_GetRecurringTransaction", data=payload)
+        return self._adapter.post("RecurringTransactionService_GetRecurringTransaction", data=payload)

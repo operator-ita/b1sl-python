@@ -2,289 +2,299 @@
 # Re-exports every entity model for a flat import namespace.
 # Usage: from b1sl.b1sl import entities as en  →  en.Item
 
-from b1sl.b1sl.models._generated.enums import *
 from b1sl.b1sl.models._generated.complex_types import *
-
-from b1sl.b1sl.models._generated.entities.businesspartners import Activity
-from b1sl.b1sl.models._generated.entities.businesspartners import ActivityLocation
-from b1sl.b1sl.models._generated.entities.businesspartners import ActivityRecipientList
-from b1sl.b1sl.models._generated.entities.businesspartners import ActivityStatus
-from b1sl.b1sl.models._generated.entities.businesspartners import ActivitySubject
-from b1sl.b1sl.models._generated.entities.businesspartners import ActivityType
-from b1sl.b1sl.models._generated.entities.businesspartners import BusinessPartner
-from b1sl.b1sl.models._generated.entities.businesspartners import BusinessPartnerGroup
-from b1sl.b1sl.models._generated.entities.businesspartners import BusinessPartnerProperty
-from b1sl.b1sl.models._generated.entities.finance import AssetClass
-from b1sl.b1sl.models._generated.entities.finance import ChartOfAccount
-from b1sl.b1sl.models._generated.entities.finance import CostCenterType
-from b1sl.b1sl.models._generated.entities.finance import Currency
-from b1sl.b1sl.models._generated.entities.finance import JournalEntry
-from b1sl.b1sl.models._generated.entities.finance import JournalEntryDocumentType
-from b1sl.b1sl.models._generated.entities.finance import ProfitCenter
-from b1sl.b1sl.models._generated.entities.finance import VatGroup
-from b1sl.b1sl.models._generated.entities.finance import WithholdingTaxCode
-from b1sl.b1sl.models._generated.entities.general import AccountCategory
-from b1sl.b1sl.models._generated.entities.general import AccountSegmentation
-from b1sl.b1sl.models._generated.entities.general import AccountSegmentationCategory
-from b1sl.b1sl.models._generated.entities.general import AccrualType
-from b1sl.b1sl.models._generated.entities.general import AdditionalExpense
-from b1sl.b1sl.models._generated.entities.general import AlertManagement
-from b1sl.b1sl.models._generated.entities.general import AlternateCatNum
-from b1sl.b1sl.models._generated.entities.general import ApprovalRequest
-from b1sl.b1sl.models._generated.entities.general import ApprovalStage
-from b1sl.b1sl.models._generated.entities.general import ApprovalTemplate
-from b1sl.b1sl.models._generated.entities.general import AssetDepreciationGroup
-from b1sl.b1sl.models._generated.entities.general import AssetDocument
-from b1sl.b1sl.models._generated.entities.general import AssetGroup
-from b1sl.b1sl.models._generated.entities.general import AssetRevaluation
-from b1sl.b1sl.models._generated.entities.general import Attachments2
-from b1sl.b1sl.models._generated.entities.general import AttributeGroup
-from b1sl.b1sl.models._generated.entities.general import B1Session
-from b1sl.b1sl.models._generated.entities.general import BOEDocumentType
-from b1sl.b1sl.models._generated.entities.general import BOEInstruction
-from b1sl.b1sl.models._generated.entities.general import BOEPortfolio
-from b1sl.b1sl.models._generated.entities.general import BPFiscalRegistryID
-from b1sl.b1sl.models._generated.entities.general import BPPriority
-from b1sl.b1sl.models._generated.entities.general import BPVatExemptions
-from b1sl.b1sl.models._generated.entities.general import Bank
-from b1sl.b1sl.models._generated.entities.general import BankChargesAllocationCode
-from b1sl.b1sl.models._generated.entities.general import BankPage
-from b1sl.b1sl.models._generated.entities.general import BankStatement
-from b1sl.b1sl.models._generated.entities.general import BarCode
-from b1sl.b1sl.models._generated.entities.general import BatchNumberDetail
-from b1sl.b1sl.models._generated.entities.general import BillOfExchangeTransaction
-from b1sl.b1sl.models._generated.entities.general import BinLocation
-from b1sl.b1sl.models._generated.entities.general import BinLocationAttribute
-from b1sl.b1sl.models._generated.entities.general import BinLocationField
-from b1sl.b1sl.models._generated.entities.general import Branch
-from b1sl.b1sl.models._generated.entities.general import BrazilBeverageIndexer
-from b1sl.b1sl.models._generated.entities.general import BrazilFuelIndexer
-from b1sl.b1sl.models._generated.entities.general import BrazilMultiIndexer
-from b1sl.b1sl.models._generated.entities.general import BrazilNumericIndexer
-from b1sl.b1sl.models._generated.entities.general import BrazilStringIndexer
-from b1sl.b1sl.models._generated.entities.general import Budget
-from b1sl.b1sl.models._generated.entities.general import BudgetDistribution
-from b1sl.b1sl.models._generated.entities.general import BudgetScenario
-from b1sl.b1sl.models._generated.entities.general import BusinessPlace
-from b1sl.b1sl.models._generated.entities.general import CIGCode
-from b1sl.b1sl.models._generated.entities.general import CUPCode
-from b1sl.b1sl.models._generated.entities.general import Campaign
-from b1sl.b1sl.models._generated.entities.general import CampaignResponseType
-from b1sl.b1sl.models._generated.entities.general import CashDiscount
-from b1sl.b1sl.models._generated.entities.general import CashFlowLineItem
-from b1sl.b1sl.models._generated.entities.general import CentralBankIndicator
-from b1sl.b1sl.models._generated.entities.general import CertificateSeries
-from b1sl.b1sl.models._generated.entities.general import ChecksforPayment
-from b1sl.b1sl.models._generated.entities.general import ChooseFromList
-from b1sl.b1sl.models._generated.entities.general import ClosingDateProcedure
-from b1sl.b1sl.models._generated.entities.general import Cockpit
-from b1sl.b1sl.models._generated.entities.general import ColumnPreferences
-from b1sl.b1sl.models._generated.entities.general import CommissionGroup
-from b1sl.b1sl.models._generated.entities.general import Contact
-from b1sl.b1sl.models._generated.entities.general import CostElement
-from b1sl.b1sl.models._generated.entities.general import Country
-from b1sl.b1sl.models._generated.entities.general import County
-from b1sl.b1sl.models._generated.entities.general import CreditCard
-from b1sl.b1sl.models._generated.entities.general import CreditCardPayment
-from b1sl.b1sl.models._generated.entities.general import CreditPaymentMethod
-from b1sl.b1sl.models._generated.entities.general import CustomerEquipmentCard
-from b1sl.b1sl.models._generated.entities.general import CustomsDeclaration
-from b1sl.b1sl.models._generated.entities.general import CustomsGroup
-from b1sl.b1sl.models._generated.entities.general import DNFCodeSetup
-from b1sl.b1sl.models._generated.entities.general import DeductibleTax
-from b1sl.b1sl.models._generated.entities.general import DeductionTaxGroup
-from b1sl.b1sl.models._generated.entities.general import DeductionTaxHierarchy
-from b1sl.b1sl.models._generated.entities.general import DeductionTaxSubGroup
-from b1sl.b1sl.models._generated.entities.general import DefaultElementsforCR
-from b1sl.b1sl.models._generated.entities.general import Department
-from b1sl.b1sl.models._generated.entities.general import Deposit
-from b1sl.b1sl.models._generated.entities.general import DepreciationArea
-from b1sl.b1sl.models._generated.entities.general import DepreciationType
-from b1sl.b1sl.models._generated.entities.general import DepreciationTypePool
-from b1sl.b1sl.models._generated.entities.general import DeterminationCriteria
-from b1sl.b1sl.models._generated.entities.general import Dimension
-from b1sl.b1sl.models._generated.entities.general import DistributionRule
-from b1sl.b1sl.models._generated.entities.general import Document
-from b1sl.b1sl.models._generated.entities.general import DunningLetter
-from b1sl.b1sl.models._generated.entities.general import DunningTerm
-from b1sl.b1sl.models._generated.entities.general import DynamicSystemString
-from b1sl.b1sl.models._generated.entities.general import EBooks
-from b1sl.b1sl.models._generated.entities.general import EWBTransporter
-from b1sl.b1sl.models._generated.entities.general import ElectronicFileFormat
-from b1sl.b1sl.models._generated.entities.general import EmailGroup
-from b1sl.b1sl.models._generated.entities.general import EmployeeIDType
-from b1sl.b1sl.models._generated.entities.general import EmployeeImage
-from b1sl.b1sl.models._generated.entities.general import EmployeeInfo
-from b1sl.b1sl.models._generated.entities.general import EmployeePosition
-from b1sl.b1sl.models._generated.entities.general import EmployeeRoleSetup
-from b1sl.b1sl.models._generated.entities.general import EmployeeStatus
-from b1sl.b1sl.models._generated.entities.general import EmployeeTransfer
-from b1sl.b1sl.models._generated.entities.general import EmploymentCategory
-from b1sl.b1sl.models._generated.entities.general import EnhancedDiscountGroup
-from b1sl.b1sl.models._generated.entities.general import ExceptionalEvent
-from b1sl.b1sl.models._generated.entities.general import ExpenseTypeData
-from b1sl.b1sl.models._generated.entities.general import ExportDetermination
-from b1sl.b1sl.models._generated.entities.general import ExtendedTranslation
-from b1sl.b1sl.models._generated.entities.general import FAAccountDetermination
-from b1sl.b1sl.models._generated.entities.general import FactoringIndicator
-from b1sl.b1sl.models._generated.entities.general import FinancialYear
-from b1sl.b1sl.models._generated.entities.general import FiscalPrinter
-from b1sl.b1sl.models._generated.entities.general import FormattedSearch
-from b1sl.b1sl.models._generated.entities.general import Forms1099
-from b1sl.b1sl.models._generated.entities.general import GLAccountAdvancedRule
-from b1sl.b1sl.models._generated.entities.general import Gender
-from b1sl.b1sl.models._generated.entities.general import GovPayCode
-from b1sl.b1sl.models._generated.entities.general import Holiday
-from b1sl.b1sl.models._generated.entities.general import HouseBankAccount
-from b1sl.b1sl.models._generated.entities.general import IdentificationCode
-from b1sl.b1sl.models._generated.entities.general import ImportDetermination
-from b1sl.b1sl.models._generated.entities.general import IndiaHsn
-from b1sl.b1sl.models._generated.entities.general import IndiaSacCode
-from b1sl.b1sl.models._generated.entities.general import Industry
-from b1sl.b1sl.models._generated.entities.general import IntegrationPackageConfigure
-from b1sl.b1sl.models._generated.entities.general import InternalReconciliation
-from b1sl.b1sl.models._generated.entities.general import IntrastatConfiguration
-from b1sl.b1sl.models._generated.entities.general import InventoryCycles
-from b1sl.b1sl.models._generated.entities.general import KPI
-from b1sl.b1sl.models._generated.entities.general import KnowledgeBaseSolution
-from b1sl.b1sl.models._generated.entities.general import LegalData
-from b1sl.b1sl.models._generated.entities.general import LengthMeasure
-from b1sl.b1sl.models._generated.entities.general import LocalEra
-from b1sl.b1sl.models._generated.entities.general import Manufacturer
-from b1sl.b1sl.models._generated.entities.general import MaterialGroup
-from b1sl.b1sl.models._generated.entities.general import Message
-from b1sl.b1sl.models._generated.entities.general import MobileAddOnSetting
-from b1sl.b1sl.models._generated.entities.general import MultiLanguageTranslation
-from b1sl.b1sl.models._generated.entities.general import NCMCodeSetup
-from b1sl.b1sl.models._generated.entities.general import NFModel
-from b1sl.b1sl.models._generated.entities.general import NFTaxCategory
-from b1sl.b1sl.models._generated.entities.general import NatureOfAssessee
-from b1sl.b1sl.models._generated.entities.general import NotaFiscalCFOP
-from b1sl.b1sl.models._generated.entities.general import NotaFiscalCST
-from b1sl.b1sl.models._generated.entities.general import NotaFiscalUsage
-from b1sl.b1sl.models._generated.entities.general import OccurenceCode
-from b1sl.b1sl.models._generated.entities.general import PM_ProjectDocumentData
-from b1sl.b1sl.models._generated.entities.general import PM_TimeSheetData
-from b1sl.b1sl.models._generated.entities.general import POSDailySummary
-from b1sl.b1sl.models._generated.entities.general import PackagesType
-from b1sl.b1sl.models._generated.entities.general import PartnersSetup
-from b1sl.b1sl.models._generated.entities.general import Payment
-from b1sl.b1sl.models._generated.entities.general import PaymentBlock
-from b1sl.b1sl.models._generated.entities.general import PaymentReasonCode
-from b1sl.b1sl.models._generated.entities.general import PaymentRunExport
-from b1sl.b1sl.models._generated.entities.general import PaymentTermsType
-from b1sl.b1sl.models._generated.entities.general import PickList
-from b1sl.b1sl.models._generated.entities.general import Picture
-from b1sl.b1sl.models._generated.entities.general import PostingTemplates
-from b1sl.b1sl.models._generated.entities.general import PredefinedText
-from b1sl.b1sl.models._generated.entities.general import PriceList
-from b1sl.b1sl.models._generated.entities.general import Project
-from b1sl.b1sl.models._generated.entities.general import PurchaseTaxInvoice
-from b1sl.b1sl.models._generated.entities.general import QueryAuthGroup
-from b1sl.b1sl.models._generated.entities.general import QueryCategory
-from b1sl.b1sl.models._generated.entities.general import Queue
-from b1sl.b1sl.models._generated.entities.general import RecurringPostings
-from b1sl.b1sl.models._generated.entities.general import Relationship
-from b1sl.b1sl.models._generated.entities.general import ReportType
-from b1sl.b1sl.models._generated.entities.general import RetornoCode
-from b1sl.b1sl.models._generated.entities.general import RouteStage
-from b1sl.b1sl.models._generated.entities.general import SQLQuery
-from b1sl.b1sl.models._generated.entities.general import SQLView
-from b1sl.b1sl.models._generated.entities.general import SalesForecast
-from b1sl.b1sl.models._generated.entities.general import SalesOpportunities
-from b1sl.b1sl.models._generated.entities.general import SalesOpportunityCompetitorSetup
-from b1sl.b1sl.models._generated.entities.general import SalesOpportunityInterestSetup
-from b1sl.b1sl.models._generated.entities.general import SalesOpportunityReasonSetup
-from b1sl.b1sl.models._generated.entities.general import SalesOpportunitySourceSetup
-from b1sl.b1sl.models._generated.entities.general import SalesPerson
-from b1sl.b1sl.models._generated.entities.general import SalesStage
-from b1sl.b1sl.models._generated.entities.general import SalesTaxAuthoritiesType
-from b1sl.b1sl.models._generated.entities.general import SalesTaxAuthority
-from b1sl.b1sl.models._generated.entities.general import SalesTaxCode
-from b1sl.b1sl.models._generated.entities.general import SalesTaxInvoice
-from b1sl.b1sl.models._generated.entities.general import Section
-from b1sl.b1sl.models._generated.entities.general import SerialNumberDetail
-from b1sl.b1sl.models._generated.entities.general import ServiceContract
-from b1sl.b1sl.models._generated.entities.general import ServiceGroup
-from b1sl.b1sl.models._generated.entities.general import ShippingType
-from b1sl.b1sl.models._generated.entities.general import ShortLinkMapping
-from b1sl.b1sl.models._generated.entities.general import SingleUserConnection
-from b1sl.b1sl.models._generated.entities.general import SpecialPrice
-from b1sl.b1sl.models._generated.entities.general import State
-from b1sl.b1sl.models._generated.entities.general import StockTaking
-from b1sl.b1sl.models._generated.entities.general import TSRExceptionalEvent
-from b1sl.b1sl.models._generated.entities.general import TargetGroup
-from b1sl.b1sl.models._generated.entities.general import TaxCodeDetermination
-from b1sl.b1sl.models._generated.entities.general import TaxCodeDeterminationTCD
-from b1sl.b1sl.models._generated.entities.general import TaxExemptReason
-from b1sl.b1sl.models._generated.entities.general import TaxInvoiceReport
-from b1sl.b1sl.models._generated.entities.general import TaxReplStateSubData
-from b1sl.b1sl.models._generated.entities.general import TaxReportFilter
-from b1sl.b1sl.models._generated.entities.general import TaxWebSite
-from b1sl.b1sl.models._generated.entities.general import Team
-from b1sl.b1sl.models._generated.entities.general import TerminationReason
-from b1sl.b1sl.models._generated.entities.general import Territory
-from b1sl.b1sl.models._generated.entities.general import TrackingNote
-from b1sl.b1sl.models._generated.entities.general import TransactionCode
-from b1sl.b1sl.models._generated.entities.general import TransportationDocumentData
-from b1sl.b1sl.models._generated.entities.general import UnitOfMeasurement
-from b1sl.b1sl.models._generated.entities.general import UnitOfMeasurementGroup
-from b1sl.b1sl.models._generated.entities.general import User
-from b1sl.b1sl.models._generated.entities.general import UserDefaultGroup
-from b1sl.b1sl.models._generated.entities.general import UserFieldMD
-from b1sl.b1sl.models._generated.entities.general import UserGroup
-from b1sl.b1sl.models._generated.entities.general import UserKeysMD
-from b1sl.b1sl.models._generated.entities.general import UserLanguage
-from b1sl.b1sl.models._generated.entities.general import UserObjectsMD
-from b1sl.b1sl.models._generated.entities.general import UserPermissionTree
-from b1sl.b1sl.models._generated.entities.general import UserQuery
-from b1sl.b1sl.models._generated.entities.general import UserTablesMD
-from b1sl.b1sl.models._generated.entities.general import ValueMappingCommunicationData
-from b1sl.b1sl.models._generated.entities.general import WTDCode
-from b1sl.b1sl.models._generated.entities.general import WTaxTypeCode
-from b1sl.b1sl.models._generated.entities.general import WebClientBookmarkTile
-from b1sl.b1sl.models._generated.entities.general import WebClientDashboard
-from b1sl.b1sl.models._generated.entities.general import WebClientFormSetting
-from b1sl.b1sl.models._generated.entities.general import WebClientLaunchpad
-from b1sl.b1sl.models._generated.entities.general import WebClientListviewFilter
-from b1sl.b1sl.models._generated.entities.general import WebClientNotification
-from b1sl.b1sl.models._generated.entities.general import WebClientPreference
-from b1sl.b1sl.models._generated.entities.general import WebClientRecentActivity
-from b1sl.b1sl.models._generated.entities.general import WebClientVariant
-from b1sl.b1sl.models._generated.entities.general import WebClientVariantGroup
-from b1sl.b1sl.models._generated.entities.general import WeightMeasure
-from b1sl.b1sl.models._generated.entities.general import WizardPaymentMethod
-from b1sl.b1sl.models._generated.entities.inventory import CycleCountDetermination
-from b1sl.b1sl.models._generated.entities.inventory import InventoryCounting
-from b1sl.b1sl.models._generated.entities.inventory import InventoryCountingDraft
-from b1sl.b1sl.models._generated.entities.inventory import InventoryOpeningBalance
-from b1sl.b1sl.models._generated.entities.inventory import InventoryPosting
+from b1sl.b1sl.models._generated.entities.businesspartners import (
+    Activity,
+    ActivityLocation,
+    ActivityRecipientList,
+    ActivityStatus,
+    ActivitySubject,
+    ActivityType,
+    BusinessPartner,
+    BusinessPartnerGroup,
+    BusinessPartnerProperty,
+)
+from b1sl.b1sl.models._generated.entities.finance import (
+    AssetClass,
+    ChartOfAccount,
+    CostCenterType,
+    Currency,
+    JournalEntry,
+    JournalEntryDocumentType,
+    ProfitCenter,
+    VatGroup,
+    WithholdingTaxCode,
+)
+from b1sl.b1sl.models._generated.entities.general import (
+    KPI,
+    AccountCategory,
+    AccountSegmentation,
+    AccountSegmentationCategory,
+    AccrualType,
+    AdditionalExpense,
+    AlertManagement,
+    AlternateCatNum,
+    ApprovalRequest,
+    ApprovalStage,
+    ApprovalTemplate,
+    AssetDepreciationGroup,
+    AssetDocument,
+    AssetGroup,
+    AssetRevaluation,
+    Attachments2,
+    AttributeGroup,
+    B1Session,
+    Bank,
+    BankChargesAllocationCode,
+    BankPage,
+    BankStatement,
+    BarCode,
+    BatchNumberDetail,
+    BillOfExchangeTransaction,
+    BinLocation,
+    BinLocationAttribute,
+    BinLocationField,
+    BOEDocumentType,
+    BOEInstruction,
+    BOEPortfolio,
+    BPFiscalRegistryID,
+    BPPriority,
+    BPVatExemptions,
+    Branch,
+    BrazilBeverageIndexer,
+    BrazilFuelIndexer,
+    BrazilMultiIndexer,
+    BrazilNumericIndexer,
+    BrazilStringIndexer,
+    Budget,
+    BudgetDistribution,
+    BudgetScenario,
+    BusinessPlace,
+    Campaign,
+    CampaignResponseType,
+    CashDiscount,
+    CashFlowLineItem,
+    CentralBankIndicator,
+    CertificateSeries,
+    ChecksforPayment,
+    ChooseFromList,
+    CIGCode,
+    ClosingDateProcedure,
+    Cockpit,
+    ColumnPreferences,
+    CommissionGroup,
+    Contact,
+    CostElement,
+    Country,
+    County,
+    CreditCard,
+    CreditCardPayment,
+    CreditPaymentMethod,
+    CUPCode,
+    CustomerEquipmentCard,
+    CustomsDeclaration,
+    CustomsGroup,
+    DeductibleTax,
+    DeductionTaxGroup,
+    DeductionTaxHierarchy,
+    DeductionTaxSubGroup,
+    DefaultElementsforCR,
+    Department,
+    Deposit,
+    DepreciationArea,
+    DepreciationType,
+    DepreciationTypePool,
+    DeterminationCriteria,
+    Dimension,
+    DistributionRule,
+    DNFCodeSetup,
+    Document,
+    DunningLetter,
+    DunningTerm,
+    DynamicSystemString,
+    EBooks,
+    ElectronicFileFormat,
+    EmailGroup,
+    EmployeeIDType,
+    EmployeeImage,
+    EmployeeInfo,
+    EmployeePosition,
+    EmployeeRoleSetup,
+    EmployeeStatus,
+    EmployeeTransfer,
+    EmploymentCategory,
+    EnhancedDiscountGroup,
+    EWBTransporter,
+    ExceptionalEvent,
+    ExpenseTypeData,
+    ExportDetermination,
+    ExtendedTranslation,
+    FAAccountDetermination,
+    FactoringIndicator,
+    FinancialYear,
+    FiscalPrinter,
+    FormattedSearch,
+    Forms1099,
+    Gender,
+    GLAccountAdvancedRule,
+    GovPayCode,
+    Holiday,
+    HouseBankAccount,
+    IdentificationCode,
+    ImportDetermination,
+    IndiaHsn,
+    IndiaSacCode,
+    Industry,
+    IntegrationPackageConfigure,
+    InternalReconciliation,
+    IntrastatConfiguration,
+    InventoryCycles,
+    KnowledgeBaseSolution,
+    LegalData,
+    LengthMeasure,
+    LocalEra,
+    Manufacturer,
+    MaterialGroup,
+    Message,
+    MobileAddOnSetting,
+    MultiLanguageTranslation,
+    NatureOfAssessee,
+    NCMCodeSetup,
+    NFModel,
+    NFTaxCategory,
+    NotaFiscalCFOP,
+    NotaFiscalCST,
+    NotaFiscalUsage,
+    OccurenceCode,
+    PackagesType,
+    PartnersSetup,
+    Payment,
+    PaymentBlock,
+    PaymentReasonCode,
+    PaymentRunExport,
+    PaymentTermsType,
+    PickList,
+    Picture,
+    PM_ProjectDocumentData,
+    PM_TimeSheetData,
+    POSDailySummary,
+    PostingTemplates,
+    PredefinedText,
+    PriceList,
+    Project,
+    PurchaseTaxInvoice,
+    QueryAuthGroup,
+    QueryCategory,
+    Queue,
+    RecurringPostings,
+    Relationship,
+    ReportType,
+    RetornoCode,
+    RouteStage,
+    SalesForecast,
+    SalesOpportunities,
+    SalesOpportunityCompetitorSetup,
+    SalesOpportunityInterestSetup,
+    SalesOpportunityReasonSetup,
+    SalesOpportunitySourceSetup,
+    SalesPerson,
+    SalesStage,
+    SalesTaxAuthoritiesType,
+    SalesTaxAuthority,
+    SalesTaxCode,
+    SalesTaxInvoice,
+    Section,
+    SerialNumberDetail,
+    ServiceContract,
+    ServiceGroup,
+    ShippingType,
+    ShortLinkMapping,
+    SingleUserConnection,
+    SpecialPrice,
+    SQLQuery,
+    SQLView,
+    State,
+    StockTaking,
+    TargetGroup,
+    TaxCodeDetermination,
+    TaxCodeDeterminationTCD,
+    TaxExemptReason,
+    TaxInvoiceReport,
+    TaxReplStateSubData,
+    TaxReportFilter,
+    TaxWebSite,
+    Team,
+    TerminationReason,
+    Territory,
+    TrackingNote,
+    TransactionCode,
+    TransportationDocumentData,
+    TSRExceptionalEvent,
+    UnitOfMeasurement,
+    UnitOfMeasurementGroup,
+    User,
+    UserDefaultGroup,
+    UserFieldMD,
+    UserGroup,
+    UserKeysMD,
+    UserLanguage,
+    UserObjectsMD,
+    UserPermissionTree,
+    UserQuery,
+    UserTablesMD,
+    ValueMappingCommunicationData,
+    WebClientBookmarkTile,
+    WebClientDashboard,
+    WebClientFormSetting,
+    WebClientLaunchpad,
+    WebClientListviewFilter,
+    WebClientNotification,
+    WebClientPreference,
+    WebClientRecentActivity,
+    WebClientVariant,
+    WebClientVariantGroup,
+    WeightMeasure,
+    WizardPaymentMethod,
+    WTaxTypeCode,
+    WTDCode,
+)
+from b1sl.b1sl.models._generated.entities.inventory import (
+    CycleCountDetermination,
+    InventoryCounting,
+    InventoryCountingDraft,
+    InventoryOpeningBalance,
+    InventoryPosting,
+    ItemGroups,
+    ItemImage,
+    ItemProperty,
+    MaterialRevaluation,
+    StockTransfer,
+    Warehouse,
+    WarehouseLocation,
+    WarehouseSublevelCode,
+)
+from b1sl.b1sl.models._generated.entities.production import (
+    ProductionOrder,
+    ProductTree,
+    Resource,
+    ResourceCapacity,
+    ResourceGroup,
+    ResourceProperty,
+)
+from b1sl.b1sl.models._generated.entities.purchasing import LandedCost, LandedCostsCode
+from b1sl.b1sl.models._generated.entities.sales import (
+    BlanketAgreement,
+    ContractTemplate,
+    ServiceCall,
+    ServiceCallOrigin,
+    ServiceCallProblemSubType,
+    ServiceCallProblemType,
+    ServiceCallSolutionStatus,
+    ServiceCallStatus,
+    ServiceCallType,
+)
+from b1sl.b1sl.models._generated.enums import *
 from b1sl.b1sl.models._overrides.inventory import Item
-from b1sl.b1sl.models._generated.entities.inventory import ItemGroups
-from b1sl.b1sl.models._generated.entities.inventory import ItemImage
-from b1sl.b1sl.models._generated.entities.inventory import ItemProperty
-from b1sl.b1sl.models._generated.entities.inventory import MaterialRevaluation
-from b1sl.b1sl.models._generated.entities.inventory import StockTransfer
-from b1sl.b1sl.models._generated.entities.inventory import Warehouse
-from b1sl.b1sl.models._generated.entities.inventory import WarehouseLocation
-from b1sl.b1sl.models._generated.entities.inventory import WarehouseSublevelCode
-from b1sl.b1sl.models._generated.entities.production import ProductTree
-from b1sl.b1sl.models._generated.entities.production import ProductionOrder
-from b1sl.b1sl.models._generated.entities.production import Resource
-from b1sl.b1sl.models._generated.entities.production import ResourceCapacity
-from b1sl.b1sl.models._generated.entities.production import ResourceGroup
-from b1sl.b1sl.models._generated.entities.production import ResourceProperty
-from b1sl.b1sl.models._generated.entities.purchasing import LandedCost
-from b1sl.b1sl.models._generated.entities.purchasing import LandedCostsCode
-from b1sl.b1sl.models._generated.entities.sales import BlanketAgreement
-from b1sl.b1sl.models._generated.entities.sales import ContractTemplate
-from b1sl.b1sl.models._generated.entities.sales import ServiceCall
-from b1sl.b1sl.models._generated.entities.sales import ServiceCallOrigin
-from b1sl.b1sl.models._generated.entities.sales import ServiceCallProblemSubType
-from b1sl.b1sl.models._generated.entities.sales import ServiceCallProblemType
-from b1sl.b1sl.models._generated.entities.sales import ServiceCallSolutionStatus
-from b1sl.b1sl.models._generated.entities.sales import ServiceCallStatus
-from b1sl.b1sl.models._generated.entities.sales import ServiceCallType
 
 # --- Aliases for EntitySets (Singularized) ---
 AssetCapitalization = AssetDocument  # From: AssetCapitalization

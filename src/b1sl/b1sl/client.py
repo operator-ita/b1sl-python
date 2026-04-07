@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from typing import TYPE_CHECKING
 
 from b1sl.b1sl.adapter_protocol import RestAdapterProtocol
 from b1sl.b1sl.base_adapter import ObservabilityConfig
@@ -8,7 +9,6 @@ from b1sl.b1sl.config import B1Config
 from b1sl.b1sl.resources._generated.client_mixin import B1ClientMixin
 from b1sl.b1sl.rest_adapter import RestAdapter
 
-from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from b1sl.b1sl.resources.udo import UDOResource
 
