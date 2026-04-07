@@ -1,0 +1,49 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  PYTHON_VERSION: ${{ vars.PYTHON_VERSION || '3.12' }}
+
+jobs:
+  test:
+    name: Run Unit Tests 🧪
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+      - name: Install dependencies
+        run: uv sync --dev
+      - name: Run unit tests
+        run: uv run pytest tests/unit/
+
+  build-n-publish:
+    name: Build & publish 📦
+    needs: test
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write  # Required for Trusted Publishing if used
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+      - name: Build distribution
+        run: uv build
+      - name: Publish package to PyPI 🐍
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        run: uv publish

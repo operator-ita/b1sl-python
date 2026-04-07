@@ -1,7 +1,7 @@
-# b1sl
+# b1sl-python
 ### Modern, async-first Python SDK for SAP Business One Service Layer.
 
-![b1sl Banner](docs/assets/hero_banner.png)
+![b1sl Banner](https://raw.githubusercontent.com/operator-ita/b1sl-python/refs/heads/main/docs/assets/hero_banner.png)
 
 [![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
@@ -27,10 +27,10 @@ b1sl is a high-performance SDK designed for the SAP B1 Service Layer, focusing o
 
 ```bash
 # Using pip
-pip install b1sl
+pip install b1sl-python
 
 # Using uv
-uv add b1sl
+uv add b1sl-python
 ```
 
 ---
@@ -114,7 +114,7 @@ This SDK is optimized for modern Service Layer environments and defaults to **v2
 *   **Minimum for ETags**: Requires Service Layer **1.21+** (March 2021).
 *   **Backward Compatibility**: Supports **v1 (OData V2)** through client configuration.
 
-For a detailed history of Service Layer features and specific version support, see the [Full Compatibility Timeline](docs/01-compatibility.md).
+For a detailed history of Service Layer features and specific version support, see the [Full Compatibility Timeline](https://github.com/operator-ita/b1sl-python/blob/main/docs/02-compatibility.md).
 
 ---
 

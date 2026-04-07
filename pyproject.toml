@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "b1sl-python"
-version = "0.1.0"
+version = "0.1.1"
 description = "A framework-agnostic Python SDK for SAP Business One Service Layer and SAP HANA. (Unofficial)"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
@@ -30,6 +30,11 @@ dependencies = [
     "python-dotenv>=1.2.2",
 ]
 
+[project.urls]
+Homepage = "https://github.com/operator-ita/b1sl-python"
+Repository = "https://github.com/operator-ita/b1sl-python"
+"Bug Tracker" = "https://github.com/operator-ita/b1sl-python/issues"
+
 [project.optional-dependencies]
 hana = ["hdbcli>=2.20.0,<3"]
 django = ["django>=4.2,<6"]
@@ -51,7 +56,7 @@ dev = [
     "pytest-cov",
 ]
 
-all = ["b1sl[hana,django,generator]"]
+all = ["b1sl-python[hana,django,generator]"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/b1sl"]
