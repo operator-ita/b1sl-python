@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class ReportTypesService(GenericResource[Any]):
     endpoint = "ReportTypesService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -20,4 +18,4 @@ class ReportTypesService(GenericResource[Any]):
         """POST ReportTypesService_GetReportTypeList
         Invoke the method 'GetReportTypeList' on this service.
         """
-        return self._adapter.post("ReportTypesService_GetReportTypeList", data=payload)
+        return self._adapter.post(f"ReportTypesService_GetReportTypeList", data=payload)

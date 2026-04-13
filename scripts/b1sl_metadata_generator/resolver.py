@@ -17,8 +17,8 @@ if _current_dir not in sys.path:
 
 if TYPE_CHECKING:
     try:
-        from scripts.sap_metadata_generator.parser import ParsedMetadata
-    except ImportError:
+        from .parser import ParsedMetadata
+    except (ImportError, ValueError):
         from parser import ParsedMetadata
 
 

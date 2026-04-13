@@ -108,7 +108,7 @@ async with AsyncB1Client(config) as b1:
 
 ---
 
-## 4. Key Async Features
+## 5. Key Async Features
 
 ### Session Resilience (401 Auto-Retry)
 If the SAP session expires (e.g., after 30 minutes of inactivity), the `AsyncRestAdapter` will catch the `401 Unauthorized` error, automatically perform a re-login, and retry your original request once.
@@ -126,9 +126,19 @@ await client.connect() # Manual Login
 await client.aclose() # Manual Logout
 ```
 
+### 5.4 Safety: Dry Run Mode (Task-Safe)
+For safe debugging in shared async environments, use the `with b1.dry_run()` context manager. It uses `ContextVar` to ensure that enabling dry run in one task does NOT affect others.
+
+```python
+async with AsyncB1Client(config) as b1:
+    # This block is safe; no real PATCH sent to SAP
+    with b1.dry_run():
+        await b1.items.update(item_code, item_data)
+```
+
 ---
 
-## 5. Performance Tips
+## 6. Performance Tips
 
 - **Shared Client**: Always reuse the same `AsyncB1Client` instance for multiple operations within the same logical unit of work.
 - **Timeout Management**: Use the `connect_timeout` and `read_timeout` in `B1Config` to tune performance based on your Service Layer's speed.

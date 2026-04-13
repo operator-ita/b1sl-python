@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class ActivitiesService(GenericResource[Any]):
     endpoint = "ActivitiesService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -30,18 +28,18 @@ class ActivitiesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ActivitiesService_DeleteSingleInstanceFromSeries", data=payload)
+        return self._adapter.post(f"ActivitiesService_DeleteSingleInstanceFromSeries", data=payload)
 
     def get_activity_list(self, payload: dict | None = None) -> Any:
         """POST ActivitiesService_GetActivityList
         Invoke the method 'GetActivityList' on this service.
         """
-        return self._adapter.post("ActivitiesService_GetActivityList", data=payload)
+        return self._adapter.post(f"ActivitiesService_GetActivityList", data=payload)
 
     def get_list_by_attend_user(self, payload: dict | None = None) -> Any:
         """POST ActivitiesService_GetListByAttendUser
         """
-        return self._adapter.post("ActivitiesService_GetListByAttendUser", data=payload)
+        return self._adapter.post(f"ActivitiesService_GetListByAttendUser", data=payload)
 
     def get_single_instance_from_series(self, payload: dict | None = None) -> Any:
         """POST ActivitiesService_GetSingleInstanceFromSeries
@@ -57,7 +55,7 @@ class ActivitiesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ActivitiesService_GetSingleInstanceFromSeries", data=payload)
+        return self._adapter.post(f"ActivitiesService_GetSingleInstanceFromSeries", data=payload)
 
     def get_top_n_activity_instances(self, payload: dict | None = None) -> Any:
         """POST ActivitiesService_GetTopNActivityInstances
@@ -74,12 +72,12 @@ class ActivitiesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ActivitiesService_GetTopNActivityInstances", data=payload)
+        return self._adapter.post(f"ActivitiesService_GetTopNActivityInstances", data=payload)
 
     def init_data(self, payload: dict | None = None) -> Any:
         """POST ActivitiesService_InitData
         """
-        return self._adapter.post("ActivitiesService_InitData", data=payload)
+        return self._adapter.post(f"ActivitiesService_InitData", data=payload)
 
     def update_single_instance_in_series(self, payload: dict | None = None) -> Any:
         """POST ActivitiesService_UpdateSingleInstanceInSeries
@@ -108,4 +106,4 @@ class ActivitiesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ActivitiesService_UpdateSingleInstanceInSeries", data=payload)
+        return self._adapter.post(f"ActivitiesService_UpdateSingleInstanceInSeries", data=payload)

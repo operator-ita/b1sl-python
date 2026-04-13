@@ -29,7 +29,7 @@ To ensure the SDK remains stable without requiring a 24/7 active SAP server, we 
 ### Layer 2: Integration Tests (VCR/Real) — Reality and Security
 *   **Purpose:** Validate against a live SAP B1 Service Layer API. It "freezes" real responses into cassettes for offline playback.
 *   **Tool:** `pytest-recording` (VCR). It captures real traffic and **automatically sanitizes** it.
-*   **Command:** `SAP_B1_INTEGRATION=1 make test-integration`
+*   **Command:** `make test-demo` (live) or `make test-vcr` (offline)
 *   **Location:** `tests/integration/`
 
 ---
@@ -66,7 +66,8 @@ def test_get_bp_logic():
 ### D. Record the Cassette
 Create `tests/integration/test_business_partners_real.py` decorated with `@pytest.mark.vcr`. Run:
 ```bash
-SAP_B1_INTEGRATION=1 make test-integration
+make test-record  # To update cassettes
+make test-demo    # To run against live SAP
 ```
 **Privacy Ensured**: The global `vcr_config` (in `tests/conftest.py`) will automatically redact:
 1.  Your real hostname (replaced by `sap-server.example.com`).

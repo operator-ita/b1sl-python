@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class AlternativeItemsService(GenericResource[Any]):
     endpoint = "AlternativeItemsService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -47,7 +45,7 @@ class AlternativeItemsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("AlternativeItemsService_AddItem", data=payload)
+        return self._adapter.post(f"AlternativeItemsService_AddItem", data=payload)
 
     def delete_item(self, payload: dict | None = None) -> Any:
         """POST AlternativeItemsService_DeleteItem
@@ -63,7 +61,7 @@ class AlternativeItemsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("AlternativeItemsService_DeleteItem", data=payload)
+        return self._adapter.post(f"AlternativeItemsService_DeleteItem", data=payload)
 
     def get_item(self, payload: dict | None = None) -> Any:
         """POST AlternativeItemsService_GetItem
@@ -79,7 +77,7 @@ class AlternativeItemsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("AlternativeItemsService_GetItem", data=payload)
+        return self._adapter.post(f"AlternativeItemsService_GetItem", data=payload)
 
     def update_item(self, payload: dict | None = None) -> Any:
         """POST AlternativeItemsService_UpdateItem
@@ -112,4 +110,4 @@ class AlternativeItemsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("AlternativeItemsService_UpdateItem", data=payload)
+        return self._adapter.post(f"AlternativeItemsService_UpdateItem", data=payload)

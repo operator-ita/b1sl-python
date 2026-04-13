@@ -20,7 +20,7 @@ from b1sl.b1sl.rest_adapter import RestAdapter
 try:
     from pydantic import ArbitraryTypeWarning
 
-    warnings.filterwarnings("ignore", category=ArbitraryTypeWarning, module=r"b1sl\..*")
+    warnings.filterwarnings("ignore", category=ArbitraryTypeWarning, module=r"b1sl\..*")  # type: ignore
 except ImportError:
     warnings.filterwarnings("ignore", module=r"b1sl\..*|pydantic\..*")
 
@@ -28,14 +28,14 @@ except ImportError:
 logging.getLogger("b1sl").addHandler(logging.NullHandler())
 
 try:
-    from b1sl.b1sl import entities
+    from b1sl.b1sl import entities  # type: ignore
 except ImportError:
-    entities = None  # Before code generation
+    entities = None  # type: ignore # Before code generation
 
 try:
-    from b1sl.b1sl import fields
+    from b1sl.b1sl import fields  # type: ignore
 except ImportError:
-    fields = None
+    fields = None  # type: ignore
 
 __all__ = [
     "AsyncB1Client",

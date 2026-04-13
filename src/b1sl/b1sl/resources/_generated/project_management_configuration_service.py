@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class ProjectManagementConfigurationService(GenericResource[Any]):
     endpoint = "ProjectManagementConfigurationService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -30,7 +28,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_AddActivities", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_AddActivities", data=payload)
 
     def add_areas(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_AddAreas
@@ -45,7 +43,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_AddAreas", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_AddAreas", data=payload)
 
     def add_priorities(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_AddPriorities
@@ -60,7 +58,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_AddPriorities", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_AddPriorities", data=payload)
 
     def add_stage_types(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_AddStageTypes
@@ -76,7 +74,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_AddStageTypes", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_AddStageTypes", data=payload)
 
     def add_subproject_types(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_AddSubprojectTypes
@@ -92,7 +90,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_AddSubprojectTypes", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_AddSubprojectTypes", data=payload)
 
     def add_tasks(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_AddTasks
@@ -107,7 +105,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_AddTasks", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_AddTasks", data=payload)
 
     def delete_activities(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_DeleteActivities
@@ -123,7 +121,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_DeleteActivities", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_DeleteActivities", data=payload)
 
     def delete_areas(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_DeleteAreas
@@ -138,7 +136,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_DeleteAreas", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_DeleteAreas", data=payload)
 
     def delete_priorities(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_DeletePriorities
@@ -154,7 +152,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_DeletePriorities", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_DeletePriorities", data=payload)
 
     def delete_stage_types(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_DeleteStageTypes
@@ -169,7 +167,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_DeleteStageTypes", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_DeleteStageTypes", data=payload)
 
     def delete_subproject_types(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_DeleteSubprojectTypes
@@ -184,7 +182,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_DeleteSubprojectTypes", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_DeleteSubprojectTypes", data=payload)
 
     def delete_tasks(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_DeleteTasks
@@ -200,43 +198,43 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_DeleteTasks", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_DeleteTasks", data=payload)
 
     def get_activities(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_GetActivities
         Invoke the method 'GetActivities' on this service.
         """
-        return self._adapter.post("ProjectManagementConfigurationService_GetActivities", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_GetActivities", data=payload)
 
     def get_areas(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_GetAreas
         Invoke the method 'GetAreas' on this service.
         """
-        return self._adapter.post("ProjectManagementConfigurationService_GetAreas", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_GetAreas", data=payload)
 
     def get_priorities(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_GetPriorities
         Invoke the method 'GetPriorities' on this service.
         """
-        return self._adapter.post("ProjectManagementConfigurationService_GetPriorities", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_GetPriorities", data=payload)
 
     def get_stage_types(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_GetStageTypes
         Invoke the method 'GetStageTypes' on this service.
         """
-        return self._adapter.post("ProjectManagementConfigurationService_GetStageTypes", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_GetStageTypes", data=payload)
 
     def get_subproject_types(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_GetSubprojectTypes
         Invoke the method 'GetSubprojectTypes' on this service.
         """
-        return self._adapter.post("ProjectManagementConfigurationService_GetSubprojectTypes", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_GetSubprojectTypes", data=payload)
 
     def get_tasks(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_GetTasks
         Invoke the method 'GetTasks' on this service.
         """
-        return self._adapter.post("ProjectManagementConfigurationService_GetTasks", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_GetTasks", data=payload)
 
     def update_activities(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_UpdateActivities
@@ -252,7 +250,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_UpdateActivities", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_UpdateActivities", data=payload)
 
     def update_areas(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_UpdateAreas
@@ -268,7 +266,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_UpdateAreas", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_UpdateAreas", data=payload)
 
     def update_priorities(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_UpdatePriorities
@@ -284,7 +282,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_UpdatePriorities", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_UpdatePriorities", data=payload)
 
     def update_stage_types(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_UpdateStageTypes
@@ -301,7 +299,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_UpdateStageTypes", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_UpdateStageTypes", data=payload)
 
     def update_subproject_types(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_UpdateSubprojectTypes
@@ -317,7 +315,7 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_UpdateSubprojectTypes", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_UpdateSubprojectTypes", data=payload)
 
     def update_tasks(self, payload: dict | None = None) -> Any:
         """POST ProjectManagementConfigurationService_UpdateTasks
@@ -332,4 +330,4 @@ class ProjectManagementConfigurationService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ProjectManagementConfigurationService_UpdateTasks", data=payload)
+        return self._adapter.post(f"ProjectManagementConfigurationService_UpdateTasks", data=payload)

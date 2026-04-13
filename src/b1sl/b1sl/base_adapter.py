@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from contextlib import contextmanager
+from contextvars import ContextVar
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -171,6 +173,47 @@ class BaseRestAdapter:
 
         self._etag_cache: OrderedDict[str, str] = OrderedDict()
         self._etag_max_size: int = getattr(config, "etag_cache_size", 256)
+
+        # ContextVar: each asyncio task / thread gets its own dry_run value.
+        # The ContextVar is per-instance to allow different clients to have
+        # different global defaults independently.
+        self._dry_run_var: ContextVar[bool] = ContextVar(
+            f"dry_run_{id(self)}", default=config.dry_run
+        )
+
+    @property
+    def _dry_run_active(self) -> bool:
+        """Returns the current effective dry_run state for this task/thread."""
+        return self._dry_run_var.get()
+
+    @contextmanager
+    def dry_run(self, enabled: bool = True):
+        """
+        Context manager to temporarily enable or disable Dry Run mode
+        **for the current asyncio task / thread only**.
+
+        Uses ``contextvars.ContextVar`` so that concurrent tasks sharing the
+        same adapter instance do NOT interfere with each other.
+
+        Usage::
+
+            # Intercept writes in this block even if global dry_run is False
+            with client.dry_run():
+                await client.items.create(new_item)  # intercepted
+
+            # Force real execution even if global dry_run is True
+            with client.dry_run(enabled=False):
+                await client.items.update(item)  # sent to SAP
+
+        Note:
+            Use ``with``, not ``async with`` — the context manager is
+            synchronous even in async code, which is correct and idiomatic.
+        """
+        token = self._dry_run_var.set(enabled)
+        try:
+            yield
+        finally:
+            self._dry_run_var.reset(token)
 
     @classmethod
     def from_config(

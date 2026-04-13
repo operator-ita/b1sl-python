@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class QueryService(GenericResource[Any]):
     endpoint = "QueryService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -28,4 +26,4 @@ class QueryService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("QueryService_PostQuery", data=payload)
+        return self._adapter.post(f"QueryService_PostQuery", data=payload)

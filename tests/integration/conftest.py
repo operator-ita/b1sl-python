@@ -5,10 +5,8 @@ import pytest
 
 from b1sl.b1sl import B1Client, B1Environment
 
-# Load common test fixtures (test_data)
-pytest_plugins = ["tests.fixtures.test_data"]
 
-
+# Fixtures for SAP B1 Service Layer
 @pytest.fixture(scope="session")
 def sap_env() -> B1Environment:
     """Provides a fully loaded B1Environment for integration tests.

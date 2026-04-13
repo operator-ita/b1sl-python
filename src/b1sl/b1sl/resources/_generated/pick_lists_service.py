@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class PickListsService(GenericResource[Any]):
     endpoint = "PickListsService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -29,7 +27,7 @@ class PickListsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("PickListsService_Close", data=payload)
+        return self._adapter.post(f"PickListsService_Close", data=payload)
 
     def update_released_allocation(self, payload: dict | None = None) -> Any:
         """POST PickListsService_UpdateReleasedAllocation
@@ -77,4 +75,4 @@ class PickListsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("PickListsService_UpdateReleasedAllocation", data=payload)
+        return self._adapter.post(f"PickListsService_UpdateReleasedAllocation", data=payload)

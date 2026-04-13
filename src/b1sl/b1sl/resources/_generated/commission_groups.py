@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -10,7 +8,7 @@ if TYPE_CHECKING:
 class CommissionGroupsService(GenericResource["CommissionGroup"]):
     """This entity enables you to manipulate 'CommissionGroups'. It defines commission groups for a sales employee, an item, or a customer."""
     endpoint = "CommissionGroups"
-
+    
     def __init__(self, adapter):
         from ...models._generated._types import CommissionGroup
         self.model = CommissionGroup

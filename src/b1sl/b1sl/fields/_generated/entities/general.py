@@ -1,4589 +1,4589 @@
 from __future__ import annotations
 
-from enum import StrEnum
-
-
-class AccountCategoryFields(StrEnum):
-    category_code = 'CategoryCode'
-    category_name = 'CategoryName'
-    category_source = 'CategorySource'
-    chart_of_accounts = 'ChartOfAccounts'
-
-class AccountSegmentationFields(StrEnum):
-    numerator = 'Numerator'
-    name = 'Name'
-    size = 'Size'
-    type = 'Type'
-    account_segmentations_categories = 'AccountSegmentationsCategories'
-    account_segmentation_categories = 'AccountSegmentationCategories'
-
-class AccountSegmentationCategoryFields(StrEnum):
-    segment_id = 'SegmentID'
-    code = 'Code'
-    name = 'Name'
-    short_name = 'ShortName'
-    account_segmentation = 'AccountSegmentation'
-
-class AccrualTypeFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    posting_account = 'PostingAccount'
-    calculation_account = 'CalculationAccount'
-    interim_account = 'InterimAccount'
-    chart_of_account = 'ChartOfAccount'
-
-class AdditionalExpenseFields(StrEnum):
-    name = 'Name'
-    revenues_account = 'RevenuesAccount'
-    expense_account = 'ExpenseAccount'
-    tax_liable = 'TaxLiable'
-    fixed_amount_revenues = 'FixedAmountRevenues'
-    fixed_amount_expenses = 'FixedAmountExpenses'
-    output_vat_group = 'OutputVATGroup'
-    input_vat_group = 'InputVATGroup'
-    distribution_method = 'DistributionMethod'
-    includein1099 = 'Includein1099'
-    freight_offset_account = 'FreightOffsetAccount'
-    wt_liable = 'WTLiable'
-    expens_code = 'ExpensCode'
-    expense_exempted_account = 'ExpenseExemptedAccount'
-    revenues_exempted_account = 'RevenuesExemptedAccount'
-    distribution_rule = 'DistributionRule'
-    drawing_method = 'DrawingMethod'
-    freight_type = 'FreightType'
-    stock = 'Stock'
-    last_purchase_price = 'LastPurchasePrice'
-    project = 'Project'
-    distribution_rule2 = 'DistributionRule2'
-    distribution_rule3 = 'DistributionRule3'
-    distribution_rule4 = 'DistributionRule4'
-    distribution_rule5 = 'DistributionRule5'
-    data_version = 'DataVersion'
-    saft_product_type = 'SAFTProductType'
-    saft_product_type_ex = 'SAFTProductTypeEx'
-    chart_of_account = 'ChartOfAccount'
-    vat_group = 'VatGroup'
-    distribution_rule6 = 'DistributionRule6'
-    project2 = 'Project2'
-
-class AlertManagementFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    type = 'Type'
-    priority = 'Priority'
-    active = 'Active'
-    param = 'Param'
-    query_id = 'QueryID'
-    frequency_type = 'FrequencyType'
-    day_of_execution = 'DayOfExecution'
-    execution_time = 'ExecutionTime'
-    last_execution_date = 'LastExecutionDate'
-    last_execution_time = 'LastExecutionTime'
-    next_execution_date = 'NextExecutionDate'
-    next_execution_time = 'NextExecutionTime'
-    save_history = 'SaveHistory'
-    frequency_interval = 'FrequencyInterval'
-    alert_management_recipients = 'AlertManagementRecipients'
-    alert_management_documents = 'AlertManagementDocuments'
-
-class AlternateCatNumFields(StrEnum):
-    item_code = 'ItemCode'
-    card_code = 'CardCode'
-    substitute = 'Substitute'
-    display_bp_catalog_number = 'DisplayBPCatalogNumber'
-    is_default = 'IsDefault'
-    description = 'Description'
-    item = 'Item'
-    business_partner = 'BusinessPartner'
-
-class ApprovalRequestFields(StrEnum):
-    code = 'Code'
-    approval_templates_id = 'ApprovalTemplatesID'
-    object_type = 'ObjectType'
-    is_draft = 'IsDraft'
-    object_entry = 'ObjectEntry'
-    status = 'Status'
-    remarks = 'Remarks'
-    current_stage = 'CurrentStage'
-    originator_id = 'OriginatorID'
-    creation_date = 'CreationDate'
-    creation_time = 'CreationTime'
-    draft_entry = 'DraftEntry'
-    draft_type = 'DraftType'
-    approval_request_lines = 'ApprovalRequestLines'
-    approval_request_decisions = 'ApprovalRequestDecisions'
-    approval_template = 'ApprovalTemplate'
-    approval_stage = 'ApprovalStage'
-    user = 'User'
-
-class ApprovalStageFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    no_of_approvers_required = 'NoOfApproversRequired'
-    remarks = 'Remarks'
-    approval_stage_approvers = 'ApprovalStageApprovers'
-    approval_requests = 'ApprovalRequests'
-
-class ApprovalTemplateFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    remarks = 'Remarks'
-    use_terms = 'UseTerms'
-    is_active = 'IsActive'
-    is_active_when_updating_documents = 'IsActiveWhenUpdatingDocuments'
-    approval_template_users = 'ApprovalTemplateUsers'
-    approval_template_stages = 'ApprovalTemplateStages'
-    approval_template_documents = 'ApprovalTemplateDocuments'
-    approval_template_terms = 'ApprovalTemplateTerms'
-    approval_template_queries = 'ApprovalTemplateQueries'
-    approval_requests = 'ApprovalRequests'
-
-class AssetDepreciationGroupFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    group = 'Group'
-    items = 'Items'
-
-class AssetDocumentFields(StrEnum):
-    doc_entry = 'DocEntry'
-    doc_num = 'DocNum'
-    series = 'Series'
-    posting_date = 'PostingDate'
-    document_date = 'DocumentDate'
-    status = 'Status'
-    remarks = 'Remarks'
-    reference = 'Reference'
-    currency = 'Currency'
-    document_rate = 'DocumentRate'
-    document_total = 'DocumentTotal'
-    document_total_fc = 'DocumentTotalFC'
-    document_total_sc = 'DocumentTotalSC'
-    asset_value_date = 'AssetValueDate'
-    document_type = 'DocumentType'
-    summerize_by_projects = 'SummerizeByProjects'
-    summerize_by_distribution_rules = 'SummerizeByDistributionRules'
-    manual_depreciation_type = 'ManualDepreciationType'
-    hand_written = 'HandWritten'
-    cancellation_date = 'CancellationDate'
-    depreciation_area = 'DepreciationArea'
-    bpl_id = 'BPLId'
-    origin = 'Origin'
-    low_value_asset_retirement = 'LowValueAssetRetirement'
-    cancellation_option = 'CancellationOption'
-    original_type = 'OriginalType'
-    base_reference = 'BaseReference'
-    bpl_name = 'BPLName'
-    vat_reg_num = 'VATRegNum'
-    asset_document_line_collection = 'AssetDocumentLineCollection'
-    asset_document_area_journal_collection = 'AssetDocumentAreaJournalCollection'
-    pti_code = 'PTICode'
-    letter = 'Letter'
-    fol_num_from = 'FolNumFrom'
-    fol_num_to = 'FolNumTo'
-    asset_document_new_loc_collection = 'AssetDocumentNewLocCollection'
-    currency2 = 'Currency2'
-    depreciation_type = 'DepreciationType'
-    depreciation_area2 = 'DepreciationArea2'
-    business_place = 'BusinessPlace'
-
-class AssetGroupFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    items = 'Items'
-
-class AssetRevaluationFields(StrEnum):
-    doc_entry = 'DocEntry'
-    doc_num = 'DocNum'
-    series = 'Series'
-    posting_date = 'PostingDate'
-    asset_value_date = 'AssetValueDate'
-    reference = 'Reference'
-    remarks = 'Remarks'
-    journal_remarks = 'JournalRemarks'
-    depreciation_area = 'DepreciationArea'
-    trans_id = 'TransId'
-    hand_written = 'HandWritten'
-    period_indicator = 'PeriodIndicator'
-    document_date = 'DocumentDate'
-    bpl_id = 'BPLId'
-    bpl_name = 'BPLName'
-    vat_reg_num = 'VATRegNum'
-    revaluation_percent = 'RevaluationPercent'
-    ifrs_posting = 'IfrsPosting'
-    summerize_by_projects = 'SummerizeByProjects'
-    summerize_by_distribution_rules = 'SummerizeByDistributionRules'
-    asset_revaluation_line_collection = 'AssetRevaluationLineCollection'
-    depreciation_area2 = 'DepreciationArea2'
-    journal_entry = 'JournalEntry'
-    business_place = 'BusinessPlace'
-
-class Attachments2Fields(StrEnum):
-    absolute_entry = 'AbsoluteEntry'
-    attachments2_lines = 'Attachments2_Lines'
-    product_trees = 'ProductTrees'
-    checksfor_payment = 'ChecksforPayment'
-    vendor_payments = 'VendorPayments'
-    customer_equipment_cards = 'CustomerEquipmentCards'
-    journal_entries = 'JournalEntries'
-    inventory_counting_drafts = 'InventoryCountingDrafts'
-    service_contracts = 'ServiceContracts'
-    inventory_countings = 'InventoryCountings'
-    inventory_opening_balances = 'InventoryOpeningBalances'
-    inventory_postings = 'InventoryPostings'
-    blanket_agreements = 'BlanketAgreements'
-    campaigns = 'Campaigns'
-    payment_drafts = 'PaymentDrafts'
-    production_orders = 'ProductionOrders'
-    project_management_time_sheet = 'ProjectManagementTimeSheet'
-    project_managements = 'ProjectManagements'
-    incoming_payments = 'IncomingPayments'
-    deposits = 'Deposits'
-
-class AttributeGroupFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    locked = 'Locked'
-    attribute_group_collection = 'AttributeGroupCollection'
-    asset_classes = 'AssetClasses'
-
-class B1SessionFields(StrEnum):
-    version = 'Version'
-    session_timeout = 'SessionTimeout'
-    session_id = 'SessionId'
-
-class BOEDocumentTypeFields(StrEnum):
-    doc_entry = 'DocEntry'
-    doc_type = 'DocType'
-    doc_description = 'DocDescription'
-
-class BOEInstructionFields(StrEnum):
-    instruction_entry = 'InstructionEntry'
-    instruction_code = 'InstructionCode'
-    instruction_desc = 'InstructionDesc'
-    is_cancel_instruction = 'IsCancelInstruction'
-
-class BOEPortfolioFields(StrEnum):
-    portfolio_entry = 'PortfolioEntry'
-    portfolio_id = 'PortfolioID'
-    portfolio_code = 'PortfolioCode'
-    portfolio_num = 'PortfolioNum'
-    portfolio_description = 'PortfolioDescription'
-
-class BPFiscalRegistryIDFields(StrEnum):
-    numerator = 'Numerator'
-    cnae_code = 'CNAECode'
-    description = 'Description'
-    business_places = 'BusinessPlaces'
-
-class BPPriorityFields(StrEnum):
-    priority = 'Priority'
-    priority_description = 'PriorityDescription'
-    business_partners = 'BusinessPartners'
-
-class BPVatExemptionsFields(StrEnum):
-    absolute_entry = 'AbsoluteEntry'
-    bp_code = 'BPCode'
-    remarks = 'Remarks'
-    bp_vat_exemptions_lines = 'BPVatExemptionsLines'
-    business_partner = 'BusinessPartner'
-
-class BankFields(StrEnum):
-    bank_code = 'BankCode'
-    bank_name = 'BankName'
-    accountfor_outgoing_checks = 'AccountforOutgoingChecks'
-    branchfor_outgoing_checks = 'BranchforOutgoingChecks'
-    next_check_number = 'NextCheckNumber'
-    swift_no = 'SwiftNo'
-    iban = 'IBAN'
-    country_code = 'CountryCode'
-    post_office = 'PostOffice'
-    absolute_entry = 'AbsoluteEntry'
-    default_bank_account_key = 'DefaultBankAccountKey'
-    digital_payments = 'DigitalPayments'
-    employees_info = 'EmployeesInfo'
-    country = 'Country'
-    house_bank_accounts = 'HouseBankAccounts'
-
-class BankChargesAllocationCodeFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    payment_run_export = 'PaymentRunExport'
-    business_partners = 'BusinessPartners'
-
-class BankPageFields(StrEnum):
-    account_code = 'AccountCode'
-    sequence = 'Sequence'
-    account_name = 'AccountName'
-    reference = 'Reference'
-    due_date = 'DueDate'
-    memo = 'Memo'
-    debit_amount = 'DebitAmount'
-    credit_amount = 'CreditAmount'
-    bank_match = 'BankMatch'
-    data_source = 'DataSource'
-    user_signature = 'UserSignature'
-    external_code = 'ExternalCode'
-    card_code = 'CardCode'
-    card_name = 'CardName'
-    statement_number = 'StatementNumber'
-    invoice_number = 'InvoiceNumber'
-    payment_created = 'PaymentCreated'
-    visual_order = 'VisualOrder'
-    doc_number_type = 'DocNumberType'
-    payment_reference = 'PaymentReference'
-    invoice_number_ex = 'InvoiceNumberEx'
-    bic_swift_code = 'BICSwiftCode'
-    chart_of_account = 'ChartOfAccount'
-    user = 'User'
-    business_partner = 'BusinessPartner'
-
-class BankStatementFields(StrEnum):
-    internal_number = 'InternalNumber'
-    bank_account_key = 'BankAccountKey'
-    statement_number = 'StatementNumber'
-    statement_date = 'StatementDate'
-    status = 'Status'
-    imported = 'Imported'
-    starting_balance_f = 'StartingBalanceF'
-    ending_balance_f = 'EndingBalanceF'
-    currency = 'Currency'
-    starting_balance_l = 'StartingBalanceL'
-    ending_balance_l = 'EndingBalanceL'
-    bank_statement_file_hash = 'BankStatementFileHash'
-    bank_statement_guid = 'BankStatementGUID'
-    bank_statement_rows = 'BankStatementRows'
-    house_bank_account = 'HouseBankAccount'
-    currency2 = 'Currency2'
-
-class BarCodeFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    item_no = 'ItemNo'
-    uo_m_entry = 'UoMEntry'
-    barcode = 'Barcode'
-    free_text = 'FreeText'
-    item = 'Item'
-    unit_of_measurement = 'UnitOfMeasurement'
-
-class BatchNumberDetailFields(StrEnum):
-    doc_entry = 'DocEntry'
-    item_code = 'ItemCode'
-    item_description = 'ItemDescription'
-    status = 'Status'
-    batch = 'Batch'
-    batch_attribute1 = 'BatchAttribute1'
-    batch_attribute2 = 'BatchAttribute2'
-    admission_date = 'AdmissionDate'
-    manufacturing_date = 'ManufacturingDate'
-    expiration_date = 'ExpirationDate'
-    details = 'Details'
-    system_number = 'SystemNumber'
-    item = 'Item'
-
-class BillOfExchangeTransactionFields(StrEnum):
-    status_from = 'StatusFrom'
-    status_to = 'StatusTo'
-    transaction_date = 'TransactionDate'
-    transaction_time = 'TransactionTime'
-    is_boe_reconciled = 'IsBoeReconciled'
-    transaction_number = 'TransactionNumber'
-    posting_date = 'PostingDate'
-    tax_date = 'TaxDate'
-    boe_transactionkey = 'BOETransactionkey'
-    bill_of_exchange_transaction_lines = 'BillOfExchangeTransactionLines'
-    bill_of_exchange_trans_deposits = 'BillOfExchangeTransDeposits'
-    bill_of_exchange_trans_bank_pages = 'BillOfExchangeTransBankPages'
-    journal_entry = 'JournalEntry'
-
-class BinLocationFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    warehouse = 'Warehouse'
-    sublevel1 = 'Sublevel1'
-    sublevel2 = 'Sublevel2'
-    sublevel3 = 'Sublevel3'
-    sublevel4 = 'Sublevel4'
-    bin_code = 'BinCode'
-    inactive = 'Inactive'
-    description = 'Description'
-    alternative_sort_code = 'AlternativeSortCode'
-    bar_code = 'BarCode'
-    attribute1 = 'Attribute1'
-    attribute2 = 'Attribute2'
-    attribute3 = 'Attribute3'
-    attribute4 = 'Attribute4'
-    attribute5 = 'Attribute5'
-    attribute6 = 'Attribute6'
-    attribute7 = 'Attribute7'
-    attribute8 = 'Attribute8'
-    attribute9 = 'Attribute9'
-    attribute10 = 'Attribute10'
-    restricted_item_type = 'RestrictedItemType'
-    specific_item = 'SpecificItem'
-    specific_item_group = 'SpecificItemGroup'
-    batch_restrictions = 'BatchRestrictions'
-    restricted_trans_type = 'RestrictedTransType'
-    restriction_reason = 'RestrictionReason'
-    date_restriction_changed = 'DateRestrictionChanged'
-    minimum_qty = 'MinimumQty'
-    maximum_qty = 'MaximumQty'
-    is_system_bin = 'IsSystemBin'
-    receiving_bin_location = 'ReceivingBinLocation'
-    exclude_auto_alloc_on_issue = 'ExcludeAutoAllocOnIssue'
-    maximum_weight = 'MaximumWeight'
-    maximum_weight1 = 'MaximumWeight1'
-    maximum_weight_unit = 'MaximumWeightUnit'
-    maximum_weight_unit1 = 'MaximumWeightUnit1'
-    restricted_uo_m_type = 'RestrictedUoMType'
-    specific_uo_m = 'SpecificUoM'
-    specific_uo_m_group = 'SpecificUoMGroup'
-    warehouses = 'Warehouses'
-    warehouse2 = 'Warehouse2'
-    item = 'Item'
-    item_groups = 'ItemGroups'
-    weight_measure = 'WeightMeasure'
-    unit_of_measurement = 'UnitOfMeasurement'
-    unit_of_measurement_group = 'UnitOfMeasurementGroup'
-
-class BinLocationAttributeFields(StrEnum):
-    attribute = 'Attribute'
-    code = 'Code'
-    abs_entry = 'AbsEntry'
-    bin_location_field = 'BinLocationField'
-
-class BinLocationFieldFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    field_type = 'FieldType'
-    field_number = 'FieldNumber'
-    name = 'Name'
-    activated = 'Activated'
-    default_field_name = 'DefaultFieldName'
-    warehouse_sublevel_codes = 'WarehouseSublevelCodes'
-    bin_location_attributes = 'BinLocationAttributes'
-
-class BranchFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    description = 'Description'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    employees_info = 'EmployeesInfo'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    users = 'Users'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class BrazilBeverageIndexerFields(StrEnum):
-    beverage_group_code = 'BeverageGroupCode'
-    beverage_table_code = 'BeverageTableCode'
-    beverage_commercial_brand_code = 'BeverageCommercialBrandCode'
-    beverage_id = 'BeverageID'
-    brazil_string_indexer = 'BrazilStringIndexer'
-    brazil_numeric_indexer = 'BrazilNumericIndexer'
-
-class BrazilFuelIndexerFields(StrEnum):
-    fuel_id = 'FuelID'
-    fuel_group_code = 'FuelGroupCode'
-    fuel_code = 'FuelCode'
-    description = 'Description'
-    items = 'Items'
-
-class BrazilMultiIndexerFields(StrEnum):
-    id = 'ID'
-    indexer_type = 'IndexerType'
-    code = 'Code'
-    description = 'Description'
-    first_ref_indexer_code = 'FirstRefIndexerCode'
-    second_ref_indexer_code = 'SecondRefIndexerCode'
-    third_ref_indexer_code = 'ThirdRefIndexerCode'
-
-class BrazilNumericIndexerFields(StrEnum):
-    indexer_type = 'IndexerType'
-    code = 'Code'
-    description = 'Description'
-    id = 'ID'
-    brazil_beverage_indexers = 'BrazilBeverageIndexers'
-    items = 'Items'
-    business_places = 'BusinessPlaces'
-
-class BrazilStringIndexerFields(StrEnum):
-    indexer_type = 'IndexerType'
-    code = 'Code'
-    description = 'Description'
-    id = 'ID'
-    brazil_beverage_indexers = 'BrazilBeverageIndexers'
-    withholding_tax_codes = 'WithholdingTaxCodes'
-    items = 'Items'
-    business_places = 'BusinessPlaces'
-
-class BudgetFields(StrEnum):
-    future_annual_expenses_credit_sys = 'FutureAnnualExpensesCreditSys'
-    future_annual_expenses_credit_loc = 'FutureAnnualExpensesCreditLoc'
-    future_annual_expenses_debit_sys = 'FutureAnnualExpensesDebitSys'
-    future_annual_expenses_debit_loc = 'FutureAnnualExpensesDebitLoc'
-    future_annual_revenues_credit = 'FutureAnnualRevenuesCredit'
-    future_annual_revenues_debit = 'FutureAnnualRevenuesDebit'
-    future_revenues_debit_sys = 'FutureRevenuesDebitSys'
-    future_revenues_debit_loc = 'FutureRevenuesDebitLoc'
-    parent_acc_percent = 'ParentAccPercent'
-    startof_fiscal_year = 'StartofFiscalYear'
-    parent_account_key = 'ParentAccountKey'
-    total_annual_budget_debit_sys = 'TotalAnnualBudgetDebitSys'
-    budget_balance_debit_sys = 'BudgetBalanceDebitSys'
-    budget_balance_debit_loc = 'BudgetBalanceDebitLoc'
-    total_annual_budget_debit_loc = 'TotalAnnualBudgetDebitLoc'
-    total_annual_budget_credit_sys = 'TotalAnnualBudgetCreditSys'
-    total_annual_budget_credit_loc = 'TotalAnnualBudgetCreditLoc'
-    budget_balance_credit_sys = 'BudgetBalanceCreditSys'
-    budget_balance_credit_loc = 'BudgetBalanceCreditLoc'
-    division_code = 'DivisionCode'
-    account_code = 'AccountCode'
-    numerator = 'Numerator'
-    budget_scenario = 'BudgetScenario'
-    budget_lines = 'BudgetLines'
-    budget_cost_accounting_lines = 'BudgetCostAccountingLines'
-    budget_distribution = 'BudgetDistribution'
-    budget_scenario2 = 'BudgetScenario2'
-
-class BudgetDistributionFields(StrEnum):
-    september = 'September'
-    august = 'August'
-    july = 'July'
-    june = 'June'
-    may = 'May'
-    april = 'April'
-    march = 'March'
-    february = 'February'
-    december = 'December'
-    november = 'November'
-    october = 'October'
-    january = 'January'
-    budget_amount = 'BudgetAmount'
-    description = 'Description'
-    division_code = 'DivisionCode'
-    budgets = 'Budgets'
-
-class BudgetScenarioFields(StrEnum):
-    name = 'Name'
-    initial_ratio_percentage = 'InitialRatioPercentage'
-    startof_fiscal_year = 'StartofFiscalYear'
-    basic_budget = 'BasicBudget'
-    numerator = 'Numerator'
-    rounding_method = 'RoundingMethod'
-    project = 'Project'
-    distribution_rule = 'DistributionRule'
-    distribution_rule2 = 'DistributionRule2'
-    distribution_rule3 = 'DistributionRule3'
-    distribution_rule4 = 'DistributionRule4'
-    distribution_rule5 = 'DistributionRule5'
-    budgets = 'Budgets'
-    project2 = 'Project2'
-    distribution_rule6 = 'DistributionRule6'
-
-class BusinessPlaceFields(StrEnum):
-    bplid = 'BPLID'
-    bpl_name = 'BPLName'
-    bpl_name_foreign = 'BPLNameForeign'
-    vat_reg_num = 'VATRegNum'
-    rep_name = 'RepName'
-    industry = 'Industry'
-    business = 'Business'
-    address = 'Address'
-    addressforeign = 'Addressforeign'
-    main_bpl = 'MainBPL'
-    tax_office_no = 'TaxOfficeNo'
-    disabled = 'Disabled'
-    default_customer_id = 'DefaultCustomerID'
-    default_vendor_id = 'DefaultVendorID'
-    default_warehouse_id = 'DefaultWarehouseID'
-    default_tax_code = 'DefaultTaxCode'
-    tax_office = 'TaxOffice'
-    federal_tax_id = 'FederalTaxID'
-    federal_tax_id2 = 'FederalTaxID2'
-    federal_tax_id3 = 'FederalTaxID3'
-    additional_id_number = 'AdditionalIdNumber'
-    nature_of_company_code = 'NatureOfCompanyCode'
-    economic_activity_type_code = 'EconomicActivityTypeCode'
-    credit_contribution_origin_code = 'CreditContributionOriginCode'
-    ipi_period_code = 'IPIPeriodCode'
-    cooperative_association_type_code = 'CooperativeAssociationTypeCode'
-    profit_taxation_code = 'ProfitTaxationCode'
-    company_qualification_code = 'CompanyQualificationCode'
-    declarer_type_code = 'DeclarerTypeCode'
-    preferred_state_code = 'PreferredStateCode'
-    address_type = 'AddressType'
-    street = 'Street'
-    street_no = 'StreetNo'
-    building = 'Building'
-    zip_code = 'ZipCode'
-    block = 'Block'
-    city = 'City'
-    state = 'State'
-    county = 'County'
-    country = 'Country'
-    alias_name = 'AliasName'
-    commercial_register = 'CommercialRegister'
-    date_of_incorporation = 'DateOfIncorporation'
-    sped_profile = 'SPEDProfile'
-    environment_type = 'EnvironmentType'
-    opting4_icms = 'Opting4ICMS'
-    payment_clearing_account = 'PaymentClearingAccount'
-    global_location_number = 'GlobalLocationNumber'
-    default_resource_warehouse_id = 'DefaultResourceWarehouseID'
-    business_place_ie_numbers = 'BusinessPlaceIENumbers'
-    business_place_tributary_infos = 'BusinessPlaceTributaryInfos'
-    user_default_groups = 'UserDefaultGroups'
-    stock_transfers = 'StockTransfers'
-    purchase_quotations = 'PurchaseQuotations'
-    vendor_payments = 'VendorPayments'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_counting_drafts = 'InventoryCountingDrafts'
-    inventory_gen_entries = 'InventoryGenEntries'
-    asset_retirement = 'AssetRetirement'
-    asset_transfer = 'AssetTransfer'
-    asset_revaluations = 'AssetRevaluations'
-    employees_info = 'EmployeesInfo'
-    asset_manual_depreciation = 'AssetManualDepreciation'
-    asset_classes = 'AssetClasses'
-    orders = 'Orders'
-    asset_capitalization = 'AssetCapitalization'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    inventory_transfer_requests = 'InventoryTransferRequests'
-    inventory_countings = 'InventoryCountings'
-    inventory_opening_balances = 'InventoryOpeningBalances'
-    inventory_postings = 'InventoryPostings'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    stock_transfer_drafts = 'StockTransferDrafts'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    asset_capitalization_credit_memo = 'AssetCapitalizationCreditMemo'
-    payment_drafts = 'PaymentDrafts'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    incoming_payments = 'IncomingPayments'
-    deposits = 'Deposits'
-    purchase_requests = 'PurchaseRequests'
-    business_partner = 'BusinessPartner'
-    warehouse = 'Warehouse'
-    bp_fiscal_registry_id = 'BPFiscalRegistryID'
-    brazil_numeric_indexer = 'BrazilNumericIndexer'
-    brazil_string_indexer = 'BrazilStringIndexer'
-    county2 = 'County2'
-    country2 = 'Country2'
-    chart_of_account = 'ChartOfAccount'
-
-class CIGCodeFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    purchase_quotations = 'PurchaseQuotations'
-    vendor_payments = 'VendorPayments'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    journal_entries = 'JournalEntries'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    payment_drafts = 'PaymentDrafts'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    incoming_payments = 'IncomingPayments'
-    purchase_requests = 'PurchaseRequests'
-
-class CUPCodeFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    purchase_quotations = 'PurchaseQuotations'
-    vendor_payments = 'VendorPayments'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    journal_entries = 'JournalEntries'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    payment_drafts = 'PaymentDrafts'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    incoming_payments = 'IncomingPayments'
-    purchase_requests = 'PurchaseRequests'
-
-class CampaignFields(StrEnum):
-    campaign_number = 'CampaignNumber'
-    campaign_name = 'CampaignName'
-    campaign_type = 'CampaignType'
-    target_group = 'TargetGroup'
-    owner = 'Owner'
-    status = 'Status'
-    start_date = 'StartDate'
-    finish_date = 'FinishDate'
-    remarks = 'Remarks'
-    generated_by_wizard = 'GeneratedByWizard'
-    attachements_entry = 'AttachementsEntry'
-    target_group_type = 'TargetGroupType'
-    campaign_business_partners = 'CampaignBusinessPartners'
-    campaign_items = 'CampaignItems'
-    campaign_partners = 'CampaignPartners'
-    target_group2 = 'TargetGroup2'
-    employee_info = 'EmployeeInfo'
-    attachments2 = 'Attachments2'
-    business_partners = 'BusinessPartners'
-
-class CampaignResponseTypeFields(StrEnum):
-    response_type_description = 'ResponseTypeDescription'
-    response_type = 'ResponseType'
-    is_active = 'IsActive'
-
-class CashDiscountFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    by_date = 'ByDate'
-    freight = 'Freight'
-    tax = 'Tax'
-    discount_lines = 'DiscountLines'
-    payment_terms_types = 'PaymentTermsTypes'
-
-class CashFlowLineItemFields(StrEnum):
-    line_item_id = 'LineItemID'
-    line_item_name = 'LineItemName'
-    active_line_item = 'ActiveLineItem'
-    parent_article = 'ParentArticle'
-    level = 'Level'
-    drawer = 'Drawer'
-
-class CentralBankIndicatorFields(StrEnum):
-    indicator = 'Indicator'
-    description = 'Description'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class CertificateSeriesFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    section = 'Section'
-    location = 'Location'
-    default_series = 'DefaultSeries'
-    series_lines = 'SeriesLines'
-    section2 = 'Section2'
-    warehouse_location = 'WarehouseLocation'
-
-class ChecksforPaymentFields(StrEnum):
-    check_key = 'CheckKey'
-    check_number = 'CheckNumber'
-    bank_code = 'BankCode'
-    branch = 'Branch'
-    bank_name = 'BankName'
-    check_date = 'CheckDate'
-    account_number = 'AccountNumber'
-    details = 'Details'
-    journal_entry_reference = 'JournalEntryReference'
-    payment_date = 'PaymentDate'
-    payment_no = 'PaymentNo'
-    check_amount = 'CheckAmount'
-    transferable = 'Transferable'
-    vendor_code = 'VendorCode'
-    check_currency = 'CheckCurrency'
-    canceled = 'Canceled'
-    card_or_account = 'CardOrAccount'
-    printed = 'Printed'
-    vendor_name = 'VendorName'
-    signature = 'Signature'
-    customer_account_code = 'CustomerAccountCode'
-    transaction_number = 'TransactionNumber'
-    address = 'Address'
-    create_journal_entry = 'CreateJournalEntry'
-    update_date = 'UpdateDate'
-    creation_date = 'CreationDate'
-    tax_total = 'TaxTotal'
-    tax_date = 'TaxDate'
-    deduction_refund_amount = 'DeductionRefundAmount'
-    printed_by = 'PrintedBy'
-    country_code = 'CountryCode'
-    totalin_words = 'TotalinWords'
-    address_name = 'AddressName'
-    manual_check = 'ManualCheck'
-    attachment_entry = 'AttachmentEntry'
-    e_check = 'ECheck'
-    print_confirm = 'PrintConfirm'
-    checksfor_payment_lines = 'ChecksforPaymentLines'
-    checksfor_payment_print_status = 'ChecksforPaymentPrintStatus'
-    checksfor_payment_document_references = 'ChecksforPaymentDocumentReferences'
-    journal_entry = 'JournalEntry'
-    country = 'Country'
-    attachments2 = 'Attachments2'
-
-class ChooseFromListFields(StrEnum):
-    object_name = 'ObjectName'
-    choose_from_list_lines = 'ChooseFromList_Lines'
-
-class ClosingDateProcedureFields(StrEnum):
-    closing_date_num = 'ClosingDateNum'
-    closing_date_code = 'ClosingDateCode'
-    baseline_date = 'BaselineDate'
-    due_month = 'DueMonth'
-    extra_month = 'ExtraMonth'
-    extra_day = 'ExtraDay'
-    business_partners = 'BusinessPartners'
-
-class CockpitFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    name = 'Name'
-    description = 'Description'
-    user_signature = 'UserSignature'
-    date = 'Date'
-    time = 'Time'
-    manufacturer = 'Manufacturer'
-    publisher = 'Publisher'
-    cockpit_type = 'CockpitType'
-    user = 'User'
-
-class ColumnPreferencesFields(StrEnum):
-    user = 'User'
-    form_id = 'FormID'
-    item_number = 'ItemNumber'
-    column = 'Column'
-    width = 'Width'
-    visible_in_form = 'VisibleInForm'
-    tabs_layout = 'TabsLayout'
-    editable_in_form = 'EditableInForm'
-    visible_in_expanded = 'VisibleInExpanded'
-    expanded_index = 'ExpandedIndex'
-    editable_in_expanded = 'EditableInExpanded'
-    user2 = 'User2'
-
-class CommissionGroupFields(StrEnum):
-    commission_group_code = 'CommissionGroupCode'
-    commission_group_name = 'CommissionGroupName'
-    commission_percentage = 'CommissionPercentage'
-    sales_persons = 'SalesPersons'
-    items = 'Items'
-    business_partners = 'BusinessPartners'
-
-class ContactFields(StrEnum):
-    card_code = 'CardCode'
-    notes = 'Notes'
-    contact_date = 'ContactDate'
-    contact_time = 'ContactTime'
-    recontact = 'Recontact'
-    closed = 'Closed'
-    close_date = 'CloseDate'
-    phone = 'Phone'
-    fax = 'Fax'
-    subject = 'Subject'
-    doc_type = 'DocType'
-    doc_num = 'DocNum'
-    doc_entry = 'DocEntry'
-    contact_code = 'ContactCode'
-    priority = 'Priority'
-    details = 'Details'
-    activity = 'Activity'
-    activity_type = 'ActivityType'
-    location = 'Location'
-    start_time = 'StartTime'
-    end_time = 'EndTime'
-    duration = 'Duration'
-    duration_type = 'DurationType'
-    sales_employee = 'SalesEmployee'
-    contact_person_code = 'ContactPersonCode'
-    handled_by = 'HandledBy'
-    reminder = 'Reminder'
-    reminder_period = 'ReminderPeriod'
-    reminder_type = 'ReminderType'
-    city = 'City'
-    personalflag = 'Personalflag'
-    street = 'Street'
-    parentobject_id = 'ParentobjectId'
-    parentobjecttype = 'Parentobjecttype'
-    room = 'Room'
-    inactiveflag = 'Inactiveflag'
-    state = 'State'
-    previous_activity = 'PreviousActivity'
-    country = 'Country'
-    status = 'Status'
-    tentativeflag = 'Tentativeflag'
-    end_duedate = 'EndDuedate'
-    doc_type_ex = 'DocTypeEx'
-    attachment_entry = 'AttachmentEntry'
-    start_date = 'StartDate'
-    user_signature = 'UserSignature'
-    user_signature2 = 'UserSignature2'
-    business_partner = 'BusinessPartner'
-    activity_subject = 'ActivitySubject'
-    activity_type2 = 'ActivityType2'
-    activity_location = 'ActivityLocation'
-    sales_person = 'SalesPerson'
-    user = 'User'
-    country2 = 'Country2'
-    activity_status = 'ActivityStatus'
-
-class CostElementFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    is_active = 'IsActive'
-    chart_of_accounts = 'ChartOfAccounts'
-
-class CountryFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    code_for_reports = 'CodeForReports'
-    address_format = 'AddressFormat'
-    eu = 'EU'
-    number_of_digits_for_tax_id = 'NumberOfDigitsForTaxID'
-    bank_code_digits = 'BankCodeDigits'
-    bank_branch_digits = 'BankBranchDigits'
-    bank_account_digits = 'BankAccountDigits'
-    bank_control_key_digits = 'BankControlKeyDigits'
-    domestic_account_validation = 'DomesticAccountValidation'
-    iban_validation = 'IbanValidation'
-    blacklisted = 'Blacklisted'
-    uic_country_code = 'UICCountryCode'
-    eaeu = 'EAEU'
-    iso_alpha2_code = 'ISOAlpha2Code'
-    iso_alpha3_code = 'ISOAlpha3Code'
-    iso_numeric = 'ISONumeric'
-    user_default_groups = 'UserDefaultGroups'
-    warehouses = 'Warehouses'
-    checksfor_payment = 'ChecksforPayment'
-    purchase_quotations = 'PurchaseQuotations'
-    vendor_payments = 'VendorPayments'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    customer_equipment_cards = 'CustomerEquipmentCards'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    warehouse_locations = 'WarehouseLocations'
-    service_calls = 'ServiceCalls'
-    employees_info = 'EmployeesInfo'
-    orders = 'Orders'
-    wizard_payment_methods = 'WizardPaymentMethods'
-    gl_account_advanced_rules = 'GLAccountAdvancedRules'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    export_determinations = 'ExportDeterminations'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    states = 'States'
-    credit_notes = 'CreditNotes'
-    payment_drafts = 'PaymentDrafts'
-    banks = 'Banks'
-    contacts = 'Contacts'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    activities = 'Activities'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    house_bank_accounts = 'HouseBankAccounts'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    incoming_payments = 'IncomingPayments'
-    purchase_requests = 'PurchaseRequests'
-    business_places = 'BusinessPlaces'
-    credit_cards = 'CreditCards'
-
-class CountyFields(StrEnum):
-    abs_id = 'AbsId'
-    code = 'Code'
-    country = 'Country'
-    state = 'State'
-    name = 'Name'
-    ibge_code = 'IbgeCode'
-    gia_code = 'GiaCode'
-    tax_zone = 'TaxZone'
-    warehouses = 'Warehouses'
-    business_places = 'BusinessPlaces'
-
-class CreditCardFields(StrEnum):
-    credit_card_code = 'CreditCardCode'
-    credit_card_name = 'CreditCardName'
-    gl_account = 'GLAccount'
-    telephone = 'Telephone'
-    company_id = 'CompanyID'
-    country_code = 'CountryCode'
-    credit_payment_methods = 'CreditPaymentMethods'
-    business_partners = 'BusinessPartners'
-    chart_of_account = 'ChartOfAccount'
-    country = 'Country'
-
-class CreditCardPaymentFields(StrEnum):
-    due_date_code = 'DueDateCode'
-    due_date_name = 'DueDateName'
-    due_dates_type = 'DueDatesType'
-    payment_after_days = 'PaymentAfterDays'
-    payment_after_months = 'PaymentAfterMonths'
-    from_day1 = 'FromDay1'
-    to_day1 = 'ToDay1'
-    payment_day1 = 'PaymentDay1'
-    no_of_months1 = 'NoOfMonths1'
-    from_day2 = 'FromDay2'
-    to_day2 = 'ToDay2'
-    payment_day2 = 'PaymentDay2'
-    no_of_months2 = 'NoOfMonths2'
-    from_day3 = 'FromDay3'
-    to_day3 = 'ToDay3'
-    payment_day3 = 'PaymentDay3'
-    no_of_months3 = 'NoOfMonths3'
-    from_day4 = 'FromDay4'
-    to_day4 = 'ToDay4'
-    payment_day4 = 'PaymentDay4'
-    no_of_months4 = 'NoOfMonths4'
-    credit_payment_methods = 'CreditPaymentMethods'
-
-class CreditPaymentMethodFields(StrEnum):
-    payment_method_code = 'PaymentMethodCode'
-    name = 'Name'
-    assignedto_credit_card = 'AssignedtoCreditCard'
-    payment_code = 'PaymentCode'
-    minimum_credit_amount = 'MinimumCreditAmount'
-    minimum_payment_amount = 'MinimumPaymentAmount'
-    max_qty_without_approval = 'MaxQtyWithoutApproval'
-    installment_payments_possible = 'InstallmentPaymentsPossible'
-    credit_card = 'CreditCard'
-    credit_card_payment = 'CreditCardPayment'
-
-class CustomerEquipmentCardFields(StrEnum):
-    equipment_card_num = 'EquipmentCardNum'
-    customer_code = 'CustomerCode'
-    customer_name = 'CustomerName'
-    contact_employee_code = 'ContactEmployeeCode'
-    direct_customer_code = 'DirectCustomerCode'
-    direct_customer_name = 'DirectCustomerName'
-    manufacturer_serial_num = 'ManufacturerSerialNum'
-    internal_serial_num = 'InternalSerialNum'
-    required_resolution_time = 'RequiredResolutionTime'
-    required_resolution_unit = 'RequiredResolutionUnit'
-    item_code = 'ItemCode'
-    item_description = 'ItemDescription'
-    invoice_code = 'InvoiceCode'
-    invoice_number = 'InvoiceNumber'
-    delivery_date = 'DeliveryDate'
-    contact_phone = 'ContactPhone'
-    street = 'Street'
-    block = 'Block'
-    zip_code = 'ZipCode'
-    city = 'City'
-    county = 'County'
-    country_code = 'CountryCode'
-    state_code = 'StateCode'
-    install_location = 'InstallLocation'
-    contract_code = 'ContractCode'
-    contract_start_date = 'ContractStartDate'
-    contract_end_date = 'ContractEndDate'
-    delivery_code = 'DeliveryCode'
-    delivery_number = 'DeliveryNumber'
-    status_of_serial_number = 'StatusOfSerialNumber'
-    replace_sn = 'ReplaceSN'
-    default_technician = 'DefaultTechnician'
-    replaced_by_sn = 'ReplacedBySN'
-    defaultterritory = 'Defaultterritory'
-    building_floor_room = 'BuildingFloorRoom'
-    attachment_entry = 'AttachmentEntry'
-    street_no = 'StreetNo'
-    service_bp_type = 'ServiceBPType'
-    customer_equipment_card_business_partners = 'CustomerEquipmentCardBusinessPartners'
-    business_partner = 'BusinessPartner'
-    item = 'Item'
-    country = 'Country'
-    service_contract = 'ServiceContract'
-    employee_info = 'EmployeeInfo'
-    territory = 'Territory'
-    attachments2 = 'Attachments2'
-
-class CustomsDeclarationFields(StrEnum):
-    ccd_num = 'CCDNum'
-    date = 'Date'
-    customs_broker = 'CustomsBroker'
-    doc_num = 'DocNum'
-    doc_date = 'DocDate'
-    supply_num = 'SupplyNum'
-    supply_date = 'SupplyDate'
-    customs_terminal = 'CustomsTerminal'
-    payment_key = 'PaymentKey'
-
-class CustomsGroupFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    number = 'Number'
-    customs = 'Customs'
-    purchase = 'Purchase'
-    other = 'Other'
-    total = 'Total'
-    locked = 'Locked'
-    customs_allocation_account = 'CustomsAllocationAccount'
-    customs_expense_account = 'CustomsExpenseAccount'
-    port_address = 'PortAddress'
-    port_state = 'PortState'
-    items = 'Items'
-    chart_of_account = 'ChartOfAccount'
-
-class DNFCodeSetupFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    ncm_code = 'NCMCode'
-    dnf_code = 'DNFCode'
-    uo_m = 'UoM'
-    factor = 'Factor'
-    items = 'Items'
-    ncm_code_setup = 'NCMCodeSetup'
-
-class DeductibleTaxFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    inactive = 'Inactive'
-    category = 'Category'
-    deductible_tax_rate = 'DeductibleTaxRate'
-
-class DeductionTaxGroupFields(StrEnum):
-    group_key = 'GroupKey'
-    group_code = 'GroupCode'
-    group_name = 'GroupName'
-    max_redin = 'MaxRedin'
-    group_extended_code = 'GroupExtendedCode'
-    business_partners = 'BusinessPartners'
-    deduction_tax_sub_group = 'DeductionTaxSubGroup'
-
-class DeductionTaxHierarchyFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    bp_code = 'BPCode'
-    hierarchy_code = 'HierarchyCode'
-    hierarchy_name = 'HierarchyName'
-    valid_from = 'ValidFrom'
-    valid_until = 'ValidUntil'
-    deduction_percent = 'DeductionPercent'
-    maximum_total = 'MaximumTotal'
-    last_updated = 'LastUpdated'
-    deduction_tax_hierarchies_lines = 'DeductionTaxHierarchies_Lines'
-    business_partner = 'BusinessPartner'
-
-class DeductionTaxSubGroupFields(StrEnum):
-    group_code = 'GroupCode'
-    group_name = 'GroupName'
-    deduction_tax_groups = 'DeductionTaxGroups'
-
-class DefaultElementsforCRFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-
-class DepartmentFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    description = 'Description'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    employees_info = 'EmployeesInfo'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    users = 'Users'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class DepositFields(StrEnum):
-    deposit_number = 'DepositNumber'
-    abs_entry = 'AbsEntry'
-    deposit_type = 'DepositType'
-    deposit_date = 'DepositDate'
-    deposit_currency = 'DepositCurrency'
-    deposit_account = 'DepositAccount'
-    depositor_name = 'DepositorName'
-    bank = 'Bank'
-    bank_account_num = 'BankAccountNum'
-    bank_branch = 'BankBranch'
-    bank_reference = 'BankReference'
-    journal_remarks = 'JournalRemarks'
-    total_lc = 'TotalLC'
-    total_fc = 'TotalFC'
-    total_sc = 'TotalSC'
-    allocation_account = 'AllocationAccount'
-    doc_rate = 'DocRate'
-    tax_account = 'TaxAccount'
-    tax_amount = 'TaxAmount'
-    commission_account = 'CommissionAccount'
-    commission = 'Commission'
-    commission_date = 'CommissionDate'
-    tax_code = 'TaxCode'
-    deposit_account_type = 'DepositAccountType'
-    reconcile_after_deposit = 'ReconcileAfterDeposit'
-    voucher_account = 'VoucherAccount'
-    series = 'Series'
-    project = 'Project'
-    distribution_rule = 'DistributionRule'
-    distribution_rule2 = 'DistributionRule2'
-    distribution_rule3 = 'DistributionRule3'
-    distribution_rule4 = 'DistributionRule4'
-    distribution_rule5 = 'DistributionRule5'
-    commission_currency = 'CommissionCurrency'
-    commission_sc = 'CommissionSC'
-    commission_fc = 'CommissionFC'
-    tax_amount_sc = 'TaxAmountSC'
-    tax_amount_fc = 'TaxAmountFC'
-    bplid = 'BPLID'
-    check_deposit_type = 'CheckDepositType'
-    attachment_entry = 'AttachmentEntry'
-    income_tax_account = 'IncomeTaxAccount'
-    income_tax_amount = 'IncomeTaxAmount'
-    income_tax_amount_sc = 'IncomeTaxAmountSC'
-    income_tax_amount_fc = 'IncomeTaxAmountFC'
-    check_lines = 'CheckLines'
-    credit_lines = 'CreditLines'
-    boe_lines = 'BOELines'
-    vat_group = 'VatGroup'
-    project2 = 'Project2'
-    distribution_rule6 = 'DistributionRule6'
-    business_place = 'BusinessPlace'
-    attachments2 = 'Attachments2'
-
-class DepreciationAreaFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    posting_of_depreciation = 'PostingOfDepreciation'
-    retirement_method = 'RetirementMethod'
-    area_type = 'AreaType'
-    derived_area = 'DerivedArea'
-    main_booking_area = 'MainBookingArea'
-    direct_revenue_posting = 'DirectRevenuePosting'
-    tax_credit_control = 'TaxCreditControl'
-    tax_type = 'TaxType'
-    bp_for_tax_correction = 'BPForTaxCorrection'
-    item_for_tax_correction = 'ItemForTaxCorrection'
-    usage_for_tax_correction = 'UsageForTaxCorrection'
-    asset_retirement = 'AssetRetirement'
-    asset_transfer = 'AssetTransfer'
-    asset_revaluations = 'AssetRevaluations'
-    asset_manual_depreciation = 'AssetManualDepreciation'
-    asset_capitalization = 'AssetCapitalization'
-    asset_capitalization_credit_memo = 'AssetCapitalizationCreditMemo'
-    sales_tax_authorities_type = 'SalesTaxAuthoritiesType'
-    business_partner = 'BusinessPartner'
-    item = 'Item'
-    nota_fiscal_usage = 'NotaFiscalUsage'
-
-class DepreciationTypeFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    depreciation_method = 'DepreciationMethod'
-    minimum_depreciated_value = 'MinimumDepreciatedValue'
-    round_year_end_book_value = 'RoundYearEndBookValue'
-    include_salvage_in_depreciation = 'IncludeSalvageInDepreciation'
-    salvage_percentage = 'SalvagePercentage'
-    acquisition_period_control = 'AcquisitionPeriodControl'
-    subsequent_acquisition_period_control = 'SubsequentAcquisitionPeriodControl'
-    retirement_period_control = 'RetirementPeriodControl'
-    acquisition_pro_rata_type = 'AcquisitionProRataType'
-    subsequent_acquisition_pro_rata_type = 'SubsequentAcquisitionProRataType'
-    retirement_pro_rata_type = 'RetirementProRataType'
-    percentage_of_depreciation_reversed_in_retirement_year = 'PercentageOfDepreciationReversedInRetirementYear'
-    valid_from = 'ValidFrom'
-    valid_to = 'ValidTo'
-    straight_line_calculation_method = 'StraightLineCalculationMethod'
-    straight_line_percentage = 'StraightLinePercentage'
-    straight_line_period_control_depreciation_periods = 'StraightLinePeriodControlDepreciationPeriods'
-    straight_line_period_control_factor = 'StraightLinePeriodControlFactor'
-    declining_percentage = 'DecliningPercentage'
-    declining_factor = 'DecliningFactor'
-    declining_change_to = 'DecliningChangeTo'
-    special_depreciation_calculation_method = 'SpecialDepreciationCalculationMethod'
-    special_depreciation_concession_period_years = 'SpecialDepreciationConcessionPeriodYears'
-    special_depreciation_maximum_percentage = 'SpecialDepreciationMaximumPercentage'
-    special_depreciation_normal_depreciation = 'SpecialDepreciationNormalDepreciation'
-    special_depreciation_alternative_depreciation = 'SpecialDepreciationAlternativeDepreciation'
-    depreciation_type_pool = 'DepreciationTypePool'
-    manual_depreciation_reduce_depreciation_base = 'ManualDepreciationReduceDepreciationBase'
-    special_depreciation_maximum_amount = 'SpecialDepreciationMaximumAmount'
-    special_depreciation_maximum_flag = 'SpecialDepreciationMaximumFlag'
-    calculation_base = 'CalculationBase'
-    depreciation_end_at_last_full_year = 'DepreciationEndAtLastFullYear'
-    include_previous_depreciation_in_capitalization_period = 'IncludePreviousDepreciationInCapitalizationPeriod'
-    delta_coefficient = 'DeltaCoefficient'
-    maximum_depreciable_value = 'MaximumDepreciableValue'
-    factor_only_relevant_to_first_fiscal_year = 'FactorOnlyRelevantToFirstFiscalYear'
-    transfer_source_period_control = 'TransferSourcePeriodControl'
-    transfer_target_period_control = 'TransferTargetPeriodControl'
-    transfer_source_pro_rata_type = 'TransferSourceProRataType'
-    transfer_target_pro_rata_type = 'TransferTargetProRataType'
-    rounding_method = 'RoundingMethod'
-    depreciation_level_collection = 'DepreciationLevelCollection'
-    asset_retirement = 'AssetRetirement'
-    asset_transfer = 'AssetTransfer'
-    asset_manual_depreciation = 'AssetManualDepreciation'
-    asset_capitalization = 'AssetCapitalization'
-    depreciation_type_pool2 = 'DepreciationTypePool2'
-    asset_capitalization_credit_memo = 'AssetCapitalizationCreditMemo'
-
-class DepreciationTypePoolFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    depreciation_types = 'DepreciationTypes'
-
-class DeterminationCriteriaFields(StrEnum):
-    dmc_id = 'DmcId'
-    determination_criteria_property = 'DeterminationCriteriaProperty'
-    is_active = 'IsActive'
-    priority = 'Priority'
-
-class DimensionFields(StrEnum):
-    dimension_code = 'DimensionCode'
-    dimension_name = 'DimensionName'
-    is_active = 'IsActive'
-    dimension_description = 'DimensionDescription'
-    distribution_rules = 'DistributionRules'
-    profit_centers = 'ProfitCenters'
-
-class DistributionRuleFields(StrEnum):
-    factor_code = 'FactorCode'
-    factor_description = 'FactorDescription'
-    total_factor = 'TotalFactor'
-    direct = 'Direct'
-    in_which_dimension = 'InWhichDimension'
-    active = 'Active'
-    is_fixed_amount = 'IsFixedAmount'
-    distribution_rule_lines = 'DistributionRuleLines'
-    product_trees = 'ProductTrees'
-    dimension = 'Dimension'
-    additional_expenses = 'AdditionalExpenses'
-    chart_of_accounts = 'ChartOfAccounts'
-    production_orders = 'ProductionOrders'
-    budget_scenarios = 'BudgetScenarios'
-    deposits = 'Deposits'
-
-class DocumentFields(StrEnum):
-    doc_entry = 'DocEntry'
-    doc_num = 'DocNum'
-    doc_type = 'DocType'
-    hand_written = 'HandWritten'
-    printed = 'Printed'
-    doc_date = 'DocDate'
-    doc_due_date = 'DocDueDate'
-    card_code = 'CardCode'
-    card_name = 'CardName'
-    address = 'Address'
-    num_at_card = 'NumAtCard'
-    doc_total = 'DocTotal'
-    attachment_entry = 'AttachmentEntry'
-    doc_currency = 'DocCurrency'
-    doc_rate = 'DocRate'
-    reference1 = 'Reference1'
-    reference2 = 'Reference2'
-    comments = 'Comments'
-    journal_memo = 'JournalMemo'
-    payment_group_code = 'PaymentGroupCode'
-    doc_time = 'DocTime'
-    sales_person_code = 'SalesPersonCode'
-    transportation_code = 'TransportationCode'
-    confirmed = 'Confirmed'
-    import_file_num = 'ImportFileNum'
-    summery_type = 'SummeryType'
-    contact_person_code = 'ContactPersonCode'
-    show_scn = 'ShowSCN'
-    series = 'Series'
-    tax_date = 'TaxDate'
-    partial_supply = 'PartialSupply'
-    doc_object_code = 'DocObjectCode'
-    ship_to_code = 'ShipToCode'
-    indicator = 'Indicator'
-    federal_tax_id = 'FederalTaxID'
-    discount_percent = 'DiscountPercent'
-    payment_reference = 'PaymentReference'
-    creation_date = 'CreationDate'
-    update_date = 'UpdateDate'
-    financial_period = 'FinancialPeriod'
-    user_sign = 'UserSign'
-    trans_num = 'TransNum'
-    vat_sum = 'VatSum'
-    vat_sum_sys = 'VatSumSys'
-    vat_sum_fc = 'VatSumFc'
-    net_procedure = 'NetProcedure'
-    doc_total_fc = 'DocTotalFc'
-    doc_total_sys = 'DocTotalSys'
-    form1099 = 'Form1099'
-    box1099 = 'Box1099'
-    revision_po = 'RevisionPo'
-    requried_date = 'RequriedDate'
-    cancel_date = 'CancelDate'
-    block_dunning = 'BlockDunning'
-    submitted = 'Submitted'
-    segment = 'Segment'
-    pick_status = 'PickStatus'
-    pick = 'Pick'
-    payment_method = 'PaymentMethod'
-    payment_block = 'PaymentBlock'
-    payment_block_entry = 'PaymentBlockEntry'
-    central_bank_indicator = 'CentralBankIndicator'
-    maximum_cash_discount = 'MaximumCashDiscount'
-    reserve = 'Reserve'
-    project = 'Project'
-    exemption_validity_date_from = 'ExemptionValidityDateFrom'
-    exemption_validity_date_to = 'ExemptionValidityDateTo'
-    ware_house_update_type = 'WareHouseUpdateType'
-    rounding = 'Rounding'
-    external_corrected_doc_num = 'ExternalCorrectedDocNum'
-    internal_corrected_doc_num = 'InternalCorrectedDocNum'
-    next_correcting_document = 'NextCorrectingDocument'
-    deferred_tax = 'DeferredTax'
-    tax_exemption_letter_num = 'TaxExemptionLetterNum'
-    wt_applied = 'WTApplied'
-    wt_applied_fc = 'WTAppliedFC'
-    bill_of_exchange_reserved = 'BillOfExchangeReserved'
-    agent_code = 'AgentCode'
-    wt_applied_sc = 'WTAppliedSC'
-    total_equalization_tax = 'TotalEqualizationTax'
-    total_equalization_tax_fc = 'TotalEqualizationTaxFC'
-    total_equalization_tax_sc = 'TotalEqualizationTaxSC'
-    number_of_installments = 'NumberOfInstallments'
-    apply_tax_on_first_installment = 'ApplyTaxOnFirstInstallment'
-    tax_on_installments = 'TaxOnInstallments'
-    wt_non_subject_amount = 'WTNonSubjectAmount'
-    wt_non_subject_amount_sc = 'WTNonSubjectAmountSC'
-    wt_non_subject_amount_fc = 'WTNonSubjectAmountFC'
-    wt_exempted_amount = 'WTExemptedAmount'
-    wt_exempted_amount_sc = 'WTExemptedAmountSC'
-    wt_exempted_amount_fc = 'WTExemptedAmountFC'
-    base_amount = 'BaseAmount'
-    base_amount_sc = 'BaseAmountSC'
-    base_amount_fc = 'BaseAmountFC'
-    wt_amount = 'WTAmount'
-    wt_amount_sc = 'WTAmountSC'
-    wt_amount_fc = 'WTAmountFC'
-    vat_date = 'VatDate'
-    documents_owner = 'DocumentsOwner'
-    folio_prefix_string = 'FolioPrefixString'
-    folio_number = 'FolioNumber'
-    document_sub_type = 'DocumentSubType'
-    bp_channel_code = 'BPChannelCode'
-    bp_channel_contact = 'BPChannelContact'
-    address2 = 'Address2'
-    document_status = 'DocumentStatus'
-    period_indicator = 'PeriodIndicator'
-    pay_to_code = 'PayToCode'
-    manual_number = 'ManualNumber'
-    use_shpd_goods_act = 'UseShpdGoodsAct'
-    is_pay_to_bank = 'IsPayToBank'
-    pay_to_bank_country = 'PayToBankCountry'
-    pay_to_bank_code = 'PayToBankCode'
-    pay_to_bank_account_no = 'PayToBankAccountNo'
-    pay_to_bank_branch = 'PayToBankBranch'
-    bpl_id_assigned_to_invoice = 'BPL_IDAssignedToInvoice'
-    down_payment = 'DownPayment'
-    reserve_invoice = 'ReserveInvoice'
-    language_code = 'LanguageCode'
-    tracking_number = 'TrackingNumber'
-    pick_remark = 'PickRemark'
-    closing_date = 'ClosingDate'
-    sequence_code = 'SequenceCode'
-    sequence_serial = 'SequenceSerial'
-    series_string = 'SeriesString'
-    sub_series_string = 'SubSeriesString'
-    sequence_model = 'SequenceModel'
-    use_correction_vat_group = 'UseCorrectionVATGroup'
-    total_discount = 'TotalDiscount'
-    down_payment_amount = 'DownPaymentAmount'
-    down_payment_percentage = 'DownPaymentPercentage'
-    down_payment_type = 'DownPaymentType'
-    down_payment_amount_sc = 'DownPaymentAmountSC'
-    down_payment_amount_fc = 'DownPaymentAmountFC'
-    vat_percent = 'VatPercent'
-    service_gross_profit_percent = 'ServiceGrossProfitPercent'
-    opening_remarks = 'OpeningRemarks'
-    closing_remarks = 'ClosingRemarks'
-    rounding_diff_amount = 'RoundingDiffAmount'
-    rounding_diff_amount_fc = 'RoundingDiffAmountFC'
-    rounding_diff_amount_sc = 'RoundingDiffAmountSC'
-    cancelled = 'Cancelled'
-    signature_input_message = 'SignatureInputMessage'
-    signature_digest = 'SignatureDigest'
-    certification_number = 'CertificationNumber'
-    private_key_version = 'PrivateKeyVersion'
-    control_account = 'ControlAccount'
-    insurance_operation347 = 'InsuranceOperation347'
-    archive_nonremovable_sales_quotation = 'ArchiveNonremovableSalesQuotation'
-    gts_checker = 'GTSChecker'
-    gts_payee = 'GTSPayee'
-    extra_month = 'ExtraMonth'
-    extra_days = 'ExtraDays'
-    cash_discount_date_offset = 'CashDiscountDateOffset'
-    start_from = 'StartFrom'
-    nts_approved = 'NTSApproved'
-    e_tax_web_site = 'ETaxWebSite'
-    e_tax_number = 'ETaxNumber'
-    nts_approved_number = 'NTSApprovedNumber'
-    e_doc_generation_type = 'EDocGenerationType'
-    e_doc_series = 'EDocSeries'
-    e_doc_num = 'EDocNum'
-    e_doc_export_format = 'EDocExportFormat'
-    e_doc_status = 'EDocStatus'
-    e_doc_error_code = 'EDocErrorCode'
-    e_doc_error_message = 'EDocErrorMessage'
-    down_payment_status = 'DownPaymentStatus'
-    group_series = 'GroupSeries'
-    group_number = 'GroupNumber'
-    group_hand_written = 'GroupHandWritten'
-    reopen_original_document = 'ReopenOriginalDocument'
-    reopen_manually_closed_or_canceled_document = 'ReopenManuallyClosedOrCanceledDocument'
-    create_online_quotation = 'CreateOnlineQuotation'
-    pos_equipment_number = 'POSEquipmentNumber'
-    pos_manufacturer_serial_number = 'POSManufacturerSerialNumber'
-    pos_cashier_number = 'POSCashierNumber'
-    apply_current_vat_rates_for_down_payments_to_draw = 'ApplyCurrentVATRatesForDownPaymentsToDraw'
-    closing_option = 'ClosingOption'
-    specified_closing_date = 'SpecifiedClosingDate'
-    open_for_landed_costs = 'OpenForLandedCosts'
-    authorization_status = 'AuthorizationStatus'
-    total_discount_fc = 'TotalDiscountFC'
-    total_discount_sc = 'TotalDiscountSC'
-    relevant_to_gts = 'RelevantToGTS'
-    bpl_name = 'BPLName'
-    vat_reg_num = 'VATRegNum'
-    annual_invoice_declaration_reference = 'AnnualInvoiceDeclarationReference'
-    supplier = 'Supplier'
-    releaser = 'Releaser'
-    receiver = 'Receiver'
-    blanket_agreement_number = 'BlanketAgreementNumber'
-    is_alteration = 'IsAlteration'
-    cancel_status = 'CancelStatus'
-    asset_value_date = 'AssetValueDate'
-    requester = 'Requester'
-    requester_name = 'RequesterName'
-    requester_branch = 'RequesterBranch'
-    requester_department = 'RequesterDepartment'
-    requester_email = 'RequesterEmail'
-    send_notification = 'SendNotification'
-    req_type = 'ReqType'
-    req_code = 'ReqCode'
-    invoice_payment = 'InvoicePayment'
-    document_delivery = 'DocumentDelivery'
-    authorization_code = 'AuthorizationCode'
-    start_delivery_date = 'StartDeliveryDate'
-    start_delivery_time = 'StartDeliveryTime'
-    end_delivery_date = 'EndDeliveryDate'
-    end_delivery_time = 'EndDeliveryTime'
-    vehicle_plate = 'VehiclePlate'
-    at_document_type = 'ATDocumentType'
-    elec_comm_status = 'ElecCommStatus'
-    elec_comm_message = 'ElecCommMessage'
-    reuse_document_num = 'ReuseDocumentNum'
-    reuse_nota_fiscal_num = 'ReuseNotaFiscalNum'
-    print_sepa_direct = 'PrintSEPADirect'
-    fiscal_doc_num = 'FiscalDocNum'
-    pos_daily_summary_no = 'POSDailySummaryNo'
-    pos_receipt_no = 'POSReceiptNo'
-    point_of_issue_code = 'PointOfIssueCode'
-    letter = 'Letter'
-    folio_number_from = 'FolioNumberFrom'
-    folio_number_to = 'FolioNumberTo'
-    interim_type = 'InterimType'
-    related_type = 'RelatedType'
-    related_entry = 'RelatedEntry'
-    sap_passport = 'SAPPassport'
-    document_tax_id = 'DocumentTaxID'
-    date_of_reporting_control_statement_vat = 'DateOfReportingControlStatementVAT'
-    reporting_section_control_statement_vat = 'ReportingSectionControlStatementVAT'
-    exclude_from_tax_report_control_statement_vat = 'ExcludeFromTaxReportControlStatementVAT'
-    update_time = 'UpdateTime'
-    create_qr_code_from = 'CreateQRCodeFrom'
-    price_mode = 'PriceMode'
-    down_payment_trasaction_id = 'DownPaymentTrasactionID'
-    original_ref_no = 'OriginalRefNo'
-    original_ref_date = 'OriginalRefDate'
-    revision = 'Revision'
-    gst_transaction_type = 'GSTTransactionType'
-    original_credit_or_debit_no = 'OriginalCreditOrDebitNo'
-    original_credit_or_debit_date = 'OriginalCreditOrDebitDate'
-    e_commerce_operator = 'ECommerceOperator'
-    e_commerce_gstin = 'ECommerceGSTIN'
-    tax_invoice_no = 'TaxInvoiceNo'
-    tax_invoice_date = 'TaxInvoiceDate'
-    ship_from = 'ShipFrom'
-    commission_trade = 'CommissionTrade'
-    commission_trade_return = 'CommissionTradeReturn'
-    use_bill_to_addr_to_determine_tax = 'UseBillToAddrToDetermineTax'
-    issuing_reason = 'IssuingReason'
-    cig = 'Cig'
-    cup = 'Cup'
-    e_doc_type = 'EDocType'
-    fce_as_payment_means = 'FCEAsPaymentMeans'
-    paid_to_date = 'PaidToDate'
-    paid_to_date_fc = 'PaidToDateFC'
-    paid_to_date_sys = 'PaidToDateSys'
-    father_card = 'FatherCard'
-    father_type = 'FatherType'
-    ship_state = 'ShipState'
-    ship_place = 'ShipPlace'
-    cust_office = 'CustOffice'
-    fci = 'FCI'
-    add_leg_in = 'AddLegIn'
-    leg_text_f = 'LegTextF'
-    danfe_lg_txt = 'DANFELgTxt'
-    data_version = 'DataVersion'
-    last_page_folio_number = 'LastPageFolioNumber'
-    inventory_status = 'InventoryStatus'
-    plastic_packaging_tax_relevant = 'PlasticPackagingTaxRelevant'
-    not_relevant_for_monthly_invoice = 'NotRelevantForMonthlyInvoice'
-    end_at = 'EndAt'
-    ship_to_code_for_return = 'ShipToCodeForReturn'
-    address_for_return = 'AddressForReturn'
-    document_approval_requests = 'Document_ApprovalRequests'
-    document_lines = 'DocumentLines'
-    e_way_bill_details = 'EWayBillDetails'
-    electronic_protocols = 'ElectronicProtocols'
-    document_additional_expenses = 'DocumentAdditionalExpenses'
-    document_distributed_expenses = 'DocumentDistributedExpenses'
-    withholding_tax_data_wtx_collection = 'WithholdingTaxDataWTXCollection'
-    withholding_tax_data_collection = 'WithholdingTaxDataCollection'
-    document_packages = 'DocumentPackages'
-    document_special_lines = 'DocumentSpecialLines'
-    document_installments = 'DocumentInstallments'
-    down_payments_to_draw = 'DownPaymentsToDraw'
-    tax_extension = 'TaxExtension'
-    address_extension = 'AddressExtension'
-    document_references = 'DocumentReferences'
-    document_additional_intrastat_expenses = 'DocumentAdditionalIntrastatExpenses'
-    base_type = 'BaseType'
-    base_entry = 'BaseEntry'
-    ind_final = 'IndFinal'
-    allocation_number_il = 'AllocationNumberIL'
-    digital_pay_to_address = 'DigitalPayToAddress'
-    digital_payments = 'DigitalPayments'
-    soi_wizard_id = 'SOIWizardId'
-    business_partner = 'BusinessPartner'
-    currency = 'Currency'
-    payment_terms_type = 'PaymentTermsType'
-    sales_person = 'SalesPerson'
-    shipping_type = 'ShippingType'
-    factoring_indicator = 'FactoringIndicator'
-    user = 'User'
-    forms1099 = 'Forms1099'
-    wizard_payment_method = 'WizardPaymentMethod'
-    payment_block2 = 'PaymentBlock2'
-    central_bank_indicator2 = 'CentralBankIndicator2'
-    project2 = 'Project2'
-    employee_info = 'EmployeeInfo'
-    country = 'Country'
-    business_place = 'BusinessPlace'
-    user_language = 'UserLanguage'
-    nf_model = 'NFModel'
-    chart_of_account = 'ChartOfAccount'
-    tax_web_site = 'TaxWebSite'
-    branch = 'Branch'
-    department = 'Department'
-    pos_daily_summary = 'POSDailySummary'
-    cig_code = 'CIGCode'
-    cup_code = 'CUPCode'
-    journal_entry = 'JournalEntry'
-    landed_cost = 'LandedCost'
-
-class DunningLetterFields(StrEnum):
-    fee_currency = 'FeeCurrency'
-    row_number = 'RowNumber'
-    letter_format = 'LetterFormat'
-    effectiveafter = 'Effectiveafter'
-    minimum_balance_currency = 'MinimumBalanceCurrency'
-    feeperletter = 'Feeperletter'
-    calc_interest = 'CalcInterest'
-    minimum_balance = 'MinimumBalance'
-    business_partners = 'BusinessPartners'
-
-class DunningTermFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    grouping_method = 'GroupingMethod'
-    days_in_year = 'DaysInYear'
-    days_in_month = 'DaysInMonth'
-    calculate_interest_method = 'CalculateInterestMethod'
-    exchange_rate_select = 'ExchangeRateSelect'
-    yearly_interest_rate = 'YearlyInterestRate'
-    letter_fee = 'LetterFee'
-    letter_fee_currency = 'LetterFeeCurrency'
-    minimum_balance = 'MinimumBalance'
-    minimum_balance_currency = 'MinimumBalanceCurrency'
-    include_interest = 'IncludeInterest'
-    apply_highest_letter_template = 'ApplyHighestLetterTemplate'
-    automatic_posting = 'AutomaticPosting'
-    interest_account = 'InterestAccount'
-    fee_account = 'FeeAccount'
-    base_date_select = 'BaseDateSelect'
-    dunning_term_lines = 'DunningTermLines'
-    chart_of_account = 'ChartOfAccount'
-    business_partners = 'BusinessPartners'
-
-class DynamicSystemStringFields(StrEnum):
-    form_id = 'FormID'
-    item_id = 'ItemID'
-    column_id = 'ColumnID'
-    item_string = 'ItemString'
-    is_bold = 'IsBold'
-    is_italics = 'IsItalics'
-
-class EBooksFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    mark = 'MARK'
-    cancel_mark = 'CancelMARK'
-    uid = 'UID'
-    issuer_vatid = 'IssuerVATID'
-    cpvatid = 'CPVATID'
-    series = 'Series'
-    aa = 'AA'
-    issue_date = 'IssueDate'
-    invoice_type = 'InvoiceType'
-    currency = 'Currency'
-    total_net_value = 'TotalNetValue'
-    total_vat_amount = 'TotalVatAmount'
-    total_withheld_amount = 'TotalWithheldAmount'
-    total_gross_value = 'TotalGrossValue'
-    linked_doc_type = 'LinkedDocType'
-    linked_doc_entry = 'LinkedDocEntry'
-    is_negative_mark = 'IsNegativeMark'
-    e_books_lines = 'EBooksLines'
-
-class EWBTransporterFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    transporter_code = 'TransporterCode'
-    transporter_name = 'TransporterName'
-    transporter_id = 'TransporterID'
-    ewb_transporter_lines = 'EWBTransporter_Lines'
-    business_partners = 'BusinessPartners'
-
-class ElectronicFileFormatFields(StrEnum):
-    format_id = 'FormatID'
-    name = 'Name'
-    description = 'Description'
-    version = 'Version'
-    schema_version = 'SchemaVersion'
-    output_file_path = 'OutputFilePath'
-    menu_name = 'MenuName'
-    menu_path = 'MenuPath'
-    import_determinations = 'ImportDeterminations'
-    export_determinations = 'ExportDeterminations'
-
-class EmailGroupFields(StrEnum):
-    email_group_code = 'EmailGroupCode'
-    email_group_name = 'EmailGroupName'
-
-class EmployeeIDTypeFields(StrEnum):
-    id_type = 'IDType'
-    employees_info = 'EmployeesInfo'
-
-class EmployeeImageFields(StrEnum):
-    employee_no = 'EmployeeNo'
-    picture = 'Picture'
-
-class EmployeeInfoFields(StrEnum):
-    employee_id = 'EmployeeID'
-    last_name = 'LastName'
-    first_name = 'FirstName'
-    middle_name = 'MiddleName'
-    gender = 'Gender'
-    job_title = 'JobTitle'
-    employee_type = 'EmployeeType'
-    department = 'Department'
-    branch = 'Branch'
-    work_street = 'WorkStreet'
-    work_block = 'WorkBlock'
-    work_zip_code = 'WorkZipCode'
-    work_city = 'WorkCity'
-    work_county = 'WorkCounty'
-    work_country_code = 'WorkCountryCode'
-    work_state_code = 'WorkStateCode'
-    manager = 'Manager'
-    application_user_id = 'ApplicationUserID'
-    sales_person_code = 'SalesPersonCode'
-    office_phone = 'OfficePhone'
-    office_extension = 'OfficeExtension'
-    mobile_phone = 'MobilePhone'
-    pager = 'Pager'
-    home_phone = 'HomePhone'
-    fax = 'Fax'
-    e_mail = 'eMail'
-    start_date = 'StartDate'
-    status_code = 'StatusCode'
-    salary = 'Salary'
-    salary_unit = 'SalaryUnit'
-    employee_costs = 'EmployeeCosts'
-    employee_cost_unit = 'EmployeeCostUnit'
-    termination_date = 'TerminationDate'
-    tremination_reason = 'TreminationReason'
-    bank_code = 'BankCode'
-    bank_branch = 'BankBranch'
-    bank_branch_num = 'BankBranchNum'
-    bank_account = 'BankAccount'
-    home_street = 'HomeStreet'
-    home_block = 'HomeBlock'
-    home_zip_code = 'HomeZipCode'
-    home_city = 'HomeCity'
-    home_county = 'HomeCounty'
-    home_country = 'HomeCountry'
-    home_state = 'HomeState'
-    date_of_birth = 'DateOfBirth'
-    country_of_birth = 'CountryOfBirth'
-    martial_status = 'MartialStatus'
-    num_of_children = 'NumOfChildren'
-    id_number = 'IdNumber'
-    citizenship_country_code = 'CitizenshipCountryCode'
-    passport_number = 'PassportNumber'
-    passport_expiration_date = 'PassportExpirationDate'
-    picture = 'Picture'
-    remarks = 'Remarks'
-    salary_currency = 'SalaryCurrency'
-    employee_costs_currency = 'EmployeeCostsCurrency'
-    work_building_floor_room = 'WorkBuildingFloorRoom'
-    home_building_floor_room = 'HomeBuildingFloorRoom'
-    position = 'Position'
-    attachment_entry = 'AttachmentEntry'
-    cost_center_code = 'CostCenterCode'
-    company_number = 'CompanyNumber'
-    vacation_previous_year = 'VacationPreviousYear'
-    vacation_current_year = 'VacationCurrentYear'
-    municipality_key = 'MunicipalityKey'
-    tax_class = 'TaxClass'
-    income_tax_liability = 'IncomeTaxLiability'
-    religion = 'Religion'
-    partner_religion = 'PartnerReligion'
-    exemption_amount = 'ExemptionAmount'
-    exemption_unit = 'ExemptionUnit'
-    exemption_currency = 'ExemptionCurrency'
-    additional_amount = 'AdditionalAmount'
-    additional_unit = 'AdditionalUnit'
-    additional_currency = 'AdditionalCurrency'
-    tax_office_name = 'TaxOfficeName'
-    tax_office_number = 'TaxOfficeNumber'
-    health_insurance_name = 'HealthInsuranceName'
-    health_insurance_code = 'HealthInsuranceCode'
-    health_insurance_type = 'HealthInsuranceType'
-    social_insurance_number = 'SocialInsuranceNumber'
-    profession_status = 'ProfessionStatus'
-    education_status = 'EducationStatus'
-    person_group = 'PersonGroup'
-    job_title_code = 'JobTitleCode'
-    bank_code_for_datev = 'BankCodeForDATEV'
-    deviating_bank_account_owner = 'DeviatingBankAccountOwner'
-    spouse_first_name = 'SpouseFirstName'
-    spouse_surname = 'SpouseSurname'
-    external_employee_number = 'ExternalEmployeeNumber'
-    birth_place = 'BirthPlace'
-    payment_method = 'PaymentMethod'
-    std_code = 'STDCode'
-    cpf = 'CPF'
-    crc_number = 'CRCNumber'
-    accountant_responsible = 'AccountantResponsible'
-    legal_representative = 'LegalRepresentative'
-    dirf_responsible = 'DIRFResponsible'
-    crc_state = 'CRCState'
-    active = 'Active'
-    id_type = 'IDType'
-    bplid = 'BPLID'
-    passport_issue_date = 'PassportIssueDate'
-    passport_issuer = 'PassportIssuer'
-    qualification_code = 'QualificationCode'
-    pr_web_access = 'PRWebAccess'
-    previous_pr_web_access = 'PreviousPRWebAccess'
-    work_street_number = 'WorkStreetNumber'
-    home_street_number = 'HomeStreetNumber'
-    linked_vendor = 'LinkedVendor'
-    create_date = 'CreateDate'
-    create_time = 'CreateTime'
-    update_date = 'UpdateDate'
-    update_time = 'UpdateTime'
-    employee_code = 'EmployeeCode'
-    a_ret_sefaz = 'ARetSEFAZ'
-    gender_ex = 'GenderEx'
-    employee_absence_info_lines = 'EmployeeAbsenceInfoLines'
-    employee_education_info_lines = 'EmployeeEducationInfoLines'
-    employee_reviews_info_lines = 'EmployeeReviewsInfoLines'
-    employee_previous_empoyment_info_lines = 'EmployeePreviousEmpoymentInfoLines'
-    employee_roles_info_lines = 'EmployeeRolesInfoLines'
-    employee_savings_payment_info_lines = 'EmployeeSavingsPaymentInfoLines'
-    employee_branch_assignment = 'EmployeeBranchAssignment'
-    sales_opportunities = 'SalesOpportunities'
-    warehouses = 'Warehouses'
-    profit_centers = 'ProfitCenters'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    customer_equipment_cards = 'CustomerEquipmentCards'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    service_calls = 'ServiceCalls'
-    items = 'Items'
-    employee_role_setup = 'EmployeeRoleSetup'
-    department2 = 'Department2'
-    branch2 = 'Branch2'
-    country = 'Country'
-    user = 'User'
-    sales_person = 'SalesPerson'
-    employee_status = 'EmployeeStatus'
-    termination_reason = 'TerminationReason'
-    bank = 'Bank'
-    employee_position = 'EmployeePosition'
-    profit_center = 'ProfitCenter'
-    employee_id_type = 'EmployeeIDType'
-    business_place = 'BusinessPlace'
-    business_partner = 'BusinessPartner'
-    gender2 = 'Gender2'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    blanket_agreements = 'BlanketAgreements'
-    invoices = 'Invoices'
-    campaigns = 'Campaigns'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    project_management_time_sheet = 'ProjectManagementTimeSheet'
-    purchase_returns = 'PurchaseReturns'
-    activities = 'Activities'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    project_managements = 'ProjectManagements'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class EmployeePositionFields(StrEnum):
-    position_id = 'PositionID'
-    name = 'Name'
-    description = 'Description'
-    employees_info = 'EmployeesInfo'
-
-class EmployeeRoleSetupFields(StrEnum):
-    type_id = 'TypeID'
-    name = 'Name'
-    description = 'Description'
-    employees_info = 'EmployeesInfo'
-
-class EmployeeStatusFields(StrEnum):
-    status_id = 'StatusId'
-    name = 'Name'
-    description = 'Description'
-    employees_info = 'EmployeesInfo'
-
-class EmployeeTransferFields(StrEnum):
-    transfer_id = 'TransferID'
-    trans_start_date = 'TransStartDate'
-    trans_start_time = 'TransStartTime'
-    trans_end_date = 'TransEndDate'
-    trans_end_time = 'TransEndTime'
-    status = 'Status'
-    comment = 'Comment'
-    employee_transfer_details = 'EmployeeTransferDetails'
-
-class EmploymentCategoryFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-
-class EnhancedDiscountGroupFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    type = 'Type'
-    object_code = 'ObjectCode'
-    discount_relations = 'DiscountRelations'
-    active = 'Active'
-    valid_from = 'ValidFrom'
-    valid_to = 'ValidTo'
-    discount_group_line_collection = 'DiscountGroupLineCollection'
-
-class ExceptionalEventFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-
-class ExpenseTypeDataFields(StrEnum):
-    expense_type = 'ExpenseType'
-    expense_name = 'ExpenseName'
-    expense_account = 'ExpenseAccount'
-    paid_by_company = 'PaidByCompany'
-    vat_group = 'VatGroup'
-    chart_of_account = 'ChartOfAccount'
-    sales_tax_code = 'SalesTaxCode'
-
-class ExportDeterminationFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    priority = 'Priority'
-    business_partner = 'BusinessPartner'
-    country = 'Country'
-    series = 'Series'
-    document_type = 'DocumentType'
-    export_format = 'ExportFormat'
-    path_file_name = 'PathFileName'
-    document_sub_type = 'DocumentSubType'
-    version_number = 'VersionNumber'
-    business_partner2 = 'BusinessPartner2'
-    country2 = 'Country2'
-    electronic_file_format = 'ElectronicFileFormat'
-
-class ExtendedTranslationFields(StrEnum):
-    doc_entry = 'DocEntry'
-    category = 'Category'
-    id = 'ID'
-    secondary_id = 'SecondaryID'
-    source_language = 'SourceLanguage'
-    update_date = 'UpdateDate'
-    create_date = 'CreateDate'
-    extended_translation_item_lines = 'ExtendedTranslation_ItemLines'
-
-class FAAccountDeterminationFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    asset_balance_sheet_account = 'AssetBalanceSheetAccount'
-    clearing_account_acquisition = 'ClearingAccountAcquisition'
-    revaluation_reserve_account = 'RevaluationReserveAccount'
-    revaluation_reserve_clearing = 'RevaluationReserveClearing'
-    ordinary_depreciation = 'OrdinaryDepreciation'
-    accumulated_ordinary_depr = 'AccumulatedOrdinaryDepr'
-    unplanned_depreciation = 'UnplannedDepreciation'
-    accumulated_unplanned_depr = 'AccumulatedUnplannedDepr'
-    special_depreciation = 'SpecialDepreciation'
-    accumulated_special_depr = 'AccumulatedSpecialDepr'
-    revenuefrom_asset_sales_net = 'RevenuefromAssetSalesNet'
-    retirementwith_expense_net = 'RetirementwithExpenseNet'
-    retirementwith_revenue_net = 'RetirementwithRevenueNet'
-    leavewith_expense_nbv_gross = 'LeavewithExpenseNBVGross'
-    leavewith_revenue_nbv_gross = 'LeavewithRevenueNBVGross'
-    revenue_accountfor_retirement = 'RevenueAccountforRetirement'
-    revenue_clearing_account = 'RevenueClearingAccount'
-    revaluation_account = 'RevaluationAccount'
-    revaluation_loss_acct = 'RevaluationLossAcct'
-    chart_of_account = 'ChartOfAccount'
-
-class FactoringIndicatorFields(StrEnum):
-    indicator_code = 'IndicatorCode'
-    indicator_name = 'IndicatorName'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    journal_entries = 'JournalEntries'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class FinancialYearFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    description = 'Description'
-    start_date = 'StartDate'
-    end_date = 'EndDate'
-    assess_year = 'AssessYear'
-    tcs_accumulation_base = 'TCSAccumulationBase'
-
-class FiscalPrinterFields(StrEnum):
-    equipment_no = 'EquipmentNo'
-    model = 'Model'
-    manufacturer_serial_n = 'ManufacturerSerialN'
-    register_no = 'RegisterNo'
-    fiscal_document_model = 'FiscalDocumentModel'
-    fiscal_printers_params = 'FiscalPrintersParams'
-    nf_model = 'NFModel'
-    pos_daily_summary = 'POSDailySummary'
-
-class FormattedSearchFields(StrEnum):
-    form_id = 'FormID'
-    item_id = 'ItemID'
-    column_id = 'ColumnID'
-    action = 'Action'
-    query_id = 'QueryID'
-    index = 'Index'
-    refresh = 'Refresh'
-    field_id = 'FieldID'
-    force_refresh = 'ForceRefresh'
-    by_field = 'ByField'
-    by_field_ex = 'ByFieldEx'
-    user_valid_values = 'UserValidValues'
-    field_i_ds = 'FieldIDs'
-
-class Forms1099Fields(StrEnum):
-    form_code = 'FormCode'
-    form1099 = 'Form1099'
-    boxes1099 = 'Boxes1099'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class GLAccountAdvancedRuleFields(StrEnum):
-    absolute_entry = 'AbsoluteEntry'
-    period = 'Period'
-    beginningof_financial_year = 'BeginningofFinancialYear'
-    financial_year = 'FinancialYear'
-    period_name = 'PeriodName'
-    sub_period_type = 'SubPeriodType'
-    number_of_periods = 'NumberOfPeriods'
-    from_posting_date = 'FromPostingDate'
-    to_posting_date = 'ToPostingDate'
-    from_due_date = 'FromDueDate'
-    to_due_date = 'ToDueDate'
-    from_document_date = 'FromDocumentDate'
-    to_document_date = 'ToDocumentDate'
-    item_code = 'ItemCode'
-    item_group = 'ItemGroup'
-    warehouse = 'Warehouse'
-    bp_group = 'BPGroup'
-    federal_tax_id = 'FederalTaxID'
-    ship_to_country = 'ShipToCountry'
-    ship_to_state = 'ShipToState'
-    description = 'Description'
-    code = 'Code'
-    get_gl_account_by = 'GetGLAccountBy'
-    from_date = 'FromDate'
-    to_date = 'ToDate'
-    expenses_account = 'ExpensesAccount'
-    revenues_account = 'RevenuesAccount'
-    exempt_income_acc = 'ExemptIncomeAcc'
-    inventory_account = 'InventoryAccount'
-    cost_account = 'CostAccount'
-    transfer_account = 'TransferAccount'
-    varience_account = 'VarienceAccount'
-    price_difference_acc = 'PriceDifferenceAcc'
-    negative_inventory_adjustment_account = 'NegativeInventoryAdjustmentAccount'
-    decreasing_account = 'DecreasingAccount'
-    increasing_account = 'IncreasingAccount'
-    returning_account = 'ReturningAccount'
-    eu_expenses_account = 'EUExpensesAccount'
-    foreign_revenue_acc = 'ForeignRevenueAcc'
-    foreign_expens_acc = 'ForeignExpensAcc'
-    purchase_acct = 'PurchaseAcct'
-    pa_return_acct = 'PAReturnAcct'
-    purchase_offset_acct = 'PurchaseOffsetAcct'
-    exchange_rate_differences_acct = 'ExchangeRateDifferencesAcct'
-    goods_clearing_acct = 'GoodsClearingAcct'
-    gl_decrease_acct = 'GLDecreaseAcct'
-    gl_increase_acct = 'GLIncreaseAcct'
-    wip_account = 'WipAccount'
-    wip_variance_account = 'WipVarianceAccount'
-    wip_offset_profit_and_loss_account = 'WipOffsetProfitAndLossAccount'
-    inventory_offset_profit_and_loss_account = 'InventoryOffsetProfitAndLossAccount'
-    stock_inflation_adjust_account = 'StockInflationAdjustAccount'
-    stock_inflation_offset_account = 'StockInflationOffsetAccount'
-    cost_inflation_account = 'CostInflationAccount'
-    cost_inflation_offset_account = 'CostInflationOffsetAccount'
-    expense_clearing_act = 'ExpenseClearingAct'
-    expense_offsetting_account = 'ExpenseOffsettingAccount'
-    stock_in_transit_account = 'StockInTransitAccount'
-    shipped_goods_account = 'ShippedGoodsAccount'
-    vat_in_revenue_account = 'VATInRevenueAccount'
-    sales_credit_acc = 'SalesCreditAcc'
-    purchase_credit_acc = 'PurchaseCreditAcc'
-    exempted_credits = 'ExemptedCredits'
-    sales_credit_foreign_acc = 'SalesCreditForeignAcc'
-    foreign_purchase_credit_acc = 'ForeignPurchaseCreditAcc'
-    sales_credit_eu_acc = 'SalesCreditEUAcc'
-    eu_purchase_credit_acc = 'EUPurchaseCreditAcc'
-    purchase_balance_account = 'PurchaseBalanceAccount'
-    wh_incoming_cenvat_account = 'WHIncomingCenvatAccount'
-    wh_outgoing_cenvat_account = 'WHOutgoingCenvatAccount'
-    is_active = 'IsActive'
-    business_partner_type = 'BusinessPartnerType'
-    vat_group = 'VATGroup'
-    bp_code = 'BPCode'
-    usage = 'Usage'
-    udf1 = 'UDF1'
-    udf2 = 'UDF2'
-    udf3 = 'UDF3'
-    udf4 = 'UDF4'
-    udf5 = 'UDF5'
-    item = 'Item'
-    item_groups = 'ItemGroups'
-    warehouse2 = 'Warehouse2'
-    business_partner_group = 'BusinessPartnerGroup'
-    country = 'Country'
-    chart_of_account = 'ChartOfAccount'
-    business_partner = 'BusinessPartner'
-    nota_fiscal_usage = 'NotaFiscalUsage'
-
-class GenderFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    employees_info = 'EmployeesInfo'
-
-class GovPayCodeFields(StrEnum):
-    abs_id = 'AbsId'
-    code = 'Code'
-    descr = 'Descr'
-    state_tax = 'StateTax'
-    prdcity = 'Prdcity'
-    gov_pay_code_authorities = 'GovPayCodeAuthorities'
-    nf_tax_categories = 'NFTaxCategories'
-
-class HolidayFields(StrEnum):
-    holiday_code = 'HolidayCode'
-    weekend_from = 'WeekendFrom'
-    weekend_to = 'WeekendTO'
-    valid_for_one_year_only = 'ValidForOneYearOnly'
-    set_weekends_as_work_days = 'SetWeekendsAsWorkDays'
-    week_no_rule = 'WeekNoRule'
-    holiday_dates = 'HolidayDates'
-
-class HouseBankAccountFields(StrEnum):
-    bank_code = 'BankCode'
-    acc_no = 'AccNo'
-    branch = 'Branch'
-    next_check_no = 'NextCheckNo'
-    gl_account = 'GLAccount'
-    dsc1_street_alias = 'DSC1_STREET_ALIAS'
-    block = 'Block'
-    zip_code = 'ZipCode'
-    city = 'City'
-    county = 'County'
-    country = 'Country'
-    state = 'State'
-    bisr = 'BISR'
-    control_key = 'ControlKey'
-    user_no1 = 'UserNo1'
-    user_no2 = 'UserNo2'
-    user_no3 = 'UserNo3'
-    user_no4 = 'UserNo4'
-    iban = 'IBAN'
-    debtof_discounted_billof_exc = 'DebtofDiscountedBillofExc'
-    tolerance_days = 'ToleranceDays'
-    min_amountof_billof_exchang = 'MinAmountofBillofExchang'
-    max_amountof_billof_exchan = 'MaxAmountofBillofExchan'
-    discount_limit = 'DiscountLimit'
-    days_in_advance = 'DaysInAdvance'
-    bankon_collection = 'BankonCollection'
-    bankon_discounted = 'BankonDiscounted'
-    gl_interim_account = 'GLInterimAccount'
-    absolute_entry = 'AbsoluteEntry'
-    bank_key = 'BankKey'
-    lock_checks_printing = 'LockChecksPrinting'
-    template_name = 'TemplateName'
-    maximum_lines = 'MaximumLines'
-    print_on = 'PrintOn'
-    customer_id_number = 'CustomerIdNumber'
-    isr_biller_id = 'ISRBillerID'
-    isr_type = 'ISRType'
-    account_check_digit = 'AccountCheckDigit'
-    our_number = 'OurNumber'
-    agreement_number = 'AgreementNumber'
-    address_type = 'AddressType'
-    street_no = 'StreetNo'
-    building = 'Building'
-    incoming_payment_series = 'IncomingPaymentSeries'
-    outgoing_payment_series = 'OutgoingPaymentSeries'
-    journal_entry_series = 'JournalEntrySeries'
-    import_file_name = 'ImportFileName'
-    account_name = 'AccountName'
-    bic_swift_code = 'BICSwiftCode'
-    fine_account = 'FineAccount'
-    interest_account = 'InterestAccount'
-    discount_account = 'DiscountAccount'
-    service_fee_account = 'ServiceFeeAccount'
-    iof_tax_account = 'IOFTaxAccount'
-    other_expenses_account = 'OtherExpensesAccount'
-    other_incomes_account = 'OtherIncomesAccount'
-    retorno_file_name = 'RetornoFileName'
-    branch_check_digit = 'BranchCheckDigit'
-    collection_code = 'CollectionCode'
-    file_seq_next_number = 'FileSeqNextNumber'
-    no_validation_for_starting_ending_bal = 'NoValidationForStartingEndingBal'
-    e_check = 'ECheck'
-    wizard_payment_methods = 'WizardPaymentMethods'
-    bank_statements = 'BankStatements'
-    chart_of_account = 'ChartOfAccount'
-    country2 = 'Country2'
-    bank = 'Bank'
-
-class IdentificationCodeFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    codelist = 'Codelist'
-    code = 'Code'
-    description = 'Description'
-    schema_code = 'SchemaCode'
-    schema_desc = 'SchemaDesc'
-    items = 'Items'
-
-class ImportDeterminationFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    line_number = 'LineNumber'
-    object_type = 'ObjectType'
-    object_type_x_path = 'ObjectTypeXPath'
-    field_type = 'FieldType'
-    field_type_x_path = 'FieldTypeXPath'
-    import_format = 'ImportFormat'
-    default_digital_series = 'DefaultDigitalSeries'
-    version_number = 'VersionNumber'
-    electronic_file_format = 'ElectronicFileFormat'
-
-class IndiaHsnFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    chapter = 'Chapter'
-    heading = 'Heading'
-    sub_heading = 'SubHeading'
-    description = 'Description'
-    chapter_id = 'ChapterID'
-    items = 'Items'
-
-class IndiaSacCodeFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    service_code = 'ServiceCode'
-    service_name = 'ServiceName'
-    items = 'Items'
-
-class IndustryFields(StrEnum):
-    industry_description = 'IndustryDescription'
-    industry_name = 'IndustryName'
-    industry_code = 'IndustryCode'
-    sales_opportunities = 'SalesOpportunities'
-    business_partners = 'BusinessPartners'
-    project_managements = 'ProjectManagements'
-
-class IntegrationPackageConfigureFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    name = 'Name'
-    is_enable = 'IsEnable'
-
-class InternalReconciliationFields(StrEnum):
-    recon_num = 'ReconNum'
-    recon_date = 'ReconDate'
-    card_or_account = 'CardOrAccount'
-    recon_type = 'ReconType'
-    total = 'Total'
-    cancel_abs = 'CancelAbs'
-    internal_reconciliation_rows = 'InternalReconciliationRows'
-    electronic_protocols = 'ElectronicProtocols'
-
-class IntrastatConfigurationFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    conf_type = 'ConfType'
-    code = 'Code'
-    descr = 'Descr'
-    prcst_val = 'PrcstVal'
-    supp_unit = 'SuppUnit'
-    export = 'Export'
-    import_ = 'Import'
-    stat_code = 'StatCode'
-    date_from = 'DateFrom'
-    date_to = 'DateTo'
-    country = 'Country'
-    conf_id = 'ConfID'
-    triang_deal = 'TriangDeal'
-
-class InventoryCyclesFields(StrEnum):
-    cycle_code = 'CycleCode'
-    cycle_name = 'CycleName'
-    frequency = 'Frequency'
-    day = 'Day'
-    hour = 'Hour'
-    next_counting_date = 'NextCountingDate'
-    interval = 'Interval'
-    sunday = 'Sunday'
-    monday = 'Monday'
-    tuesday = 'Tuesday'
-    wednesday = 'Wednesday'
-    thursday = 'Thursday'
-    friday = 'Friday'
-    saturday = 'Saturday'
-    repeat_option = 'RepeatOption'
-    recurrence_sequence_specifier = 'RecurrenceSequenceSpecifier'
-    recurrence_day_in_month = 'RecurrenceDayInMonth'
-    recurrence_month = 'RecurrenceMonth'
-    recurrence_day_of_week = 'RecurrenceDayOfWeek'
-    end_type = 'endType'
-    max_occurrence = 'MaxOccurrence'
-    series_end_date = 'SeriesEndDate'
-    item_groups = 'ItemGroups'
-    items = 'Items'
-
-class KPIFields(StrEnum):
-    kpi_code = 'KPICode'
-    kpi_name = 'KPIName'
-    kpi_type = 'KPIType'
-    number_of_columns = 'NumberOfColumns'
-    kpi_item_lines = 'KPI_ItemLines'
-
-class KnowledgeBaseSolutionFields(StrEnum):
-    item_code = 'ItemCode'
-    status = 'Status'
-    owner = 'Owner'
-    created_by = 'CreatedBy'
-    creation_date = 'CreationDate'
-    last_updated_by = 'LastUpdatedBy'
-    last_update_date = 'LastUpdateDate'
-    solution = 'Solution'
-    symptom = 'Symptom'
-    cause = 'Cause'
-    description = 'Description'
-    solution_code = 'SolutionCode'
-    attachment_entry = 'AttachmentEntry'
-    item = 'Item'
-    service_call_solution_status = 'ServiceCallSolutionStatus'
-    user = 'User'
-
-class LegalDataFields(StrEnum):
-    doc_entry = 'DocEntry'
-    source_object_type = 'SourceObjectType'
-    source_object_entry = 'SourceObjectEntry'
-    date_of_printing = 'DateOfPrinting'
-    time_of_printing = 'TimeOfPrinting'
-    printer_brand = 'PrinterBrand'
-    printer_type = 'PrinterType'
-    printer_model = 'PrinterModel'
-    printer_firmware_version = 'PrinterFirmwareVersion'
-    printer_dll_version = 'PrinterDllVersion'
-    fiscal_series = 'FiscalSeries'
-    fiscal_number = 'FiscalNumber'
-    document_number = 'DocumentNumber'
-    fiscal_user_id = 'FiscalUserID'
-    legal_data_detail_collection = 'LegalDataDetailCollection'
-    user = 'User'
-
-class LengthMeasureFields(StrEnum):
-    unit_code = 'UnitCode'
-    unit_display = 'UnitDisplay'
-    unit_name = 'UnitName'
-    unit_codefor_quantity_display = 'UnitCodeforQuantityDisplay'
-    unit_lengthinmm = 'UnitLengthinmm'
-
-class LocalEraFields(StrEnum):
-    era_name = 'EraName'
-    start_date = 'StartDate'
-    code = 'Code'
-
-class ManufacturerFields(StrEnum):
-    code = 'Code'
-    manufacturer_name = 'ManufacturerName'
-    items = 'Items'
-
-class MaterialGroupFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    material_group_code = 'MaterialGroupCode'
-    description = 'Description'
-    items = 'Items'
-
-class MessageFields(StrEnum):
-    code = 'Code'
-    user = 'User'
-    priority = 'Priority'
-    subject = 'Subject'
-    text = 'Text'
-    attachment = 'Attachment'
-    message_data_columns = 'MessageDataColumns'
-    recipient_collection = 'RecipientCollection'
-
-class MobileAddOnSettingFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    url = 'Url'
-    type = 'Type'
-    provider = 'Provider'
-    view_style = 'ViewStyle'
-    logon_method = 'LogonMethod'
-    enable = 'Enable'
-    b1_mobile_app = 'B1MobileApp'
-    b1_sales_app = 'B1SalesApp'
-    b1_service_app = 'B1ServiceApp'
-
-class MultiLanguageTranslationFields(StrEnum):
-    numerator = 'Numerator'
-    table_name = 'TableName'
-    field_alias = 'FieldAlias'
-    primary_keyofobject = 'PrimaryKeyofobject'
-    translations_in_user_languages = 'TranslationsInUserLanguages'
-
-class NCMCodeSetupFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    ncm_code = 'NCMCode'
-    description = 'Description'
-    group_code = 'GroupCode'
-    items = 'Items'
-    dnf_code_setup = 'DNFCodeSetup'
-
-class NFModelFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    nfm_name = 'NFMName'
-    nfm_description = 'NFMDescription'
-    nfm_code = 'NFMCode'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    fiscal_printer = 'FiscalPrinter'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class NFTaxCategoryFields(StrEnum):
-    abs_id = 'AbsId'
-    code = 'Code'
-    locked = 'Locked'
-    gpc_id = 'GPCId'
-    gov_pay_code = 'GovPayCode'
-    nota_fiscal_cst = 'NotaFiscalCST'
-
-class NatureOfAssesseeFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    description = 'Description'
-    assessee_type = 'AssesseeType'
-    withholding_tax_codes = 'WithholdingTaxCodes'
-
-class NotaFiscalCFOPFields(StrEnum):
-    id = 'ID'
-    description = 'Description'
-    code = 'Code'
-    application = 'Application'
-    nota_fiscal_usage = 'NotaFiscalUsage'
-
-class NotaFiscalCSTFields(StrEnum):
-    id = 'ID'
-    code = 'Code'
-    situation = 'Situation'
-    tax_category = 'TaxCategory'
-    cst_code_outgoing = 'CSTCodeOutgoing'
-    description_outgoing = 'DescriptionOutgoing'
-    withholding_tax_codes = 'WithholdingTaxCodes'
-    nf_tax_category = 'NFTaxCategory'
-
-class NotaFiscalUsageFields(StrEnum):
-    id = 'ID'
-    usage = 'Usage'
-    incoming_in_state_cfop_code = 'IncomingInStateCFOPCode'
-    incoming_out_state_cfop_code = 'IncomingOutStateCFOPCode'
-    incoming_import_cfop_code = 'IncomingImportCFOPCode'
-    outgoing_in_state_cfop_code = 'OutgoingInStateCFOPCode'
-    outgoing_out_state_cfop_code = 'OutgoingOutStateCFOPCode'
-    outgoing_export_cfop_code = 'OutgoingExportCFOPCode'
-    description = 'Description'
-    gl_account_advanced_rules = 'GLAccountAdvancedRules'
-    depreciation_areas = 'DepreciationAreas'
-    nota_fiscal_cfop = 'NotaFiscalCFOP'
-
-class OccurenceCodeFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    description = 'Description'
-    note = 'Note'
-    requested_boe_status = 'RequestedBoeStatus'
-    is_movement = 'IsMovement'
-
-class PM_ProjectDocumentDataFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    owner = 'Owner'
-    project_name = 'ProjectName'
-    start_date = 'StartDate'
-    finished_percent = 'FinishedPercent'
-    doc_num = 'DocNum'
-    series = 'Series'
-    project_type = 'ProjectType'
-    business_partner = 'BusinessPartner'
-    business_partner_name = 'BusinessPartnerName'
-    contact_person = 'ContactPerson'
-    territory = 'Territory'
-    sales_employee = 'SalesEmployee'
-    allow_subprojects = 'AllowSubprojects'
-    project_status = 'ProjectStatus'
-    due_date = 'DueDate'
-    closing_date = 'ClosingDate'
-    financial_project = 'FinancialProject'
-    risk_level = 'RiskLevel'
-    industry = 'Industry'
-    reason = 'Reason'
-    attachment_entry = 'AttachmentEntry'
-    pm_stages_collection = 'PM_StagesCollection'
-    pm_open_issues_collection = 'PM_OpenIssuesCollection'
-    pm_documents_collection = 'PM_DocumentsCollection'
-    pm_activities_collection = 'PM_ActivitiesCollection'
-    pm_work_orders_collection = 'PM_WorkOrdersCollection'
-    pm_summary_data = 'PM_SummaryData'
-    pm_doc_attachements = 'PM_DocAttachements'
-    pm_stage_attachements = 'PM_StageAttachements'
-    employee_info = 'EmployeeInfo'
-    business_partner2 = 'BusinessPartner2'
-    territory2 = 'Territory2'
-    sales_person = 'SalesPerson'
-    project = 'Project'
-    industry2 = 'Industry2'
-    attachments2 = 'Attachments2'
-
-class PM_TimeSheetDataFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    doc_number = 'DocNumber'
-    time_sheet_type = 'TimeSheetType'
-    user_id = 'UserID'
-    last_name = 'LastName'
-    first_name = 'FirstName'
-    department = 'Department'
-    owner_code = 'OwnerCode'
-    date_from = 'DateFrom'
-    date_to = 'DateTo'
-    sap_passport = 'SAPPassport'
-    attachment_entry = 'AttachmentEntry'
-    user_code = 'UserCode'
-    pm_time_sheet_line_data_collection = 'PM_TimeSheetLineDataCollection'
-    employee_info = 'EmployeeInfo'
-    attachments2 = 'Attachments2'
-
-class POSDailySummaryFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    date = 'Date'
-    equipment_no = 'EquipmentNo'
-    counter_position = 'CounterPosition'
-    reset_counter_position = 'ResetCounterPosition'
-    operation_counter = 'OperationCounter'
-    total = 'Total'
-    gross_sales = 'GrossSales'
-    pis_total = 'PISTotal'
-    cofins_total = 'COFINSTotal'
-    pos_totalizer_collection = 'POSTotalizerCollection'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    fiscal_printer = 'FiscalPrinter'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class PackagesTypeFields(StrEnum):
-    type = 'Type'
-    code = 'Code'
-    length1 = 'Length1'
-    length1_unit = 'Length1Unit'
-    length2 = 'Length2'
-    length2_unit = 'Length2Unit'
-    width1 = 'Width1'
-    width1_unit = 'Width1Unit'
-    width2 = 'Width2'
-    width2_unit = 'Width2Unit'
-    height1 = 'Height1'
-    height1_unit = 'Height1Unit'
-    height2 = 'Height2'
-    height2_unit = 'Height2Unit'
-    volume = 'Volume'
-    volume_unit = 'VolumeUnit'
-    weight1 = 'Weight1'
-    weight1_unit = 'Weight1Unit'
-    weight2 = 'Weight2'
-    weight2_unit = 'Weight2Unit'
-
-class PartnersSetupFields(StrEnum):
-    partner_id = 'PartnerID'
-    name = 'Name'
-    default_relationship = 'DefaultRelationship'
-    related_bp = 'RelatedBP'
-    details = 'Details'
-    relationship = 'Relationship'
-    business_partner = 'BusinessPartner'
-
-class PaymentFields(StrEnum):
-    doc_num = 'DocNum'
-    doc_type = 'DocType'
-    hand_written = 'HandWritten'
-    printed = 'Printed'
-    doc_date = 'DocDate'
-    card_code = 'CardCode'
-    card_name = 'CardName'
-    address = 'Address'
-    cash_account = 'CashAccount'
-    doc_currency = 'DocCurrency'
-    cash_sum = 'CashSum'
-    check_account = 'CheckAccount'
-    transfer_account = 'TransferAccount'
-    transfer_sum = 'TransferSum'
-    transfer_date = 'TransferDate'
-    transfer_reference = 'TransferReference'
-    local_currency = 'LocalCurrency'
-    doc_rate = 'DocRate'
-    reference1 = 'Reference1'
-    reference2 = 'Reference2'
-    counter_reference = 'CounterReference'
-    payment_reference_no = 'PaymentReferenceNo'
-    remarks = 'Remarks'
-    journal_remarks = 'JournalRemarks'
-    split_transaction = 'SplitTransaction'
-    contact_person_code = 'ContactPersonCode'
-    apply_vat = 'ApplyVAT'
-    tax_date = 'TaxDate'
-    series = 'Series'
-    bank_code = 'BankCode'
-    bank_account = 'BankAccount'
-    discount_percent = 'DiscountPercent'
-    project_code = 'ProjectCode'
-    currency_is_local = 'CurrencyIsLocal'
-    deduction_percent = 'DeductionPercent'
-    deduction_sum = 'DeductionSum'
-    cash_sum_fc = 'CashSumFC'
-    cash_sum_sys = 'CashSumSys'
-    boe_account = 'BoeAccount'
-    bill_of_exchange_amount = 'BillOfExchangeAmount'
-    billof_exchange_status = 'BillofExchangeStatus'
-    bill_of_exchange_amount_fc = 'BillOfExchangeAmountFC'
-    bill_of_exchange_amount_sc = 'BillOfExchangeAmountSC'
-    bill_of_exchange_agent = 'BillOfExchangeAgent'
-    wt_code = 'WTCode'
-    wt_amount = 'WTAmount'
-    wt_amount_fc = 'WTAmountFC'
-    wt_amount_sc = 'WTAmountSC'
-    wt_account = 'WTAccount'
-    wt_taxable_amount = 'WTTaxableAmount'
-    proforma = 'Proforma'
-    pay_to_bank_code = 'PayToBankCode'
-    pay_to_bank_branch = 'PayToBankBranch'
-    pay_to_bank_account_no = 'PayToBankAccountNo'
-    pay_to_code = 'PayToCode'
-    pay_to_bank_country = 'PayToBankCountry'
-    is_pay_to_bank = 'IsPayToBank'
-    doc_entry = 'DocEntry'
-    payment_priority = 'PaymentPriority'
-    tax_group = 'TaxGroup'
-    bank_charge_amount = 'BankChargeAmount'
-    bank_charge_amount_in_fc = 'BankChargeAmountInFC'
-    bank_charge_amount_in_sc = 'BankChargeAmountInSC'
-    under_overpaymentdifference = 'UnderOverpaymentdifference'
-    under_overpaymentdiff_sc = 'UnderOverpaymentdiffSC'
-    wt_base_sum = 'WtBaseSum'
-    wt_base_sum_fc = 'WtBaseSumFC'
-    wt_base_sum_sc = 'WtBaseSumSC'
-    vat_date = 'VatDate'
-    transaction_code = 'TransactionCode'
-    payment_type = 'PaymentType'
-    transfer_real_amount = 'TransferRealAmount'
-    doc_object_code = 'DocObjectCode'
-    doc_typte = 'DocTypte'
-    due_date = 'DueDate'
-    location_code = 'LocationCode'
-    cancelled = 'Cancelled'
-    cancel_status = 'CancelStatus'
-    control_account = 'ControlAccount'
-    under_overpaymentdiff_fc = 'UnderOverpaymentdiffFC'
-    authorization_status = 'AuthorizationStatus'
-    bplid = 'BPLID'
-    bpl_name = 'BPLName'
-    vat_reg_num = 'VATRegNum'
-    blanket_agreement = 'BlanketAgreement'
-    payment_by_wt_certif = 'PaymentByWTCertif'
-    cig = 'Cig'
-    cup = 'Cup'
-    attachment_entry = 'AttachmentEntry'
-    signature_input_message = 'SignatureInputMessage'
-    signature_digest = 'SignatureDigest'
-    certification_number = 'CertificationNumber'
-    private_key_version = 'PrivateKeyVersion'
-    e_doc_export_format = 'EDocExportFormat'
-    elec_comm_status = 'ElecCommStatus'
-    elec_comm_message = 'ElecCommMessage'
-    split_vendor_credit_row = 'SplitVendorCreditRow'
-    digital_payments = 'DigitalPayments'
-    allocation_number_il = 'AllocationNumberIL'
-    payment_checks = 'PaymentChecks'
-    payment_invoices = 'PaymentInvoices'
-    payment_credit_cards = 'PaymentCreditCards'
-    payment_accounts = 'PaymentAccounts'
-    payment_document_references_collection = 'PaymentDocumentReferencesCollection'
-    bill_of_exchange = 'BillOfExchange'
-    withholding_tax_certificates_collection = 'WithholdingTaxCertificatesCollection'
-    electronic_protocols = 'ElectronicProtocols'
-    cash_flow_assignments = 'CashFlowAssignments'
-    payments_approval_requests = 'Payments_ApprovalRequests'
-    withholding_tax_data_wtx_collection = 'WithholdingTaxDataWTXCollection'
-    business_partner = 'BusinessPartner'
-    chart_of_account = 'ChartOfAccount'
-    currency = 'Currency'
-    project = 'Project'
-    withholding_tax_code = 'WithholdingTaxCode'
-    country = 'Country'
-    vat_group = 'VatGroup'
-    transaction_code2 = 'TransactionCode2'
-    warehouse_location = 'WarehouseLocation'
-    business_place = 'BusinessPlace'
-    blanket_agreement2 = 'BlanketAgreement2'
-    cig_code = 'CIGCode'
-    cup_code = 'CUPCode'
-    attachments2 = 'Attachments2'
-
-class PaymentBlockFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    payment_block_code = 'PaymentBlockCode'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class PaymentReasonCodeFields(StrEnum):
-    code = 'Code'
-
-class PaymentRunExportFields(StrEnum):
-    absolute_entry = 'AbsoluteEntry'
-    run_date = 'RunDate'
-    vendor_num = 'VendorNum'
-    customer_num = 'CustomerNum'
-    payment_method = 'PaymentMethod'
-    doc_num = 'DocNum'
-    fiscal_year = 'FiscalYear'
-    countery = 'Countery'
-    company_tax_num = 'CompanyTaxNum'
-    payee_name = 'PayeeName'
-    payee_postal_code = 'PayeePostalCode'
-    payee_city = 'PayeeCity'
-    payee_street = 'PayeeStreet'
-    payee_country = 'PayeeCountry'
-    payee_state = 'PayeeState'
-    payee_bank_name = 'PayeeBankName'
-    payee_bank_zip = 'PayeeBankZip'
-    payee_bank_city = 'PayeeBankCity'
-    payee_bank_street = 'PayeeBankStreet'
-    payee_bank_country = 'PayeeBankCountry'
-    payee_bank_account = 'PayeeBankAccount'
-    payee_bank_code = 'PayeeBankCode'
-    payee_bank_ctrl_key = 'PayeeBankCtrlKey'
-    payee_bank_swift_num = 'PayeeBankSwiftNum'
-    payee_bank_iban = 'PayeeBankIBAN'
-    posting_date = 'PostingDate'
-    bank_account = 'BankAccount'
-    bank_country = 'BankCountry'
-    bank_code = 'BankCode'
-    bank_iban = 'BankIBAN'
-    gl_account = 'GLAccount'
-    currency = 'Currency'
-    doc_amount_local = 'DocAmountLocal'
-    doc_currnecy = 'DocCurrnecy'
-    doc_amount_forign = 'DocAmountForign'
-    doc_cash_discount = 'DocCashDiscount'
-    doc_cash_discount_forign = 'DocCashDiscountForign'
-    doc_num_offield_paid = 'DocNumOffieldPaid'
-    doc_rate = 'DocRate'
-    wiz_code = 'WizCode'
-    collection_authorization = 'CollectionAuthorization'
-    payee_bank_post_office = 'PayeeBankPostOffice'
-    payee_bank_next_check_number = 'PayeeBankNextCheckNumber'
-    payee_bank_house_bank = 'PayeeBankHouseBank'
-    payee_bank_block = 'PayeeBankBlock'
-    payee_bank_county = 'PayeeBankCounty'
-    payee_bank_state = 'PayeeBankState'
-    payee_bank_bisr = 'PayeeBankBISR'
-    payee_bank_user_num1 = 'PayeeBankUserNum1'
-    payee_bank_user_num2 = 'PayeeBankUserNum2'
-    payee_bank_user_num3 = 'PayeeBankUserNum3'
-    payee_bank_user_num4 = 'PayeeBankUserNum4'
-    instruction_key = 'InstructionKey'
-    payment_format = 'PaymentFormat'
-    company_name = 'CompanyName'
-    company_address = 'CompanyAddress'
-    status = 'Status'
-    comp_isr_biller_id = 'CompIsrBillerID'
-    vendor_isr_biller_id = 'VendorIsrBillerID'
-    additional_id_number = 'AdditionalIdNumber'
-    organization_number = 'OrganizationNumber'
-    payee_bank_branch = 'PayeeBankBranch'
-    payment_bank_branch = 'PaymentBankBranch'
-    user_name = 'UserName'
-    user_e_mail = 'UserEMail'
-    user_mobile_phone_number = 'UserMobilePhoneNumber'
-    user_fax_number = 'UserFaxNumber'
-    user_department = 'UserDepartment'
-    debit_memo = 'DebitMemo'
-    eu_internal_transfer = 'EUInternalTransfer'
-    file_path = 'FilePath'
-    ordering_party = 'OrderingParty'
-    payment_bank_control_key = 'PaymentBankControlKey'
-    payee_tax_number = 'PayeeTaxNumber'
-    payment_key_code = 'PaymentKeyCode'
-    payee_reference_details = 'PayeeReferenceDetails'
-    format_name = 'FormatName'
-    payment_donewith_check = 'PaymentDonewithCheck'
-    company_block = 'CompanyBlock'
-    company_city = 'CompanyCity'
-    company_county = 'CompanyCounty'
-    company_state = 'CompanyState'
-    company_street = 'CompanyStreet'
-    company_zip_code = 'CompanyZipCode'
-    payment_bank_charges = 'PaymentBankCharges'
-    payment_bank_user_no1 = 'PaymentBankUserNo1'
-    payment_bank_user_no2 = 'PaymentBankUserNo2'
-    payment_bank_user_no3 = 'PaymentBankUserNo3'
-    payment_bank_user_no4 = 'PaymentBankUserNo4'
-    payment_bank_charges_allocation_code = 'PaymentBankChargesAllocationCode'
-    payment_order_num = 'PaymentOrderNum'
-    free_text1 = 'FreeText1'
-    free_text2 = 'FreeText2'
-    free_text3 = 'FreeText3'
-    row_type = 'RowType'
-    payment_run_export_lines = 'PaymentRunExport_Lines'
-    bank_charges_allocation_code = 'BankChargesAllocationCode'
-
-class PaymentTermsTypeFields(StrEnum):
-    group_number = 'GroupNumber'
-    payment_terms_group_name = 'PaymentTermsGroupName'
-    start_from = 'StartFrom'
-    number_of_additional_months = 'NumberOfAdditionalMonths'
-    number_of_additional_days = 'NumberOfAdditionalDays'
-    credit_limit = 'CreditLimit'
-    general_discount = 'GeneralDiscount'
-    interest_on_arrears = 'InterestOnArrears'
-    price_list_no = 'PriceListNo'
-    load_limit = 'LoadLimit'
-    open_receipt = 'OpenReceipt'
-    discount_code = 'DiscountCode'
-    dunning_code = 'DunningCode'
-    baseline_date = 'BaselineDate'
-    number_of_installments = 'NumberOfInstallments'
-    number_of_tolerance_days = 'NumberOfToleranceDays'
-    end_at = 'EndAt'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    wizard_payment_methods = 'WizardPaymentMethods'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    inventory_transfer_requests = 'InventoryTransferRequests'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    stock_transfer_drafts = 'StockTransferDrafts'
-    self_invoices = 'SelfInvoices'
-    blanket_agreements = 'BlanketAgreements'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    price_list = 'PriceList'
-    cash_discount = 'CashDiscount'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class PickListFields(StrEnum):
-    absoluteentry = 'Absoluteentry'
-    name = 'Name'
-    owner_code = 'OwnerCode'
-    owner_name = 'OwnerName'
-    pick_date = 'PickDate'
-    remarks = 'Remarks'
-    status = 'Status'
-    object_type = 'ObjectType'
-    use_base_units = 'UseBaseUnits'
-    pick_lists_lines = 'PickListsLines'
-    user = 'User'
-
-class PictureFields(StrEnum):
-    picture_name = 'PictureName'
-    picture_path = 'PicturePath'
-    picture_size = 'PictureSize'
-    picture_create_date = 'PictureCreateDate'
-    picture_modify_date = 'PictureModifyDate'
-
-class PostingTemplatesFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    stamp_tax = 'StampTax'
-    automatic_vat = 'AutomaticVAT'
-    manage_w_tax = 'ManageWTax'
-    deferred_tax = 'DeferredTax'
-    posting_templates_line_collection = 'PostingTemplatesLineCollection'
-
-class PredefinedTextFields(StrEnum):
-    numerator = 'Numerator'
-    text_code = 'TextCode'
-    text = 'Text'
-
-class PriceListFields(StrEnum):
-    rounding_method = 'RoundingMethod'
-    group_num = 'GroupNum'
-    base_price_list = 'BasePriceList'
-    factor = 'Factor'
-    price_list_no = 'PriceListNo'
-    price_list_name = 'PriceListName'
-    is_gross_price = 'IsGrossPrice'
-    active = 'Active'
-    valid_from = 'ValidFrom'
-    valid_to = 'ValidTo'
-    default_prime_currency = 'DefaultPrimeCurrency'
-    default_additional_currency1 = 'DefaultAdditionalCurrency1'
-    default_additional_currency2 = 'DefaultAdditionalCurrency2'
-    rounding_rule = 'RoundingRule'
-    fixed_amount = 'FixedAmount'
-    stock_transfers = 'StockTransfers'
-    product_trees = 'ProductTrees'
-    blanket_agreements = 'BlanketAgreements'
-    business_partners = 'BusinessPartners'
-    special_prices = 'SpecialPrices'
-    payment_terms_types = 'PaymentTermsTypes'
-
-class ProjectFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    valid_from = 'ValidFrom'
-    valid_to = 'ValidTo'
-    active = 'Active'
-    sales_opportunities = 'SalesOpportunities'
-    product_trees = 'ProductTrees'
-    purchase_quotations = 'PurchaseQuotations'
-    vendor_payments = 'VendorPayments'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    journal_entries = 'JournalEntries'
-    inventory_gen_entries = 'InventoryGenEntries'
-    service_calls = 'ServiceCalls'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    additional_expenses = 'AdditionalExpenses'
-    chart_of_accounts = 'ChartOfAccounts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    blanket_agreements = 'BlanketAgreements'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    payment_drafts = 'PaymentDrafts'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    production_orders = 'ProductionOrders'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    project_managements = 'ProjectManagements'
-    goods_return_request = 'GoodsReturnRequest'
-    budget_scenarios = 'BudgetScenarios'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    incoming_payments = 'IncomingPayments'
-    deposits = 'Deposits'
-    purchase_requests = 'PurchaseRequests'
-
-class PurchaseTaxInvoiceFields(StrEnum):
-    doc_entry = 'DocEntry'
-    doc_num = 'DocNum'
-    doc_type = 'DocType'
-    printed = 'Printed'
-    doc_date = 'DocDate'
-    card_code = 'CardCode'
-    creation_date = 'CreationDate'
-    update_date = 'UpdateDate'
-    doc_due_date = 'DocDueDate'
-    series = 'Series'
-    segment = 'Segment'
-    contact_person_code = 'ContactPersonCode'
-    tax_date = 'TaxDate'
-    comments = 'Comments'
-    ship_to_code = 'ShipToCode'
-    address = 'Address'
-    address2 = 'Address2'
-    currency_source = 'CurrencySource'
-    doc_currency = 'DocCurrency'
-    customer_or_vendor_ref_no = 'CustomerOrVendorRefNo'
-    customer_or_vendor_name = 'CustomerOrVendorName'
-    cancel_date = 'CancelDate'
-    document_total = 'DocumentTotal'
-    tax_total = 'TaxTotal'
-    payment_ref_no = 'PaymentRefNo'
-    payment_ref_date = 'PaymentRefDate'
-    alteration_revision = 'AlterationRevision'
-    purchase_tax_invoice_lines = 'PurchaseTaxInvoiceLines'
-    purchase_tax_invoice_operation_codes = 'PurchaseTaxInvoiceOperationCodes'
-    purchase_tax_invoice_document_references = 'PurchaseTaxInvoiceDocumentReferences'
-    purchase_tax_invoice_linked_down_payments = 'PurchaseTaxInvoiceLinkedDownPayments'
-    business_partner = 'BusinessPartner'
-
-class QueryAuthGroupFields(StrEnum):
-    auth_group_code = 'AuthGroupCode'
-    auth_group_des = 'AuthGroupDes'
-    auth_group_id = 'AuthGroupId'
-    category_group_collection = 'CategoryGroupCollection'
-
-class QueryCategoryFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    permissions = 'Permissions'
-    user_queries = 'UserQueries'
-
-class QueueFields(StrEnum):
-    queue_id = 'QueueID'
-    description = 'Description'
-    inactive = 'Inactive'
-    queue_manager = 'QueueManager'
-    queue_email = 'QueueEmail'
-    queue_members = 'QueueMembers'
-    service_calls = 'ServiceCalls'
-    user = 'User'
-
-class RecurringPostingsFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    instance = 'Instance'
-    reference1 = 'Reference1'
-    reference2 = 'Reference2'
-    reference3 = 'Reference3'
-    transaction_code = 'TransactionCode'
-    remarks = 'Remarks'
-    frequency = 'Frequency'
-    sub_frequency = 'SubFrequency'
-    next_execution = 'NextExecution'
-    stamp_tax = 'StampTax'
-    automatic_vat = 'AutomaticVAT'
-    manage_w_tax = 'ManageWTax'
-    deferred_tax = 'DeferredTax'
-    valid_until = 'ValidUntil'
-    valid_until_date = 'ValidUntilDate'
-    recurring_postings_line_collection = 'RecurringPostingsLineCollection'
-    recurring_postings_document_reference_collection = 'RecurringPostingsDocumentReferenceCollection'
-
-class RelationshipFields(StrEnum):
-    relationship_description = 'RelationshipDescription'
-    relationship_code = 'RelationshipCode'
-    partners_setups = 'PartnersSetups'
-
-class ReportTypeFields(StrEnum):
-    type_code = 'TypeCode'
-    type_name = 'TypeName'
-    default_report_layout = 'DefaultReportLayout'
-    addon_name = 'AddonName'
-    addon_form_type = 'AddonFormType'
-    menu_id = 'MenuID'
-
-class RetornoCodeFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    occurence_code = 'OccurenceCode'
-    movement_code = 'MovementCode'
-    boe_status = 'BoeStatus'
-    description = 'Description'
-    color = 'Color'
-    file_format = 'FileFormat'
-    bank_code = 'BankCode'
-
-class RouteStageFields(StrEnum):
-    internal_number = 'InternalNumber'
-    code = 'Code'
-    description = 'Description'
-    creation_date = 'CreationDate'
-    generation_time = 'GenerationTime'
-    date_of_update = 'DateOfUpdate'
-
-class SQLQueryFields(StrEnum):
-    sql_code = 'SqlCode'
-    sql_name = 'SqlName'
-    sql_text = 'SqlText'
-    param_list = 'ParamList'
-    create_date = 'CreateDate'
-    update_date = 'UpdateDate'
-
-class SQLViewFields(StrEnum):
-    name = 'Name'
-    db_type = 'DBType'
-    schema_name = 'SchemaName'
-    create_date = 'CreateDate'
-
-class SalesForecastFields(StrEnum):
-    forecast_start_date = 'ForecastStartDate'
-    forecast_end_date = 'ForecastEndDate'
-    forecast_code = 'ForecastCode'
-    forecast_name = 'ForecastName'
-    numerator = 'Numerator'
-    view = 'View'
-    sales_forecast_lines = 'SalesForecastLines'
-
-class SalesOpportunitiesFields(StrEnum):
-    sequential_no = 'SequentialNo'
-    card_code = 'CardCode'
-    sales_person = 'SalesPerson'
-    contact_person = 'ContactPerson'
-    source = 'Source'
-    interest_field1 = 'InterestField1'
-    interest_field2 = 'InterestField2'
-    interest_field3 = 'InterestField3'
-    interest_level = 'InterestLevel'
-    start_date = 'StartDate'
-    predicted_closing_date = 'PredictedClosingDate'
-    max_local_total = 'MaxLocalTotal'
-    max_system_total = 'MaxSystemTotal'
-    weighted_sum_lc = 'WeightedSumLC'
-    weighted_sum_sc = 'WeightedSumSC'
-    gross_profit = 'GrossProfit'
-    gross_profit_total_local = 'GrossProfitTotalLocal'
-    gross_profit_total_system = 'GrossProfitTotalSystem'
-    remarks = 'Remarks'
-    status = 'Status'
-    reason_for_closing = 'ReasonForClosing'
-    total_amount_local = 'TotalAmountLocal'
-    total_amoun_system = 'TotalAmounSystem'
-    closing_gross_profit_local = 'ClosingGrossProfitLocal'
-    closing_gross_profit_system = 'ClosingGrossProfitSystem'
-    closing_percentage = 'ClosingPercentage'
-    current_stage_no = 'CurrentStageNo'
-    current_stage_number = 'CurrentStageNumber'
-    opportunity_name = 'OpportunityName'
-    industry = 'Industry'
-    linked_document_type = 'LinkedDocumentType'
-    data_ownershipfield = 'DataOwnershipfield'
-    status_remarks = 'StatusRemarks'
-    project_code = 'ProjectCode'
-    bp_chanel_name = 'BPChanelName'
-    user_signature = 'UserSignature'
-    customer_name = 'CustomerName'
-    document_checkbox = 'DocumentCheckbox'
-    linked_document_number = 'LinkedDocumentNumber'
-    territory = 'Territory'
-    closing_date = 'ClosingDate'
-    bp_channel_contact = 'BPChannelContact'
-    bp_chanel_code = 'BPChanelCode'
-    closing_type = 'ClosingType'
-    attachment_entry = 'AttachmentEntry'
-    opportunity_type = 'OpportunityType'
-    update_date = 'UpdateDate'
-    update_time = 'UpdateTime'
-    sales_opportunities_lines = 'SalesOpportunitiesLines'
-    sales_opportunities_competition = 'SalesOpportunitiesCompetition'
-    sales_opportunities_partners = 'SalesOpportunitiesPartners'
-    sales_opportunities_interests = 'SalesOpportunitiesInterests'
-    sales_opportunities_reasons = 'SalesOpportunitiesReasons'
-    business_partner = 'BusinessPartner'
-    sales_person2 = 'SalesPerson2'
-    sales_opportunity_source_setup = 'SalesOpportunitySourceSetup'
-    sales_opportunity_interest_setup = 'SalesOpportunityInterestSetup'
-    sales_opportunity_reason_setup = 'SalesOpportunityReasonSetup'
-    sales_stage = 'SalesStage'
-    industry2 = 'Industry2'
-    employee_info = 'EmployeeInfo'
-    project = 'Project'
-    user = 'User'
-    territory2 = 'Territory2'
-
-class SalesOpportunityCompetitorSetupFields(StrEnum):
-    sequence_no = 'SequenceNo'
-    name = 'Name'
-    threat_level = 'ThreatLevel'
-    details = 'Details'
-
-class SalesOpportunityInterestSetupFields(StrEnum):
-    sequence_no = 'SequenceNo'
-    description = 'Description'
-    sort = 'Sort'
-    sales_opportunities = 'SalesOpportunities'
-
-class SalesOpportunityReasonSetupFields(StrEnum):
-    sequence_no = 'SequenceNo'
-    description = 'Description'
-    sort = 'Sort'
-    sales_opportunities = 'SalesOpportunities'
-
-class SalesOpportunitySourceSetupFields(StrEnum):
-    sequence_no = 'SequenceNo'
-    description = 'Description'
-    sort = 'Sort'
-    sales_opportunities = 'SalesOpportunities'
-
-class SalesPersonFields(StrEnum):
-    sales_employee_code = 'SalesEmployeeCode'
-    sales_employee_name = 'SalesEmployeeName'
-    remarks = 'Remarks'
-    commission_for_sales_employee = 'CommissionForSalesEmployee'
-    commission_group = 'CommissionGroup'
-    locked = 'Locked'
-    employee_id = 'EmployeeID'
-    active = 'Active'
-    telephone = 'Telephone'
-    mobile = 'Mobile'
-    fax = 'Fax'
-    email = 'Email'
-    sales_opportunities = 'SalesOpportunities'
-    user_default_groups = 'UserDefaultGroups'
-    stock_transfers = 'StockTransfers'
-    purchase_quotations = 'PurchaseQuotations'
-    commission_group2 = 'CommissionGroup2'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    employees_info = 'EmployeesInfo'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    inventory_transfer_requests = 'InventoryTransferRequests'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    stock_transfer_drafts = 'StockTransferDrafts'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    contacts = 'Contacts'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    activities = 'Activities'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    project_managements = 'ProjectManagements'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class SalesStageFields(StrEnum):
-    sequence_no = 'SequenceNo'
-    name = 'Name'
-    stageno = 'Stageno'
-    closing_percentage = 'ClosingPercentage'
-    cancelled = 'Cancelled'
-    is_sales = 'IsSales'
-    is_purchasing = 'IsPurchasing'
-    sales_opportunities = 'SalesOpportunities'
-
-class SalesTaxAuthoritiesTypeFields(StrEnum):
-    user_signature = 'UserSignature'
-    name = 'Name'
-    vat = 'VAT'
-    numerator = 'Numerator'
-    tax_credit_control = 'TaxCreditControl'
-    sales_tax_authorities = 'SalesTaxAuthorities'
-    user = 'User'
-    depreciation_areas = 'DepreciationAreas'
-
-class SalesTaxAuthorityFields(StrEnum):
-    use_tax_account = 'UseTaxAccount'
-    user_signature = 'UserSignature'
-    type = 'Type'
-    a_or_r_tax_account = 'AOrRTaxAccount'
-    rate = 'Rate'
-    a_or_p_tax_account = 'AOrPTaxAccount'
-    non_deductible_precent = 'NonDeductiblePrecent'
-    non_deductible_account = 'NonDeductibleAccount'
-    name = 'Name'
-    deferred_tax_account = 'DeferredTaxAccount'
-    code = 'Code'
-    min_taxable_amount = 'MinTaxableAmount'
-    max_taxable_amount = 'MaxTaxableAmount'
-    flat_tax_amount = 'FlatTaxAmount'
-    incl_in_price = 'InclInPrice'
-    exempt = 'Exempt'
-    ap_exp_account = 'APExpAccount'
-    ar_exp_account = 'ARExpAccount'
-    incl_in_gross_revenue = 'InclInGrossRevenue'
-    text_code = 'TextCode'
-    incl_in_first_installment = 'InclInFirstInstallment'
-    reverse_charge_percent = 'ReverseChargePercent'
-    sales_tax_rcm_account = 'SalesTaxRCMAccount'
-    sales_tax_rcm_clr_account = 'SalesTaxRCMClrAccount'
-    vat_exemption = 'VATExemption'
-    vat_exemption_base_percent = 'VATExemptionBasePercent'
-    vat_exemption_percent = 'VATExemptionPercent'
-    tax_definitions = 'TaxDefinitions'
-    chart_of_account = 'ChartOfAccount'
-    user = 'User'
-    sales_tax_authorities_type = 'SalesTaxAuthoritiesType'
-
-class SalesTaxCodeFields(StrEnum):
-    valid_for_ar = 'ValidForAR'
-    valid_for_ap = 'ValidForAP'
-    user_signature = 'UserSignature'
-    rate = 'Rate'
-    name = 'Name'
-    freight = 'Freight'
-    code = 'Code'
-    is_item_level = 'IsItemLevel'
-    inactive = 'Inactive'
-    fa_debit = 'FADebit'
-    sales_tax_codes_lines = 'SalesTaxCodes_Lines'
-    user_default_groups = 'UserDefaultGroups'
-    warehouses = 'Warehouses'
-    items = 'Items'
-    business_partners = 'BusinessPartners'
-    user = 'User'
-    expense_types = 'ExpenseTypes'
-
-class SalesTaxInvoiceFields(StrEnum):
-    doc_entry = 'DocEntry'
-    doc_num = 'DocNum'
-    doc_type = 'DocType'
-    printed = 'Printed'
-    doc_date = 'DocDate'
-    card_code = 'CardCode'
-    creation_date = 'CreationDate'
-    update_date = 'UpdateDate'
-    doc_due_date = 'DocDueDate'
-    series = 'Series'
-    segment = 'Segment'
-    contact_person_code = 'ContactPersonCode'
-    tax_date = 'TaxDate'
-    comments = 'Comments'
-    ship_to_code = 'ShipToCode'
-    address = 'Address'
-    address2 = 'Address2'
-    currency_source = 'CurrencySource'
-    doc_currency = 'DocCurrency'
-    customer_or_vendor_ref_no = 'CustomerOrVendorRefNo'
-    customer_or_vendor_name = 'CustomerOrVendorName'
-    cancel_date = 'CancelDate'
-    document_total = 'DocumentTotal'
-    tax_total = 'TaxTotal'
-    payment_ref_no = 'PaymentRefNo'
-    payment_ref_date = 'PaymentRefDate'
-    alteration_revision = 'AlterationRevision'
-    sales_tax_invoice_lines = 'SalesTaxInvoiceLines'
-    sales_tax_invoice_operation_codes = 'SalesTaxInvoiceOperationCodes'
-    sales_tax_invoice_document_references = 'SalesTaxInvoiceDocumentReferences'
-    sales_tax_invoice_linked_down_payments = 'SalesTaxInvoiceLinkedDownPayments'
-    business_partner = 'BusinessPartner'
-
-class SectionFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    description = 'Description'
-    e_code = 'ECode'
-    withholding_tax_codes = 'WithholdingTaxCodes'
-    certificate_series = 'CertificateSeries'
-
-class SerialNumberDetailFields(StrEnum):
-    doc_entry = 'DocEntry'
-    item_code = 'ItemCode'
-    item_description = 'ItemDescription'
-    mfr_serial_no = 'MfrSerialNo'
-    serial_number = 'SerialNumber'
-    lot_number = 'LotNumber'
-    system_number = 'SystemNumber'
-    admission_date = 'AdmissionDate'
-    manufacturing_date = 'ManufacturingDate'
-    expiration_date = 'ExpirationDate'
-    mfr_warranty_start = 'MfrWarrantyStart'
-    m_fr_warranty_end = 'MFrWarrantyEnd'
-    location = 'Location'
-    details = 'Details'
-    item = 'Item'
-
-class ServiceContractFields(StrEnum):
-    contract_id = 'ContractID'
-    customer_code = 'CustomerCode'
-    customer_name = 'CustomerName'
-    contact_code = 'ContactCode'
-    owner = 'Owner'
-    status = 'Status'
-    contract_template = 'ContractTemplate'
-    contract_type = 'ContractType'
-    renewal = 'Renewal'
-    reminder_time = 'ReminderTime'
-    remind_unit = 'RemindUnit'
-    duration_of_coverage = 'DurationOfCoverage'
-    start_date = 'StartDate'
-    end_date = 'EndDate'
-    resolution_time = 'ResolutionTime'
-    resolution_unit = 'ResolutionUnit'
-    description = 'Description'
-    monday_enabled = 'MondayEnabled'
-    tuesday_enabled = 'TuesdayEnabled'
-    wednesday_enabled = 'WednesdayEnabled'
-    thursday_enabled = 'ThursdayEnabled'
-    friday_enabled = 'FridayEnabled'
-    saturday_enabled = 'SaturdayEnabled'
-    sunday_enabled = 'SundayEnabled'
-    monday_start = 'MondayStart'
-    monday_end = 'MondayEnd'
-    tuesday_start = 'TuesdayStart'
-    tuesday_end = 'TuesdayEnd'
-    wednesday_start = 'WednesdayStart'
-    wednesday_end = 'WednesdayEnd'
-    thursday_start = 'ThursdayStart'
-    thursday_end = 'ThursdayEnd'
-    friday_start = 'FridayStart'
-    friday_end = 'FridayEnd'
-    saturday_start = 'SaturdayStart'
-    saturday_end = 'SaturdayEnd'
-    sunday_start = 'SundayStart'
-    sunday_end = 'SundayEnd'
-    include_parts = 'IncludeParts'
-    include_labor = 'IncludeLabor'
-    include_travel = 'IncludeTravel'
-    template_remarks = 'TemplateRemarks'
-    remarks = 'Remarks'
-    include_holidays = 'IncludeHolidays'
-    service_type = 'ServiceType'
-    response_unit = 'ResponseUnit'
-    response_time = 'ResponseTime'
-    termination_date = 'TerminationDate'
-    attachment_entry = 'AttachmentEntry'
-    service_bp_type = 'ServiceBPType'
-    service_contract_lines = 'ServiceContract_Lines'
-    customer_equipment_cards = 'CustomerEquipmentCards'
-    service_calls = 'ServiceCalls'
-    business_partner = 'BusinessPartner'
-    user = 'User'
-    contract_template2 = 'ContractTemplate2'
-    attachments2 = 'Attachments2'
-
-class ServiceGroupFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    service_group_code = 'ServiceGroupCode'
-    description = 'Description'
-    items = 'Items'
-
-class ShippingTypeFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    website = 'Website'
-    landed_costs = 'LandedCosts'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    items = 'Items'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    blanket_agreements = 'BlanketAgreements'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class ShortLinkMappingFields(StrEnum):
-    guid = 'Guid'
-    origin = 'Origin'
-    src_link = 'SrcLink'
-    owner_code = 'OwnerCode'
-    create_date = 'CreateDate'
-    create_time = 'CreateTime'
-
-class SingleUserConnectionFields(StrEnum):
-    code = 'Code'
-    action = 'Action'
-
-class SpecialPriceFields(StrEnum):
-    item_code = 'ItemCode'
-    card_code = 'CardCode'
-    price = 'Price'
-    currency = 'Currency'
-    discount_percent = 'DiscountPercent'
-    price_list_num = 'PriceListNum'
-    auto_update = 'AutoUpdate'
-    source_price = 'SourcePrice'
-    valid = 'Valid'
-    valid_from = 'ValidFrom'
-    valid_to = 'ValidTo'
-    special_price_data_areas = 'SpecialPriceDataAreas'
-    item = 'Item'
-    business_partner = 'BusinessPartner'
-    price_list = 'PriceList'
-
-class StateFields(StrEnum):
-    code = 'Code'
-    country = 'Country'
-    name = 'Name'
-    gst_code = 'GSTCode'
-    is_union_territory = 'IsUnionTerritory'
-    country2 = 'Country2'
-
-class StockTakingFields(StrEnum):
-    item_code = 'ItemCode'
-    warehouse_code = 'WarehouseCode'
-    counted = 'Counted'
-    item = 'Item'
-    warehouse = 'Warehouse'
-
-class TSRExceptionalEventFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-
-class TargetGroupFields(StrEnum):
-    target_group_code = 'TargetGroupCode'
-    target_group_name = 'TargetGroupName'
-    target_group_type = 'TargetGroupType'
-    target_groups_details = 'TargetGroupsDetails'
-    campaigns = 'Campaigns'
-
-class TaxCodeDeterminationFields(StrEnum):
-    doc_entry = 'DocEntry'
-    line_number = 'LineNumber'
-    document_type = 'DocumentType'
-    business_area = 'BusinessArea'
-    condition1 = 'Condition1'
-    udf_table1 = 'UDFTable1'
-    number_value1 = 'NumberValue1'
-    string_value1 = 'StringValue1'
-    money_value1 = 'MoneyValue1'
-    condition2 = 'Condition2'
-    udf_table2 = 'UDFTable2'
-    number_value2 = 'NumberValue2'
-    string_value2 = 'StringValue2'
-    money_value2 = 'MoneyValue2'
-    condition3 = 'Condition3'
-    udf_table3 = 'UDFTable3'
-    number_value3 = 'NumberValue3'
-    string_value3 = 'StringValue3'
-    money_value3 = 'MoneyValue3'
-    condition4 = 'Condition4'
-    udf_table4 = 'UDFTable4'
-    number_value4 = 'NumberValue4'
-    string_value4 = 'StringValue4'
-    money_value4 = 'MoneyValue4'
-    condition5 = 'Condition5'
-    udf_table5 = 'UDFTable5'
-    number_value5 = 'NumberValue5'
-    string_value5 = 'StringValue5'
-    money_value5 = 'MoneyValue5'
-    description = 'Description'
-    tax_code = 'TaxCode'
-    freight_row_tax = 'FreightRowTax'
-    freight_header_tax = 'FreightHeaderTax'
-    udf_alias1 = 'UDFAlias1'
-    udf_alias2 = 'UDFAlias2'
-    udf_alias3 = 'UDFAlias3'
-    udf_alias4 = 'UDFAlias4'
-    udf_alias5 = 'UDFAlias5'
-
-class TaxCodeDeterminationTCDFields(StrEnum):
-    abs_id = 'AbsId'
-    tcd_type = 'TcdType'
-    dft_ar_code = 'DftArCode'
-    dft_ap_code = 'DftApCode'
-    tax_code_determination_tcd_default_w_ts = 'TaxCodeDeterminationTCDDefaultWTs'
-    tax_code_determination_tcd_by_usages = 'TaxCodeDeterminationTCDByUsages'
-    tax_code_determination_tcd_key_fields = 'TaxCodeDeterminationTCDKeyFields'
-
-class TaxExemptReasonFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    vat_groups = 'VatGroups'
-
-class TaxInvoiceReportFields(StrEnum):
-    nts_approval = 'NTSApproval'
-    e_tax_web_site = 'ETaxWebSite'
-    e_tax_no = 'ETaxNo'
-    nts_approval_no = 'NTSApprovalNo'
-    original_nts_approval_no = 'OriginalNTSApprovalNo'
-    remarks = 'Remarks'
-    tax_invoice_report_number = 'TaxInvoiceReportNumber'
-    date = 'Date'
-    business_place = 'BusinessPlace'
-    bp_code = 'BPCode'
-    bp_name = 'BPName'
-    base_amount = 'BaseAmount'
-    tax_amount = 'TaxAmount'
-    canceled = 'Canceled'
-    report_type = 'ReportType'
-    tax_invoice_report_line_collection = 'TaxInvoiceReportLineCollection'
-    tax_web_site = 'TaxWebSite'
-
-class TaxReplStateSubDataFields(StrEnum):
-    state = 'State'
-    iest = 'IEST'
-
-class TaxReportFilterFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    report_layout = 'ReportLayout'
-    first_printed_number = 'FirstPrintedNumber'
-    from_date = 'FromDate'
-    to_date = 'ToDate'
-    tax_date = 'TaxDate'
-    round_amount = 'RoundAmount'
-    declaration_type = 'DeclarationType'
-    filter_type = 'FilterType'
-    exclude_wt = 'ExcludeWT'
-    include_customers = 'IncludeCustomers'
-    include_vendors = 'IncludeVendors'
-    period = 'Period'
-    quarter = 'Quarter'
-    year = 'Year'
-    document_type = 'DocumentType'
-    first_register_number = 'FirstRegisterNumber'
-    include_gl_accounts = 'IncludeGLAccounts'
-    appendix_oor_p_selection = 'AppendixOorPSelection'
-    opening_and_closing_balance = 'OpeningAndClosingBalance'
-    from_series = 'FromSeries'
-    to_series = 'ToSeries'
-    cancellation = 'Cancellation'
-    hide_tax_without_transaction = 'HideTaxWithoutTransaction'
-    include_series_filter = 'IncludeSeriesFilter'
-    include_document_type = 'IncludeDocumentType'
-    diplay_credit_memos_in_separate_column = 'DiplayCreditMemosInSeparateColumn'
-    show_payments_with_deferred_tax = 'ShowPaymentsWithDeferredTax'
-    quarter_or_dates = 'QuarterOrDates'
-    tax_report_groups = 'TaxReportGroups'
-    tax_report_business_partners = 'TaxReportBusinessPartners'
-    tax_report_documents = 'TaxReportDocuments'
-    tax_report_series_collection = 'TaxReportSeriesCollection'
-    tax_report_accounts = 'TaxReportAccounts'
-
-class TaxWebSiteFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    web_site_name = 'WebSiteName'
-    web_site_url = 'WebSiteURL'
-    description = 'Description'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    tax_invoice_report = 'TaxInvoiceReport'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class TeamFields(StrEnum):
-    team_id = 'TeamID'
-    team_name = 'TeamName'
-    description = 'Description'
-    team_members = 'TeamMembers'
-
-class TerminationReasonFields(StrEnum):
-    reason_id = 'ReasonID'
-    name = 'Name'
-    description = 'Description'
-    employees_info = 'EmployeesInfo'
-
-class TerritoryFields(StrEnum):
-    territory_id = 'TerritoryID'
-    description = 'Description'
-    location_index = 'LocationIndex'
-    inactive = 'Inactive'
-    parent = 'Parent'
-    sales_opportunities = 'SalesOpportunities'
-    customer_equipment_cards = 'CustomerEquipmentCards'
-    business_partners = 'BusinessPartners'
-    project_managements = 'ProjectManagements'
-
-class TrackingNoteFields(StrEnum):
-    tracking_note_number = 'TrackingNoteNumber'
-    ccd_number = 'CCDNumber'
-    date = 'Date'
-    customs_terminal = 'CustomsTerminal'
-    country_of_origin = 'CountryOfOrigin'
-    is_direct_import = 'IsDirectImport'
-    tracking_note_item_collection = 'TrackingNoteItemCollection'
-    tracking_note_broker_collection = 'TrackingNoteBrokerCollection'
-
-class TransactionCodeFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-    vendor_payments = 'VendorPayments'
-    journal_entries = 'JournalEntries'
-    chart_of_accounts = 'ChartOfAccounts'
-    payment_drafts = 'PaymentDrafts'
-    incoming_payments = 'IncomingPayments'
-
-class TransportationDocumentDataFields(StrEnum):
-    transp_doc_number = 'TranspDocNumber'
-    next_number = 'NextNumber'
-    post_date = 'PostDate'
-    el_doc_gen_type = 'ElDocGenType'
-    el_doc_export_format = 'ElDocExportFormat'
-    transportation_number = 'TransportationNumber'
-    expiration_date = 'ExpirationDate'
-    vehicle_id = 'VehicleID'
-    trailer_id = 'TrailerID'
-    carrier_code = 'CarrierCode'
-    issue_gate = 'IssueGate'
-    attachment_entry = 'AttachmentEntry'
-    canceled = 'Canceled'
-    weight = 'Weight'
-    weight_unit = 'WeightUnit'
-    transported_total_lc = 'TransportedTotalLC'
-    warehouse_code = 'WarehouseCode'
-    cot_code = 'COTCode'
-    transportation_document_line_data_collection = 'TransportationDocumentLineDataCollection'
-    electronic_protocols = 'ElectronicProtocols'
-
-class UnitOfMeasurementFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    name = 'Name'
-    length1 = 'Length1'
-    length1_unit = 'Length1Unit'
-    length2 = 'Length2'
-    length2_unit = 'Length2Unit'
-    width1 = 'Width1'
-    width1_unit = 'Width1Unit'
-    width2 = 'Width2'
-    width2_unit = 'Width2Unit'
-    height1 = 'Height1'
-    height1_unit = 'Height1Unit'
-    height2 = 'Height2'
-    height2_unit = 'Height2Unit'
-    volume = 'Volume'
-    volume_unit = 'VolumeUnit'
-    weight1 = 'Weight1'
-    weight1_unit = 'Weight1Unit'
-    weight2 = 'Weight2'
-    weight2_unit = 'Weight2Unit'
-    international_symbol = 'InternationalSymbol'
-    ewb_unit_entry = 'EWBUnitEntry'
-    pp_weight1 = 'PPWeight1'
-    pp_we1_unit = 'PPWe1Unit'
-    pp_weight2 = 'PPWeight2'
-    pp_we2_unit = 'PPWe2Unit'
-    item_groups = 'ItemGroups'
-    items = 'Items'
-    bin_locations = 'BinLocations'
-    bar_codes = 'BarCodes'
-    unit_of_measurement_groups = 'UnitOfMeasurementGroups'
-    production_orders = 'ProductionOrders'
-
-class UnitOfMeasurementGroupFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    code = 'Code'
-    name = 'Name'
-    base_uo_m = 'BaseUoM'
-    uo_m_group_definition_collection = 'UoMGroupDefinitionCollection'
-    item_groups = 'ItemGroups'
-    items = 'Items'
-    bin_locations = 'BinLocations'
-    unit_of_measurement = 'UnitOfMeasurement'
-
-class UserFields(StrEnum):
-    internal_key = 'InternalKey'
-    user_password = 'UserPassword'
-    user_code = 'UserCode'
-    user_name = 'UserName'
-    superuser = 'Superuser'
-    e_mail = 'eMail'
-    mobile_phone_number = 'MobilePhoneNumber'
-    defaults = 'Defaults'
-    fax_number = 'FaxNumber'
-    branch = 'Branch'
-    department = 'Department'
-    language_code = 'LanguageCode'
-    locked = 'Locked'
-    group = 'Group'
-    max_discount_general = 'MaxDiscountGeneral'
-    max_discount_sales = 'MaxDiscountSales'
-    max_discount_purchase = 'MaxDiscountPurchase'
-    cash_limit = 'CashLimit'
-    max_cash_amt_for_incmng_payts = 'MaxCashAmtForIncmngPayts'
-    last_logout_date = 'LastLogoutDate'
-    last_login_time = 'LastLoginTime'
-    last_logout_time = 'LastLogoutTime'
-    last_password_change_time = 'LastPasswordChangeTime'
-    last_password_changed_by = 'LastPasswordChangedBy'
-    user_permission = 'UserPermission'
-    user_action_record = 'UserActionRecord'
-    user_group_by_user = 'UserGroupByUser'
-    user_branch_assignment = 'UserBranchAssignment'
-    sales_opportunities = 'SalesOpportunities'
-    user_default_groups = 'UserDefaultGroups'
-    legal_data = 'LegalData'
-    purchase_quotations = 'PurchaseQuotations'
-    bank_pages = 'BankPages'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    pick_lists = 'PickLists'
-    inventory_gen_entries = 'InventoryGenEntries'
-    service_calls = 'ServiceCalls'
-    employees_info = 'EmployeesInfo'
-    orders = 'Orders'
-    wizard_payment_methods = 'WizardPaymentMethods'
-    service_contracts = 'ServiceContracts'
-    inventory_gen_exits = 'InventoryGenExits'
-    material_revaluation = 'MaterialRevaluation'
-    drafts = 'Drafts'
-    approval_requests = 'ApprovalRequests'
-    queue = 'Queue'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    branch2 = 'Branch2'
-    department2 = 'Department2'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    sales_tax_authorities = 'SalesTaxAuthorities'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    sales_tax_authorities_types = 'SalesTaxAuthoritiesTypes'
-    knowledge_base_solutions = 'KnowledgeBaseSolutions'
-    contacts = 'Contacts'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    production_orders = 'ProductionOrders'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    cockpits = 'Cockpits'
-    user_permission_tree = 'UserPermissionTree'
-    activities = 'Activities'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    sales_tax_codes = 'SalesTaxCodes'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-    form_preferences = 'FormPreferences'
-
-class UserDefaultGroupFields(StrEnum):
-    code = 'Code'
-    name = 'Name'
-    warehouse = 'Warehouse'
-    sales_employee = 'SalesEmployee'
-    b_pfor_invoice_payment = 'BPforInvoicePayment'
-    cash_account = 'CashAccount'
-    checking_acct = 'CheckingAcct'
-    print_receipt = 'PrintReceipt'
-    print_invoiceand_paymentin_s = 'PrintInvoiceandPaymentinS'
-    windows_color = 'WindowsColor'
-    address = 'Address'
-    country = 'Country'
-    printing_header = 'PrintingHeader'
-    phone_number1 = 'PhoneNumber1'
-    phone_number2 = 'PhoneNumber2'
-    fax_number = 'FaxNumber'
-    e_mail = 'eMail'
-    addressin_foreign_language = 'AddressinForeignLanguage'
-    printing_header_in_foreign_langu = 'PrintingHeaderInForeignLangu'
-    phone_number1_foreign_lang = 'PhoneNumber1ForeignLang'
-    phone_number2_foreign_lang = 'PhoneNumber2ForeignLang'
-    fax_number_foreign_lang = 'FaxNumberForeignLang'
-    default_tax_code = 'DefaultTaxCode'
-    additional_id_number = 'AdditionalIdNumber'
-    user_signature = 'UserSignature'
-    use_tax = 'UseTax'
-    use_warehouse_addressin_apd = 'UseWarehouseAddressinAPD'
-    bplid = 'BPLID'
-    asset_in_doc = 'AssetInDoc'
-    language_code = 'LanguageCode'
-    default_documents = 'DefaultDocuments'
-    default_credit_cards = 'DefaultCreditCards'
-    warehouse2 = 'Warehouse2'
-    sales_person = 'SalesPerson'
-    business_partner = 'BusinessPartner'
-    country2 = 'Country2'
-    sales_tax_code = 'SalesTaxCode'
-    user = 'User'
-    business_place = 'BusinessPlace'
-    user_language = 'UserLanguage'
-
-class UserFieldMDFields(StrEnum):
-    name = 'Name'
-    type = 'Type'
-    size = 'Size'
-    description = 'Description'
-    sub_type = 'SubType'
-    linked_table = 'LinkedTable'
-    default_value = 'DefaultValue'
-    table_name = 'TableName'
-    field_id = 'FieldID'
-    edit_size = 'EditSize'
-    mandatory = 'Mandatory'
-    linked_udo = 'LinkedUDO'
-    linked_system_object = 'LinkedSystemObject'
-    valid_values_md = 'ValidValuesMD'
-    user_tables_md = 'UserTablesMD'
-
-class UserGroupFields(StrEnum):
-    user_group_id = 'UserGroupId'
-    user_group_name = 'UserGroupName'
-    user_group_dec = 'UserGroupDec'
-    tpl_id = 'TPLId'
-    start_date = 'StartDate'
-    due_date = 'DueDate'
-    user_group_type = 'UserGroupType'
-
-class UserKeysMDFields(StrEnum):
-    table_name = 'TableName'
-    key_index = 'KeyIndex'
-    key_name = 'KeyName'
-    unique = 'Unique'
-    user_keys_md_elements = 'UserKeysMD_Elements'
-
-class UserLanguageFields(StrEnum):
-    code = 'Code'
-    language_short_name = 'LanguageShortName'
-    language_full_name = 'LanguageFullName'
-    related_system_language = 'RelatedSystemLanguage'
-    user_default_groups = 'UserDefaultGroups'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
-
-class UserObjectsMDFields(StrEnum):
-    table_name = 'TableName'
-    code = 'Code'
-    log_table_name = 'LogTableName'
-    can_create_default_form = 'CanCreateDefaultForm'
-    object_type = 'ObjectType'
-    extension_name = 'ExtensionName'
-    can_cancel = 'CanCancel'
-    can_delete = 'CanDelete'
-    can_log = 'CanLog'
-    manage_series = 'ManageSeries'
-    can_find = 'CanFind'
-    can_year_transfer = 'CanYearTransfer'
-    name = 'Name'
-    can_close = 'CanClose'
-    overwrite_dllfile = 'OverwriteDllfile'
-    use_unique_form_type = 'UseUniqueFormType'
-    can_archive = 'CanArchive'
-    menu_item = 'MenuItem'
-    menu_caption = 'MenuCaption'
-    father_menu_id = 'FatherMenuID'
-    position = 'Position'
-    menu_uid = 'MenuUID'
-    enable_enhanced_form = 'EnableEnhancedForm'
-    rebuild_enhanced_form = 'RebuildEnhancedForm'
-    form_srf = 'FormSRF'
-    apply_authorization = 'ApplyAuthorization'
-    personal_data_protection = 'PersonalDataProtection'
-    user_object_md_child_tables = 'UserObjectMD_ChildTables'
-    user_object_md_find_columns = 'UserObjectMD_FindColumns'
-    user_object_md_form_columns = 'UserObjectMD_FormColumns'
-    user_object_md_enhanced_form_columns = 'UserObjectMD_EnhancedFormColumns'
-    user_tables_md = 'UserTablesMD'
-
-class UserPermissionTreeFields(StrEnum):
-    user_signature = 'UserSignature'
-    display_order = 'DisplayOrder'
-    permission_id = 'PermissionID'
-    options = 'Options'
-    name = 'Name'
-    levels = 'Levels'
-    is_item = 'IsItem'
-    parent_id = 'ParentID'
-    user_permission_forms = 'UserPermissionForms'
-    user = 'User'
-
-class UserQueryFields(StrEnum):
-    internal_key = 'InternalKey'
-    query_category = 'QueryCategory'
-    query_description = 'QueryDescription'
-    query = 'Query'
-    procedure_alias = 'ProcedureAlias'
-    procedure_name = 'ProcedureName'
-    query_type = 'QueryType'
-    menu_caption = 'MenuCaption'
-    parent_menu_id = 'ParentMenuID'
-    menu_position = 'MenuPosition'
-    menu_unique_id = 'MenuUniqueID'
-    enable_menu_entry = 'EnableMenuEntry'
-    query_category2 = 'QueryCategory2'
-
-class UserTablesMDFields(StrEnum):
-    table_name = 'TableName'
-    table_description = 'TableDescription'
-    table_type = 'TableType'
-    archivable = 'Archivable'
-    archive_date_field = 'ArchiveDateField'
-    display_menu = 'DisplayMenu'
-    apply_authorization = 'ApplyAuthorization'
-    user_fields_md = 'UserFieldsMD'
-    user_objects_md = 'UserObjectsMD'
-
-class ValueMappingCommunicationDataFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    third_party_system_id = 'ThirdPartySystemId'
-    object_id = 'ObjectId'
-    communication_type = 'CommunicationType'
-    start_date = 'StartDate'
-    start_time = 'StartTime'
-    end_date = 'EndDate'
-    end_time = 'EndTime'
-    message = 'Message'
-    status = 'Status'
-
-class WTDCodeFields(StrEnum):
-    abs_entry = 'AbsEntry'
-    w_tax_code = 'WTaxCode'
-    w_tax_name = 'WTaxName'
-    formula_id = 'FormulaID'
-    inactive = 'Inactive'
-    official_code = 'OfficialCode'
-    category = 'Category'
-    base_type = 'BaseType'
-    type = 'Type'
-    min_amount = 'MinAmount'
-    base_amount_prct = 'BaseAmountPrct'
-    sliding_scale_progressive_tax = 'SlidingScaleProgressiveTax'
-    calculate_in_automatic_cm = 'CalculateInAutomaticCM'
-    wtd_effective_date_collection = 'WTDEffectiveDateCollection'
-    wtdbp_collection = 'WTDBPCollection'
-    wtd_item_collection = 'WTDItemCollection'
-    wtd_freight_collection = 'WTDFreightCollection'
-
-class WTaxTypeCodeFields(StrEnum):
-    code = 'Code'
-    description = 'Description'
-
-class WebClientBookmarkTileFields(StrEnum):
-    guid = 'Guid'
-    title = 'Title'
-    sub_title = 'SubTitle'
-    info = 'Info'
-    bind_type = 'BindType'
-    url_target = 'UrlTarget'
-
-class WebClientDashboardFields(StrEnum):
-    guid = 'Guid'
-    user_id = 'UserId'
-    content = 'Content'
-    sys = 'Sys'
-    web_client_dashboard_cards = 'WebClientDashboardCards'
-
-class WebClientFormSettingFields(StrEnum):
-    guid = 'Guid'
-    form_id = 'FormId'
-    user_id = 'UserId'
-    doc_object_code = 'DocObjectCode'
-    web_client_form_setting_items = 'WebClientFormSettingItems'
-
-class WebClientLaunchpadFields(StrEnum):
-    guid = 'Guid'
-    user_id = 'UserId'
-    theme_id = 'ThemeId'
-    display_quick_view = 'DisplayQuickView'
-    notification_show_days = 'NotificationShowDays'
-    web_client_launchpad_groups = 'WebClientLaunchpadGroups'
-
-class WebClientListviewFilterFields(StrEnum):
-    guid = 'Guid'
-    user_id = 'UserId'
-    table_name = 'TableName'
-    filter_name = 'FilterName'
-    web_client_listview_filter_conditions = 'WebClientListviewFilterConditions'
-
-class WebClientNotificationFields(StrEnum):
-    guid = 'Guid'
-    user_id = 'UserId'
-    activity_date = 'ActivityDate'
-    read_status = 'ReadStatus'
-    is_dismissed = 'IsDismissed'
-    noti_type = 'NotiType'
-
-class WebClientPreferenceFields(StrEnum):
-    guid = 'Guid'
-    user_id = 'UserId'
-    table_name = 'TableName'
-    column_name = 'ColumnName'
-    default_value = 'DefaultValue'
-
-class WebClientRecentActivityFields(StrEnum):
-    guid = 'Guid'
-    app_id = 'AppId'
-    app_type = 'AppType'
-    count = 'Count'
-    timestamp = 'Timestamp'
-    title = 'Title'
-    url = 'Url'
-    usage_array = 'UsageArray'
-    user_id = 'UserId'
-    recent_day = 'RecentDay'
-
-class WebClientVariantFields(StrEnum):
-    guid = 'Guid'
-    order = 'Order'
-    user_id = 'UserId'
-    view_type = 'ViewType'
-    sub_view_type = 'SubViewType'
-    view_id = 'ViewId'
-    object_name = 'ObjectName'
-    filter_bar_layout = 'FilterBarLayout'
-    system_filter = 'SystemFilter'
-    user_filter = 'UserFilter'
-    condition_filter = 'ConditionFilter'
-    is_public = 'IsPublic'
-    is_system = 'IsSystem'
-    name = 'Name'
-    version = 'Version'
-    overview_customization = 'OverviewCustomization'
-    chart_customization = 'ChartCustomization'
-    web_client_variant_selected_column_collection = 'WebClientVariantSelectedColumnCollection'
-    web_client_variant_group_by_collection = 'WebClientVariantGroupByCollection'
-    web_client_variant_sort_by_collection = 'WebClientVariantSortByCollection'
-    web_client_variant_embedded_chart_collection = 'WebClientVariantEmbeddedChartCollection'
-    web_client_variant_m_chart_collection = 'WebClientVariantMChartCollection'
-
-class WebClientVariantGroupFields(StrEnum):
-    guid = 'Guid'
-    user_id = 'UserId'
-    view_type = 'ViewType'
-    view_id = 'ViewId'
-    object_name = 'ObjectName'
-    default_variant = 'DefaultVariant'
-
-class WeightMeasureFields(StrEnum):
-    unit_code = 'UnitCode'
-    unit_display = 'UnitDisplay'
-    unit_name = 'UnitName'
-    unit_weightinmg = 'UnitWeightinmg'
-    bin_locations = 'BinLocations'
-
-class WizardPaymentMethodFields(StrEnum):
-    payment_method_code = 'PaymentMethodCode'
-    description = 'Description'
-    type = 'Type'
-    payment_means = 'PaymentMeans'
-    check_address = 'CheckAddress'
-    check_bank_details = 'CheckBankDetails'
-    collection_authorization_check = 'CollectionAuthorizationCheck'
-    block_foreign_payment = 'BlockForeignPayment'
-    block_foreign_bank = 'BlockForeignBank'
-    currency_restriction = 'CurrencyRestriction'
-    post_office_bank = 'PostOfficeBank'
-    minimum_amount = 'MinimumAmount'
-    maximum_amount = 'MaximumAmount'
-    default_bank = 'DefaultBank'
-    user_signature = 'UserSignature'
-    creation_date = 'CreationDate'
-    bank_country = 'BankCountry'
-    default_account = 'DefaultAccount'
-    gl_account = 'GLAccount'
-    branch = 'Branch'
-    key_code = 'KeyCode'
-    transaction_type = 'TransactionType'
-    format = 'Format'
-    agent_collection = 'AgentCollection'
-    sendfor_acceptance = 'SendforAcceptance'
-    group_by_date = 'GroupByDate'
-    deposit_norm = 'DepositNorm'
-    debit_memo = 'DebitMemo'
-    group_by_payment_reference = 'GroupByPaymentReference'
-    group_invoicesby_pay = 'GroupInvoicesbyPay'
-    due_date_selection = 'DueDateSelection'
-    payment_terms_code = 'PaymentTermsCode'
-    postto_gl_interim_account = 'PosttoGLInterimAccount'
-    bank_account_key = 'BankAccountKey'
-    doc_type = 'DocType'
-    accepted = 'Accepted'
-    portfolio_id = 'PortfolioID'
-    cur_code = 'CurCode'
-    instruction1 = 'Instruction1'
-    instruction2 = 'Instruction2'
-    payment_place = 'PaymentPlace'
-    barcode_dll = 'BarcodeDll'
-    active = 'Active'
-    group_invoices_by_pay_to_bank = 'GroupInvoicesByPayToBank'
-    group_invoices_by_currency = 'GroupInvoicesByCurrency'
-    bank_charge_rate = 'BankChargeRate'
-    report_code = 'ReportCode'
-    cancel_instruction = 'CancelInstruction'
-    occurence_code = 'OccurenceCode'
-    movement_code = 'MovementCode'
-    direct_debit = 'DirectDebit'
-    currency_restrictions = 'CurrencyRestrictions'
-    purchase_quotations = 'PurchaseQuotations'
-    correction_invoice_reversal = 'CorrectionInvoiceReversal'
-    correction_invoice = 'CorrectionInvoice'
-    purchase_delivery_notes = 'PurchaseDeliveryNotes'
-    correction_purchase_invoice = 'CorrectionPurchaseInvoice'
-    inventory_gen_entries = 'InventoryGenEntries'
-    orders = 'Orders'
-    user = 'User'
-    country = 'Country'
-    chart_of_account = 'ChartOfAccount'
-    payment_terms_type = 'PaymentTermsType'
-    house_bank_account = 'HouseBankAccount'
-    inventory_gen_exits = 'InventoryGenExits'
-    drafts = 'Drafts'
-    return_request = 'ReturnRequest'
-    delivery_notes = 'DeliveryNotes'
-    purchase_invoices = 'PurchaseInvoices'
-    self_invoices = 'SelfInvoices'
-    blanket_agreements = 'BlanketAgreements'
-    invoices = 'Invoices'
-    credit_notes = 'CreditNotes'
-    purchase_credit_notes = 'PurchaseCreditNotes'
-    business_partners = 'BusinessPartners'
-    down_payments = 'DownPayments'
-    purchase_down_payments = 'PurchaseDownPayments'
-    purchase_returns = 'PurchaseReturns'
-    purchase_orders = 'PurchaseOrders'
-    self_credit_memos = 'SelfCreditMemos'
-    quotations = 'Quotations'
-    returns = 'Returns'
-    goods_return_request = 'GoodsReturnRequest'
-    correction_purchase_invoice_reversal = 'CorrectionPurchaseInvoiceReversal'
-    purchase_requests = 'PurchaseRequests'
+from ...base import FieldEnum, ODataField
+
+
+class AccountCategoryFields(FieldEnum):
+    category_code = ODataField('CategoryCode')
+    category_name = ODataField('CategoryName')
+    category_source = ODataField('CategorySource')
+    chart_of_accounts = ODataField('ChartOfAccounts')
+
+class AccountSegmentationFields(FieldEnum):
+    numerator = ODataField('Numerator')
+    name = ODataField('Name')
+    size = ODataField('Size')
+    type = ODataField('Type')
+    account_segmentations_categories = ODataField('AccountSegmentationsCategories')
+    account_segmentation_categories = ODataField('AccountSegmentationCategories')
+
+class AccountSegmentationCategoryFields(FieldEnum):
+    segment_id = ODataField('SegmentID')
+    code = ODataField('Code')
+    name = ODataField('Name')
+    short_name = ODataField('ShortName')
+    account_segmentation = ODataField('AccountSegmentation')
+
+class AccrualTypeFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    posting_account = ODataField('PostingAccount')
+    calculation_account = ODataField('CalculationAccount')
+    interim_account = ODataField('InterimAccount')
+    chart_of_account = ODataField('ChartOfAccount')
+
+class AdditionalExpenseFields(FieldEnum):
+    name = ODataField('Name')
+    revenues_account = ODataField('RevenuesAccount')
+    expense_account = ODataField('ExpenseAccount')
+    tax_liable = ODataField('TaxLiable')
+    fixed_amount_revenues = ODataField('FixedAmountRevenues')
+    fixed_amount_expenses = ODataField('FixedAmountExpenses')
+    output_vat_group = ODataField('OutputVATGroup')
+    input_vat_group = ODataField('InputVATGroup')
+    distribution_method = ODataField('DistributionMethod')
+    includein1099 = ODataField('Includein1099')
+    freight_offset_account = ODataField('FreightOffsetAccount')
+    wt_liable = ODataField('WTLiable')
+    expens_code = ODataField('ExpensCode')
+    expense_exempted_account = ODataField('ExpenseExemptedAccount')
+    revenues_exempted_account = ODataField('RevenuesExemptedAccount')
+    distribution_rule = ODataField('DistributionRule')
+    drawing_method = ODataField('DrawingMethod')
+    freight_type = ODataField('FreightType')
+    stock = ODataField('Stock')
+    last_purchase_price = ODataField('LastPurchasePrice')
+    project = ODataField('Project')
+    distribution_rule2 = ODataField('DistributionRule2')
+    distribution_rule3 = ODataField('DistributionRule3')
+    distribution_rule4 = ODataField('DistributionRule4')
+    distribution_rule5 = ODataField('DistributionRule5')
+    data_version = ODataField('DataVersion')
+    saft_product_type = ODataField('SAFTProductType')
+    saft_product_type_ex = ODataField('SAFTProductTypeEx')
+    chart_of_account = ODataField('ChartOfAccount')
+    vat_group = ODataField('VatGroup')
+    distribution_rule6 = ODataField('DistributionRule6')
+    project2 = ODataField('Project2')
+
+class AlertManagementFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    type = ODataField('Type')
+    priority = ODataField('Priority')
+    active = ODataField('Active')
+    param = ODataField('Param')
+    query_id = ODataField('QueryID')
+    frequency_type = ODataField('FrequencyType')
+    day_of_execution = ODataField('DayOfExecution')
+    execution_time = ODataField('ExecutionTime')
+    last_execution_date = ODataField('LastExecutionDate')
+    last_execution_time = ODataField('LastExecutionTime')
+    next_execution_date = ODataField('NextExecutionDate')
+    next_execution_time = ODataField('NextExecutionTime')
+    save_history = ODataField('SaveHistory')
+    frequency_interval = ODataField('FrequencyInterval')
+    alert_management_recipients = ODataField('AlertManagementRecipients')
+    alert_management_documents = ODataField('AlertManagementDocuments')
+
+class AlternateCatNumFields(FieldEnum):
+    item_code = ODataField('ItemCode')
+    card_code = ODataField('CardCode')
+    substitute = ODataField('Substitute')
+    display_bp_catalog_number = ODataField('DisplayBPCatalogNumber')
+    is_default = ODataField('IsDefault')
+    description = ODataField('Description')
+    item = ODataField('Item')
+    business_partner = ODataField('BusinessPartner')
+
+class ApprovalRequestFields(FieldEnum):
+    code = ODataField('Code')
+    approval_templates_id = ODataField('ApprovalTemplatesID')
+    object_type = ODataField('ObjectType')
+    is_draft = ODataField('IsDraft')
+    object_entry = ODataField('ObjectEntry')
+    status = ODataField('Status')
+    remarks = ODataField('Remarks')
+    current_stage = ODataField('CurrentStage')
+    originator_id = ODataField('OriginatorID')
+    creation_date = ODataField('CreationDate')
+    creation_time = ODataField('CreationTime')
+    draft_entry = ODataField('DraftEntry')
+    draft_type = ODataField('DraftType')
+    approval_request_lines = ODataField('ApprovalRequestLines')
+    approval_request_decisions = ODataField('ApprovalRequestDecisions')
+    approval_template = ODataField('ApprovalTemplate')
+    approval_stage = ODataField('ApprovalStage')
+    user = ODataField('User')
+
+class ApprovalStageFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    no_of_approvers_required = ODataField('NoOfApproversRequired')
+    remarks = ODataField('Remarks')
+    approval_stage_approvers = ODataField('ApprovalStageApprovers')
+    approval_requests = ODataField('ApprovalRequests')
+
+class ApprovalTemplateFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    remarks = ODataField('Remarks')
+    use_terms = ODataField('UseTerms')
+    is_active = ODataField('IsActive')
+    is_active_when_updating_documents = ODataField('IsActiveWhenUpdatingDocuments')
+    approval_template_users = ODataField('ApprovalTemplateUsers')
+    approval_template_stages = ODataField('ApprovalTemplateStages')
+    approval_template_documents = ODataField('ApprovalTemplateDocuments')
+    approval_template_terms = ODataField('ApprovalTemplateTerms')
+    approval_template_queries = ODataField('ApprovalTemplateQueries')
+    approval_requests = ODataField('ApprovalRequests')
+
+class AssetDepreciationGroupFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    group = ODataField('Group')
+    items = ODataField('Items')
+
+class AssetDocumentFields(FieldEnum):
+    doc_entry = ODataField('DocEntry')
+    doc_num = ODataField('DocNum')
+    series = ODataField('Series')
+    posting_date = ODataField('PostingDate')
+    document_date = ODataField('DocumentDate')
+    status = ODataField('Status')
+    remarks = ODataField('Remarks')
+    reference = ODataField('Reference')
+    currency = ODataField('Currency')
+    document_rate = ODataField('DocumentRate')
+    document_total = ODataField('DocumentTotal')
+    document_total_fc = ODataField('DocumentTotalFC')
+    document_total_sc = ODataField('DocumentTotalSC')
+    asset_value_date = ODataField('AssetValueDate')
+    document_type = ODataField('DocumentType')
+    summerize_by_projects = ODataField('SummerizeByProjects')
+    summerize_by_distribution_rules = ODataField('SummerizeByDistributionRules')
+    manual_depreciation_type = ODataField('ManualDepreciationType')
+    hand_written = ODataField('HandWritten')
+    cancellation_date = ODataField('CancellationDate')
+    depreciation_area = ODataField('DepreciationArea')
+    bpl_id = ODataField('BPLId')
+    origin = ODataField('Origin')
+    low_value_asset_retirement = ODataField('LowValueAssetRetirement')
+    cancellation_option = ODataField('CancellationOption')
+    original_type = ODataField('OriginalType')
+    base_reference = ODataField('BaseReference')
+    bpl_name = ODataField('BPLName')
+    vat_reg_num = ODataField('VATRegNum')
+    asset_document_line_collection = ODataField('AssetDocumentLineCollection')
+    asset_document_area_journal_collection = ODataField('AssetDocumentAreaJournalCollection')
+    pti_code = ODataField('PTICode')
+    letter = ODataField('Letter')
+    fol_num_from = ODataField('FolNumFrom')
+    fol_num_to = ODataField('FolNumTo')
+    asset_document_new_loc_collection = ODataField('AssetDocumentNewLocCollection')
+    currency2 = ODataField('Currency2')
+    depreciation_type = ODataField('DepreciationType')
+    depreciation_area2 = ODataField('DepreciationArea2')
+    business_place = ODataField('BusinessPlace')
+
+class AssetGroupFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    items = ODataField('Items')
+
+class AssetRevaluationFields(FieldEnum):
+    doc_entry = ODataField('DocEntry')
+    doc_num = ODataField('DocNum')
+    series = ODataField('Series')
+    posting_date = ODataField('PostingDate')
+    asset_value_date = ODataField('AssetValueDate')
+    reference = ODataField('Reference')
+    remarks = ODataField('Remarks')
+    journal_remarks = ODataField('JournalRemarks')
+    depreciation_area = ODataField('DepreciationArea')
+    trans_id = ODataField('TransId')
+    hand_written = ODataField('HandWritten')
+    period_indicator = ODataField('PeriodIndicator')
+    document_date = ODataField('DocumentDate')
+    bpl_id = ODataField('BPLId')
+    bpl_name = ODataField('BPLName')
+    vat_reg_num = ODataField('VATRegNum')
+    revaluation_percent = ODataField('RevaluationPercent')
+    ifrs_posting = ODataField('IfrsPosting')
+    summerize_by_projects = ODataField('SummerizeByProjects')
+    summerize_by_distribution_rules = ODataField('SummerizeByDistributionRules')
+    asset_revaluation_line_collection = ODataField('AssetRevaluationLineCollection')
+    depreciation_area2 = ODataField('DepreciationArea2')
+    journal_entry = ODataField('JournalEntry')
+    business_place = ODataField('BusinessPlace')
+
+class Attachments2Fields(FieldEnum):
+    absolute_entry = ODataField('AbsoluteEntry')
+    attachments2_lines = ODataField('Attachments2_Lines')
+    product_trees = ODataField('ProductTrees')
+    checksfor_payment = ODataField('ChecksforPayment')
+    vendor_payments = ODataField('VendorPayments')
+    customer_equipment_cards = ODataField('CustomerEquipmentCards')
+    journal_entries = ODataField('JournalEntries')
+    inventory_counting_drafts = ODataField('InventoryCountingDrafts')
+    service_contracts = ODataField('ServiceContracts')
+    inventory_countings = ODataField('InventoryCountings')
+    inventory_opening_balances = ODataField('InventoryOpeningBalances')
+    inventory_postings = ODataField('InventoryPostings')
+    blanket_agreements = ODataField('BlanketAgreements')
+    campaigns = ODataField('Campaigns')
+    payment_drafts = ODataField('PaymentDrafts')
+    production_orders = ODataField('ProductionOrders')
+    project_management_time_sheet = ODataField('ProjectManagementTimeSheet')
+    project_managements = ODataField('ProjectManagements')
+    incoming_payments = ODataField('IncomingPayments')
+    deposits = ODataField('Deposits')
+
+class AttributeGroupFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    locked = ODataField('Locked')
+    attribute_group_collection = ODataField('AttributeGroupCollection')
+    asset_classes = ODataField('AssetClasses')
+
+class B1SessionFields(FieldEnum):
+    version = ODataField('Version')
+    session_timeout = ODataField('SessionTimeout')
+    session_id = ODataField('SessionId')
+
+class BOEDocumentTypeFields(FieldEnum):
+    doc_entry = ODataField('DocEntry')
+    doc_type = ODataField('DocType')
+    doc_description = ODataField('DocDescription')
+
+class BOEInstructionFields(FieldEnum):
+    instruction_entry = ODataField('InstructionEntry')
+    instruction_code = ODataField('InstructionCode')
+    instruction_desc = ODataField('InstructionDesc')
+    is_cancel_instruction = ODataField('IsCancelInstruction')
+
+class BOEPortfolioFields(FieldEnum):
+    portfolio_entry = ODataField('PortfolioEntry')
+    portfolio_id = ODataField('PortfolioID')
+    portfolio_code = ODataField('PortfolioCode')
+    portfolio_num = ODataField('PortfolioNum')
+    portfolio_description = ODataField('PortfolioDescription')
+
+class BPFiscalRegistryIDFields(FieldEnum):
+    numerator = ODataField('Numerator')
+    cnae_code = ODataField('CNAECode')
+    description = ODataField('Description')
+    business_places = ODataField('BusinessPlaces')
+
+class BPPriorityFields(FieldEnum):
+    priority = ODataField('Priority')
+    priority_description = ODataField('PriorityDescription')
+    business_partners = ODataField('BusinessPartners')
+
+class BPVatExemptionsFields(FieldEnum):
+    absolute_entry = ODataField('AbsoluteEntry')
+    bp_code = ODataField('BPCode')
+    remarks = ODataField('Remarks')
+    bp_vat_exemptions_lines = ODataField('BPVatExemptionsLines')
+    business_partner = ODataField('BusinessPartner')
+
+class BankFields(FieldEnum):
+    bank_code = ODataField('BankCode')
+    bank_name = ODataField('BankName')
+    accountfor_outgoing_checks = ODataField('AccountforOutgoingChecks')
+    branchfor_outgoing_checks = ODataField('BranchforOutgoingChecks')
+    next_check_number = ODataField('NextCheckNumber')
+    swift_no = ODataField('SwiftNo')
+    iban = ODataField('IBAN')
+    country_code = ODataField('CountryCode')
+    post_office = ODataField('PostOffice')
+    absolute_entry = ODataField('AbsoluteEntry')
+    default_bank_account_key = ODataField('DefaultBankAccountKey')
+    digital_payments = ODataField('DigitalPayments')
+    employees_info = ODataField('EmployeesInfo')
+    country = ODataField('Country')
+    house_bank_accounts = ODataField('HouseBankAccounts')
+
+class BankChargesAllocationCodeFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    payment_run_export = ODataField('PaymentRunExport')
+    business_partners = ODataField('BusinessPartners')
+
+class BankPageFields(FieldEnum):
+    account_code = ODataField('AccountCode')
+    sequence = ODataField('Sequence')
+    account_name = ODataField('AccountName')
+    reference = ODataField('Reference')
+    due_date = ODataField('DueDate')
+    memo = ODataField('Memo')
+    debit_amount = ODataField('DebitAmount')
+    credit_amount = ODataField('CreditAmount')
+    bank_match = ODataField('BankMatch')
+    data_source = ODataField('DataSource')
+    user_signature = ODataField('UserSignature')
+    external_code = ODataField('ExternalCode')
+    card_code = ODataField('CardCode')
+    card_name = ODataField('CardName')
+    statement_number = ODataField('StatementNumber')
+    invoice_number = ODataField('InvoiceNumber')
+    payment_created = ODataField('PaymentCreated')
+    visual_order = ODataField('VisualOrder')
+    doc_number_type = ODataField('DocNumberType')
+    payment_reference = ODataField('PaymentReference')
+    invoice_number_ex = ODataField('InvoiceNumberEx')
+    bic_swift_code = ODataField('BICSwiftCode')
+    chart_of_account = ODataField('ChartOfAccount')
+    user = ODataField('User')
+    business_partner = ODataField('BusinessPartner')
+
+class BankStatementFields(FieldEnum):
+    internal_number = ODataField('InternalNumber')
+    bank_account_key = ODataField('BankAccountKey')
+    statement_number = ODataField('StatementNumber')
+    statement_date = ODataField('StatementDate')
+    status = ODataField('Status')
+    imported = ODataField('Imported')
+    starting_balance_f = ODataField('StartingBalanceF')
+    ending_balance_f = ODataField('EndingBalanceF')
+    currency = ODataField('Currency')
+    starting_balance_l = ODataField('StartingBalanceL')
+    ending_balance_l = ODataField('EndingBalanceL')
+    bank_statement_file_hash = ODataField('BankStatementFileHash')
+    bank_statement_guid = ODataField('BankStatementGUID')
+    bank_statement_rows = ODataField('BankStatementRows')
+    house_bank_account = ODataField('HouseBankAccount')
+    currency2 = ODataField('Currency2')
+
+class BarCodeFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    item_no = ODataField('ItemNo')
+    uo_m_entry = ODataField('UoMEntry')
+    barcode = ODataField('Barcode')
+    free_text = ODataField('FreeText')
+    item = ODataField('Item')
+    unit_of_measurement = ODataField('UnitOfMeasurement')
+
+class BatchNumberDetailFields(FieldEnum):
+    doc_entry = ODataField('DocEntry')
+    item_code = ODataField('ItemCode')
+    item_description = ODataField('ItemDescription')
+    status = ODataField('Status')
+    batch = ODataField('Batch')
+    batch_attribute1 = ODataField('BatchAttribute1')
+    batch_attribute2 = ODataField('BatchAttribute2')
+    admission_date = ODataField('AdmissionDate')
+    manufacturing_date = ODataField('ManufacturingDate')
+    expiration_date = ODataField('ExpirationDate')
+    details = ODataField('Details')
+    system_number = ODataField('SystemNumber')
+    item = ODataField('Item')
+
+class BillOfExchangeTransactionFields(FieldEnum):
+    status_from = ODataField('StatusFrom')
+    status_to = ODataField('StatusTo')
+    transaction_date = ODataField('TransactionDate')
+    transaction_time = ODataField('TransactionTime')
+    is_boe_reconciled = ODataField('IsBoeReconciled')
+    transaction_number = ODataField('TransactionNumber')
+    posting_date = ODataField('PostingDate')
+    tax_date = ODataField('TaxDate')
+    boe_transactionkey = ODataField('BOETransactionkey')
+    bill_of_exchange_transaction_lines = ODataField('BillOfExchangeTransactionLines')
+    bill_of_exchange_trans_deposits = ODataField('BillOfExchangeTransDeposits')
+    bill_of_exchange_trans_bank_pages = ODataField('BillOfExchangeTransBankPages')
+    journal_entry = ODataField('JournalEntry')
+
+class BinLocationFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    warehouse = ODataField('Warehouse')
+    sublevel1 = ODataField('Sublevel1')
+    sublevel2 = ODataField('Sublevel2')
+    sublevel3 = ODataField('Sublevel3')
+    sublevel4 = ODataField('Sublevel4')
+    bin_code = ODataField('BinCode')
+    inactive = ODataField('Inactive')
+    description = ODataField('Description')
+    alternative_sort_code = ODataField('AlternativeSortCode')
+    bar_code = ODataField('BarCode')
+    attribute1 = ODataField('Attribute1')
+    attribute2 = ODataField('Attribute2')
+    attribute3 = ODataField('Attribute3')
+    attribute4 = ODataField('Attribute4')
+    attribute5 = ODataField('Attribute5')
+    attribute6 = ODataField('Attribute6')
+    attribute7 = ODataField('Attribute7')
+    attribute8 = ODataField('Attribute8')
+    attribute9 = ODataField('Attribute9')
+    attribute10 = ODataField('Attribute10')
+    restricted_item_type = ODataField('RestrictedItemType')
+    specific_item = ODataField('SpecificItem')
+    specific_item_group = ODataField('SpecificItemGroup')
+    batch_restrictions = ODataField('BatchRestrictions')
+    restricted_trans_type = ODataField('RestrictedTransType')
+    restriction_reason = ODataField('RestrictionReason')
+    date_restriction_changed = ODataField('DateRestrictionChanged')
+    minimum_qty = ODataField('MinimumQty')
+    maximum_qty = ODataField('MaximumQty')
+    is_system_bin = ODataField('IsSystemBin')
+    receiving_bin_location = ODataField('ReceivingBinLocation')
+    exclude_auto_alloc_on_issue = ODataField('ExcludeAutoAllocOnIssue')
+    maximum_weight = ODataField('MaximumWeight')
+    maximum_weight1 = ODataField('MaximumWeight1')
+    maximum_weight_unit = ODataField('MaximumWeightUnit')
+    maximum_weight_unit1 = ODataField('MaximumWeightUnit1')
+    restricted_uo_m_type = ODataField('RestrictedUoMType')
+    specific_uo_m = ODataField('SpecificUoM')
+    specific_uo_m_group = ODataField('SpecificUoMGroup')
+    warehouses = ODataField('Warehouses')
+    warehouse2 = ODataField('Warehouse2')
+    item = ODataField('Item')
+    item_groups = ODataField('ItemGroups')
+    weight_measure = ODataField('WeightMeasure')
+    unit_of_measurement = ODataField('UnitOfMeasurement')
+    unit_of_measurement_group = ODataField('UnitOfMeasurementGroup')
+
+class BinLocationAttributeFields(FieldEnum):
+    attribute = ODataField('Attribute')
+    code = ODataField('Code')
+    abs_entry = ODataField('AbsEntry')
+    bin_location_field = ODataField('BinLocationField')
+
+class BinLocationFieldFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    field_type = ODataField('FieldType')
+    field_number = ODataField('FieldNumber')
+    name = ODataField('Name')
+    activated = ODataField('Activated')
+    default_field_name = ODataField('DefaultFieldName')
+    warehouse_sublevel_codes = ODataField('WarehouseSublevelCodes')
+    bin_location_attributes = ODataField('BinLocationAttributes')
+
+class BranchFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    description = ODataField('Description')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    employees_info = ODataField('EmployeesInfo')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    users = ODataField('Users')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class BrazilBeverageIndexerFields(FieldEnum):
+    beverage_group_code = ODataField('BeverageGroupCode')
+    beverage_table_code = ODataField('BeverageTableCode')
+    beverage_commercial_brand_code = ODataField('BeverageCommercialBrandCode')
+    beverage_id = ODataField('BeverageID')
+    brazil_string_indexer = ODataField('BrazilStringIndexer')
+    brazil_numeric_indexer = ODataField('BrazilNumericIndexer')
+
+class BrazilFuelIndexerFields(FieldEnum):
+    fuel_id = ODataField('FuelID')
+    fuel_group_code = ODataField('FuelGroupCode')
+    fuel_code = ODataField('FuelCode')
+    description = ODataField('Description')
+    items = ODataField('Items')
+
+class BrazilMultiIndexerFields(FieldEnum):
+    id = ODataField('ID')
+    indexer_type = ODataField('IndexerType')
+    code = ODataField('Code')
+    description = ODataField('Description')
+    first_ref_indexer_code = ODataField('FirstRefIndexerCode')
+    second_ref_indexer_code = ODataField('SecondRefIndexerCode')
+    third_ref_indexer_code = ODataField('ThirdRefIndexerCode')
+
+class BrazilNumericIndexerFields(FieldEnum):
+    indexer_type = ODataField('IndexerType')
+    code = ODataField('Code')
+    description = ODataField('Description')
+    id = ODataField('ID')
+    brazil_beverage_indexers = ODataField('BrazilBeverageIndexers')
+    items = ODataField('Items')
+    business_places = ODataField('BusinessPlaces')
+
+class BrazilStringIndexerFields(FieldEnum):
+    indexer_type = ODataField('IndexerType')
+    code = ODataField('Code')
+    description = ODataField('Description')
+    id = ODataField('ID')
+    brazil_beverage_indexers = ODataField('BrazilBeverageIndexers')
+    withholding_tax_codes = ODataField('WithholdingTaxCodes')
+    items = ODataField('Items')
+    business_places = ODataField('BusinessPlaces')
+
+class BudgetFields(FieldEnum):
+    future_annual_expenses_credit_sys = ODataField('FutureAnnualExpensesCreditSys')
+    future_annual_expenses_credit_loc = ODataField('FutureAnnualExpensesCreditLoc')
+    future_annual_expenses_debit_sys = ODataField('FutureAnnualExpensesDebitSys')
+    future_annual_expenses_debit_loc = ODataField('FutureAnnualExpensesDebitLoc')
+    future_annual_revenues_credit = ODataField('FutureAnnualRevenuesCredit')
+    future_annual_revenues_debit = ODataField('FutureAnnualRevenuesDebit')
+    future_revenues_debit_sys = ODataField('FutureRevenuesDebitSys')
+    future_revenues_debit_loc = ODataField('FutureRevenuesDebitLoc')
+    parent_acc_percent = ODataField('ParentAccPercent')
+    startof_fiscal_year = ODataField('StartofFiscalYear')
+    parent_account_key = ODataField('ParentAccountKey')
+    total_annual_budget_debit_sys = ODataField('TotalAnnualBudgetDebitSys')
+    budget_balance_debit_sys = ODataField('BudgetBalanceDebitSys')
+    budget_balance_debit_loc = ODataField('BudgetBalanceDebitLoc')
+    total_annual_budget_debit_loc = ODataField('TotalAnnualBudgetDebitLoc')
+    total_annual_budget_credit_sys = ODataField('TotalAnnualBudgetCreditSys')
+    total_annual_budget_credit_loc = ODataField('TotalAnnualBudgetCreditLoc')
+    budget_balance_credit_sys = ODataField('BudgetBalanceCreditSys')
+    budget_balance_credit_loc = ODataField('BudgetBalanceCreditLoc')
+    division_code = ODataField('DivisionCode')
+    account_code = ODataField('AccountCode')
+    numerator = ODataField('Numerator')
+    budget_scenario = ODataField('BudgetScenario')
+    budget_lines = ODataField('BudgetLines')
+    budget_cost_accounting_lines = ODataField('BudgetCostAccountingLines')
+    budget_distribution = ODataField('BudgetDistribution')
+    budget_scenario2 = ODataField('BudgetScenario2')
+
+class BudgetDistributionFields(FieldEnum):
+    september = ODataField('September')
+    august = ODataField('August')
+    july = ODataField('July')
+    june = ODataField('June')
+    may = ODataField('May')
+    april = ODataField('April')
+    march = ODataField('March')
+    february = ODataField('February')
+    december = ODataField('December')
+    november = ODataField('November')
+    october = ODataField('October')
+    january = ODataField('January')
+    budget_amount = ODataField('BudgetAmount')
+    description = ODataField('Description')
+    division_code = ODataField('DivisionCode')
+    budgets = ODataField('Budgets')
+
+class BudgetScenarioFields(FieldEnum):
+    name = ODataField('Name')
+    initial_ratio_percentage = ODataField('InitialRatioPercentage')
+    startof_fiscal_year = ODataField('StartofFiscalYear')
+    basic_budget = ODataField('BasicBudget')
+    numerator = ODataField('Numerator')
+    rounding_method = ODataField('RoundingMethod')
+    project = ODataField('Project')
+    distribution_rule = ODataField('DistributionRule')
+    distribution_rule2 = ODataField('DistributionRule2')
+    distribution_rule3 = ODataField('DistributionRule3')
+    distribution_rule4 = ODataField('DistributionRule4')
+    distribution_rule5 = ODataField('DistributionRule5')
+    budgets = ODataField('Budgets')
+    project2 = ODataField('Project2')
+    distribution_rule6 = ODataField('DistributionRule6')
+
+class BusinessPlaceFields(FieldEnum):
+    bplid = ODataField('BPLID')
+    bpl_name = ODataField('BPLName')
+    bpl_name_foreign = ODataField('BPLNameForeign')
+    vat_reg_num = ODataField('VATRegNum')
+    rep_name = ODataField('RepName')
+    industry = ODataField('Industry')
+    business = ODataField('Business')
+    address = ODataField('Address')
+    addressforeign = ODataField('Addressforeign')
+    main_bpl = ODataField('MainBPL')
+    tax_office_no = ODataField('TaxOfficeNo')
+    disabled = ODataField('Disabled')
+    default_customer_id = ODataField('DefaultCustomerID')
+    default_vendor_id = ODataField('DefaultVendorID')
+    default_warehouse_id = ODataField('DefaultWarehouseID')
+    default_tax_code = ODataField('DefaultTaxCode')
+    tax_office = ODataField('TaxOffice')
+    federal_tax_id = ODataField('FederalTaxID')
+    federal_tax_id2 = ODataField('FederalTaxID2')
+    federal_tax_id3 = ODataField('FederalTaxID3')
+    additional_id_number = ODataField('AdditionalIdNumber')
+    nature_of_company_code = ODataField('NatureOfCompanyCode')
+    economic_activity_type_code = ODataField('EconomicActivityTypeCode')
+    credit_contribution_origin_code = ODataField('CreditContributionOriginCode')
+    ipi_period_code = ODataField('IPIPeriodCode')
+    cooperative_association_type_code = ODataField('CooperativeAssociationTypeCode')
+    profit_taxation_code = ODataField('ProfitTaxationCode')
+    company_qualification_code = ODataField('CompanyQualificationCode')
+    declarer_type_code = ODataField('DeclarerTypeCode')
+    preferred_state_code = ODataField('PreferredStateCode')
+    address_type = ODataField('AddressType')
+    street = ODataField('Street')
+    street_no = ODataField('StreetNo')
+    building = ODataField('Building')
+    zip_code = ODataField('ZipCode')
+    block = ODataField('Block')
+    city = ODataField('City')
+    state = ODataField('State')
+    county = ODataField('County')
+    country = ODataField('Country')
+    alias_name = ODataField('AliasName')
+    commercial_register = ODataField('CommercialRegister')
+    date_of_incorporation = ODataField('DateOfIncorporation')
+    sped_profile = ODataField('SPEDProfile')
+    environment_type = ODataField('EnvironmentType')
+    opting4_icms = ODataField('Opting4ICMS')
+    payment_clearing_account = ODataField('PaymentClearingAccount')
+    global_location_number = ODataField('GlobalLocationNumber')
+    default_resource_warehouse_id = ODataField('DefaultResourceWarehouseID')
+    business_place_ie_numbers = ODataField('BusinessPlaceIENumbers')
+    business_place_tributary_infos = ODataField('BusinessPlaceTributaryInfos')
+    user_default_groups = ODataField('UserDefaultGroups')
+    stock_transfers = ODataField('StockTransfers')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    vendor_payments = ODataField('VendorPayments')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_counting_drafts = ODataField('InventoryCountingDrafts')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    asset_retirement = ODataField('AssetRetirement')
+    asset_transfer = ODataField('AssetTransfer')
+    asset_revaluations = ODataField('AssetRevaluations')
+    employees_info = ODataField('EmployeesInfo')
+    asset_manual_depreciation = ODataField('AssetManualDepreciation')
+    asset_classes = ODataField('AssetClasses')
+    orders = ODataField('Orders')
+    asset_capitalization = ODataField('AssetCapitalization')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    inventory_transfer_requests = ODataField('InventoryTransferRequests')
+    inventory_countings = ODataField('InventoryCountings')
+    inventory_opening_balances = ODataField('InventoryOpeningBalances')
+    inventory_postings = ODataField('InventoryPostings')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    stock_transfer_drafts = ODataField('StockTransferDrafts')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    asset_capitalization_credit_memo = ODataField('AssetCapitalizationCreditMemo')
+    payment_drafts = ODataField('PaymentDrafts')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    incoming_payments = ODataField('IncomingPayments')
+    deposits = ODataField('Deposits')
+    purchase_requests = ODataField('PurchaseRequests')
+    business_partner = ODataField('BusinessPartner')
+    warehouse = ODataField('Warehouse')
+    bp_fiscal_registry_id = ODataField('BPFiscalRegistryID')
+    brazil_numeric_indexer = ODataField('BrazilNumericIndexer')
+    brazil_string_indexer = ODataField('BrazilStringIndexer')
+    county2 = ODataField('County2')
+    country2 = ODataField('Country2')
+    chart_of_account = ODataField('ChartOfAccount')
+
+class CIGCodeFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    vendor_payments = ODataField('VendorPayments')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    journal_entries = ODataField('JournalEntries')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    payment_drafts = ODataField('PaymentDrafts')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    incoming_payments = ODataField('IncomingPayments')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class CUPCodeFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    vendor_payments = ODataField('VendorPayments')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    journal_entries = ODataField('JournalEntries')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    payment_drafts = ODataField('PaymentDrafts')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    incoming_payments = ODataField('IncomingPayments')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class CampaignFields(FieldEnum):
+    campaign_number = ODataField('CampaignNumber')
+    campaign_name = ODataField('CampaignName')
+    campaign_type = ODataField('CampaignType')
+    target_group = ODataField('TargetGroup')
+    owner = ODataField('Owner')
+    status = ODataField('Status')
+    start_date = ODataField('StartDate')
+    finish_date = ODataField('FinishDate')
+    remarks = ODataField('Remarks')
+    generated_by_wizard = ODataField('GeneratedByWizard')
+    attachements_entry = ODataField('AttachementsEntry')
+    target_group_type = ODataField('TargetGroupType')
+    campaign_business_partners = ODataField('CampaignBusinessPartners')
+    campaign_items = ODataField('CampaignItems')
+    campaign_partners = ODataField('CampaignPartners')
+    target_group2 = ODataField('TargetGroup2')
+    employee_info = ODataField('EmployeeInfo')
+    attachments2 = ODataField('Attachments2')
+    business_partners = ODataField('BusinessPartners')
+
+class CampaignResponseTypeFields(FieldEnum):
+    response_type_description = ODataField('ResponseTypeDescription')
+    response_type = ODataField('ResponseType')
+    is_active = ODataField('IsActive')
+
+class CashDiscountFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    by_date = ODataField('ByDate')
+    freight = ODataField('Freight')
+    tax = ODataField('Tax')
+    discount_lines = ODataField('DiscountLines')
+    payment_terms_types = ODataField('PaymentTermsTypes')
+
+class CashFlowLineItemFields(FieldEnum):
+    line_item_id = ODataField('LineItemID')
+    line_item_name = ODataField('LineItemName')
+    active_line_item = ODataField('ActiveLineItem')
+    parent_article = ODataField('ParentArticle')
+    level = ODataField('Level')
+    drawer = ODataField('Drawer')
+
+class CentralBankIndicatorFields(FieldEnum):
+    indicator = ODataField('Indicator')
+    description = ODataField('Description')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class CertificateSeriesFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    section = ODataField('Section')
+    location = ODataField('Location')
+    default_series = ODataField('DefaultSeries')
+    series_lines = ODataField('SeriesLines')
+    section2 = ODataField('Section2')
+    warehouse_location = ODataField('WarehouseLocation')
+
+class ChecksforPaymentFields(FieldEnum):
+    check_key = ODataField('CheckKey')
+    check_number = ODataField('CheckNumber')
+    bank_code = ODataField('BankCode')
+    branch = ODataField('Branch')
+    bank_name = ODataField('BankName')
+    check_date = ODataField('CheckDate')
+    account_number = ODataField('AccountNumber')
+    details = ODataField('Details')
+    journal_entry_reference = ODataField('JournalEntryReference')
+    payment_date = ODataField('PaymentDate')
+    payment_no = ODataField('PaymentNo')
+    check_amount = ODataField('CheckAmount')
+    transferable = ODataField('Transferable')
+    vendor_code = ODataField('VendorCode')
+    check_currency = ODataField('CheckCurrency')
+    canceled = ODataField('Canceled')
+    card_or_account = ODataField('CardOrAccount')
+    printed = ODataField('Printed')
+    vendor_name = ODataField('VendorName')
+    signature = ODataField('Signature')
+    customer_account_code = ODataField('CustomerAccountCode')
+    transaction_number = ODataField('TransactionNumber')
+    address = ODataField('Address')
+    create_journal_entry = ODataField('CreateJournalEntry')
+    update_date = ODataField('UpdateDate')
+    creation_date = ODataField('CreationDate')
+    tax_total = ODataField('TaxTotal')
+    tax_date = ODataField('TaxDate')
+    deduction_refund_amount = ODataField('DeductionRefundAmount')
+    printed_by = ODataField('PrintedBy')
+    country_code = ODataField('CountryCode')
+    totalin_words = ODataField('TotalinWords')
+    address_name = ODataField('AddressName')
+    manual_check = ODataField('ManualCheck')
+    attachment_entry = ODataField('AttachmentEntry')
+    e_check = ODataField('ECheck')
+    print_confirm = ODataField('PrintConfirm')
+    checksfor_payment_lines = ODataField('ChecksforPaymentLines')
+    checksfor_payment_print_status = ODataField('ChecksforPaymentPrintStatus')
+    checksfor_payment_document_references = ODataField('ChecksforPaymentDocumentReferences')
+    journal_entry = ODataField('JournalEntry')
+    country = ODataField('Country')
+    attachments2 = ODataField('Attachments2')
+
+class ChooseFromListFields(FieldEnum):
+    object_name = ODataField('ObjectName')
+    choose_from_list_lines = ODataField('ChooseFromList_Lines')
+
+class ClosingDateProcedureFields(FieldEnum):
+    closing_date_num = ODataField('ClosingDateNum')
+    closing_date_code = ODataField('ClosingDateCode')
+    baseline_date = ODataField('BaselineDate')
+    due_month = ODataField('DueMonth')
+    extra_month = ODataField('ExtraMonth')
+    extra_day = ODataField('ExtraDay')
+    business_partners = ODataField('BusinessPartners')
+
+class CockpitFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    name = ODataField('Name')
+    description = ODataField('Description')
+    user_signature = ODataField('UserSignature')
+    date = ODataField('Date')
+    time = ODataField('Time')
+    manufacturer = ODataField('Manufacturer')
+    publisher = ODataField('Publisher')
+    cockpit_type = ODataField('CockpitType')
+    user = ODataField('User')
+
+class ColumnPreferencesFields(FieldEnum):
+    user = ODataField('User')
+    form_id = ODataField('FormID')
+    item_number = ODataField('ItemNumber')
+    column = ODataField('Column')
+    width = ODataField('Width')
+    visible_in_form = ODataField('VisibleInForm')
+    tabs_layout = ODataField('TabsLayout')
+    editable_in_form = ODataField('EditableInForm')
+    visible_in_expanded = ODataField('VisibleInExpanded')
+    expanded_index = ODataField('ExpandedIndex')
+    editable_in_expanded = ODataField('EditableInExpanded')
+    user2 = ODataField('User2')
+
+class CommissionGroupFields(FieldEnum):
+    commission_group_code = ODataField('CommissionGroupCode')
+    commission_group_name = ODataField('CommissionGroupName')
+    commission_percentage = ODataField('CommissionPercentage')
+    sales_persons = ODataField('SalesPersons')
+    items = ODataField('Items')
+    business_partners = ODataField('BusinessPartners')
+
+class ContactFields(FieldEnum):
+    card_code = ODataField('CardCode')
+    notes = ODataField('Notes')
+    contact_date = ODataField('ContactDate')
+    contact_time = ODataField('ContactTime')
+    recontact = ODataField('Recontact')
+    closed = ODataField('Closed')
+    close_date = ODataField('CloseDate')
+    phone = ODataField('Phone')
+    fax = ODataField('Fax')
+    subject = ODataField('Subject')
+    doc_type = ODataField('DocType')
+    doc_num = ODataField('DocNum')
+    doc_entry = ODataField('DocEntry')
+    contact_code = ODataField('ContactCode')
+    priority = ODataField('Priority')
+    details = ODataField('Details')
+    activity = ODataField('Activity')
+    activity_type = ODataField('ActivityType')
+    location = ODataField('Location')
+    start_time = ODataField('StartTime')
+    end_time = ODataField('EndTime')
+    duration = ODataField('Duration')
+    duration_type = ODataField('DurationType')
+    sales_employee = ODataField('SalesEmployee')
+    contact_person_code = ODataField('ContactPersonCode')
+    handled_by = ODataField('HandledBy')
+    reminder = ODataField('Reminder')
+    reminder_period = ODataField('ReminderPeriod')
+    reminder_type = ODataField('ReminderType')
+    city = ODataField('City')
+    personalflag = ODataField('Personalflag')
+    street = ODataField('Street')
+    parentobject_id = ODataField('ParentobjectId')
+    parentobjecttype = ODataField('Parentobjecttype')
+    room = ODataField('Room')
+    inactiveflag = ODataField('Inactiveflag')
+    state = ODataField('State')
+    previous_activity = ODataField('PreviousActivity')
+    country = ODataField('Country')
+    status = ODataField('Status')
+    tentativeflag = ODataField('Tentativeflag')
+    end_duedate = ODataField('EndDuedate')
+    doc_type_ex = ODataField('DocTypeEx')
+    attachment_entry = ODataField('AttachmentEntry')
+    start_date = ODataField('StartDate')
+    user_signature = ODataField('UserSignature')
+    user_signature2 = ODataField('UserSignature2')
+    business_partner = ODataField('BusinessPartner')
+    activity_subject = ODataField('ActivitySubject')
+    activity_type2 = ODataField('ActivityType2')
+    activity_location = ODataField('ActivityLocation')
+    sales_person = ODataField('SalesPerson')
+    user = ODataField('User')
+    country2 = ODataField('Country2')
+    activity_status = ODataField('ActivityStatus')
+
+class CostElementFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    is_active = ODataField('IsActive')
+    chart_of_accounts = ODataField('ChartOfAccounts')
+
+class CountryFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    code_for_reports = ODataField('CodeForReports')
+    address_format = ODataField('AddressFormat')
+    eu = ODataField('EU')
+    number_of_digits_for_tax_id = ODataField('NumberOfDigitsForTaxID')
+    bank_code_digits = ODataField('BankCodeDigits')
+    bank_branch_digits = ODataField('BankBranchDigits')
+    bank_account_digits = ODataField('BankAccountDigits')
+    bank_control_key_digits = ODataField('BankControlKeyDigits')
+    domestic_account_validation = ODataField('DomesticAccountValidation')
+    iban_validation = ODataField('IbanValidation')
+    blacklisted = ODataField('Blacklisted')
+    uic_country_code = ODataField('UICCountryCode')
+    eaeu = ODataField('EAEU')
+    iso_alpha2_code = ODataField('ISOAlpha2Code')
+    iso_alpha3_code = ODataField('ISOAlpha3Code')
+    iso_numeric = ODataField('ISONumeric')
+    user_default_groups = ODataField('UserDefaultGroups')
+    warehouses = ODataField('Warehouses')
+    checksfor_payment = ODataField('ChecksforPayment')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    vendor_payments = ODataField('VendorPayments')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    customer_equipment_cards = ODataField('CustomerEquipmentCards')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    warehouse_locations = ODataField('WarehouseLocations')
+    service_calls = ODataField('ServiceCalls')
+    employees_info = ODataField('EmployeesInfo')
+    orders = ODataField('Orders')
+    wizard_payment_methods = ODataField('WizardPaymentMethods')
+    gl_account_advanced_rules = ODataField('GLAccountAdvancedRules')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    export_determinations = ODataField('ExportDeterminations')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    states = ODataField('States')
+    credit_notes = ODataField('CreditNotes')
+    payment_drafts = ODataField('PaymentDrafts')
+    banks = ODataField('Banks')
+    contacts = ODataField('Contacts')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    activities = ODataField('Activities')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    house_bank_accounts = ODataField('HouseBankAccounts')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    incoming_payments = ODataField('IncomingPayments')
+    purchase_requests = ODataField('PurchaseRequests')
+    business_places = ODataField('BusinessPlaces')
+    credit_cards = ODataField('CreditCards')
+
+class CountyFields(FieldEnum):
+    abs_id = ODataField('AbsId')
+    code = ODataField('Code')
+    country = ODataField('Country')
+    state = ODataField('State')
+    name = ODataField('Name')
+    ibge_code = ODataField('IbgeCode')
+    gia_code = ODataField('GiaCode')
+    tax_zone = ODataField('TaxZone')
+    warehouses = ODataField('Warehouses')
+    business_places = ODataField('BusinessPlaces')
+
+class CreditCardFields(FieldEnum):
+    credit_card_code = ODataField('CreditCardCode')
+    credit_card_name = ODataField('CreditCardName')
+    gl_account = ODataField('GLAccount')
+    telephone = ODataField('Telephone')
+    company_id = ODataField('CompanyID')
+    country_code = ODataField('CountryCode')
+    credit_payment_methods = ODataField('CreditPaymentMethods')
+    business_partners = ODataField('BusinessPartners')
+    chart_of_account = ODataField('ChartOfAccount')
+    country = ODataField('Country')
+
+class CreditCardPaymentFields(FieldEnum):
+    due_date_code = ODataField('DueDateCode')
+    due_date_name = ODataField('DueDateName')
+    due_dates_type = ODataField('DueDatesType')
+    payment_after_days = ODataField('PaymentAfterDays')
+    payment_after_months = ODataField('PaymentAfterMonths')
+    from_day1 = ODataField('FromDay1')
+    to_day1 = ODataField('ToDay1')
+    payment_day1 = ODataField('PaymentDay1')
+    no_of_months1 = ODataField('NoOfMonths1')
+    from_day2 = ODataField('FromDay2')
+    to_day2 = ODataField('ToDay2')
+    payment_day2 = ODataField('PaymentDay2')
+    no_of_months2 = ODataField('NoOfMonths2')
+    from_day3 = ODataField('FromDay3')
+    to_day3 = ODataField('ToDay3')
+    payment_day3 = ODataField('PaymentDay3')
+    no_of_months3 = ODataField('NoOfMonths3')
+    from_day4 = ODataField('FromDay4')
+    to_day4 = ODataField('ToDay4')
+    payment_day4 = ODataField('PaymentDay4')
+    no_of_months4 = ODataField('NoOfMonths4')
+    credit_payment_methods = ODataField('CreditPaymentMethods')
+
+class CreditPaymentMethodFields(FieldEnum):
+    payment_method_code = ODataField('PaymentMethodCode')
+    name = ODataField('Name')
+    assignedto_credit_card = ODataField('AssignedtoCreditCard')
+    payment_code = ODataField('PaymentCode')
+    minimum_credit_amount = ODataField('MinimumCreditAmount')
+    minimum_payment_amount = ODataField('MinimumPaymentAmount')
+    max_qty_without_approval = ODataField('MaxQtyWithoutApproval')
+    installment_payments_possible = ODataField('InstallmentPaymentsPossible')
+    credit_card = ODataField('CreditCard')
+    credit_card_payment = ODataField('CreditCardPayment')
+
+class CustomerEquipmentCardFields(FieldEnum):
+    equipment_card_num = ODataField('EquipmentCardNum')
+    customer_code = ODataField('CustomerCode')
+    customer_name = ODataField('CustomerName')
+    contact_employee_code = ODataField('ContactEmployeeCode')
+    direct_customer_code = ODataField('DirectCustomerCode')
+    direct_customer_name = ODataField('DirectCustomerName')
+    manufacturer_serial_num = ODataField('ManufacturerSerialNum')
+    internal_serial_num = ODataField('InternalSerialNum')
+    required_resolution_time = ODataField('RequiredResolutionTime')
+    required_resolution_unit = ODataField('RequiredResolutionUnit')
+    item_code = ODataField('ItemCode')
+    item_description = ODataField('ItemDescription')
+    invoice_code = ODataField('InvoiceCode')
+    invoice_number = ODataField('InvoiceNumber')
+    delivery_date = ODataField('DeliveryDate')
+    contact_phone = ODataField('ContactPhone')
+    street = ODataField('Street')
+    block = ODataField('Block')
+    zip_code = ODataField('ZipCode')
+    city = ODataField('City')
+    county = ODataField('County')
+    country_code = ODataField('CountryCode')
+    state_code = ODataField('StateCode')
+    install_location = ODataField('InstallLocation')
+    contract_code = ODataField('ContractCode')
+    contract_start_date = ODataField('ContractStartDate')
+    contract_end_date = ODataField('ContractEndDate')
+    delivery_code = ODataField('DeliveryCode')
+    delivery_number = ODataField('DeliveryNumber')
+    status_of_serial_number = ODataField('StatusOfSerialNumber')
+    replace_sn = ODataField('ReplaceSN')
+    default_technician = ODataField('DefaultTechnician')
+    replaced_by_sn = ODataField('ReplacedBySN')
+    defaultterritory = ODataField('Defaultterritory')
+    building_floor_room = ODataField('BuildingFloorRoom')
+    attachment_entry = ODataField('AttachmentEntry')
+    street_no = ODataField('StreetNo')
+    service_bp_type = ODataField('ServiceBPType')
+    customer_equipment_card_business_partners = ODataField('CustomerEquipmentCardBusinessPartners')
+    business_partner = ODataField('BusinessPartner')
+    item = ODataField('Item')
+    country = ODataField('Country')
+    service_contract = ODataField('ServiceContract')
+    employee_info = ODataField('EmployeeInfo')
+    territory = ODataField('Territory')
+    attachments2 = ODataField('Attachments2')
+
+class CustomsDeclarationFields(FieldEnum):
+    ccd_num = ODataField('CCDNum')
+    date = ODataField('Date')
+    customs_broker = ODataField('CustomsBroker')
+    doc_num = ODataField('DocNum')
+    doc_date = ODataField('DocDate')
+    supply_num = ODataField('SupplyNum')
+    supply_date = ODataField('SupplyDate')
+    customs_terminal = ODataField('CustomsTerminal')
+    payment_key = ODataField('PaymentKey')
+
+class CustomsGroupFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    number = ODataField('Number')
+    customs = ODataField('Customs')
+    purchase = ODataField('Purchase')
+    other = ODataField('Other')
+    total = ODataField('Total')
+    locked = ODataField('Locked')
+    customs_allocation_account = ODataField('CustomsAllocationAccount')
+    customs_expense_account = ODataField('CustomsExpenseAccount')
+    port_address = ODataField('PortAddress')
+    port_state = ODataField('PortState')
+    items = ODataField('Items')
+    chart_of_account = ODataField('ChartOfAccount')
+
+class DNFCodeSetupFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    ncm_code = ODataField('NCMCode')
+    dnf_code = ODataField('DNFCode')
+    uo_m = ODataField('UoM')
+    factor = ODataField('Factor')
+    items = ODataField('Items')
+    ncm_code_setup = ODataField('NCMCodeSetup')
+
+class DeductibleTaxFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    inactive = ODataField('Inactive')
+    category = ODataField('Category')
+    deductible_tax_rate = ODataField('DeductibleTaxRate')
+
+class DeductionTaxGroupFields(FieldEnum):
+    group_key = ODataField('GroupKey')
+    group_code = ODataField('GroupCode')
+    group_name = ODataField('GroupName')
+    max_redin = ODataField('MaxRedin')
+    group_extended_code = ODataField('GroupExtendedCode')
+    business_partners = ODataField('BusinessPartners')
+    deduction_tax_sub_group = ODataField('DeductionTaxSubGroup')
+
+class DeductionTaxHierarchyFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    bp_code = ODataField('BPCode')
+    hierarchy_code = ODataField('HierarchyCode')
+    hierarchy_name = ODataField('HierarchyName')
+    valid_from = ODataField('ValidFrom')
+    valid_until = ODataField('ValidUntil')
+    deduction_percent = ODataField('DeductionPercent')
+    maximum_total = ODataField('MaximumTotal')
+    last_updated = ODataField('LastUpdated')
+    deduction_tax_hierarchies_lines = ODataField('DeductionTaxHierarchies_Lines')
+    business_partner = ODataField('BusinessPartner')
+
+class DeductionTaxSubGroupFields(FieldEnum):
+    group_code = ODataField('GroupCode')
+    group_name = ODataField('GroupName')
+    deduction_tax_groups = ODataField('DeductionTaxGroups')
+
+class DefaultElementsforCRFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+
+class DepartmentFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    description = ODataField('Description')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    employees_info = ODataField('EmployeesInfo')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    users = ODataField('Users')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class DepositFields(FieldEnum):
+    deposit_number = ODataField('DepositNumber')
+    abs_entry = ODataField('AbsEntry')
+    deposit_type = ODataField('DepositType')
+    deposit_date = ODataField('DepositDate')
+    deposit_currency = ODataField('DepositCurrency')
+    deposit_account = ODataField('DepositAccount')
+    depositor_name = ODataField('DepositorName')
+    bank = ODataField('Bank')
+    bank_account_num = ODataField('BankAccountNum')
+    bank_branch = ODataField('BankBranch')
+    bank_reference = ODataField('BankReference')
+    journal_remarks = ODataField('JournalRemarks')
+    total_lc = ODataField('TotalLC')
+    total_fc = ODataField('TotalFC')
+    total_sc = ODataField('TotalSC')
+    allocation_account = ODataField('AllocationAccount')
+    doc_rate = ODataField('DocRate')
+    tax_account = ODataField('TaxAccount')
+    tax_amount = ODataField('TaxAmount')
+    commission_account = ODataField('CommissionAccount')
+    commission = ODataField('Commission')
+    commission_date = ODataField('CommissionDate')
+    tax_code = ODataField('TaxCode')
+    deposit_account_type = ODataField('DepositAccountType')
+    reconcile_after_deposit = ODataField('ReconcileAfterDeposit')
+    voucher_account = ODataField('VoucherAccount')
+    series = ODataField('Series')
+    project = ODataField('Project')
+    distribution_rule = ODataField('DistributionRule')
+    distribution_rule2 = ODataField('DistributionRule2')
+    distribution_rule3 = ODataField('DistributionRule3')
+    distribution_rule4 = ODataField('DistributionRule4')
+    distribution_rule5 = ODataField('DistributionRule5')
+    commission_currency = ODataField('CommissionCurrency')
+    commission_sc = ODataField('CommissionSC')
+    commission_fc = ODataField('CommissionFC')
+    tax_amount_sc = ODataField('TaxAmountSC')
+    tax_amount_fc = ODataField('TaxAmountFC')
+    bplid = ODataField('BPLID')
+    check_deposit_type = ODataField('CheckDepositType')
+    attachment_entry = ODataField('AttachmentEntry')
+    income_tax_account = ODataField('IncomeTaxAccount')
+    income_tax_amount = ODataField('IncomeTaxAmount')
+    income_tax_amount_sc = ODataField('IncomeTaxAmountSC')
+    income_tax_amount_fc = ODataField('IncomeTaxAmountFC')
+    check_lines = ODataField('CheckLines')
+    credit_lines = ODataField('CreditLines')
+    boe_lines = ODataField('BOELines')
+    vat_group = ODataField('VatGroup')
+    project2 = ODataField('Project2')
+    distribution_rule6 = ODataField('DistributionRule6')
+    business_place = ODataField('BusinessPlace')
+    attachments2 = ODataField('Attachments2')
+
+class DepreciationAreaFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    posting_of_depreciation = ODataField('PostingOfDepreciation')
+    retirement_method = ODataField('RetirementMethod')
+    area_type = ODataField('AreaType')
+    derived_area = ODataField('DerivedArea')
+    main_booking_area = ODataField('MainBookingArea')
+    direct_revenue_posting = ODataField('DirectRevenuePosting')
+    tax_credit_control = ODataField('TaxCreditControl')
+    tax_type = ODataField('TaxType')
+    bp_for_tax_correction = ODataField('BPForTaxCorrection')
+    item_for_tax_correction = ODataField('ItemForTaxCorrection')
+    usage_for_tax_correction = ODataField('UsageForTaxCorrection')
+    asset_retirement = ODataField('AssetRetirement')
+    asset_transfer = ODataField('AssetTransfer')
+    asset_revaluations = ODataField('AssetRevaluations')
+    asset_manual_depreciation = ODataField('AssetManualDepreciation')
+    asset_capitalization = ODataField('AssetCapitalization')
+    asset_capitalization_credit_memo = ODataField('AssetCapitalizationCreditMemo')
+    sales_tax_authorities_type = ODataField('SalesTaxAuthoritiesType')
+    business_partner = ODataField('BusinessPartner')
+    item = ODataField('Item')
+    nota_fiscal_usage = ODataField('NotaFiscalUsage')
+
+class DepreciationTypeFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    depreciation_method = ODataField('DepreciationMethod')
+    minimum_depreciated_value = ODataField('MinimumDepreciatedValue')
+    round_year_end_book_value = ODataField('RoundYearEndBookValue')
+    include_salvage_in_depreciation = ODataField('IncludeSalvageInDepreciation')
+    salvage_percentage = ODataField('SalvagePercentage')
+    acquisition_period_control = ODataField('AcquisitionPeriodControl')
+    subsequent_acquisition_period_control = ODataField('SubsequentAcquisitionPeriodControl')
+    retirement_period_control = ODataField('RetirementPeriodControl')
+    acquisition_pro_rata_type = ODataField('AcquisitionProRataType')
+    subsequent_acquisition_pro_rata_type = ODataField('SubsequentAcquisitionProRataType')
+    retirement_pro_rata_type = ODataField('RetirementProRataType')
+    percentage_of_depreciation_reversed_in_retirement_year = ODataField('PercentageOfDepreciationReversedInRetirementYear')
+    valid_from = ODataField('ValidFrom')
+    valid_to = ODataField('ValidTo')
+    straight_line_calculation_method = ODataField('StraightLineCalculationMethod')
+    straight_line_percentage = ODataField('StraightLinePercentage')
+    straight_line_period_control_depreciation_periods = ODataField('StraightLinePeriodControlDepreciationPeriods')
+    straight_line_period_control_factor = ODataField('StraightLinePeriodControlFactor')
+    declining_percentage = ODataField('DecliningPercentage')
+    declining_factor = ODataField('DecliningFactor')
+    declining_change_to = ODataField('DecliningChangeTo')
+    special_depreciation_calculation_method = ODataField('SpecialDepreciationCalculationMethod')
+    special_depreciation_concession_period_years = ODataField('SpecialDepreciationConcessionPeriodYears')
+    special_depreciation_maximum_percentage = ODataField('SpecialDepreciationMaximumPercentage')
+    special_depreciation_normal_depreciation = ODataField('SpecialDepreciationNormalDepreciation')
+    special_depreciation_alternative_depreciation = ODataField('SpecialDepreciationAlternativeDepreciation')
+    depreciation_type_pool = ODataField('DepreciationTypePool')
+    manual_depreciation_reduce_depreciation_base = ODataField('ManualDepreciationReduceDepreciationBase')
+    special_depreciation_maximum_amount = ODataField('SpecialDepreciationMaximumAmount')
+    special_depreciation_maximum_flag = ODataField('SpecialDepreciationMaximumFlag')
+    calculation_base = ODataField('CalculationBase')
+    depreciation_end_at_last_full_year = ODataField('DepreciationEndAtLastFullYear')
+    include_previous_depreciation_in_capitalization_period = ODataField('IncludePreviousDepreciationInCapitalizationPeriod')
+    delta_coefficient = ODataField('DeltaCoefficient')
+    maximum_depreciable_value = ODataField('MaximumDepreciableValue')
+    factor_only_relevant_to_first_fiscal_year = ODataField('FactorOnlyRelevantToFirstFiscalYear')
+    transfer_source_period_control = ODataField('TransferSourcePeriodControl')
+    transfer_target_period_control = ODataField('TransferTargetPeriodControl')
+    transfer_source_pro_rata_type = ODataField('TransferSourceProRataType')
+    transfer_target_pro_rata_type = ODataField('TransferTargetProRataType')
+    rounding_method = ODataField('RoundingMethod')
+    depreciation_level_collection = ODataField('DepreciationLevelCollection')
+    asset_retirement = ODataField('AssetRetirement')
+    asset_transfer = ODataField('AssetTransfer')
+    asset_manual_depreciation = ODataField('AssetManualDepreciation')
+    asset_capitalization = ODataField('AssetCapitalization')
+    depreciation_type_pool2 = ODataField('DepreciationTypePool2')
+    asset_capitalization_credit_memo = ODataField('AssetCapitalizationCreditMemo')
+
+class DepreciationTypePoolFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    depreciation_types = ODataField('DepreciationTypes')
+
+class DeterminationCriteriaFields(FieldEnum):
+    dmc_id = ODataField('DmcId')
+    determination_criteria_property = ODataField('DeterminationCriteriaProperty')
+    is_active = ODataField('IsActive')
+    priority = ODataField('Priority')
+
+class DimensionFields(FieldEnum):
+    dimension_code = ODataField('DimensionCode')
+    dimension_name = ODataField('DimensionName')
+    is_active = ODataField('IsActive')
+    dimension_description = ODataField('DimensionDescription')
+    distribution_rules = ODataField('DistributionRules')
+    profit_centers = ODataField('ProfitCenters')
+
+class DistributionRuleFields(FieldEnum):
+    factor_code = ODataField('FactorCode')
+    factor_description = ODataField('FactorDescription')
+    total_factor = ODataField('TotalFactor')
+    direct = ODataField('Direct')
+    in_which_dimension = ODataField('InWhichDimension')
+    active = ODataField('Active')
+    is_fixed_amount = ODataField('IsFixedAmount')
+    distribution_rule_lines = ODataField('DistributionRuleLines')
+    product_trees = ODataField('ProductTrees')
+    dimension = ODataField('Dimension')
+    additional_expenses = ODataField('AdditionalExpenses')
+    chart_of_accounts = ODataField('ChartOfAccounts')
+    production_orders = ODataField('ProductionOrders')
+    budget_scenarios = ODataField('BudgetScenarios')
+    deposits = ODataField('Deposits')
+
+class DocumentFields(FieldEnum):
+    doc_entry = ODataField('DocEntry')
+    doc_num = ODataField('DocNum')
+    doc_type = ODataField('DocType')
+    hand_written = ODataField('HandWritten')
+    printed = ODataField('Printed')
+    doc_date = ODataField('DocDate')
+    doc_due_date = ODataField('DocDueDate')
+    card_code = ODataField('CardCode')
+    card_name = ODataField('CardName')
+    address = ODataField('Address')
+    num_at_card = ODataField('NumAtCard')
+    doc_total = ODataField('DocTotal')
+    attachment_entry = ODataField('AttachmentEntry')
+    doc_currency = ODataField('DocCurrency')
+    doc_rate = ODataField('DocRate')
+    reference1 = ODataField('Reference1')
+    reference2 = ODataField('Reference2')
+    comments = ODataField('Comments')
+    journal_memo = ODataField('JournalMemo')
+    payment_group_code = ODataField('PaymentGroupCode')
+    doc_time = ODataField('DocTime')
+    sales_person_code = ODataField('SalesPersonCode')
+    transportation_code = ODataField('TransportationCode')
+    confirmed = ODataField('Confirmed')
+    import_file_num = ODataField('ImportFileNum')
+    summery_type = ODataField('SummeryType')
+    contact_person_code = ODataField('ContactPersonCode')
+    show_scn = ODataField('ShowSCN')
+    series = ODataField('Series')
+    tax_date = ODataField('TaxDate')
+    partial_supply = ODataField('PartialSupply')
+    doc_object_code = ODataField('DocObjectCode')
+    ship_to_code = ODataField('ShipToCode')
+    indicator = ODataField('Indicator')
+    federal_tax_id = ODataField('FederalTaxID')
+    discount_percent = ODataField('DiscountPercent')
+    payment_reference = ODataField('PaymentReference')
+    creation_date = ODataField('CreationDate')
+    update_date = ODataField('UpdateDate')
+    financial_period = ODataField('FinancialPeriod')
+    user_sign = ODataField('UserSign')
+    trans_num = ODataField('TransNum')
+    vat_sum = ODataField('VatSum')
+    vat_sum_sys = ODataField('VatSumSys')
+    vat_sum_fc = ODataField('VatSumFc')
+    net_procedure = ODataField('NetProcedure')
+    doc_total_fc = ODataField('DocTotalFc')
+    doc_total_sys = ODataField('DocTotalSys')
+    form1099 = ODataField('Form1099')
+    box1099 = ODataField('Box1099')
+    revision_po = ODataField('RevisionPo')
+    requried_date = ODataField('RequriedDate')
+    cancel_date = ODataField('CancelDate')
+    block_dunning = ODataField('BlockDunning')
+    submitted = ODataField('Submitted')
+    segment = ODataField('Segment')
+    pick_status = ODataField('PickStatus')
+    pick = ODataField('Pick')
+    payment_method = ODataField('PaymentMethod')
+    payment_block = ODataField('PaymentBlock')
+    payment_block_entry = ODataField('PaymentBlockEntry')
+    central_bank_indicator = ODataField('CentralBankIndicator')
+    maximum_cash_discount = ODataField('MaximumCashDiscount')
+    reserve = ODataField('Reserve')
+    project = ODataField('Project')
+    exemption_validity_date_from = ODataField('ExemptionValidityDateFrom')
+    exemption_validity_date_to = ODataField('ExemptionValidityDateTo')
+    ware_house_update_type = ODataField('WareHouseUpdateType')
+    rounding = ODataField('Rounding')
+    external_corrected_doc_num = ODataField('ExternalCorrectedDocNum')
+    internal_corrected_doc_num = ODataField('InternalCorrectedDocNum')
+    next_correcting_document = ODataField('NextCorrectingDocument')
+    deferred_tax = ODataField('DeferredTax')
+    tax_exemption_letter_num = ODataField('TaxExemptionLetterNum')
+    wt_applied = ODataField('WTApplied')
+    wt_applied_fc = ODataField('WTAppliedFC')
+    bill_of_exchange_reserved = ODataField('BillOfExchangeReserved')
+    agent_code = ODataField('AgentCode')
+    wt_applied_sc = ODataField('WTAppliedSC')
+    total_equalization_tax = ODataField('TotalEqualizationTax')
+    total_equalization_tax_fc = ODataField('TotalEqualizationTaxFC')
+    total_equalization_tax_sc = ODataField('TotalEqualizationTaxSC')
+    number_of_installments = ODataField('NumberOfInstallments')
+    apply_tax_on_first_installment = ODataField('ApplyTaxOnFirstInstallment')
+    tax_on_installments = ODataField('TaxOnInstallments')
+    wt_non_subject_amount = ODataField('WTNonSubjectAmount')
+    wt_non_subject_amount_sc = ODataField('WTNonSubjectAmountSC')
+    wt_non_subject_amount_fc = ODataField('WTNonSubjectAmountFC')
+    wt_exempted_amount = ODataField('WTExemptedAmount')
+    wt_exempted_amount_sc = ODataField('WTExemptedAmountSC')
+    wt_exempted_amount_fc = ODataField('WTExemptedAmountFC')
+    base_amount = ODataField('BaseAmount')
+    base_amount_sc = ODataField('BaseAmountSC')
+    base_amount_fc = ODataField('BaseAmountFC')
+    wt_amount = ODataField('WTAmount')
+    wt_amount_sc = ODataField('WTAmountSC')
+    wt_amount_fc = ODataField('WTAmountFC')
+    vat_date = ODataField('VatDate')
+    documents_owner = ODataField('DocumentsOwner')
+    folio_prefix_string = ODataField('FolioPrefixString')
+    folio_number = ODataField('FolioNumber')
+    document_sub_type = ODataField('DocumentSubType')
+    bp_channel_code = ODataField('BPChannelCode')
+    bp_channel_contact = ODataField('BPChannelContact')
+    address2 = ODataField('Address2')
+    document_status = ODataField('DocumentStatus')
+    period_indicator = ODataField('PeriodIndicator')
+    pay_to_code = ODataField('PayToCode')
+    manual_number = ODataField('ManualNumber')
+    use_shpd_goods_act = ODataField('UseShpdGoodsAct')
+    is_pay_to_bank = ODataField('IsPayToBank')
+    pay_to_bank_country = ODataField('PayToBankCountry')
+    pay_to_bank_code = ODataField('PayToBankCode')
+    pay_to_bank_account_no = ODataField('PayToBankAccountNo')
+    pay_to_bank_branch = ODataField('PayToBankBranch')
+    bpl_id_assigned_to_invoice = ODataField('BPL_IDAssignedToInvoice')
+    down_payment = ODataField('DownPayment')
+    reserve_invoice = ODataField('ReserveInvoice')
+    language_code = ODataField('LanguageCode')
+    tracking_number = ODataField('TrackingNumber')
+    pick_remark = ODataField('PickRemark')
+    closing_date = ODataField('ClosingDate')
+    sequence_code = ODataField('SequenceCode')
+    sequence_serial = ODataField('SequenceSerial')
+    series_string = ODataField('SeriesString')
+    sub_series_string = ODataField('SubSeriesString')
+    sequence_model = ODataField('SequenceModel')
+    use_correction_vat_group = ODataField('UseCorrectionVATGroup')
+    total_discount = ODataField('TotalDiscount')
+    down_payment_amount = ODataField('DownPaymentAmount')
+    down_payment_percentage = ODataField('DownPaymentPercentage')
+    down_payment_type = ODataField('DownPaymentType')
+    down_payment_amount_sc = ODataField('DownPaymentAmountSC')
+    down_payment_amount_fc = ODataField('DownPaymentAmountFC')
+    vat_percent = ODataField('VatPercent')
+    service_gross_profit_percent = ODataField('ServiceGrossProfitPercent')
+    opening_remarks = ODataField('OpeningRemarks')
+    closing_remarks = ODataField('ClosingRemarks')
+    rounding_diff_amount = ODataField('RoundingDiffAmount')
+    rounding_diff_amount_fc = ODataField('RoundingDiffAmountFC')
+    rounding_diff_amount_sc = ODataField('RoundingDiffAmountSC')
+    cancelled = ODataField('Cancelled')
+    signature_input_message = ODataField('SignatureInputMessage')
+    signature_digest = ODataField('SignatureDigest')
+    certification_number = ODataField('CertificationNumber')
+    private_key_version = ODataField('PrivateKeyVersion')
+    control_account = ODataField('ControlAccount')
+    insurance_operation347 = ODataField('InsuranceOperation347')
+    archive_nonremovable_sales_quotation = ODataField('ArchiveNonremovableSalesQuotation')
+    gts_checker = ODataField('GTSChecker')
+    gts_payee = ODataField('GTSPayee')
+    extra_month = ODataField('ExtraMonth')
+    extra_days = ODataField('ExtraDays')
+    cash_discount_date_offset = ODataField('CashDiscountDateOffset')
+    start_from = ODataField('StartFrom')
+    nts_approved = ODataField('NTSApproved')
+    e_tax_web_site = ODataField('ETaxWebSite')
+    e_tax_number = ODataField('ETaxNumber')
+    nts_approved_number = ODataField('NTSApprovedNumber')
+    e_doc_generation_type = ODataField('EDocGenerationType')
+    e_doc_series = ODataField('EDocSeries')
+    e_doc_num = ODataField('EDocNum')
+    e_doc_export_format = ODataField('EDocExportFormat')
+    e_doc_status = ODataField('EDocStatus')
+    e_doc_error_code = ODataField('EDocErrorCode')
+    e_doc_error_message = ODataField('EDocErrorMessage')
+    down_payment_status = ODataField('DownPaymentStatus')
+    group_series = ODataField('GroupSeries')
+    group_number = ODataField('GroupNumber')
+    group_hand_written = ODataField('GroupHandWritten')
+    reopen_original_document = ODataField('ReopenOriginalDocument')
+    reopen_manually_closed_or_canceled_document = ODataField('ReopenManuallyClosedOrCanceledDocument')
+    create_online_quotation = ODataField('CreateOnlineQuotation')
+    pos_equipment_number = ODataField('POSEquipmentNumber')
+    pos_manufacturer_serial_number = ODataField('POSManufacturerSerialNumber')
+    pos_cashier_number = ODataField('POSCashierNumber')
+    apply_current_vat_rates_for_down_payments_to_draw = ODataField('ApplyCurrentVATRatesForDownPaymentsToDraw')
+    closing_option = ODataField('ClosingOption')
+    specified_closing_date = ODataField('SpecifiedClosingDate')
+    open_for_landed_costs = ODataField('OpenForLandedCosts')
+    authorization_status = ODataField('AuthorizationStatus')
+    total_discount_fc = ODataField('TotalDiscountFC')
+    total_discount_sc = ODataField('TotalDiscountSC')
+    relevant_to_gts = ODataField('RelevantToGTS')
+    bpl_name = ODataField('BPLName')
+    vat_reg_num = ODataField('VATRegNum')
+    annual_invoice_declaration_reference = ODataField('AnnualInvoiceDeclarationReference')
+    supplier = ODataField('Supplier')
+    releaser = ODataField('Releaser')
+    receiver = ODataField('Receiver')
+    blanket_agreement_number = ODataField('BlanketAgreementNumber')
+    is_alteration = ODataField('IsAlteration')
+    cancel_status = ODataField('CancelStatus')
+    asset_value_date = ODataField('AssetValueDate')
+    requester = ODataField('Requester')
+    requester_name = ODataField('RequesterName')
+    requester_branch = ODataField('RequesterBranch')
+    requester_department = ODataField('RequesterDepartment')
+    requester_email = ODataField('RequesterEmail')
+    send_notification = ODataField('SendNotification')
+    req_type = ODataField('ReqType')
+    req_code = ODataField('ReqCode')
+    invoice_payment = ODataField('InvoicePayment')
+    document_delivery = ODataField('DocumentDelivery')
+    authorization_code = ODataField('AuthorizationCode')
+    start_delivery_date = ODataField('StartDeliveryDate')
+    start_delivery_time = ODataField('StartDeliveryTime')
+    end_delivery_date = ODataField('EndDeliveryDate')
+    end_delivery_time = ODataField('EndDeliveryTime')
+    vehicle_plate = ODataField('VehiclePlate')
+    at_document_type = ODataField('ATDocumentType')
+    elec_comm_status = ODataField('ElecCommStatus')
+    elec_comm_message = ODataField('ElecCommMessage')
+    reuse_document_num = ODataField('ReuseDocumentNum')
+    reuse_nota_fiscal_num = ODataField('ReuseNotaFiscalNum')
+    print_sepa_direct = ODataField('PrintSEPADirect')
+    fiscal_doc_num = ODataField('FiscalDocNum')
+    pos_daily_summary_no = ODataField('POSDailySummaryNo')
+    pos_receipt_no = ODataField('POSReceiptNo')
+    point_of_issue_code = ODataField('PointOfIssueCode')
+    letter = ODataField('Letter')
+    folio_number_from = ODataField('FolioNumberFrom')
+    folio_number_to = ODataField('FolioNumberTo')
+    interim_type = ODataField('InterimType')
+    related_type = ODataField('RelatedType')
+    related_entry = ODataField('RelatedEntry')
+    sap_passport = ODataField('SAPPassport')
+    document_tax_id = ODataField('DocumentTaxID')
+    date_of_reporting_control_statement_vat = ODataField('DateOfReportingControlStatementVAT')
+    reporting_section_control_statement_vat = ODataField('ReportingSectionControlStatementVAT')
+    exclude_from_tax_report_control_statement_vat = ODataField('ExcludeFromTaxReportControlStatementVAT')
+    update_time = ODataField('UpdateTime')
+    create_qr_code_from = ODataField('CreateQRCodeFrom')
+    price_mode = ODataField('PriceMode')
+    down_payment_trasaction_id = ODataField('DownPaymentTrasactionID')
+    original_ref_no = ODataField('OriginalRefNo')
+    original_ref_date = ODataField('OriginalRefDate')
+    revision = ODataField('Revision')
+    gst_transaction_type = ODataField('GSTTransactionType')
+    original_credit_or_debit_no = ODataField('OriginalCreditOrDebitNo')
+    original_credit_or_debit_date = ODataField('OriginalCreditOrDebitDate')
+    e_commerce_operator = ODataField('ECommerceOperator')
+    e_commerce_gstin = ODataField('ECommerceGSTIN')
+    tax_invoice_no = ODataField('TaxInvoiceNo')
+    tax_invoice_date = ODataField('TaxInvoiceDate')
+    ship_from = ODataField('ShipFrom')
+    commission_trade = ODataField('CommissionTrade')
+    commission_trade_return = ODataField('CommissionTradeReturn')
+    use_bill_to_addr_to_determine_tax = ODataField('UseBillToAddrToDetermineTax')
+    issuing_reason = ODataField('IssuingReason')
+    cig = ODataField('Cig')
+    cup = ODataField('Cup')
+    e_doc_type = ODataField('EDocType')
+    fce_as_payment_means = ODataField('FCEAsPaymentMeans')
+    paid_to_date = ODataField('PaidToDate')
+    paid_to_date_fc = ODataField('PaidToDateFC')
+    paid_to_date_sys = ODataField('PaidToDateSys')
+    father_card = ODataField('FatherCard')
+    father_type = ODataField('FatherType')
+    ship_state = ODataField('ShipState')
+    ship_place = ODataField('ShipPlace')
+    cust_office = ODataField('CustOffice')
+    fci = ODataField('FCI')
+    add_leg_in = ODataField('AddLegIn')
+    leg_text_f = ODataField('LegTextF')
+    danfe_lg_txt = ODataField('DANFELgTxt')
+    data_version = ODataField('DataVersion')
+    last_page_folio_number = ODataField('LastPageFolioNumber')
+    inventory_status = ODataField('InventoryStatus')
+    plastic_packaging_tax_relevant = ODataField('PlasticPackagingTaxRelevant')
+    not_relevant_for_monthly_invoice = ODataField('NotRelevantForMonthlyInvoice')
+    end_at = ODataField('EndAt')
+    ship_to_code_for_return = ODataField('ShipToCodeForReturn')
+    address_for_return = ODataField('AddressForReturn')
+    document_approval_requests = ODataField('Document_ApprovalRequests')
+    document_lines = ODataField('DocumentLines')
+    e_way_bill_details = ODataField('EWayBillDetails')
+    electronic_protocols = ODataField('ElectronicProtocols')
+    document_additional_expenses = ODataField('DocumentAdditionalExpenses')
+    document_distributed_expenses = ODataField('DocumentDistributedExpenses')
+    withholding_tax_data_wtx_collection = ODataField('WithholdingTaxDataWTXCollection')
+    withholding_tax_data_collection = ODataField('WithholdingTaxDataCollection')
+    document_packages = ODataField('DocumentPackages')
+    document_special_lines = ODataField('DocumentSpecialLines')
+    document_installments = ODataField('DocumentInstallments')
+    down_payments_to_draw = ODataField('DownPaymentsToDraw')
+    tax_extension = ODataField('TaxExtension')
+    address_extension = ODataField('AddressExtension')
+    document_references = ODataField('DocumentReferences')
+    document_additional_intrastat_expenses = ODataField('DocumentAdditionalIntrastatExpenses')
+    base_type = ODataField('BaseType')
+    base_entry = ODataField('BaseEntry')
+    ind_final = ODataField('IndFinal')
+    allocation_number_il = ODataField('AllocationNumberIL')
+    digital_pay_to_address = ODataField('DigitalPayToAddress')
+    digital_payments = ODataField('DigitalPayments')
+    soi_wizard_id = ODataField('SOIWizardId')
+    business_partner = ODataField('BusinessPartner')
+    currency = ODataField('Currency')
+    payment_terms_type = ODataField('PaymentTermsType')
+    sales_person = ODataField('SalesPerson')
+    shipping_type = ODataField('ShippingType')
+    factoring_indicator = ODataField('FactoringIndicator')
+    user = ODataField('User')
+    forms1099 = ODataField('Forms1099')
+    wizard_payment_method = ODataField('WizardPaymentMethod')
+    payment_block2 = ODataField('PaymentBlock2')
+    central_bank_indicator2 = ODataField('CentralBankIndicator2')
+    project2 = ODataField('Project2')
+    employee_info = ODataField('EmployeeInfo')
+    country = ODataField('Country')
+    business_place = ODataField('BusinessPlace')
+    user_language = ODataField('UserLanguage')
+    nf_model = ODataField('NFModel')
+    chart_of_account = ODataField('ChartOfAccount')
+    tax_web_site = ODataField('TaxWebSite')
+    branch = ODataField('Branch')
+    department = ODataField('Department')
+    pos_daily_summary = ODataField('POSDailySummary')
+    cig_code = ODataField('CIGCode')
+    cup_code = ODataField('CUPCode')
+    journal_entry = ODataField('JournalEntry')
+    landed_cost = ODataField('LandedCost')
+
+class DunningLetterFields(FieldEnum):
+    fee_currency = ODataField('FeeCurrency')
+    row_number = ODataField('RowNumber')
+    letter_format = ODataField('LetterFormat')
+    effectiveafter = ODataField('Effectiveafter')
+    minimum_balance_currency = ODataField('MinimumBalanceCurrency')
+    feeperletter = ODataField('Feeperletter')
+    calc_interest = ODataField('CalcInterest')
+    minimum_balance = ODataField('MinimumBalance')
+    business_partners = ODataField('BusinessPartners')
+
+class DunningTermFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    grouping_method = ODataField('GroupingMethod')
+    days_in_year = ODataField('DaysInYear')
+    days_in_month = ODataField('DaysInMonth')
+    calculate_interest_method = ODataField('CalculateInterestMethod')
+    exchange_rate_select = ODataField('ExchangeRateSelect')
+    yearly_interest_rate = ODataField('YearlyInterestRate')
+    letter_fee = ODataField('LetterFee')
+    letter_fee_currency = ODataField('LetterFeeCurrency')
+    minimum_balance = ODataField('MinimumBalance')
+    minimum_balance_currency = ODataField('MinimumBalanceCurrency')
+    include_interest = ODataField('IncludeInterest')
+    apply_highest_letter_template = ODataField('ApplyHighestLetterTemplate')
+    automatic_posting = ODataField('AutomaticPosting')
+    interest_account = ODataField('InterestAccount')
+    fee_account = ODataField('FeeAccount')
+    base_date_select = ODataField('BaseDateSelect')
+    dunning_term_lines = ODataField('DunningTermLines')
+    chart_of_account = ODataField('ChartOfAccount')
+    business_partners = ODataField('BusinessPartners')
+
+class DynamicSystemStringFields(FieldEnum):
+    form_id = ODataField('FormID')
+    item_id = ODataField('ItemID')
+    column_id = ODataField('ColumnID')
+    item_string = ODataField('ItemString')
+    is_bold = ODataField('IsBold')
+    is_italics = ODataField('IsItalics')
+
+class EBooksFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    mark = ODataField('MARK')
+    cancel_mark = ODataField('CancelMARK')
+    uid = ODataField('UID')
+    issuer_vatid = ODataField('IssuerVATID')
+    cpvatid = ODataField('CPVATID')
+    series = ODataField('Series')
+    aa = ODataField('AA')
+    issue_date = ODataField('IssueDate')
+    invoice_type = ODataField('InvoiceType')
+    currency = ODataField('Currency')
+    total_net_value = ODataField('TotalNetValue')
+    total_vat_amount = ODataField('TotalVatAmount')
+    total_withheld_amount = ODataField('TotalWithheldAmount')
+    total_gross_value = ODataField('TotalGrossValue')
+    linked_doc_type = ODataField('LinkedDocType')
+    linked_doc_entry = ODataField('LinkedDocEntry')
+    is_negative_mark = ODataField('IsNegativeMark')
+    e_books_lines = ODataField('EBooksLines')
+
+class EWBTransporterFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    transporter_code = ODataField('TransporterCode')
+    transporter_name = ODataField('TransporterName')
+    transporter_id = ODataField('TransporterID')
+    ewb_transporter_lines = ODataField('EWBTransporter_Lines')
+    business_partners = ODataField('BusinessPartners')
+
+class ElectronicFileFormatFields(FieldEnum):
+    format_id = ODataField('FormatID')
+    name = ODataField('Name')
+    description = ODataField('Description')
+    version = ODataField('Version')
+    schema_version = ODataField('SchemaVersion')
+    output_file_path = ODataField('OutputFilePath')
+    menu_name = ODataField('MenuName')
+    menu_path = ODataField('MenuPath')
+    import_determinations = ODataField('ImportDeterminations')
+    export_determinations = ODataField('ExportDeterminations')
+
+class EmailGroupFields(FieldEnum):
+    email_group_code = ODataField('EmailGroupCode')
+    email_group_name = ODataField('EmailGroupName')
+
+class EmployeeIDTypeFields(FieldEnum):
+    id_type = ODataField('IDType')
+    employees_info = ODataField('EmployeesInfo')
+
+class EmployeeImageFields(FieldEnum):
+    employee_no = ODataField('EmployeeNo')
+    picture = ODataField('Picture')
+
+class EmployeeInfoFields(FieldEnum):
+    employee_id = ODataField('EmployeeID')
+    last_name = ODataField('LastName')
+    first_name = ODataField('FirstName')
+    middle_name = ODataField('MiddleName')
+    gender = ODataField('Gender')
+    job_title = ODataField('JobTitle')
+    employee_type = ODataField('EmployeeType')
+    department = ODataField('Department')
+    branch = ODataField('Branch')
+    work_street = ODataField('WorkStreet')
+    work_block = ODataField('WorkBlock')
+    work_zip_code = ODataField('WorkZipCode')
+    work_city = ODataField('WorkCity')
+    work_county = ODataField('WorkCounty')
+    work_country_code = ODataField('WorkCountryCode')
+    work_state_code = ODataField('WorkStateCode')
+    manager = ODataField('Manager')
+    application_user_id = ODataField('ApplicationUserID')
+    sales_person_code = ODataField('SalesPersonCode')
+    office_phone = ODataField('OfficePhone')
+    office_extension = ODataField('OfficeExtension')
+    mobile_phone = ODataField('MobilePhone')
+    pager = ODataField('Pager')
+    home_phone = ODataField('HomePhone')
+    fax = ODataField('Fax')
+    e_mail = ODataField('eMail')
+    start_date = ODataField('StartDate')
+    status_code = ODataField('StatusCode')
+    salary = ODataField('Salary')
+    salary_unit = ODataField('SalaryUnit')
+    employee_costs = ODataField('EmployeeCosts')
+    employee_cost_unit = ODataField('EmployeeCostUnit')
+    termination_date = ODataField('TerminationDate')
+    tremination_reason = ODataField('TreminationReason')
+    bank_code = ODataField('BankCode')
+    bank_branch = ODataField('BankBranch')
+    bank_branch_num = ODataField('BankBranchNum')
+    bank_account = ODataField('BankAccount')
+    home_street = ODataField('HomeStreet')
+    home_block = ODataField('HomeBlock')
+    home_zip_code = ODataField('HomeZipCode')
+    home_city = ODataField('HomeCity')
+    home_county = ODataField('HomeCounty')
+    home_country = ODataField('HomeCountry')
+    home_state = ODataField('HomeState')
+    date_of_birth = ODataField('DateOfBirth')
+    country_of_birth = ODataField('CountryOfBirth')
+    martial_status = ODataField('MartialStatus')
+    num_of_children = ODataField('NumOfChildren')
+    id_number = ODataField('IdNumber')
+    citizenship_country_code = ODataField('CitizenshipCountryCode')
+    passport_number = ODataField('PassportNumber')
+    passport_expiration_date = ODataField('PassportExpirationDate')
+    picture = ODataField('Picture')
+    remarks = ODataField('Remarks')
+    salary_currency = ODataField('SalaryCurrency')
+    employee_costs_currency = ODataField('EmployeeCostsCurrency')
+    work_building_floor_room = ODataField('WorkBuildingFloorRoom')
+    home_building_floor_room = ODataField('HomeBuildingFloorRoom')
+    position = ODataField('Position')
+    attachment_entry = ODataField('AttachmentEntry')
+    cost_center_code = ODataField('CostCenterCode')
+    company_number = ODataField('CompanyNumber')
+    vacation_previous_year = ODataField('VacationPreviousYear')
+    vacation_current_year = ODataField('VacationCurrentYear')
+    municipality_key = ODataField('MunicipalityKey')
+    tax_class = ODataField('TaxClass')
+    income_tax_liability = ODataField('IncomeTaxLiability')
+    religion = ODataField('Religion')
+    partner_religion = ODataField('PartnerReligion')
+    exemption_amount = ODataField('ExemptionAmount')
+    exemption_unit = ODataField('ExemptionUnit')
+    exemption_currency = ODataField('ExemptionCurrency')
+    additional_amount = ODataField('AdditionalAmount')
+    additional_unit = ODataField('AdditionalUnit')
+    additional_currency = ODataField('AdditionalCurrency')
+    tax_office_name = ODataField('TaxOfficeName')
+    tax_office_number = ODataField('TaxOfficeNumber')
+    health_insurance_name = ODataField('HealthInsuranceName')
+    health_insurance_code = ODataField('HealthInsuranceCode')
+    health_insurance_type = ODataField('HealthInsuranceType')
+    social_insurance_number = ODataField('SocialInsuranceNumber')
+    profession_status = ODataField('ProfessionStatus')
+    education_status = ODataField('EducationStatus')
+    person_group = ODataField('PersonGroup')
+    job_title_code = ODataField('JobTitleCode')
+    bank_code_for_datev = ODataField('BankCodeForDATEV')
+    deviating_bank_account_owner = ODataField('DeviatingBankAccountOwner')
+    spouse_first_name = ODataField('SpouseFirstName')
+    spouse_surname = ODataField('SpouseSurname')
+    external_employee_number = ODataField('ExternalEmployeeNumber')
+    birth_place = ODataField('BirthPlace')
+    payment_method = ODataField('PaymentMethod')
+    std_code = ODataField('STDCode')
+    cpf = ODataField('CPF')
+    crc_number = ODataField('CRCNumber')
+    accountant_responsible = ODataField('AccountantResponsible')
+    legal_representative = ODataField('LegalRepresentative')
+    dirf_responsible = ODataField('DIRFResponsible')
+    crc_state = ODataField('CRCState')
+    active = ODataField('Active')
+    id_type = ODataField('IDType')
+    bplid = ODataField('BPLID')
+    passport_issue_date = ODataField('PassportIssueDate')
+    passport_issuer = ODataField('PassportIssuer')
+    qualification_code = ODataField('QualificationCode')
+    pr_web_access = ODataField('PRWebAccess')
+    previous_pr_web_access = ODataField('PreviousPRWebAccess')
+    work_street_number = ODataField('WorkStreetNumber')
+    home_street_number = ODataField('HomeStreetNumber')
+    linked_vendor = ODataField('LinkedVendor')
+    create_date = ODataField('CreateDate')
+    create_time = ODataField('CreateTime')
+    update_date = ODataField('UpdateDate')
+    update_time = ODataField('UpdateTime')
+    employee_code = ODataField('EmployeeCode')
+    a_ret_sefaz = ODataField('ARetSEFAZ')
+    gender_ex = ODataField('GenderEx')
+    employee_absence_info_lines = ODataField('EmployeeAbsenceInfoLines')
+    employee_education_info_lines = ODataField('EmployeeEducationInfoLines')
+    employee_reviews_info_lines = ODataField('EmployeeReviewsInfoLines')
+    employee_previous_empoyment_info_lines = ODataField('EmployeePreviousEmpoymentInfoLines')
+    employee_roles_info_lines = ODataField('EmployeeRolesInfoLines')
+    employee_savings_payment_info_lines = ODataField('EmployeeSavingsPaymentInfoLines')
+    employee_branch_assignment = ODataField('EmployeeBranchAssignment')
+    sales_opportunities = ODataField('SalesOpportunities')
+    warehouses = ODataField('Warehouses')
+    profit_centers = ODataField('ProfitCenters')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    customer_equipment_cards = ODataField('CustomerEquipmentCards')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    service_calls = ODataField('ServiceCalls')
+    items = ODataField('Items')
+    employee_role_setup = ODataField('EmployeeRoleSetup')
+    department2 = ODataField('Department2')
+    branch2 = ODataField('Branch2')
+    country = ODataField('Country')
+    user = ODataField('User')
+    sales_person = ODataField('SalesPerson')
+    employee_status = ODataField('EmployeeStatus')
+    termination_reason = ODataField('TerminationReason')
+    bank = ODataField('Bank')
+    employee_position = ODataField('EmployeePosition')
+    profit_center = ODataField('ProfitCenter')
+    employee_id_type = ODataField('EmployeeIDType')
+    business_place = ODataField('BusinessPlace')
+    business_partner = ODataField('BusinessPartner')
+    gender2 = ODataField('Gender2')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    blanket_agreements = ODataField('BlanketAgreements')
+    invoices = ODataField('Invoices')
+    campaigns = ODataField('Campaigns')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    project_management_time_sheet = ODataField('ProjectManagementTimeSheet')
+    purchase_returns = ODataField('PurchaseReturns')
+    activities = ODataField('Activities')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    project_managements = ODataField('ProjectManagements')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class EmployeePositionFields(FieldEnum):
+    position_id = ODataField('PositionID')
+    name = ODataField('Name')
+    description = ODataField('Description')
+    employees_info = ODataField('EmployeesInfo')
+
+class EmployeeRoleSetupFields(FieldEnum):
+    type_id = ODataField('TypeID')
+    name = ODataField('Name')
+    description = ODataField('Description')
+    employees_info = ODataField('EmployeesInfo')
+
+class EmployeeStatusFields(FieldEnum):
+    status_id = ODataField('StatusId')
+    name = ODataField('Name')
+    description = ODataField('Description')
+    employees_info = ODataField('EmployeesInfo')
+
+class EmployeeTransferFields(FieldEnum):
+    transfer_id = ODataField('TransferID')
+    trans_start_date = ODataField('TransStartDate')
+    trans_start_time = ODataField('TransStartTime')
+    trans_end_date = ODataField('TransEndDate')
+    trans_end_time = ODataField('TransEndTime')
+    status = ODataField('Status')
+    comment = ODataField('Comment')
+    employee_transfer_details = ODataField('EmployeeTransferDetails')
+
+class EmploymentCategoryFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+
+class EnhancedDiscountGroupFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    type = ODataField('Type')
+    object_code = ODataField('ObjectCode')
+    discount_relations = ODataField('DiscountRelations')
+    active = ODataField('Active')
+    valid_from = ODataField('ValidFrom')
+    valid_to = ODataField('ValidTo')
+    discount_group_line_collection = ODataField('DiscountGroupLineCollection')
+
+class ExceptionalEventFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+
+class ExpenseTypeDataFields(FieldEnum):
+    expense_type = ODataField('ExpenseType')
+    expense_name = ODataField('ExpenseName')
+    expense_account = ODataField('ExpenseAccount')
+    paid_by_company = ODataField('PaidByCompany')
+    vat_group = ODataField('VatGroup')
+    chart_of_account = ODataField('ChartOfAccount')
+    sales_tax_code = ODataField('SalesTaxCode')
+
+class ExportDeterminationFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    priority = ODataField('Priority')
+    business_partner = ODataField('BusinessPartner')
+    country = ODataField('Country')
+    series = ODataField('Series')
+    document_type = ODataField('DocumentType')
+    export_format = ODataField('ExportFormat')
+    path_file_name = ODataField('PathFileName')
+    document_sub_type = ODataField('DocumentSubType')
+    version_number = ODataField('VersionNumber')
+    business_partner2 = ODataField('BusinessPartner2')
+    country2 = ODataField('Country2')
+    electronic_file_format = ODataField('ElectronicFileFormat')
+
+class ExtendedTranslationFields(FieldEnum):
+    doc_entry = ODataField('DocEntry')
+    category = ODataField('Category')
+    id = ODataField('ID')
+    secondary_id = ODataField('SecondaryID')
+    source_language = ODataField('SourceLanguage')
+    update_date = ODataField('UpdateDate')
+    create_date = ODataField('CreateDate')
+    extended_translation_item_lines = ODataField('ExtendedTranslation_ItemLines')
+
+class FAAccountDeterminationFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    asset_balance_sheet_account = ODataField('AssetBalanceSheetAccount')
+    clearing_account_acquisition = ODataField('ClearingAccountAcquisition')
+    revaluation_reserve_account = ODataField('RevaluationReserveAccount')
+    revaluation_reserve_clearing = ODataField('RevaluationReserveClearing')
+    ordinary_depreciation = ODataField('OrdinaryDepreciation')
+    accumulated_ordinary_depr = ODataField('AccumulatedOrdinaryDepr')
+    unplanned_depreciation = ODataField('UnplannedDepreciation')
+    accumulated_unplanned_depr = ODataField('AccumulatedUnplannedDepr')
+    special_depreciation = ODataField('SpecialDepreciation')
+    accumulated_special_depr = ODataField('AccumulatedSpecialDepr')
+    revenuefrom_asset_sales_net = ODataField('RevenuefromAssetSalesNet')
+    retirementwith_expense_net = ODataField('RetirementwithExpenseNet')
+    retirementwith_revenue_net = ODataField('RetirementwithRevenueNet')
+    leavewith_expense_nbv_gross = ODataField('LeavewithExpenseNBVGross')
+    leavewith_revenue_nbv_gross = ODataField('LeavewithRevenueNBVGross')
+    revenue_accountfor_retirement = ODataField('RevenueAccountforRetirement')
+    revenue_clearing_account = ODataField('RevenueClearingAccount')
+    revaluation_account = ODataField('RevaluationAccount')
+    revaluation_loss_acct = ODataField('RevaluationLossAcct')
+    chart_of_account = ODataField('ChartOfAccount')
+
+class FactoringIndicatorFields(FieldEnum):
+    indicator_code = ODataField('IndicatorCode')
+    indicator_name = ODataField('IndicatorName')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    journal_entries = ODataField('JournalEntries')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class FinancialYearFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    description = ODataField('Description')
+    start_date = ODataField('StartDate')
+    end_date = ODataField('EndDate')
+    assess_year = ODataField('AssessYear')
+    tcs_accumulation_base = ODataField('TCSAccumulationBase')
+
+class FiscalPrinterFields(FieldEnum):
+    equipment_no = ODataField('EquipmentNo')
+    model = ODataField('Model')
+    manufacturer_serial_n = ODataField('ManufacturerSerialN')
+    register_no = ODataField('RegisterNo')
+    fiscal_document_model = ODataField('FiscalDocumentModel')
+    fiscal_printers_params = ODataField('FiscalPrintersParams')
+    nf_model = ODataField('NFModel')
+    pos_daily_summary = ODataField('POSDailySummary')
+
+class FormattedSearchFields(FieldEnum):
+    form_id = ODataField('FormID')
+    item_id = ODataField('ItemID')
+    column_id = ODataField('ColumnID')
+    action = ODataField('Action')
+    query_id = ODataField('QueryID')
+    index = ODataField('Index')
+    refresh = ODataField('Refresh')
+    field_id = ODataField('FieldID')
+    force_refresh = ODataField('ForceRefresh')
+    by_field = ODataField('ByField')
+    by_field_ex = ODataField('ByFieldEx')
+    user_valid_values = ODataField('UserValidValues')
+    field_i_ds = ODataField('FieldIDs')
+
+class Forms1099Fields(FieldEnum):
+    form_code = ODataField('FormCode')
+    form1099 = ODataField('Form1099')
+    boxes1099 = ODataField('Boxes1099')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class GLAccountAdvancedRuleFields(FieldEnum):
+    absolute_entry = ODataField('AbsoluteEntry')
+    period = ODataField('Period')
+    beginningof_financial_year = ODataField('BeginningofFinancialYear')
+    financial_year = ODataField('FinancialYear')
+    period_name = ODataField('PeriodName')
+    sub_period_type = ODataField('SubPeriodType')
+    number_of_periods = ODataField('NumberOfPeriods')
+    from_posting_date = ODataField('FromPostingDate')
+    to_posting_date = ODataField('ToPostingDate')
+    from_due_date = ODataField('FromDueDate')
+    to_due_date = ODataField('ToDueDate')
+    from_document_date = ODataField('FromDocumentDate')
+    to_document_date = ODataField('ToDocumentDate')
+    item_code = ODataField('ItemCode')
+    item_group = ODataField('ItemGroup')
+    warehouse = ODataField('Warehouse')
+    bp_group = ODataField('BPGroup')
+    federal_tax_id = ODataField('FederalTaxID')
+    ship_to_country = ODataField('ShipToCountry')
+    ship_to_state = ODataField('ShipToState')
+    description = ODataField('Description')
+    code = ODataField('Code')
+    get_gl_account_by = ODataField('GetGLAccountBy')
+    from_date = ODataField('FromDate')
+    to_date = ODataField('ToDate')
+    expenses_account = ODataField('ExpensesAccount')
+    revenues_account = ODataField('RevenuesAccount')
+    exempt_income_acc = ODataField('ExemptIncomeAcc')
+    inventory_account = ODataField('InventoryAccount')
+    cost_account = ODataField('CostAccount')
+    transfer_account = ODataField('TransferAccount')
+    varience_account = ODataField('VarienceAccount')
+    price_difference_acc = ODataField('PriceDifferenceAcc')
+    negative_inventory_adjustment_account = ODataField('NegativeInventoryAdjustmentAccount')
+    decreasing_account = ODataField('DecreasingAccount')
+    increasing_account = ODataField('IncreasingAccount')
+    returning_account = ODataField('ReturningAccount')
+    eu_expenses_account = ODataField('EUExpensesAccount')
+    foreign_revenue_acc = ODataField('ForeignRevenueAcc')
+    foreign_expens_acc = ODataField('ForeignExpensAcc')
+    purchase_acct = ODataField('PurchaseAcct')
+    pa_return_acct = ODataField('PAReturnAcct')
+    purchase_offset_acct = ODataField('PurchaseOffsetAcct')
+    exchange_rate_differences_acct = ODataField('ExchangeRateDifferencesAcct')
+    goods_clearing_acct = ODataField('GoodsClearingAcct')
+    gl_decrease_acct = ODataField('GLDecreaseAcct')
+    gl_increase_acct = ODataField('GLIncreaseAcct')
+    wip_account = ODataField('WipAccount')
+    wip_variance_account = ODataField('WipVarianceAccount')
+    wip_offset_profit_and_loss_account = ODataField('WipOffsetProfitAndLossAccount')
+    inventory_offset_profit_and_loss_account = ODataField('InventoryOffsetProfitAndLossAccount')
+    stock_inflation_adjust_account = ODataField('StockInflationAdjustAccount')
+    stock_inflation_offset_account = ODataField('StockInflationOffsetAccount')
+    cost_inflation_account = ODataField('CostInflationAccount')
+    cost_inflation_offset_account = ODataField('CostInflationOffsetAccount')
+    expense_clearing_act = ODataField('ExpenseClearingAct')
+    expense_offsetting_account = ODataField('ExpenseOffsettingAccount')
+    stock_in_transit_account = ODataField('StockInTransitAccount')
+    shipped_goods_account = ODataField('ShippedGoodsAccount')
+    vat_in_revenue_account = ODataField('VATInRevenueAccount')
+    sales_credit_acc = ODataField('SalesCreditAcc')
+    purchase_credit_acc = ODataField('PurchaseCreditAcc')
+    exempted_credits = ODataField('ExemptedCredits')
+    sales_credit_foreign_acc = ODataField('SalesCreditForeignAcc')
+    foreign_purchase_credit_acc = ODataField('ForeignPurchaseCreditAcc')
+    sales_credit_eu_acc = ODataField('SalesCreditEUAcc')
+    eu_purchase_credit_acc = ODataField('EUPurchaseCreditAcc')
+    purchase_balance_account = ODataField('PurchaseBalanceAccount')
+    wh_incoming_cenvat_account = ODataField('WHIncomingCenvatAccount')
+    wh_outgoing_cenvat_account = ODataField('WHOutgoingCenvatAccount')
+    is_active = ODataField('IsActive')
+    business_partner_type = ODataField('BusinessPartnerType')
+    vat_group = ODataField('VATGroup')
+    bp_code = ODataField('BPCode')
+    usage = ODataField('Usage')
+    udf1 = ODataField('UDF1')
+    udf2 = ODataField('UDF2')
+    udf3 = ODataField('UDF3')
+    udf4 = ODataField('UDF4')
+    udf5 = ODataField('UDF5')
+    item = ODataField('Item')
+    item_groups = ODataField('ItemGroups')
+    warehouse2 = ODataField('Warehouse2')
+    business_partner_group = ODataField('BusinessPartnerGroup')
+    country = ODataField('Country')
+    chart_of_account = ODataField('ChartOfAccount')
+    business_partner = ODataField('BusinessPartner')
+    nota_fiscal_usage = ODataField('NotaFiscalUsage')
+
+class GenderFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    employees_info = ODataField('EmployeesInfo')
+
+class GovPayCodeFields(FieldEnum):
+    abs_id = ODataField('AbsId')
+    code = ODataField('Code')
+    descr = ODataField('Descr')
+    state_tax = ODataField('StateTax')
+    prdcity = ODataField('Prdcity')
+    gov_pay_code_authorities = ODataField('GovPayCodeAuthorities')
+    nf_tax_categories = ODataField('NFTaxCategories')
+
+class HolidayFields(FieldEnum):
+    holiday_code = ODataField('HolidayCode')
+    weekend_from = ODataField('WeekendFrom')
+    weekend_to = ODataField('WeekendTO')
+    valid_for_one_year_only = ODataField('ValidForOneYearOnly')
+    set_weekends_as_work_days = ODataField('SetWeekendsAsWorkDays')
+    week_no_rule = ODataField('WeekNoRule')
+    holiday_dates = ODataField('HolidayDates')
+
+class HouseBankAccountFields(FieldEnum):
+    bank_code = ODataField('BankCode')
+    acc_no = ODataField('AccNo')
+    branch = ODataField('Branch')
+    next_check_no = ODataField('NextCheckNo')
+    gl_account = ODataField('GLAccount')
+    dsc1_street_alias = ODataField('DSC1_STREET_ALIAS')
+    block = ODataField('Block')
+    zip_code = ODataField('ZipCode')
+    city = ODataField('City')
+    county = ODataField('County')
+    country = ODataField('Country')
+    state = ODataField('State')
+    bisr = ODataField('BISR')
+    control_key = ODataField('ControlKey')
+    user_no1 = ODataField('UserNo1')
+    user_no2 = ODataField('UserNo2')
+    user_no3 = ODataField('UserNo3')
+    user_no4 = ODataField('UserNo4')
+    iban = ODataField('IBAN')
+    debtof_discounted_billof_exc = ODataField('DebtofDiscountedBillofExc')
+    tolerance_days = ODataField('ToleranceDays')
+    min_amountof_billof_exchang = ODataField('MinAmountofBillofExchang')
+    max_amountof_billof_exchan = ODataField('MaxAmountofBillofExchan')
+    discount_limit = ODataField('DiscountLimit')
+    days_in_advance = ODataField('DaysInAdvance')
+    bankon_collection = ODataField('BankonCollection')
+    bankon_discounted = ODataField('BankonDiscounted')
+    gl_interim_account = ODataField('GLInterimAccount')
+    absolute_entry = ODataField('AbsoluteEntry')
+    bank_key = ODataField('BankKey')
+    lock_checks_printing = ODataField('LockChecksPrinting')
+    template_name = ODataField('TemplateName')
+    maximum_lines = ODataField('MaximumLines')
+    print_on = ODataField('PrintOn')
+    customer_id_number = ODataField('CustomerIdNumber')
+    isr_biller_id = ODataField('ISRBillerID')
+    isr_type = ODataField('ISRType')
+    account_check_digit = ODataField('AccountCheckDigit')
+    our_number = ODataField('OurNumber')
+    agreement_number = ODataField('AgreementNumber')
+    address_type = ODataField('AddressType')
+    street_no = ODataField('StreetNo')
+    building = ODataField('Building')
+    incoming_payment_series = ODataField('IncomingPaymentSeries')
+    outgoing_payment_series = ODataField('OutgoingPaymentSeries')
+    journal_entry_series = ODataField('JournalEntrySeries')
+    import_file_name = ODataField('ImportFileName')
+    account_name = ODataField('AccountName')
+    bic_swift_code = ODataField('BICSwiftCode')
+    fine_account = ODataField('FineAccount')
+    interest_account = ODataField('InterestAccount')
+    discount_account = ODataField('DiscountAccount')
+    service_fee_account = ODataField('ServiceFeeAccount')
+    iof_tax_account = ODataField('IOFTaxAccount')
+    other_expenses_account = ODataField('OtherExpensesAccount')
+    other_incomes_account = ODataField('OtherIncomesAccount')
+    retorno_file_name = ODataField('RetornoFileName')
+    branch_check_digit = ODataField('BranchCheckDigit')
+    collection_code = ODataField('CollectionCode')
+    file_seq_next_number = ODataField('FileSeqNextNumber')
+    no_validation_for_starting_ending_bal = ODataField('NoValidationForStartingEndingBal')
+    e_check = ODataField('ECheck')
+    wizard_payment_methods = ODataField('WizardPaymentMethods')
+    bank_statements = ODataField('BankStatements')
+    chart_of_account = ODataField('ChartOfAccount')
+    country2 = ODataField('Country2')
+    bank = ODataField('Bank')
+
+class IdentificationCodeFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    codelist = ODataField('Codelist')
+    code = ODataField('Code')
+    description = ODataField('Description')
+    schema_code = ODataField('SchemaCode')
+    schema_desc = ODataField('SchemaDesc')
+    items = ODataField('Items')
+
+class ImportDeterminationFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    line_number = ODataField('LineNumber')
+    object_type = ODataField('ObjectType')
+    object_type_x_path = ODataField('ObjectTypeXPath')
+    field_type = ODataField('FieldType')
+    field_type_x_path = ODataField('FieldTypeXPath')
+    import_format = ODataField('ImportFormat')
+    default_digital_series = ODataField('DefaultDigitalSeries')
+    version_number = ODataField('VersionNumber')
+    electronic_file_format = ODataField('ElectronicFileFormat')
+
+class IndiaHsnFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    chapter = ODataField('Chapter')
+    heading = ODataField('Heading')
+    sub_heading = ODataField('SubHeading')
+    description = ODataField('Description')
+    chapter_id = ODataField('ChapterID')
+    items = ODataField('Items')
+
+class IndiaSacCodeFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    service_code = ODataField('ServiceCode')
+    service_name = ODataField('ServiceName')
+    items = ODataField('Items')
+
+class IndustryFields(FieldEnum):
+    industry_description = ODataField('IndustryDescription')
+    industry_name = ODataField('IndustryName')
+    industry_code = ODataField('IndustryCode')
+    sales_opportunities = ODataField('SalesOpportunities')
+    business_partners = ODataField('BusinessPartners')
+    project_managements = ODataField('ProjectManagements')
+
+class IntegrationPackageConfigureFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    name = ODataField('Name')
+    is_enable = ODataField('IsEnable')
+
+class InternalReconciliationFields(FieldEnum):
+    recon_num = ODataField('ReconNum')
+    recon_date = ODataField('ReconDate')
+    card_or_account = ODataField('CardOrAccount')
+    recon_type = ODataField('ReconType')
+    total = ODataField('Total')
+    cancel_abs = ODataField('CancelAbs')
+    internal_reconciliation_rows = ODataField('InternalReconciliationRows')
+    electronic_protocols = ODataField('ElectronicProtocols')
+
+class IntrastatConfigurationFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    conf_type = ODataField('ConfType')
+    code = ODataField('Code')
+    descr = ODataField('Descr')
+    prcst_val = ODataField('PrcstVal')
+    supp_unit = ODataField('SuppUnit')
+    export = ODataField('Export')
+    import_ = ODataField('Import')
+    stat_code = ODataField('StatCode')
+    date_from = ODataField('DateFrom')
+    date_to = ODataField('DateTo')
+    country = ODataField('Country')
+    conf_id = ODataField('ConfID')
+    triang_deal = ODataField('TriangDeal')
+
+class InventoryCyclesFields(FieldEnum):
+    cycle_code = ODataField('CycleCode')
+    cycle_name = ODataField('CycleName')
+    frequency = ODataField('Frequency')
+    day = ODataField('Day')
+    hour = ODataField('Hour')
+    next_counting_date = ODataField('NextCountingDate')
+    interval = ODataField('Interval')
+    sunday = ODataField('Sunday')
+    monday = ODataField('Monday')
+    tuesday = ODataField('Tuesday')
+    wednesday = ODataField('Wednesday')
+    thursday = ODataField('Thursday')
+    friday = ODataField('Friday')
+    saturday = ODataField('Saturday')
+    repeat_option = ODataField('RepeatOption')
+    recurrence_sequence_specifier = ODataField('RecurrenceSequenceSpecifier')
+    recurrence_day_in_month = ODataField('RecurrenceDayInMonth')
+    recurrence_month = ODataField('RecurrenceMonth')
+    recurrence_day_of_week = ODataField('RecurrenceDayOfWeek')
+    end_type = ODataField('endType')
+    max_occurrence = ODataField('MaxOccurrence')
+    series_end_date = ODataField('SeriesEndDate')
+    item_groups = ODataField('ItemGroups')
+    items = ODataField('Items')
+
+class KPIFields(FieldEnum):
+    kpi_code = ODataField('KPICode')
+    kpi_name = ODataField('KPIName')
+    kpi_type = ODataField('KPIType')
+    number_of_columns = ODataField('NumberOfColumns')
+    kpi_item_lines = ODataField('KPI_ItemLines')
+
+class KnowledgeBaseSolutionFields(FieldEnum):
+    item_code = ODataField('ItemCode')
+    status = ODataField('Status')
+    owner = ODataField('Owner')
+    created_by = ODataField('CreatedBy')
+    creation_date = ODataField('CreationDate')
+    last_updated_by = ODataField('LastUpdatedBy')
+    last_update_date = ODataField('LastUpdateDate')
+    solution = ODataField('Solution')
+    symptom = ODataField('Symptom')
+    cause = ODataField('Cause')
+    description = ODataField('Description')
+    solution_code = ODataField('SolutionCode')
+    attachment_entry = ODataField('AttachmentEntry')
+    item = ODataField('Item')
+    service_call_solution_status = ODataField('ServiceCallSolutionStatus')
+    user = ODataField('User')
+
+class LegalDataFields(FieldEnum):
+    doc_entry = ODataField('DocEntry')
+    source_object_type = ODataField('SourceObjectType')
+    source_object_entry = ODataField('SourceObjectEntry')
+    date_of_printing = ODataField('DateOfPrinting')
+    time_of_printing = ODataField('TimeOfPrinting')
+    printer_brand = ODataField('PrinterBrand')
+    printer_type = ODataField('PrinterType')
+    printer_model = ODataField('PrinterModel')
+    printer_firmware_version = ODataField('PrinterFirmwareVersion')
+    printer_dll_version = ODataField('PrinterDllVersion')
+    fiscal_series = ODataField('FiscalSeries')
+    fiscal_number = ODataField('FiscalNumber')
+    document_number = ODataField('DocumentNumber')
+    fiscal_user_id = ODataField('FiscalUserID')
+    legal_data_detail_collection = ODataField('LegalDataDetailCollection')
+    user = ODataField('User')
+
+class LengthMeasureFields(FieldEnum):
+    unit_code = ODataField('UnitCode')
+    unit_display = ODataField('UnitDisplay')
+    unit_name = ODataField('UnitName')
+    unit_codefor_quantity_display = ODataField('UnitCodeforQuantityDisplay')
+    unit_lengthinmm = ODataField('UnitLengthinmm')
+
+class LocalEraFields(FieldEnum):
+    era_name = ODataField('EraName')
+    start_date = ODataField('StartDate')
+    code = ODataField('Code')
+
+class ManufacturerFields(FieldEnum):
+    code = ODataField('Code')
+    manufacturer_name = ODataField('ManufacturerName')
+    items = ODataField('Items')
+
+class MaterialGroupFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    material_group_code = ODataField('MaterialGroupCode')
+    description = ODataField('Description')
+    items = ODataField('Items')
+
+class MessageFields(FieldEnum):
+    code = ODataField('Code')
+    user = ODataField('User')
+    priority = ODataField('Priority')
+    subject = ODataField('Subject')
+    text = ODataField('Text')
+    attachment = ODataField('Attachment')
+    message_data_columns = ODataField('MessageDataColumns')
+    recipient_collection = ODataField('RecipientCollection')
+
+class MobileAddOnSettingFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    url = ODataField('Url')
+    type = ODataField('Type')
+    provider = ODataField('Provider')
+    view_style = ODataField('ViewStyle')
+    logon_method = ODataField('LogonMethod')
+    enable = ODataField('Enable')
+    b1_mobile_app = ODataField('B1MobileApp')
+    b1_sales_app = ODataField('B1SalesApp')
+    b1_service_app = ODataField('B1ServiceApp')
+
+class MultiLanguageTranslationFields(FieldEnum):
+    numerator = ODataField('Numerator')
+    table_name = ODataField('TableName')
+    field_alias = ODataField('FieldAlias')
+    primary_keyofobject = ODataField('PrimaryKeyofobject')
+    translations_in_user_languages = ODataField('TranslationsInUserLanguages')
+
+class NCMCodeSetupFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    ncm_code = ODataField('NCMCode')
+    description = ODataField('Description')
+    group_code = ODataField('GroupCode')
+    items = ODataField('Items')
+    dnf_code_setup = ODataField('DNFCodeSetup')
+
+class NFModelFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    nfm_name = ODataField('NFMName')
+    nfm_description = ODataField('NFMDescription')
+    nfm_code = ODataField('NFMCode')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    fiscal_printer = ODataField('FiscalPrinter')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class NFTaxCategoryFields(FieldEnum):
+    abs_id = ODataField('AbsId')
+    code = ODataField('Code')
+    locked = ODataField('Locked')
+    gpc_id = ODataField('GPCId')
+    gov_pay_code = ODataField('GovPayCode')
+    nota_fiscal_cst = ODataField('NotaFiscalCST')
+
+class NatureOfAssesseeFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    description = ODataField('Description')
+    assessee_type = ODataField('AssesseeType')
+    withholding_tax_codes = ODataField('WithholdingTaxCodes')
+
+class NotaFiscalCFOPFields(FieldEnum):
+    id = ODataField('ID')
+    description = ODataField('Description')
+    code = ODataField('Code')
+    application = ODataField('Application')
+    nota_fiscal_usage = ODataField('NotaFiscalUsage')
+
+class NotaFiscalCSTFields(FieldEnum):
+    id = ODataField('ID')
+    code = ODataField('Code')
+    situation = ODataField('Situation')
+    tax_category = ODataField('TaxCategory')
+    cst_code_outgoing = ODataField('CSTCodeOutgoing')
+    description_outgoing = ODataField('DescriptionOutgoing')
+    withholding_tax_codes = ODataField('WithholdingTaxCodes')
+    nf_tax_category = ODataField('NFTaxCategory')
+
+class NotaFiscalUsageFields(FieldEnum):
+    id = ODataField('ID')
+    usage = ODataField('Usage')
+    incoming_in_state_cfop_code = ODataField('IncomingInStateCFOPCode')
+    incoming_out_state_cfop_code = ODataField('IncomingOutStateCFOPCode')
+    incoming_import_cfop_code = ODataField('IncomingImportCFOPCode')
+    outgoing_in_state_cfop_code = ODataField('OutgoingInStateCFOPCode')
+    outgoing_out_state_cfop_code = ODataField('OutgoingOutStateCFOPCode')
+    outgoing_export_cfop_code = ODataField('OutgoingExportCFOPCode')
+    description = ODataField('Description')
+    gl_account_advanced_rules = ODataField('GLAccountAdvancedRules')
+    depreciation_areas = ODataField('DepreciationAreas')
+    nota_fiscal_cfop = ODataField('NotaFiscalCFOP')
+
+class OccurenceCodeFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    description = ODataField('Description')
+    note = ODataField('Note')
+    requested_boe_status = ODataField('RequestedBoeStatus')
+    is_movement = ODataField('IsMovement')
+
+class PM_ProjectDocumentDataFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    owner = ODataField('Owner')
+    project_name = ODataField('ProjectName')
+    start_date = ODataField('StartDate')
+    finished_percent = ODataField('FinishedPercent')
+    doc_num = ODataField('DocNum')
+    series = ODataField('Series')
+    project_type = ODataField('ProjectType')
+    business_partner = ODataField('BusinessPartner')
+    business_partner_name = ODataField('BusinessPartnerName')
+    contact_person = ODataField('ContactPerson')
+    territory = ODataField('Territory')
+    sales_employee = ODataField('SalesEmployee')
+    allow_subprojects = ODataField('AllowSubprojects')
+    project_status = ODataField('ProjectStatus')
+    due_date = ODataField('DueDate')
+    closing_date = ODataField('ClosingDate')
+    financial_project = ODataField('FinancialProject')
+    risk_level = ODataField('RiskLevel')
+    industry = ODataField('Industry')
+    reason = ODataField('Reason')
+    attachment_entry = ODataField('AttachmentEntry')
+    pm_stages_collection = ODataField('PM_StagesCollection')
+    pm_open_issues_collection = ODataField('PM_OpenIssuesCollection')
+    pm_documents_collection = ODataField('PM_DocumentsCollection')
+    pm_activities_collection = ODataField('PM_ActivitiesCollection')
+    pm_work_orders_collection = ODataField('PM_WorkOrdersCollection')
+    pm_summary_data = ODataField('PM_SummaryData')
+    pm_doc_attachements = ODataField('PM_DocAttachements')
+    pm_stage_attachements = ODataField('PM_StageAttachements')
+    employee_info = ODataField('EmployeeInfo')
+    business_partner2 = ODataField('BusinessPartner2')
+    territory2 = ODataField('Territory2')
+    sales_person = ODataField('SalesPerson')
+    project = ODataField('Project')
+    industry2 = ODataField('Industry2')
+    attachments2 = ODataField('Attachments2')
+
+class PM_TimeSheetDataFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    doc_number = ODataField('DocNumber')
+    time_sheet_type = ODataField('TimeSheetType')
+    user_id = ODataField('UserID')
+    last_name = ODataField('LastName')
+    first_name = ODataField('FirstName')
+    department = ODataField('Department')
+    owner_code = ODataField('OwnerCode')
+    date_from = ODataField('DateFrom')
+    date_to = ODataField('DateTo')
+    sap_passport = ODataField('SAPPassport')
+    attachment_entry = ODataField('AttachmentEntry')
+    user_code = ODataField('UserCode')
+    pm_time_sheet_line_data_collection = ODataField('PM_TimeSheetLineDataCollection')
+    employee_info = ODataField('EmployeeInfo')
+    attachments2 = ODataField('Attachments2')
+
+class POSDailySummaryFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    date = ODataField('Date')
+    equipment_no = ODataField('EquipmentNo')
+    counter_position = ODataField('CounterPosition')
+    reset_counter_position = ODataField('ResetCounterPosition')
+    operation_counter = ODataField('OperationCounter')
+    total = ODataField('Total')
+    gross_sales = ODataField('GrossSales')
+    pis_total = ODataField('PISTotal')
+    cofins_total = ODataField('COFINSTotal')
+    pos_totalizer_collection = ODataField('POSTotalizerCollection')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    fiscal_printer = ODataField('FiscalPrinter')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class PackagesTypeFields(FieldEnum):
+    type = ODataField('Type')
+    code = ODataField('Code')
+    length1 = ODataField('Length1')
+    length1_unit = ODataField('Length1Unit')
+    length2 = ODataField('Length2')
+    length2_unit = ODataField('Length2Unit')
+    width1 = ODataField('Width1')
+    width1_unit = ODataField('Width1Unit')
+    width2 = ODataField('Width2')
+    width2_unit = ODataField('Width2Unit')
+    height1 = ODataField('Height1')
+    height1_unit = ODataField('Height1Unit')
+    height2 = ODataField('Height2')
+    height2_unit = ODataField('Height2Unit')
+    volume = ODataField('Volume')
+    volume_unit = ODataField('VolumeUnit')
+    weight1 = ODataField('Weight1')
+    weight1_unit = ODataField('Weight1Unit')
+    weight2 = ODataField('Weight2')
+    weight2_unit = ODataField('Weight2Unit')
+
+class PartnersSetupFields(FieldEnum):
+    partner_id = ODataField('PartnerID')
+    name = ODataField('Name')
+    default_relationship = ODataField('DefaultRelationship')
+    related_bp = ODataField('RelatedBP')
+    details = ODataField('Details')
+    relationship = ODataField('Relationship')
+    business_partner = ODataField('BusinessPartner')
+
+class PaymentFields(FieldEnum):
+    doc_num = ODataField('DocNum')
+    doc_type = ODataField('DocType')
+    hand_written = ODataField('HandWritten')
+    printed = ODataField('Printed')
+    doc_date = ODataField('DocDate')
+    card_code = ODataField('CardCode')
+    card_name = ODataField('CardName')
+    address = ODataField('Address')
+    cash_account = ODataField('CashAccount')
+    doc_currency = ODataField('DocCurrency')
+    cash_sum = ODataField('CashSum')
+    check_account = ODataField('CheckAccount')
+    transfer_account = ODataField('TransferAccount')
+    transfer_sum = ODataField('TransferSum')
+    transfer_date = ODataField('TransferDate')
+    transfer_reference = ODataField('TransferReference')
+    local_currency = ODataField('LocalCurrency')
+    doc_rate = ODataField('DocRate')
+    reference1 = ODataField('Reference1')
+    reference2 = ODataField('Reference2')
+    counter_reference = ODataField('CounterReference')
+    payment_reference_no = ODataField('PaymentReferenceNo')
+    remarks = ODataField('Remarks')
+    journal_remarks = ODataField('JournalRemarks')
+    split_transaction = ODataField('SplitTransaction')
+    contact_person_code = ODataField('ContactPersonCode')
+    apply_vat = ODataField('ApplyVAT')
+    tax_date = ODataField('TaxDate')
+    series = ODataField('Series')
+    bank_code = ODataField('BankCode')
+    bank_account = ODataField('BankAccount')
+    discount_percent = ODataField('DiscountPercent')
+    project_code = ODataField('ProjectCode')
+    currency_is_local = ODataField('CurrencyIsLocal')
+    deduction_percent = ODataField('DeductionPercent')
+    deduction_sum = ODataField('DeductionSum')
+    cash_sum_fc = ODataField('CashSumFC')
+    cash_sum_sys = ODataField('CashSumSys')
+    boe_account = ODataField('BoeAccount')
+    bill_of_exchange_amount = ODataField('BillOfExchangeAmount')
+    billof_exchange_status = ODataField('BillofExchangeStatus')
+    bill_of_exchange_amount_fc = ODataField('BillOfExchangeAmountFC')
+    bill_of_exchange_amount_sc = ODataField('BillOfExchangeAmountSC')
+    bill_of_exchange_agent = ODataField('BillOfExchangeAgent')
+    wt_code = ODataField('WTCode')
+    wt_amount = ODataField('WTAmount')
+    wt_amount_fc = ODataField('WTAmountFC')
+    wt_amount_sc = ODataField('WTAmountSC')
+    wt_account = ODataField('WTAccount')
+    wt_taxable_amount = ODataField('WTTaxableAmount')
+    proforma = ODataField('Proforma')
+    pay_to_bank_code = ODataField('PayToBankCode')
+    pay_to_bank_branch = ODataField('PayToBankBranch')
+    pay_to_bank_account_no = ODataField('PayToBankAccountNo')
+    pay_to_code = ODataField('PayToCode')
+    pay_to_bank_country = ODataField('PayToBankCountry')
+    is_pay_to_bank = ODataField('IsPayToBank')
+    doc_entry = ODataField('DocEntry')
+    payment_priority = ODataField('PaymentPriority')
+    tax_group = ODataField('TaxGroup')
+    bank_charge_amount = ODataField('BankChargeAmount')
+    bank_charge_amount_in_fc = ODataField('BankChargeAmountInFC')
+    bank_charge_amount_in_sc = ODataField('BankChargeAmountInSC')
+    under_overpaymentdifference = ODataField('UnderOverpaymentdifference')
+    under_overpaymentdiff_sc = ODataField('UnderOverpaymentdiffSC')
+    wt_base_sum = ODataField('WtBaseSum')
+    wt_base_sum_fc = ODataField('WtBaseSumFC')
+    wt_base_sum_sc = ODataField('WtBaseSumSC')
+    vat_date = ODataField('VatDate')
+    transaction_code = ODataField('TransactionCode')
+    payment_type = ODataField('PaymentType')
+    transfer_real_amount = ODataField('TransferRealAmount')
+    doc_object_code = ODataField('DocObjectCode')
+    doc_typte = ODataField('DocTypte')
+    due_date = ODataField('DueDate')
+    location_code = ODataField('LocationCode')
+    cancelled = ODataField('Cancelled')
+    cancel_status = ODataField('CancelStatus')
+    control_account = ODataField('ControlAccount')
+    under_overpaymentdiff_fc = ODataField('UnderOverpaymentdiffFC')
+    authorization_status = ODataField('AuthorizationStatus')
+    bplid = ODataField('BPLID')
+    bpl_name = ODataField('BPLName')
+    vat_reg_num = ODataField('VATRegNum')
+    blanket_agreement = ODataField('BlanketAgreement')
+    payment_by_wt_certif = ODataField('PaymentByWTCertif')
+    cig = ODataField('Cig')
+    cup = ODataField('Cup')
+    attachment_entry = ODataField('AttachmentEntry')
+    signature_input_message = ODataField('SignatureInputMessage')
+    signature_digest = ODataField('SignatureDigest')
+    certification_number = ODataField('CertificationNumber')
+    private_key_version = ODataField('PrivateKeyVersion')
+    e_doc_export_format = ODataField('EDocExportFormat')
+    elec_comm_status = ODataField('ElecCommStatus')
+    elec_comm_message = ODataField('ElecCommMessage')
+    split_vendor_credit_row = ODataField('SplitVendorCreditRow')
+    digital_payments = ODataField('DigitalPayments')
+    allocation_number_il = ODataField('AllocationNumberIL')
+    payment_checks = ODataField('PaymentChecks')
+    payment_invoices = ODataField('PaymentInvoices')
+    payment_credit_cards = ODataField('PaymentCreditCards')
+    payment_accounts = ODataField('PaymentAccounts')
+    payment_document_references_collection = ODataField('PaymentDocumentReferencesCollection')
+    bill_of_exchange = ODataField('BillOfExchange')
+    withholding_tax_certificates_collection = ODataField('WithholdingTaxCertificatesCollection')
+    electronic_protocols = ODataField('ElectronicProtocols')
+    cash_flow_assignments = ODataField('CashFlowAssignments')
+    payments_approval_requests = ODataField('Payments_ApprovalRequests')
+    withholding_tax_data_wtx_collection = ODataField('WithholdingTaxDataWTXCollection')
+    business_partner = ODataField('BusinessPartner')
+    chart_of_account = ODataField('ChartOfAccount')
+    currency = ODataField('Currency')
+    project = ODataField('Project')
+    withholding_tax_code = ODataField('WithholdingTaxCode')
+    country = ODataField('Country')
+    vat_group = ODataField('VatGroup')
+    transaction_code2 = ODataField('TransactionCode2')
+    warehouse_location = ODataField('WarehouseLocation')
+    business_place = ODataField('BusinessPlace')
+    blanket_agreement2 = ODataField('BlanketAgreement2')
+    cig_code = ODataField('CIGCode')
+    cup_code = ODataField('CUPCode')
+    attachments2 = ODataField('Attachments2')
+
+class PaymentBlockFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    payment_block_code = ODataField('PaymentBlockCode')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class PaymentReasonCodeFields(FieldEnum):
+    code = ODataField('Code')
+
+class PaymentRunExportFields(FieldEnum):
+    absolute_entry = ODataField('AbsoluteEntry')
+    run_date = ODataField('RunDate')
+    vendor_num = ODataField('VendorNum')
+    customer_num = ODataField('CustomerNum')
+    payment_method = ODataField('PaymentMethod')
+    doc_num = ODataField('DocNum')
+    fiscal_year = ODataField('FiscalYear')
+    countery = ODataField('Countery')
+    company_tax_num = ODataField('CompanyTaxNum')
+    payee_name = ODataField('PayeeName')
+    payee_postal_code = ODataField('PayeePostalCode')
+    payee_city = ODataField('PayeeCity')
+    payee_street = ODataField('PayeeStreet')
+    payee_country = ODataField('PayeeCountry')
+    payee_state = ODataField('PayeeState')
+    payee_bank_name = ODataField('PayeeBankName')
+    payee_bank_zip = ODataField('PayeeBankZip')
+    payee_bank_city = ODataField('PayeeBankCity')
+    payee_bank_street = ODataField('PayeeBankStreet')
+    payee_bank_country = ODataField('PayeeBankCountry')
+    payee_bank_account = ODataField('PayeeBankAccount')
+    payee_bank_code = ODataField('PayeeBankCode')
+    payee_bank_ctrl_key = ODataField('PayeeBankCtrlKey')
+    payee_bank_swift_num = ODataField('PayeeBankSwiftNum')
+    payee_bank_iban = ODataField('PayeeBankIBAN')
+    posting_date = ODataField('PostingDate')
+    bank_account = ODataField('BankAccount')
+    bank_country = ODataField('BankCountry')
+    bank_code = ODataField('BankCode')
+    bank_iban = ODataField('BankIBAN')
+    gl_account = ODataField('GLAccount')
+    currency = ODataField('Currency')
+    doc_amount_local = ODataField('DocAmountLocal')
+    doc_currnecy = ODataField('DocCurrnecy')
+    doc_amount_forign = ODataField('DocAmountForign')
+    doc_cash_discount = ODataField('DocCashDiscount')
+    doc_cash_discount_forign = ODataField('DocCashDiscountForign')
+    doc_num_offield_paid = ODataField('DocNumOffieldPaid')
+    doc_rate = ODataField('DocRate')
+    wiz_code = ODataField('WizCode')
+    collection_authorization = ODataField('CollectionAuthorization')
+    payee_bank_post_office = ODataField('PayeeBankPostOffice')
+    payee_bank_next_check_number = ODataField('PayeeBankNextCheckNumber')
+    payee_bank_house_bank = ODataField('PayeeBankHouseBank')
+    payee_bank_block = ODataField('PayeeBankBlock')
+    payee_bank_county = ODataField('PayeeBankCounty')
+    payee_bank_state = ODataField('PayeeBankState')
+    payee_bank_bisr = ODataField('PayeeBankBISR')
+    payee_bank_user_num1 = ODataField('PayeeBankUserNum1')
+    payee_bank_user_num2 = ODataField('PayeeBankUserNum2')
+    payee_bank_user_num3 = ODataField('PayeeBankUserNum3')
+    payee_bank_user_num4 = ODataField('PayeeBankUserNum4')
+    instruction_key = ODataField('InstructionKey')
+    payment_format = ODataField('PaymentFormat')
+    company_name = ODataField('CompanyName')
+    company_address = ODataField('CompanyAddress')
+    status = ODataField('Status')
+    comp_isr_biller_id = ODataField('CompIsrBillerID')
+    vendor_isr_biller_id = ODataField('VendorIsrBillerID')
+    additional_id_number = ODataField('AdditionalIdNumber')
+    organization_number = ODataField('OrganizationNumber')
+    payee_bank_branch = ODataField('PayeeBankBranch')
+    payment_bank_branch = ODataField('PaymentBankBranch')
+    user_name = ODataField('UserName')
+    user_e_mail = ODataField('UserEMail')
+    user_mobile_phone_number = ODataField('UserMobilePhoneNumber')
+    user_fax_number = ODataField('UserFaxNumber')
+    user_department = ODataField('UserDepartment')
+    debit_memo = ODataField('DebitMemo')
+    eu_internal_transfer = ODataField('EUInternalTransfer')
+    file_path = ODataField('FilePath')
+    ordering_party = ODataField('OrderingParty')
+    payment_bank_control_key = ODataField('PaymentBankControlKey')
+    payee_tax_number = ODataField('PayeeTaxNumber')
+    payment_key_code = ODataField('PaymentKeyCode')
+    payee_reference_details = ODataField('PayeeReferenceDetails')
+    format_name = ODataField('FormatName')
+    payment_donewith_check = ODataField('PaymentDonewithCheck')
+    company_block = ODataField('CompanyBlock')
+    company_city = ODataField('CompanyCity')
+    company_county = ODataField('CompanyCounty')
+    company_state = ODataField('CompanyState')
+    company_street = ODataField('CompanyStreet')
+    company_zip_code = ODataField('CompanyZipCode')
+    payment_bank_charges = ODataField('PaymentBankCharges')
+    payment_bank_user_no1 = ODataField('PaymentBankUserNo1')
+    payment_bank_user_no2 = ODataField('PaymentBankUserNo2')
+    payment_bank_user_no3 = ODataField('PaymentBankUserNo3')
+    payment_bank_user_no4 = ODataField('PaymentBankUserNo4')
+    payment_bank_charges_allocation_code = ODataField('PaymentBankChargesAllocationCode')
+    payment_order_num = ODataField('PaymentOrderNum')
+    free_text1 = ODataField('FreeText1')
+    free_text2 = ODataField('FreeText2')
+    free_text3 = ODataField('FreeText3')
+    row_type = ODataField('RowType')
+    payment_run_export_lines = ODataField('PaymentRunExport_Lines')
+    bank_charges_allocation_code = ODataField('BankChargesAllocationCode')
+
+class PaymentTermsTypeFields(FieldEnum):
+    group_number = ODataField('GroupNumber')
+    payment_terms_group_name = ODataField('PaymentTermsGroupName')
+    start_from = ODataField('StartFrom')
+    number_of_additional_months = ODataField('NumberOfAdditionalMonths')
+    number_of_additional_days = ODataField('NumberOfAdditionalDays')
+    credit_limit = ODataField('CreditLimit')
+    general_discount = ODataField('GeneralDiscount')
+    interest_on_arrears = ODataField('InterestOnArrears')
+    price_list_no = ODataField('PriceListNo')
+    load_limit = ODataField('LoadLimit')
+    open_receipt = ODataField('OpenReceipt')
+    discount_code = ODataField('DiscountCode')
+    dunning_code = ODataField('DunningCode')
+    baseline_date = ODataField('BaselineDate')
+    number_of_installments = ODataField('NumberOfInstallments')
+    number_of_tolerance_days = ODataField('NumberOfToleranceDays')
+    end_at = ODataField('EndAt')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    wizard_payment_methods = ODataField('WizardPaymentMethods')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    inventory_transfer_requests = ODataField('InventoryTransferRequests')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    stock_transfer_drafts = ODataField('StockTransferDrafts')
+    self_invoices = ODataField('SelfInvoices')
+    blanket_agreements = ODataField('BlanketAgreements')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    price_list = ODataField('PriceList')
+    cash_discount = ODataField('CashDiscount')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class PickListFields(FieldEnum):
+    absoluteentry = ODataField('Absoluteentry')
+    name = ODataField('Name')
+    owner_code = ODataField('OwnerCode')
+    owner_name = ODataField('OwnerName')
+    pick_date = ODataField('PickDate')
+    remarks = ODataField('Remarks')
+    status = ODataField('Status')
+    object_type = ODataField('ObjectType')
+    use_base_units = ODataField('UseBaseUnits')
+    pick_lists_lines = ODataField('PickListsLines')
+    user = ODataField('User')
+
+class PictureFields(FieldEnum):
+    picture_name = ODataField('PictureName')
+    picture_path = ODataField('PicturePath')
+    picture_size = ODataField('PictureSize')
+    picture_create_date = ODataField('PictureCreateDate')
+    picture_modify_date = ODataField('PictureModifyDate')
+
+class PostingTemplatesFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    stamp_tax = ODataField('StampTax')
+    automatic_vat = ODataField('AutomaticVAT')
+    manage_w_tax = ODataField('ManageWTax')
+    deferred_tax = ODataField('DeferredTax')
+    posting_templates_line_collection = ODataField('PostingTemplatesLineCollection')
+
+class PredefinedTextFields(FieldEnum):
+    numerator = ODataField('Numerator')
+    text_code = ODataField('TextCode')
+    text = ODataField('Text')
+
+class PriceListFields(FieldEnum):
+    rounding_method = ODataField('RoundingMethod')
+    group_num = ODataField('GroupNum')
+    base_price_list = ODataField('BasePriceList')
+    factor = ODataField('Factor')
+    price_list_no = ODataField('PriceListNo')
+    price_list_name = ODataField('PriceListName')
+    is_gross_price = ODataField('IsGrossPrice')
+    active = ODataField('Active')
+    valid_from = ODataField('ValidFrom')
+    valid_to = ODataField('ValidTo')
+    default_prime_currency = ODataField('DefaultPrimeCurrency')
+    default_additional_currency1 = ODataField('DefaultAdditionalCurrency1')
+    default_additional_currency2 = ODataField('DefaultAdditionalCurrency2')
+    rounding_rule = ODataField('RoundingRule')
+    fixed_amount = ODataField('FixedAmount')
+    stock_transfers = ODataField('StockTransfers')
+    product_trees = ODataField('ProductTrees')
+    blanket_agreements = ODataField('BlanketAgreements')
+    business_partners = ODataField('BusinessPartners')
+    special_prices = ODataField('SpecialPrices')
+    payment_terms_types = ODataField('PaymentTermsTypes')
+
+class ProjectFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    valid_from = ODataField('ValidFrom')
+    valid_to = ODataField('ValidTo')
+    active = ODataField('Active')
+    sales_opportunities = ODataField('SalesOpportunities')
+    product_trees = ODataField('ProductTrees')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    vendor_payments = ODataField('VendorPayments')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    journal_entries = ODataField('JournalEntries')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    service_calls = ODataField('ServiceCalls')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    additional_expenses = ODataField('AdditionalExpenses')
+    chart_of_accounts = ODataField('ChartOfAccounts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    blanket_agreements = ODataField('BlanketAgreements')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    payment_drafts = ODataField('PaymentDrafts')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    production_orders = ODataField('ProductionOrders')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    project_managements = ODataField('ProjectManagements')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    budget_scenarios = ODataField('BudgetScenarios')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    incoming_payments = ODataField('IncomingPayments')
+    deposits = ODataField('Deposits')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class PurchaseTaxInvoiceFields(FieldEnum):
+    doc_entry = ODataField('DocEntry')
+    doc_num = ODataField('DocNum')
+    doc_type = ODataField('DocType')
+    printed = ODataField('Printed')
+    doc_date = ODataField('DocDate')
+    card_code = ODataField('CardCode')
+    creation_date = ODataField('CreationDate')
+    update_date = ODataField('UpdateDate')
+    doc_due_date = ODataField('DocDueDate')
+    series = ODataField('Series')
+    segment = ODataField('Segment')
+    contact_person_code = ODataField('ContactPersonCode')
+    tax_date = ODataField('TaxDate')
+    comments = ODataField('Comments')
+    ship_to_code = ODataField('ShipToCode')
+    address = ODataField('Address')
+    address2 = ODataField('Address2')
+    currency_source = ODataField('CurrencySource')
+    doc_currency = ODataField('DocCurrency')
+    customer_or_vendor_ref_no = ODataField('CustomerOrVendorRefNo')
+    customer_or_vendor_name = ODataField('CustomerOrVendorName')
+    cancel_date = ODataField('CancelDate')
+    document_total = ODataField('DocumentTotal')
+    tax_total = ODataField('TaxTotal')
+    payment_ref_no = ODataField('PaymentRefNo')
+    payment_ref_date = ODataField('PaymentRefDate')
+    alteration_revision = ODataField('AlterationRevision')
+    purchase_tax_invoice_lines = ODataField('PurchaseTaxInvoiceLines')
+    purchase_tax_invoice_operation_codes = ODataField('PurchaseTaxInvoiceOperationCodes')
+    purchase_tax_invoice_document_references = ODataField('PurchaseTaxInvoiceDocumentReferences')
+    purchase_tax_invoice_linked_down_payments = ODataField('PurchaseTaxInvoiceLinkedDownPayments')
+    business_partner = ODataField('BusinessPartner')
+
+class QueryAuthGroupFields(FieldEnum):
+    auth_group_code = ODataField('AuthGroupCode')
+    auth_group_des = ODataField('AuthGroupDes')
+    auth_group_id = ODataField('AuthGroupId')
+    category_group_collection = ODataField('CategoryGroupCollection')
+
+class QueryCategoryFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    permissions = ODataField('Permissions')
+    user_queries = ODataField('UserQueries')
+
+class QueueFields(FieldEnum):
+    queue_id = ODataField('QueueID')
+    description = ODataField('Description')
+    inactive = ODataField('Inactive')
+    queue_manager = ODataField('QueueManager')
+    queue_email = ODataField('QueueEmail')
+    queue_members = ODataField('QueueMembers')
+    service_calls = ODataField('ServiceCalls')
+    user = ODataField('User')
+
+class RecurringPostingsFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    instance = ODataField('Instance')
+    reference1 = ODataField('Reference1')
+    reference2 = ODataField('Reference2')
+    reference3 = ODataField('Reference3')
+    transaction_code = ODataField('TransactionCode')
+    remarks = ODataField('Remarks')
+    frequency = ODataField('Frequency')
+    sub_frequency = ODataField('SubFrequency')
+    next_execution = ODataField('NextExecution')
+    stamp_tax = ODataField('StampTax')
+    automatic_vat = ODataField('AutomaticVAT')
+    manage_w_tax = ODataField('ManageWTax')
+    deferred_tax = ODataField('DeferredTax')
+    valid_until = ODataField('ValidUntil')
+    valid_until_date = ODataField('ValidUntilDate')
+    recurring_postings_line_collection = ODataField('RecurringPostingsLineCollection')
+    recurring_postings_document_reference_collection = ODataField('RecurringPostingsDocumentReferenceCollection')
+
+class RelationshipFields(FieldEnum):
+    relationship_description = ODataField('RelationshipDescription')
+    relationship_code = ODataField('RelationshipCode')
+    partners_setups = ODataField('PartnersSetups')
+
+class ReportTypeFields(FieldEnum):
+    type_code = ODataField('TypeCode')
+    type_name = ODataField('TypeName')
+    default_report_layout = ODataField('DefaultReportLayout')
+    addon_name = ODataField('AddonName')
+    addon_form_type = ODataField('AddonFormType')
+    menu_id = ODataField('MenuID')
+
+class RetornoCodeFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    occurence_code = ODataField('OccurenceCode')
+    movement_code = ODataField('MovementCode')
+    boe_status = ODataField('BoeStatus')
+    description = ODataField('Description')
+    color = ODataField('Color')
+    file_format = ODataField('FileFormat')
+    bank_code = ODataField('BankCode')
+
+class RouteStageFields(FieldEnum):
+    internal_number = ODataField('InternalNumber')
+    code = ODataField('Code')
+    description = ODataField('Description')
+    creation_date = ODataField('CreationDate')
+    generation_time = ODataField('GenerationTime')
+    date_of_update = ODataField('DateOfUpdate')
+
+class SQLQueryFields(FieldEnum):
+    sql_code = ODataField('SqlCode')
+    sql_name = ODataField('SqlName')
+    sql_text = ODataField('SqlText')
+    param_list = ODataField('ParamList')
+    create_date = ODataField('CreateDate')
+    update_date = ODataField('UpdateDate')
+
+class SQLViewFields(FieldEnum):
+    name = ODataField('Name')
+    db_type = ODataField('DBType')
+    schema_name = ODataField('SchemaName')
+    create_date = ODataField('CreateDate')
+
+class SalesForecastFields(FieldEnum):
+    forecast_start_date = ODataField('ForecastStartDate')
+    forecast_end_date = ODataField('ForecastEndDate')
+    forecast_code = ODataField('ForecastCode')
+    forecast_name = ODataField('ForecastName')
+    numerator = ODataField('Numerator')
+    view = ODataField('View')
+    sales_forecast_lines = ODataField('SalesForecastLines')
+
+class SalesOpportunitiesFields(FieldEnum):
+    sequential_no = ODataField('SequentialNo')
+    card_code = ODataField('CardCode')
+    sales_person = ODataField('SalesPerson')
+    contact_person = ODataField('ContactPerson')
+    source = ODataField('Source')
+    interest_field1 = ODataField('InterestField1')
+    interest_field2 = ODataField('InterestField2')
+    interest_field3 = ODataField('InterestField3')
+    interest_level = ODataField('InterestLevel')
+    start_date = ODataField('StartDate')
+    predicted_closing_date = ODataField('PredictedClosingDate')
+    max_local_total = ODataField('MaxLocalTotal')
+    max_system_total = ODataField('MaxSystemTotal')
+    weighted_sum_lc = ODataField('WeightedSumLC')
+    weighted_sum_sc = ODataField('WeightedSumSC')
+    gross_profit = ODataField('GrossProfit')
+    gross_profit_total_local = ODataField('GrossProfitTotalLocal')
+    gross_profit_total_system = ODataField('GrossProfitTotalSystem')
+    remarks = ODataField('Remarks')
+    status = ODataField('Status')
+    reason_for_closing = ODataField('ReasonForClosing')
+    total_amount_local = ODataField('TotalAmountLocal')
+    total_amoun_system = ODataField('TotalAmounSystem')
+    closing_gross_profit_local = ODataField('ClosingGrossProfitLocal')
+    closing_gross_profit_system = ODataField('ClosingGrossProfitSystem')
+    closing_percentage = ODataField('ClosingPercentage')
+    current_stage_no = ODataField('CurrentStageNo')
+    current_stage_number = ODataField('CurrentStageNumber')
+    opportunity_name = ODataField('OpportunityName')
+    industry = ODataField('Industry')
+    linked_document_type = ODataField('LinkedDocumentType')
+    data_ownershipfield = ODataField('DataOwnershipfield')
+    status_remarks = ODataField('StatusRemarks')
+    project_code = ODataField('ProjectCode')
+    bp_chanel_name = ODataField('BPChanelName')
+    user_signature = ODataField('UserSignature')
+    customer_name = ODataField('CustomerName')
+    document_checkbox = ODataField('DocumentCheckbox')
+    linked_document_number = ODataField('LinkedDocumentNumber')
+    territory = ODataField('Territory')
+    closing_date = ODataField('ClosingDate')
+    bp_channel_contact = ODataField('BPChannelContact')
+    bp_chanel_code = ODataField('BPChanelCode')
+    closing_type = ODataField('ClosingType')
+    attachment_entry = ODataField('AttachmentEntry')
+    opportunity_type = ODataField('OpportunityType')
+    update_date = ODataField('UpdateDate')
+    update_time = ODataField('UpdateTime')
+    sales_opportunities_lines = ODataField('SalesOpportunitiesLines')
+    sales_opportunities_competition = ODataField('SalesOpportunitiesCompetition')
+    sales_opportunities_partners = ODataField('SalesOpportunitiesPartners')
+    sales_opportunities_interests = ODataField('SalesOpportunitiesInterests')
+    sales_opportunities_reasons = ODataField('SalesOpportunitiesReasons')
+    business_partner = ODataField('BusinessPartner')
+    sales_person2 = ODataField('SalesPerson2')
+    sales_opportunity_source_setup = ODataField('SalesOpportunitySourceSetup')
+    sales_opportunity_interest_setup = ODataField('SalesOpportunityInterestSetup')
+    sales_opportunity_reason_setup = ODataField('SalesOpportunityReasonSetup')
+    sales_stage = ODataField('SalesStage')
+    industry2 = ODataField('Industry2')
+    employee_info = ODataField('EmployeeInfo')
+    project = ODataField('Project')
+    user = ODataField('User')
+    territory2 = ODataField('Territory2')
+
+class SalesOpportunityCompetitorSetupFields(FieldEnum):
+    sequence_no = ODataField('SequenceNo')
+    name = ODataField('Name')
+    threat_level = ODataField('ThreatLevel')
+    details = ODataField('Details')
+
+class SalesOpportunityInterestSetupFields(FieldEnum):
+    sequence_no = ODataField('SequenceNo')
+    description = ODataField('Description')
+    sort = ODataField('Sort')
+    sales_opportunities = ODataField('SalesOpportunities')
+
+class SalesOpportunityReasonSetupFields(FieldEnum):
+    sequence_no = ODataField('SequenceNo')
+    description = ODataField('Description')
+    sort = ODataField('Sort')
+    sales_opportunities = ODataField('SalesOpportunities')
+
+class SalesOpportunitySourceSetupFields(FieldEnum):
+    sequence_no = ODataField('SequenceNo')
+    description = ODataField('Description')
+    sort = ODataField('Sort')
+    sales_opportunities = ODataField('SalesOpportunities')
+
+class SalesPersonFields(FieldEnum):
+    sales_employee_code = ODataField('SalesEmployeeCode')
+    sales_employee_name = ODataField('SalesEmployeeName')
+    remarks = ODataField('Remarks')
+    commission_for_sales_employee = ODataField('CommissionForSalesEmployee')
+    commission_group = ODataField('CommissionGroup')
+    locked = ODataField('Locked')
+    employee_id = ODataField('EmployeeID')
+    active = ODataField('Active')
+    telephone = ODataField('Telephone')
+    mobile = ODataField('Mobile')
+    fax = ODataField('Fax')
+    email = ODataField('Email')
+    sales_opportunities = ODataField('SalesOpportunities')
+    user_default_groups = ODataField('UserDefaultGroups')
+    stock_transfers = ODataField('StockTransfers')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    commission_group2 = ODataField('CommissionGroup2')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    employees_info = ODataField('EmployeesInfo')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    inventory_transfer_requests = ODataField('InventoryTransferRequests')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    stock_transfer_drafts = ODataField('StockTransferDrafts')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    contacts = ODataField('Contacts')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    activities = ODataField('Activities')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    project_managements = ODataField('ProjectManagements')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class SalesStageFields(FieldEnum):
+    sequence_no = ODataField('SequenceNo')
+    name = ODataField('Name')
+    stageno = ODataField('Stageno')
+    closing_percentage = ODataField('ClosingPercentage')
+    cancelled = ODataField('Cancelled')
+    is_sales = ODataField('IsSales')
+    is_purchasing = ODataField('IsPurchasing')
+    sales_opportunities = ODataField('SalesOpportunities')
+
+class SalesTaxAuthoritiesTypeFields(FieldEnum):
+    user_signature = ODataField('UserSignature')
+    name = ODataField('Name')
+    vat = ODataField('VAT')
+    numerator = ODataField('Numerator')
+    tax_credit_control = ODataField('TaxCreditControl')
+    sales_tax_authorities = ODataField('SalesTaxAuthorities')
+    user = ODataField('User')
+    depreciation_areas = ODataField('DepreciationAreas')
+
+class SalesTaxAuthorityFields(FieldEnum):
+    use_tax_account = ODataField('UseTaxAccount')
+    user_signature = ODataField('UserSignature')
+    type = ODataField('Type')
+    a_or_r_tax_account = ODataField('AOrRTaxAccount')
+    rate = ODataField('Rate')
+    a_or_p_tax_account = ODataField('AOrPTaxAccount')
+    non_deductible_precent = ODataField('NonDeductiblePrecent')
+    non_deductible_account = ODataField('NonDeductibleAccount')
+    name = ODataField('Name')
+    deferred_tax_account = ODataField('DeferredTaxAccount')
+    code = ODataField('Code')
+    min_taxable_amount = ODataField('MinTaxableAmount')
+    max_taxable_amount = ODataField('MaxTaxableAmount')
+    flat_tax_amount = ODataField('FlatTaxAmount')
+    incl_in_price = ODataField('InclInPrice')
+    exempt = ODataField('Exempt')
+    ap_exp_account = ODataField('APExpAccount')
+    ar_exp_account = ODataField('ARExpAccount')
+    incl_in_gross_revenue = ODataField('InclInGrossRevenue')
+    text_code = ODataField('TextCode')
+    incl_in_first_installment = ODataField('InclInFirstInstallment')
+    reverse_charge_percent = ODataField('ReverseChargePercent')
+    sales_tax_rcm_account = ODataField('SalesTaxRCMAccount')
+    sales_tax_rcm_clr_account = ODataField('SalesTaxRCMClrAccount')
+    vat_exemption = ODataField('VATExemption')
+    vat_exemption_base_percent = ODataField('VATExemptionBasePercent')
+    vat_exemption_percent = ODataField('VATExemptionPercent')
+    tax_definitions = ODataField('TaxDefinitions')
+    chart_of_account = ODataField('ChartOfAccount')
+    user = ODataField('User')
+    sales_tax_authorities_type = ODataField('SalesTaxAuthoritiesType')
+
+class SalesTaxCodeFields(FieldEnum):
+    valid_for_ar = ODataField('ValidForAR')
+    valid_for_ap = ODataField('ValidForAP')
+    user_signature = ODataField('UserSignature')
+    rate = ODataField('Rate')
+    name = ODataField('Name')
+    freight = ODataField('Freight')
+    code = ODataField('Code')
+    is_item_level = ODataField('IsItemLevel')
+    inactive = ODataField('Inactive')
+    fa_debit = ODataField('FADebit')
+    sales_tax_codes_lines = ODataField('SalesTaxCodes_Lines')
+    user_default_groups = ODataField('UserDefaultGroups')
+    warehouses = ODataField('Warehouses')
+    items = ODataField('Items')
+    business_partners = ODataField('BusinessPartners')
+    user = ODataField('User')
+    expense_types = ODataField('ExpenseTypes')
+
+class SalesTaxInvoiceFields(FieldEnum):
+    doc_entry = ODataField('DocEntry')
+    doc_num = ODataField('DocNum')
+    doc_type = ODataField('DocType')
+    printed = ODataField('Printed')
+    doc_date = ODataField('DocDate')
+    card_code = ODataField('CardCode')
+    creation_date = ODataField('CreationDate')
+    update_date = ODataField('UpdateDate')
+    doc_due_date = ODataField('DocDueDate')
+    series = ODataField('Series')
+    segment = ODataField('Segment')
+    contact_person_code = ODataField('ContactPersonCode')
+    tax_date = ODataField('TaxDate')
+    comments = ODataField('Comments')
+    ship_to_code = ODataField('ShipToCode')
+    address = ODataField('Address')
+    address2 = ODataField('Address2')
+    currency_source = ODataField('CurrencySource')
+    doc_currency = ODataField('DocCurrency')
+    customer_or_vendor_ref_no = ODataField('CustomerOrVendorRefNo')
+    customer_or_vendor_name = ODataField('CustomerOrVendorName')
+    cancel_date = ODataField('CancelDate')
+    document_total = ODataField('DocumentTotal')
+    tax_total = ODataField('TaxTotal')
+    payment_ref_no = ODataField('PaymentRefNo')
+    payment_ref_date = ODataField('PaymentRefDate')
+    alteration_revision = ODataField('AlterationRevision')
+    sales_tax_invoice_lines = ODataField('SalesTaxInvoiceLines')
+    sales_tax_invoice_operation_codes = ODataField('SalesTaxInvoiceOperationCodes')
+    sales_tax_invoice_document_references = ODataField('SalesTaxInvoiceDocumentReferences')
+    sales_tax_invoice_linked_down_payments = ODataField('SalesTaxInvoiceLinkedDownPayments')
+    business_partner = ODataField('BusinessPartner')
+
+class SectionFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    description = ODataField('Description')
+    e_code = ODataField('ECode')
+    withholding_tax_codes = ODataField('WithholdingTaxCodes')
+    certificate_series = ODataField('CertificateSeries')
+
+class SerialNumberDetailFields(FieldEnum):
+    doc_entry = ODataField('DocEntry')
+    item_code = ODataField('ItemCode')
+    item_description = ODataField('ItemDescription')
+    mfr_serial_no = ODataField('MfrSerialNo')
+    serial_number = ODataField('SerialNumber')
+    lot_number = ODataField('LotNumber')
+    system_number = ODataField('SystemNumber')
+    admission_date = ODataField('AdmissionDate')
+    manufacturing_date = ODataField('ManufacturingDate')
+    expiration_date = ODataField('ExpirationDate')
+    mfr_warranty_start = ODataField('MfrWarrantyStart')
+    m_fr_warranty_end = ODataField('MFrWarrantyEnd')
+    location = ODataField('Location')
+    details = ODataField('Details')
+    item = ODataField('Item')
+
+class ServiceContractFields(FieldEnum):
+    contract_id = ODataField('ContractID')
+    customer_code = ODataField('CustomerCode')
+    customer_name = ODataField('CustomerName')
+    contact_code = ODataField('ContactCode')
+    owner = ODataField('Owner')
+    status = ODataField('Status')
+    contract_template = ODataField('ContractTemplate')
+    contract_type = ODataField('ContractType')
+    renewal = ODataField('Renewal')
+    reminder_time = ODataField('ReminderTime')
+    remind_unit = ODataField('RemindUnit')
+    duration_of_coverage = ODataField('DurationOfCoverage')
+    start_date = ODataField('StartDate')
+    end_date = ODataField('EndDate')
+    resolution_time = ODataField('ResolutionTime')
+    resolution_unit = ODataField('ResolutionUnit')
+    description = ODataField('Description')
+    monday_enabled = ODataField('MondayEnabled')
+    tuesday_enabled = ODataField('TuesdayEnabled')
+    wednesday_enabled = ODataField('WednesdayEnabled')
+    thursday_enabled = ODataField('ThursdayEnabled')
+    friday_enabled = ODataField('FridayEnabled')
+    saturday_enabled = ODataField('SaturdayEnabled')
+    sunday_enabled = ODataField('SundayEnabled')
+    monday_start = ODataField('MondayStart')
+    monday_end = ODataField('MondayEnd')
+    tuesday_start = ODataField('TuesdayStart')
+    tuesday_end = ODataField('TuesdayEnd')
+    wednesday_start = ODataField('WednesdayStart')
+    wednesday_end = ODataField('WednesdayEnd')
+    thursday_start = ODataField('ThursdayStart')
+    thursday_end = ODataField('ThursdayEnd')
+    friday_start = ODataField('FridayStart')
+    friday_end = ODataField('FridayEnd')
+    saturday_start = ODataField('SaturdayStart')
+    saturday_end = ODataField('SaturdayEnd')
+    sunday_start = ODataField('SundayStart')
+    sunday_end = ODataField('SundayEnd')
+    include_parts = ODataField('IncludeParts')
+    include_labor = ODataField('IncludeLabor')
+    include_travel = ODataField('IncludeTravel')
+    template_remarks = ODataField('TemplateRemarks')
+    remarks = ODataField('Remarks')
+    include_holidays = ODataField('IncludeHolidays')
+    service_type = ODataField('ServiceType')
+    response_unit = ODataField('ResponseUnit')
+    response_time = ODataField('ResponseTime')
+    termination_date = ODataField('TerminationDate')
+    attachment_entry = ODataField('AttachmentEntry')
+    service_bp_type = ODataField('ServiceBPType')
+    service_contract_lines = ODataField('ServiceContract_Lines')
+    customer_equipment_cards = ODataField('CustomerEquipmentCards')
+    service_calls = ODataField('ServiceCalls')
+    business_partner = ODataField('BusinessPartner')
+    user = ODataField('User')
+    contract_template2 = ODataField('ContractTemplate2')
+    attachments2 = ODataField('Attachments2')
+
+class ServiceGroupFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    service_group_code = ODataField('ServiceGroupCode')
+    description = ODataField('Description')
+    items = ODataField('Items')
+
+class ShippingTypeFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    website = ODataField('Website')
+    landed_costs = ODataField('LandedCosts')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    items = ODataField('Items')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    blanket_agreements = ODataField('BlanketAgreements')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class ShortLinkMappingFields(FieldEnum):
+    guid = ODataField('Guid')
+    origin = ODataField('Origin')
+    src_link = ODataField('SrcLink')
+    owner_code = ODataField('OwnerCode')
+    create_date = ODataField('CreateDate')
+    create_time = ODataField('CreateTime')
+
+class SingleUserConnectionFields(FieldEnum):
+    code = ODataField('Code')
+    action = ODataField('Action')
+
+class SpecialPriceFields(FieldEnum):
+    item_code = ODataField('ItemCode')
+    card_code = ODataField('CardCode')
+    price = ODataField('Price')
+    currency = ODataField('Currency')
+    discount_percent = ODataField('DiscountPercent')
+    price_list_num = ODataField('PriceListNum')
+    auto_update = ODataField('AutoUpdate')
+    source_price = ODataField('SourcePrice')
+    valid = ODataField('Valid')
+    valid_from = ODataField('ValidFrom')
+    valid_to = ODataField('ValidTo')
+    special_price_data_areas = ODataField('SpecialPriceDataAreas')
+    item = ODataField('Item')
+    business_partner = ODataField('BusinessPartner')
+    price_list = ODataField('PriceList')
+
+class StateFields(FieldEnum):
+    code = ODataField('Code')
+    country = ODataField('Country')
+    name = ODataField('Name')
+    gst_code = ODataField('GSTCode')
+    is_union_territory = ODataField('IsUnionTerritory')
+    country2 = ODataField('Country2')
+
+class StockTakingFields(FieldEnum):
+    item_code = ODataField('ItemCode')
+    warehouse_code = ODataField('WarehouseCode')
+    counted = ODataField('Counted')
+    item = ODataField('Item')
+    warehouse = ODataField('Warehouse')
+
+class TSRExceptionalEventFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+
+class TargetGroupFields(FieldEnum):
+    target_group_code = ODataField('TargetGroupCode')
+    target_group_name = ODataField('TargetGroupName')
+    target_group_type = ODataField('TargetGroupType')
+    target_groups_details = ODataField('TargetGroupsDetails')
+    campaigns = ODataField('Campaigns')
+
+class TaxCodeDeterminationFields(FieldEnum):
+    doc_entry = ODataField('DocEntry')
+    line_number = ODataField('LineNumber')
+    document_type = ODataField('DocumentType')
+    business_area = ODataField('BusinessArea')
+    condition1 = ODataField('Condition1')
+    udf_table1 = ODataField('UDFTable1')
+    number_value1 = ODataField('NumberValue1')
+    string_value1 = ODataField('StringValue1')
+    money_value1 = ODataField('MoneyValue1')
+    condition2 = ODataField('Condition2')
+    udf_table2 = ODataField('UDFTable2')
+    number_value2 = ODataField('NumberValue2')
+    string_value2 = ODataField('StringValue2')
+    money_value2 = ODataField('MoneyValue2')
+    condition3 = ODataField('Condition3')
+    udf_table3 = ODataField('UDFTable3')
+    number_value3 = ODataField('NumberValue3')
+    string_value3 = ODataField('StringValue3')
+    money_value3 = ODataField('MoneyValue3')
+    condition4 = ODataField('Condition4')
+    udf_table4 = ODataField('UDFTable4')
+    number_value4 = ODataField('NumberValue4')
+    string_value4 = ODataField('StringValue4')
+    money_value4 = ODataField('MoneyValue4')
+    condition5 = ODataField('Condition5')
+    udf_table5 = ODataField('UDFTable5')
+    number_value5 = ODataField('NumberValue5')
+    string_value5 = ODataField('StringValue5')
+    money_value5 = ODataField('MoneyValue5')
+    description = ODataField('Description')
+    tax_code = ODataField('TaxCode')
+    freight_row_tax = ODataField('FreightRowTax')
+    freight_header_tax = ODataField('FreightHeaderTax')
+    udf_alias1 = ODataField('UDFAlias1')
+    udf_alias2 = ODataField('UDFAlias2')
+    udf_alias3 = ODataField('UDFAlias3')
+    udf_alias4 = ODataField('UDFAlias4')
+    udf_alias5 = ODataField('UDFAlias5')
+
+class TaxCodeDeterminationTCDFields(FieldEnum):
+    abs_id = ODataField('AbsId')
+    tcd_type = ODataField('TcdType')
+    dft_ar_code = ODataField('DftArCode')
+    dft_ap_code = ODataField('DftApCode')
+    tax_code_determination_tcd_default_w_ts = ODataField('TaxCodeDeterminationTCDDefaultWTs')
+    tax_code_determination_tcd_by_usages = ODataField('TaxCodeDeterminationTCDByUsages')
+    tax_code_determination_tcd_key_fields = ODataField('TaxCodeDeterminationTCDKeyFields')
+
+class TaxExemptReasonFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    vat_groups = ODataField('VatGroups')
+
+class TaxInvoiceReportFields(FieldEnum):
+    nts_approval = ODataField('NTSApproval')
+    e_tax_web_site = ODataField('ETaxWebSite')
+    e_tax_no = ODataField('ETaxNo')
+    nts_approval_no = ODataField('NTSApprovalNo')
+    original_nts_approval_no = ODataField('OriginalNTSApprovalNo')
+    remarks = ODataField('Remarks')
+    tax_invoice_report_number = ODataField('TaxInvoiceReportNumber')
+    date = ODataField('Date')
+    business_place = ODataField('BusinessPlace')
+    bp_code = ODataField('BPCode')
+    bp_name = ODataField('BPName')
+    base_amount = ODataField('BaseAmount')
+    tax_amount = ODataField('TaxAmount')
+    canceled = ODataField('Canceled')
+    report_type = ODataField('ReportType')
+    tax_invoice_report_line_collection = ODataField('TaxInvoiceReportLineCollection')
+    tax_web_site = ODataField('TaxWebSite')
+
+class TaxReplStateSubDataFields(FieldEnum):
+    state = ODataField('State')
+    iest = ODataField('IEST')
+
+class TaxReportFilterFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    report_layout = ODataField('ReportLayout')
+    first_printed_number = ODataField('FirstPrintedNumber')
+    from_date = ODataField('FromDate')
+    to_date = ODataField('ToDate')
+    tax_date = ODataField('TaxDate')
+    round_amount = ODataField('RoundAmount')
+    declaration_type = ODataField('DeclarationType')
+    filter_type = ODataField('FilterType')
+    exclude_wt = ODataField('ExcludeWT')
+    include_customers = ODataField('IncludeCustomers')
+    include_vendors = ODataField('IncludeVendors')
+    period = ODataField('Period')
+    quarter = ODataField('Quarter')
+    year = ODataField('Year')
+    document_type = ODataField('DocumentType')
+    first_register_number = ODataField('FirstRegisterNumber')
+    include_gl_accounts = ODataField('IncludeGLAccounts')
+    appendix_oor_p_selection = ODataField('AppendixOorPSelection')
+    opening_and_closing_balance = ODataField('OpeningAndClosingBalance')
+    from_series = ODataField('FromSeries')
+    to_series = ODataField('ToSeries')
+    cancellation = ODataField('Cancellation')
+    hide_tax_without_transaction = ODataField('HideTaxWithoutTransaction')
+    include_series_filter = ODataField('IncludeSeriesFilter')
+    include_document_type = ODataField('IncludeDocumentType')
+    diplay_credit_memos_in_separate_column = ODataField('DiplayCreditMemosInSeparateColumn')
+    show_payments_with_deferred_tax = ODataField('ShowPaymentsWithDeferredTax')
+    quarter_or_dates = ODataField('QuarterOrDates')
+    tax_report_groups = ODataField('TaxReportGroups')
+    tax_report_business_partners = ODataField('TaxReportBusinessPartners')
+    tax_report_documents = ODataField('TaxReportDocuments')
+    tax_report_series_collection = ODataField('TaxReportSeriesCollection')
+    tax_report_accounts = ODataField('TaxReportAccounts')
+
+class TaxWebSiteFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    web_site_name = ODataField('WebSiteName')
+    web_site_url = ODataField('WebSiteURL')
+    description = ODataField('Description')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    tax_invoice_report = ODataField('TaxInvoiceReport')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class TeamFields(FieldEnum):
+    team_id = ODataField('TeamID')
+    team_name = ODataField('TeamName')
+    description = ODataField('Description')
+    team_members = ODataField('TeamMembers')
+
+class TerminationReasonFields(FieldEnum):
+    reason_id = ODataField('ReasonID')
+    name = ODataField('Name')
+    description = ODataField('Description')
+    employees_info = ODataField('EmployeesInfo')
+
+class TerritoryFields(FieldEnum):
+    territory_id = ODataField('TerritoryID')
+    description = ODataField('Description')
+    location_index = ODataField('LocationIndex')
+    inactive = ODataField('Inactive')
+    parent = ODataField('Parent')
+    sales_opportunities = ODataField('SalesOpportunities')
+    customer_equipment_cards = ODataField('CustomerEquipmentCards')
+    business_partners = ODataField('BusinessPartners')
+    project_managements = ODataField('ProjectManagements')
+
+class TrackingNoteFields(FieldEnum):
+    tracking_note_number = ODataField('TrackingNoteNumber')
+    ccd_number = ODataField('CCDNumber')
+    date = ODataField('Date')
+    customs_terminal = ODataField('CustomsTerminal')
+    country_of_origin = ODataField('CountryOfOrigin')
+    is_direct_import = ODataField('IsDirectImport')
+    tracking_note_item_collection = ODataField('TrackingNoteItemCollection')
+    tracking_note_broker_collection = ODataField('TrackingNoteBrokerCollection')
+
+class TransactionCodeFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+    vendor_payments = ODataField('VendorPayments')
+    journal_entries = ODataField('JournalEntries')
+    chart_of_accounts = ODataField('ChartOfAccounts')
+    payment_drafts = ODataField('PaymentDrafts')
+    incoming_payments = ODataField('IncomingPayments')
+
+class TransportationDocumentDataFields(FieldEnum):
+    transp_doc_number = ODataField('TranspDocNumber')
+    next_number = ODataField('NextNumber')
+    post_date = ODataField('PostDate')
+    el_doc_gen_type = ODataField('ElDocGenType')
+    el_doc_export_format = ODataField('ElDocExportFormat')
+    transportation_number = ODataField('TransportationNumber')
+    expiration_date = ODataField('ExpirationDate')
+    vehicle_id = ODataField('VehicleID')
+    trailer_id = ODataField('TrailerID')
+    carrier_code = ODataField('CarrierCode')
+    issue_gate = ODataField('IssueGate')
+    attachment_entry = ODataField('AttachmentEntry')
+    canceled = ODataField('Canceled')
+    weight = ODataField('Weight')
+    weight_unit = ODataField('WeightUnit')
+    transported_total_lc = ODataField('TransportedTotalLC')
+    warehouse_code = ODataField('WarehouseCode')
+    cot_code = ODataField('COTCode')
+    transportation_document_line_data_collection = ODataField('TransportationDocumentLineDataCollection')
+    electronic_protocols = ODataField('ElectronicProtocols')
+
+class UnitOfMeasurementFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    name = ODataField('Name')
+    length1 = ODataField('Length1')
+    length1_unit = ODataField('Length1Unit')
+    length2 = ODataField('Length2')
+    length2_unit = ODataField('Length2Unit')
+    width1 = ODataField('Width1')
+    width1_unit = ODataField('Width1Unit')
+    width2 = ODataField('Width2')
+    width2_unit = ODataField('Width2Unit')
+    height1 = ODataField('Height1')
+    height1_unit = ODataField('Height1Unit')
+    height2 = ODataField('Height2')
+    height2_unit = ODataField('Height2Unit')
+    volume = ODataField('Volume')
+    volume_unit = ODataField('VolumeUnit')
+    weight1 = ODataField('Weight1')
+    weight1_unit = ODataField('Weight1Unit')
+    weight2 = ODataField('Weight2')
+    weight2_unit = ODataField('Weight2Unit')
+    international_symbol = ODataField('InternationalSymbol')
+    ewb_unit_entry = ODataField('EWBUnitEntry')
+    pp_weight1 = ODataField('PPWeight1')
+    pp_we1_unit = ODataField('PPWe1Unit')
+    pp_weight2 = ODataField('PPWeight2')
+    pp_we2_unit = ODataField('PPWe2Unit')
+    item_groups = ODataField('ItemGroups')
+    items = ODataField('Items')
+    bin_locations = ODataField('BinLocations')
+    bar_codes = ODataField('BarCodes')
+    unit_of_measurement_groups = ODataField('UnitOfMeasurementGroups')
+    production_orders = ODataField('ProductionOrders')
+
+class UnitOfMeasurementGroupFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    code = ODataField('Code')
+    name = ODataField('Name')
+    base_uo_m = ODataField('BaseUoM')
+    uo_m_group_definition_collection = ODataField('UoMGroupDefinitionCollection')
+    item_groups = ODataField('ItemGroups')
+    items = ODataField('Items')
+    bin_locations = ODataField('BinLocations')
+    unit_of_measurement = ODataField('UnitOfMeasurement')
+
+class UserFields(FieldEnum):
+    internal_key = ODataField('InternalKey')
+    user_password = ODataField('UserPassword')
+    user_code = ODataField('UserCode')
+    user_name = ODataField('UserName')
+    superuser = ODataField('Superuser')
+    e_mail = ODataField('eMail')
+    mobile_phone_number = ODataField('MobilePhoneNumber')
+    defaults = ODataField('Defaults')
+    fax_number = ODataField('FaxNumber')
+    branch = ODataField('Branch')
+    department = ODataField('Department')
+    language_code = ODataField('LanguageCode')
+    locked = ODataField('Locked')
+    group = ODataField('Group')
+    max_discount_general = ODataField('MaxDiscountGeneral')
+    max_discount_sales = ODataField('MaxDiscountSales')
+    max_discount_purchase = ODataField('MaxDiscountPurchase')
+    cash_limit = ODataField('CashLimit')
+    max_cash_amt_for_incmng_payts = ODataField('MaxCashAmtForIncmngPayts')
+    last_logout_date = ODataField('LastLogoutDate')
+    last_login_time = ODataField('LastLoginTime')
+    last_logout_time = ODataField('LastLogoutTime')
+    last_password_change_time = ODataField('LastPasswordChangeTime')
+    last_password_changed_by = ODataField('LastPasswordChangedBy')
+    user_permission = ODataField('UserPermission')
+    user_action_record = ODataField('UserActionRecord')
+    user_group_by_user = ODataField('UserGroupByUser')
+    user_branch_assignment = ODataField('UserBranchAssignment')
+    sales_opportunities = ODataField('SalesOpportunities')
+    user_default_groups = ODataField('UserDefaultGroups')
+    legal_data = ODataField('LegalData')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    bank_pages = ODataField('BankPages')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    pick_lists = ODataField('PickLists')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    service_calls = ODataField('ServiceCalls')
+    employees_info = ODataField('EmployeesInfo')
+    orders = ODataField('Orders')
+    wizard_payment_methods = ODataField('WizardPaymentMethods')
+    service_contracts = ODataField('ServiceContracts')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    material_revaluation = ODataField('MaterialRevaluation')
+    drafts = ODataField('Drafts')
+    approval_requests = ODataField('ApprovalRequests')
+    queue = ODataField('Queue')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    branch2 = ODataField('Branch2')
+    department2 = ODataField('Department2')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    sales_tax_authorities = ODataField('SalesTaxAuthorities')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    sales_tax_authorities_types = ODataField('SalesTaxAuthoritiesTypes')
+    knowledge_base_solutions = ODataField('KnowledgeBaseSolutions')
+    contacts = ODataField('Contacts')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    production_orders = ODataField('ProductionOrders')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    cockpits = ODataField('Cockpits')
+    user_permission_tree = ODataField('UserPermissionTree')
+    activities = ODataField('Activities')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    sales_tax_codes = ODataField('SalesTaxCodes')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+    form_preferences = ODataField('FormPreferences')
+
+class UserDefaultGroupFields(FieldEnum):
+    code = ODataField('Code')
+    name = ODataField('Name')
+    warehouse = ODataField('Warehouse')
+    sales_employee = ODataField('SalesEmployee')
+    b_pfor_invoice_payment = ODataField('BPforInvoicePayment')
+    cash_account = ODataField('CashAccount')
+    checking_acct = ODataField('CheckingAcct')
+    print_receipt = ODataField('PrintReceipt')
+    print_invoiceand_paymentin_s = ODataField('PrintInvoiceandPaymentinS')
+    windows_color = ODataField('WindowsColor')
+    address = ODataField('Address')
+    country = ODataField('Country')
+    printing_header = ODataField('PrintingHeader')
+    phone_number1 = ODataField('PhoneNumber1')
+    phone_number2 = ODataField('PhoneNumber2')
+    fax_number = ODataField('FaxNumber')
+    e_mail = ODataField('eMail')
+    addressin_foreign_language = ODataField('AddressinForeignLanguage')
+    printing_header_in_foreign_langu = ODataField('PrintingHeaderInForeignLangu')
+    phone_number1_foreign_lang = ODataField('PhoneNumber1ForeignLang')
+    phone_number2_foreign_lang = ODataField('PhoneNumber2ForeignLang')
+    fax_number_foreign_lang = ODataField('FaxNumberForeignLang')
+    default_tax_code = ODataField('DefaultTaxCode')
+    additional_id_number = ODataField('AdditionalIdNumber')
+    user_signature = ODataField('UserSignature')
+    use_tax = ODataField('UseTax')
+    use_warehouse_addressin_apd = ODataField('UseWarehouseAddressinAPD')
+    bplid = ODataField('BPLID')
+    asset_in_doc = ODataField('AssetInDoc')
+    language_code = ODataField('LanguageCode')
+    default_documents = ODataField('DefaultDocuments')
+    default_credit_cards = ODataField('DefaultCreditCards')
+    warehouse2 = ODataField('Warehouse2')
+    sales_person = ODataField('SalesPerson')
+    business_partner = ODataField('BusinessPartner')
+    country2 = ODataField('Country2')
+    sales_tax_code = ODataField('SalesTaxCode')
+    user = ODataField('User')
+    business_place = ODataField('BusinessPlace')
+    user_language = ODataField('UserLanguage')
+
+class UserFieldMDFields(FieldEnum):
+    name = ODataField('Name')
+    type = ODataField('Type')
+    size = ODataField('Size')
+    description = ODataField('Description')
+    sub_type = ODataField('SubType')
+    linked_table = ODataField('LinkedTable')
+    default_value = ODataField('DefaultValue')
+    table_name = ODataField('TableName')
+    field_id = ODataField('FieldID')
+    edit_size = ODataField('EditSize')
+    mandatory = ODataField('Mandatory')
+    linked_udo = ODataField('LinkedUDO')
+    linked_system_object = ODataField('LinkedSystemObject')
+    valid_values_md = ODataField('ValidValuesMD')
+    user_tables_md = ODataField('UserTablesMD')
+
+class UserGroupFields(FieldEnum):
+    user_group_id = ODataField('UserGroupId')
+    user_group_name = ODataField('UserGroupName')
+    user_group_dec = ODataField('UserGroupDec')
+    tpl_id = ODataField('TPLId')
+    start_date = ODataField('StartDate')
+    due_date = ODataField('DueDate')
+    user_group_type = ODataField('UserGroupType')
+
+class UserKeysMDFields(FieldEnum):
+    table_name = ODataField('TableName')
+    key_index = ODataField('KeyIndex')
+    key_name = ODataField('KeyName')
+    unique = ODataField('Unique')
+    user_keys_md_elements = ODataField('UserKeysMD_Elements')
+
+class UserLanguageFields(FieldEnum):
+    code = ODataField('Code')
+    language_short_name = ODataField('LanguageShortName')
+    language_full_name = ODataField('LanguageFullName')
+    related_system_language = ODataField('RelatedSystemLanguage')
+    user_default_groups = ODataField('UserDefaultGroups')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')
+
+class UserObjectsMDFields(FieldEnum):
+    table_name = ODataField('TableName')
+    code = ODataField('Code')
+    log_table_name = ODataField('LogTableName')
+    can_create_default_form = ODataField('CanCreateDefaultForm')
+    object_type = ODataField('ObjectType')
+    extension_name = ODataField('ExtensionName')
+    can_cancel = ODataField('CanCancel')
+    can_delete = ODataField('CanDelete')
+    can_log = ODataField('CanLog')
+    manage_series = ODataField('ManageSeries')
+    can_find = ODataField('CanFind')
+    can_year_transfer = ODataField('CanYearTransfer')
+    name = ODataField('Name')
+    can_close = ODataField('CanClose')
+    overwrite_dllfile = ODataField('OverwriteDllfile')
+    use_unique_form_type = ODataField('UseUniqueFormType')
+    can_archive = ODataField('CanArchive')
+    menu_item = ODataField('MenuItem')
+    menu_caption = ODataField('MenuCaption')
+    father_menu_id = ODataField('FatherMenuID')
+    position = ODataField('Position')
+    menu_uid = ODataField('MenuUID')
+    enable_enhanced_form = ODataField('EnableEnhancedForm')
+    rebuild_enhanced_form = ODataField('RebuildEnhancedForm')
+    form_srf = ODataField('FormSRF')
+    apply_authorization = ODataField('ApplyAuthorization')
+    personal_data_protection = ODataField('PersonalDataProtection')
+    user_object_md_child_tables = ODataField('UserObjectMD_ChildTables')
+    user_object_md_find_columns = ODataField('UserObjectMD_FindColumns')
+    user_object_md_form_columns = ODataField('UserObjectMD_FormColumns')
+    user_object_md_enhanced_form_columns = ODataField('UserObjectMD_EnhancedFormColumns')
+    user_tables_md = ODataField('UserTablesMD')
+
+class UserPermissionTreeFields(FieldEnum):
+    user_signature = ODataField('UserSignature')
+    display_order = ODataField('DisplayOrder')
+    permission_id = ODataField('PermissionID')
+    options = ODataField('Options')
+    name = ODataField('Name')
+    levels = ODataField('Levels')
+    is_item = ODataField('IsItem')
+    parent_id = ODataField('ParentID')
+    user_permission_forms = ODataField('UserPermissionForms')
+    user = ODataField('User')
+
+class UserQueryFields(FieldEnum):
+    internal_key = ODataField('InternalKey')
+    query_category = ODataField('QueryCategory')
+    query_description = ODataField('QueryDescription')
+    query = ODataField('Query')
+    procedure_alias = ODataField('ProcedureAlias')
+    procedure_name = ODataField('ProcedureName')
+    query_type = ODataField('QueryType')
+    menu_caption = ODataField('MenuCaption')
+    parent_menu_id = ODataField('ParentMenuID')
+    menu_position = ODataField('MenuPosition')
+    menu_unique_id = ODataField('MenuUniqueID')
+    enable_menu_entry = ODataField('EnableMenuEntry')
+    query_category2 = ODataField('QueryCategory2')
+
+class UserTablesMDFields(FieldEnum):
+    table_name = ODataField('TableName')
+    table_description = ODataField('TableDescription')
+    table_type = ODataField('TableType')
+    archivable = ODataField('Archivable')
+    archive_date_field = ODataField('ArchiveDateField')
+    display_menu = ODataField('DisplayMenu')
+    apply_authorization = ODataField('ApplyAuthorization')
+    user_fields_md = ODataField('UserFieldsMD')
+    user_objects_md = ODataField('UserObjectsMD')
+
+class ValueMappingCommunicationDataFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    third_party_system_id = ODataField('ThirdPartySystemId')
+    object_id = ODataField('ObjectId')
+    communication_type = ODataField('CommunicationType')
+    start_date = ODataField('StartDate')
+    start_time = ODataField('StartTime')
+    end_date = ODataField('EndDate')
+    end_time = ODataField('EndTime')
+    message = ODataField('Message')
+    status = ODataField('Status')
+
+class WTDCodeFields(FieldEnum):
+    abs_entry = ODataField('AbsEntry')
+    w_tax_code = ODataField('WTaxCode')
+    w_tax_name = ODataField('WTaxName')
+    formula_id = ODataField('FormulaID')
+    inactive = ODataField('Inactive')
+    official_code = ODataField('OfficialCode')
+    category = ODataField('Category')
+    base_type = ODataField('BaseType')
+    type = ODataField('Type')
+    min_amount = ODataField('MinAmount')
+    base_amount_prct = ODataField('BaseAmountPrct')
+    sliding_scale_progressive_tax = ODataField('SlidingScaleProgressiveTax')
+    calculate_in_automatic_cm = ODataField('CalculateInAutomaticCM')
+    wtd_effective_date_collection = ODataField('WTDEffectiveDateCollection')
+    wtdbp_collection = ODataField('WTDBPCollection')
+    wtd_item_collection = ODataField('WTDItemCollection')
+    wtd_freight_collection = ODataField('WTDFreightCollection')
+
+class WTaxTypeCodeFields(FieldEnum):
+    code = ODataField('Code')
+    description = ODataField('Description')
+
+class WebClientBookmarkTileFields(FieldEnum):
+    guid = ODataField('Guid')
+    title = ODataField('Title')
+    sub_title = ODataField('SubTitle')
+    info = ODataField('Info')
+    bind_type = ODataField('BindType')
+    url_target = ODataField('UrlTarget')
+
+class WebClientDashboardFields(FieldEnum):
+    guid = ODataField('Guid')
+    user_id = ODataField('UserId')
+    content = ODataField('Content')
+    sys = ODataField('Sys')
+    web_client_dashboard_cards = ODataField('WebClientDashboardCards')
+
+class WebClientFormSettingFields(FieldEnum):
+    guid = ODataField('Guid')
+    form_id = ODataField('FormId')
+    user_id = ODataField('UserId')
+    doc_object_code = ODataField('DocObjectCode')
+    web_client_form_setting_items = ODataField('WebClientFormSettingItems')
+
+class WebClientLaunchpadFields(FieldEnum):
+    guid = ODataField('Guid')
+    user_id = ODataField('UserId')
+    theme_id = ODataField('ThemeId')
+    display_quick_view = ODataField('DisplayQuickView')
+    notification_show_days = ODataField('NotificationShowDays')
+    web_client_launchpad_groups = ODataField('WebClientLaunchpadGroups')
+
+class WebClientListviewFilterFields(FieldEnum):
+    guid = ODataField('Guid')
+    user_id = ODataField('UserId')
+    table_name = ODataField('TableName')
+    filter_name = ODataField('FilterName')
+    web_client_listview_filter_conditions = ODataField('WebClientListviewFilterConditions')
+
+class WebClientNotificationFields(FieldEnum):
+    guid = ODataField('Guid')
+    user_id = ODataField('UserId')
+    activity_date = ODataField('ActivityDate')
+    read_status = ODataField('ReadStatus')
+    is_dismissed = ODataField('IsDismissed')
+    noti_type = ODataField('NotiType')
+
+class WebClientPreferenceFields(FieldEnum):
+    guid = ODataField('Guid')
+    user_id = ODataField('UserId')
+    table_name = ODataField('TableName')
+    column_name = ODataField('ColumnName')
+    default_value = ODataField('DefaultValue')
+
+class WebClientRecentActivityFields(FieldEnum):
+    guid = ODataField('Guid')
+    app_id = ODataField('AppId')
+    app_type = ODataField('AppType')
+    count = ODataField('Count')
+    timestamp = ODataField('Timestamp')
+    title = ODataField('Title')
+    url = ODataField('Url')
+    usage_array = ODataField('UsageArray')
+    user_id = ODataField('UserId')
+    recent_day = ODataField('RecentDay')
+
+class WebClientVariantFields(FieldEnum):
+    guid = ODataField('Guid')
+    order = ODataField('Order')
+    user_id = ODataField('UserId')
+    view_type = ODataField('ViewType')
+    sub_view_type = ODataField('SubViewType')
+    view_id = ODataField('ViewId')
+    object_name = ODataField('ObjectName')
+    filter_bar_layout = ODataField('FilterBarLayout')
+    system_filter = ODataField('SystemFilter')
+    user_filter = ODataField('UserFilter')
+    condition_filter = ODataField('ConditionFilter')
+    is_public = ODataField('IsPublic')
+    is_system = ODataField('IsSystem')
+    name = ODataField('Name')
+    version = ODataField('Version')
+    overview_customization = ODataField('OverviewCustomization')
+    chart_customization = ODataField('ChartCustomization')
+    web_client_variant_selected_column_collection = ODataField('WebClientVariantSelectedColumnCollection')
+    web_client_variant_group_by_collection = ODataField('WebClientVariantGroupByCollection')
+    web_client_variant_sort_by_collection = ODataField('WebClientVariantSortByCollection')
+    web_client_variant_embedded_chart_collection = ODataField('WebClientVariantEmbeddedChartCollection')
+    web_client_variant_m_chart_collection = ODataField('WebClientVariantMChartCollection')
+
+class WebClientVariantGroupFields(FieldEnum):
+    guid = ODataField('Guid')
+    user_id = ODataField('UserId')
+    view_type = ODataField('ViewType')
+    view_id = ODataField('ViewId')
+    object_name = ODataField('ObjectName')
+    default_variant = ODataField('DefaultVariant')
+
+class WeightMeasureFields(FieldEnum):
+    unit_code = ODataField('UnitCode')
+    unit_display = ODataField('UnitDisplay')
+    unit_name = ODataField('UnitName')
+    unit_weightinmg = ODataField('UnitWeightinmg')
+    bin_locations = ODataField('BinLocations')
+
+class WizardPaymentMethodFields(FieldEnum):
+    payment_method_code = ODataField('PaymentMethodCode')
+    description = ODataField('Description')
+    type = ODataField('Type')
+    payment_means = ODataField('PaymentMeans')
+    check_address = ODataField('CheckAddress')
+    check_bank_details = ODataField('CheckBankDetails')
+    collection_authorization_check = ODataField('CollectionAuthorizationCheck')
+    block_foreign_payment = ODataField('BlockForeignPayment')
+    block_foreign_bank = ODataField('BlockForeignBank')
+    currency_restriction = ODataField('CurrencyRestriction')
+    post_office_bank = ODataField('PostOfficeBank')
+    minimum_amount = ODataField('MinimumAmount')
+    maximum_amount = ODataField('MaximumAmount')
+    default_bank = ODataField('DefaultBank')
+    user_signature = ODataField('UserSignature')
+    creation_date = ODataField('CreationDate')
+    bank_country = ODataField('BankCountry')
+    default_account = ODataField('DefaultAccount')
+    gl_account = ODataField('GLAccount')
+    branch = ODataField('Branch')
+    key_code = ODataField('KeyCode')
+    transaction_type = ODataField('TransactionType')
+    format = ODataField('Format')
+    agent_collection = ODataField('AgentCollection')
+    sendfor_acceptance = ODataField('SendforAcceptance')
+    group_by_date = ODataField('GroupByDate')
+    deposit_norm = ODataField('DepositNorm')
+    debit_memo = ODataField('DebitMemo')
+    group_by_payment_reference = ODataField('GroupByPaymentReference')
+    group_invoicesby_pay = ODataField('GroupInvoicesbyPay')
+    due_date_selection = ODataField('DueDateSelection')
+    payment_terms_code = ODataField('PaymentTermsCode')
+    postto_gl_interim_account = ODataField('PosttoGLInterimAccount')
+    bank_account_key = ODataField('BankAccountKey')
+    doc_type = ODataField('DocType')
+    accepted = ODataField('Accepted')
+    portfolio_id = ODataField('PortfolioID')
+    cur_code = ODataField('CurCode')
+    instruction1 = ODataField('Instruction1')
+    instruction2 = ODataField('Instruction2')
+    payment_place = ODataField('PaymentPlace')
+    barcode_dll = ODataField('BarcodeDll')
+    active = ODataField('Active')
+    group_invoices_by_pay_to_bank = ODataField('GroupInvoicesByPayToBank')
+    group_invoices_by_currency = ODataField('GroupInvoicesByCurrency')
+    bank_charge_rate = ODataField('BankChargeRate')
+    report_code = ODataField('ReportCode')
+    cancel_instruction = ODataField('CancelInstruction')
+    occurence_code = ODataField('OccurenceCode')
+    movement_code = ODataField('MovementCode')
+    direct_debit = ODataField('DirectDebit')
+    currency_restrictions = ODataField('CurrencyRestrictions')
+    purchase_quotations = ODataField('PurchaseQuotations')
+    correction_invoice_reversal = ODataField('CorrectionInvoiceReversal')
+    correction_invoice = ODataField('CorrectionInvoice')
+    purchase_delivery_notes = ODataField('PurchaseDeliveryNotes')
+    correction_purchase_invoice = ODataField('CorrectionPurchaseInvoice')
+    inventory_gen_entries = ODataField('InventoryGenEntries')
+    orders = ODataField('Orders')
+    user = ODataField('User')
+    country = ODataField('Country')
+    chart_of_account = ODataField('ChartOfAccount')
+    payment_terms_type = ODataField('PaymentTermsType')
+    house_bank_account = ODataField('HouseBankAccount')
+    inventory_gen_exits = ODataField('InventoryGenExits')
+    drafts = ODataField('Drafts')
+    return_request = ODataField('ReturnRequest')
+    delivery_notes = ODataField('DeliveryNotes')
+    purchase_invoices = ODataField('PurchaseInvoices')
+    self_invoices = ODataField('SelfInvoices')
+    blanket_agreements = ODataField('BlanketAgreements')
+    invoices = ODataField('Invoices')
+    credit_notes = ODataField('CreditNotes')
+    purchase_credit_notes = ODataField('PurchaseCreditNotes')
+    business_partners = ODataField('BusinessPartners')
+    down_payments = ODataField('DownPayments')
+    purchase_down_payments = ODataField('PurchaseDownPayments')
+    purchase_returns = ODataField('PurchaseReturns')
+    purchase_orders = ODataField('PurchaseOrders')
+    self_credit_memos = ODataField('SelfCreditMemos')
+    quotations = ODataField('Quotations')
+    returns = ODataField('Returns')
+    goods_return_request = ODataField('GoodsReturnRequest')
+    correction_purchase_invoice_reversal = ODataField('CorrectionPurchaseInvoiceReversal')
+    purchase_requests = ODataField('PurchaseRequests')

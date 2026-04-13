@@ -131,7 +131,7 @@ class AsyncRestAdapter(BaseRestAdapter):
         """
         await self.aclose()
 
-    async def ensure_session(self, force_refresh_if_expiry: Optional[datetime] = None) -> None:
+    async def ensure_session(self, force_refresh_if_expiry: Optional[datetime] = None, force_refresh: bool = False) -> None:
         """
         Ensures a valid SAP session exists before a request.
 
@@ -144,14 +144,18 @@ class AsyncRestAdapter(BaseRestAdapter):
             raise B1Exception("AsyncRestAdapter not initialized. Call connect() first.")
         lock = await self._get_lock()
         async with lock:
-            if force_refresh_if_expiry is not None and self.token_expiry == force_refresh_if_expiry:
+            if (force_refresh or force_refresh_if_expiry is not None) and self.token_expiry == force_refresh_if_expiry:
                 self.is_session_active = False
 
-            if (
-                not self.is_session_active
-                or not self.token_expiry
-                or datetime.now() >= self.token_expiry
-            ):
+            # We should login if:
+            # 1. We are not active (Initial start or logout or forced refresh)
+            # 2. We are active but we have an expiry date and it has passed.
+            # Note: We DON'T login if we are active but have no expiry (Hydrated session).
+            should_login = not self.is_session_active
+            if not should_login and self.token_expiry:
+                should_login = datetime.now() >= self.token_expiry
+
+            if should_login:
                 await self.login()
 
     async def login(self) -> Result:
@@ -237,14 +241,21 @@ class AsyncRestAdapter(BaseRestAdapter):
         try:
             # ── ETag: inject If-None-Match (GET) or If-Match (PATCH/DELETE/POST) ──
             headers = self._build_headers(http_method, endpoint_path)
-            response = await self._client.request(
-                method=http_method, url=full_url, params=ep_params, json=data,
-                headers=headers,
-            )
+
+            if self._dry_run_active and http_method in {"POST", "PATCH", "DELETE"} and not _is_login:
+                self._logger.info(f"[{req_id}] [DRY RUN] Intercepting {http_method} {full_url}")
+                # We simulate a response object to keep the rest of the logic working (hooks, logs, etc)
+                is_success = True
+                response = httpx.Response(204, request=httpx.Request(http_method, full_url))
+            else:
+                response = await self._client.request(
+                    method=http_method, url=full_url, params=ep_params, json=data,
+                    headers=headers,
+                )
 
             if response.status_code == 401 and _retry_once and not _is_login:
                 self._logger.warning(f"[{req_id}] 401 Unauthorized - retrying login...")
-                await self.ensure_session(force_refresh_if_expiry=self.token_expiry)
+                await self.ensure_session(force_refresh_if_expiry=self.token_expiry, force_refresh=True)
                 # Recursive call will handle its own finally block,
                 # but we need to return here to avoid double-logging/hooking.
                 return await self._do(

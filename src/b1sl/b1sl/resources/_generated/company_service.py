@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class CompanyService(GenericResource[Any]):
     endpoint = "CompanyService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -37,7 +35,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_CreatePeriod", data=payload)
+        return self._adapter.post(f"CompanyService_CreatePeriod", data=payload)
 
     def create_period_with_finance_params(self, payload: dict | None = None) -> Any:
         """POST CompanyService_CreatePeriodWithFinanceParams
@@ -64,7 +62,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_CreatePeriodWithFinanceParams", data=payload)
+        return self._adapter.post(f"CompanyService_CreatePeriodWithFinanceParams", data=payload)
 
     def get_advanced_gl_account(self, payload: dict | None = None) -> Any:
         """POST CompanyService_GetAdvancedGLAccount
@@ -77,7 +75,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_GetAdvancedGLAccount", data=payload)
+        return self._adapter.post(f"CompanyService_GetAdvancedGLAccount", data=payload)
 
     def get_features_status(self, payload: dict | None = None) -> Any:
         """POST CompanyService_GetFeaturesStatus
@@ -85,7 +83,7 @@ class CompanyService(GenericResource[Any]):
 					It returns the 'FeatureStatusCollection'. A feature status can be either blocked or not.
 					This object represents the status of a specified feature in the application, whether it is blocked or not according to the installation type: new 2007 release installation or upgrade installation prior to 2007 release.
         """
-        return self._adapter.post("CompanyService_GetFeaturesStatus", data=payload)
+        return self._adapter.post(f"CompanyService_GetFeaturesStatus", data=payload)
 
     def get_finance_period(self, payload: dict | None = None) -> Any:
         """POST CompanyService_GetFinancePeriod
@@ -100,7 +98,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_GetFinancePeriod", data=payload)
+        return self._adapter.post(f"CompanyService_GetFinancePeriod", data=payload)
 
     def get_finance_periods(self, payload: dict | None = None) -> Any:
         """POST CompanyService_GetFinancePeriods
@@ -117,7 +115,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_GetFinancePeriods", data=payload)
+        return self._adapter.post(f"CompanyService_GetFinancePeriods", data=payload)
 
     def get_item_price(self, payload: dict | None = None) -> Any:
         """POST CompanyService_GetItemPrice
@@ -134,7 +132,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_GetItemPrice", data=payload)
+        return self._adapter.post(f"CompanyService_GetItemPrice", data=payload)
 
     def get_period(self, payload: dict | None = None) -> Any:
         """POST CompanyService_GetPeriod
@@ -151,14 +149,14 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_GetPeriod", data=payload)
+        return self._adapter.post(f"CompanyService_GetPeriod", data=payload)
 
     def get_periods(self, payload: dict | None = None) -> Any:
         """GET CompanyService_GetPeriods
         Invoke the method 'GetPeriods' on this service.
 					It returns the 'PeriodCategoryParamsCollection', which is a collection of 'PeriodCategoryParams' identification keys.
         """
-        return self._adapter.post("CompanyService_GetPeriods", data=payload)
+        return self._adapter.post(f"CompanyService_GetPeriods", data=payload)
 
     def log_login_action(self, payload: dict | None = None) -> Any:
         """POST CompanyService_LogLoginAction
@@ -197,7 +195,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_LogLoginAction", data=payload)
+        return self._adapter.post(f"CompanyService_LogLoginAction", data=payload)
 
     def log_logoff_action(self, payload: dict | None = None) -> Any:
         """POST CompanyService_LogLogoffAction
@@ -237,7 +235,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_LogLogoffAction", data=payload)
+        return self._adapter.post(f"CompanyService_LogLogoffAction", data=payload)
 
     def remove_finance_period(self, payload: dict | None = None) -> Any:
         """POST CompanyService_RemoveFinancePeriod
@@ -254,7 +252,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_RemoveFinancePeriod", data=payload)
+        return self._adapter.post(f"CompanyService_RemoveFinancePeriod", data=payload)
 
     def round_decimal(self, payload: dict | None = None) -> Any:
         """POST CompanyService_RoundDecimal
@@ -272,7 +270,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_RoundDecimal", data=payload)
+        return self._adapter.post(f"CompanyService_RoundDecimal", data=payload)
 
     def update_admin_info(self, payload: dict | None = None) -> Any:
         """POST CompanyService_UpdateAdminInfo
@@ -304,7 +302,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_UpdateAdminInfo", data=payload)
+        return self._adapter.post(f"CompanyService_UpdateAdminInfo", data=payload)
 
     def update_company_info(self, payload: dict | None = None) -> Any:
         """POST CompanyService_UpdateCompanyInfo
@@ -326,7 +324,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_UpdateCompanyInfo", data=payload)
+        return self._adapter.post(f"CompanyService_UpdateCompanyInfo", data=payload)
 
     def update_finance_period(self, payload: dict | None = None) -> Any:
         """POST CompanyService_UpdateFinancePeriod
@@ -350,7 +348,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_UpdateFinancePeriod", data=payload)
+        return self._adapter.post(f"CompanyService_UpdateFinancePeriod", data=payload)
 
     def update_path_admin(self, payload: dict | None = None) -> Any:
         """POST CompanyService_UpdatePathAdmin
@@ -369,7 +367,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_UpdatePathAdmin", data=payload)
+        return self._adapter.post(f"CompanyService_UpdatePathAdmin", data=payload)
 
     def update_period(self, payload: dict | None = None) -> Any:
         """POST CompanyService_UpdatePeriod
@@ -389,7 +387,7 @@ class CompanyService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("CompanyService_UpdatePeriod", data=payload)
+        return self._adapter.post(f"CompanyService_UpdatePeriod", data=payload)
 
     # --- Functions ---
 
@@ -397,16 +395,16 @@ class CompanyService(GenericResource[Any]):
         """POST CompanyService_GetAdminInfo(params)
         Invoke the method 'GetAdminInfo' on this service. It Returns the 'AdminInfo' data structure, including administration properties for system initialization and various definitions, such as financials and banking.
         """
-        return self._function("CompanyService_GetAdminInfo", params)
+        return self._function(f"CompanyService_GetAdminInfo", params)
 
     def get_company_info(self, params: dict | None = None) -> Any:
         """POST CompanyService_GetCompanyInfo(params)
         Invoke the method 'GetCompanyInfo' on this service. It returns the 'CompanyInfo' data structure, including initial parameters related to the company. The default values of some of the properties vary according to the country localization.
         """
-        return self._function("CompanyService_GetCompanyInfo", params)
+        return self._function(f"CompanyService_GetCompanyInfo", params)
 
     def get_path_admin(self, params: dict | None = None) -> Any:
         """POST CompanyService_GetPathAdmin(params)
         Invoke the method 'GetPathAdmin' on this service.
         """
-        return self._function("CompanyService_GetPathAdmin", params)
+        return self._function(f"CompanyService_GetPathAdmin", params)

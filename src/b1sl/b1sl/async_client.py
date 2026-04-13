@@ -78,6 +78,28 @@ class AsyncB1Client:
         """
         return self._adapter.session_id
 
+    def dry_run(self, enabled: bool = True):
+        """
+        Context manager to temporarily enable or disable Dry Run mode
+        **for the current asyncio task only** (task-safe via ContextVar).
+
+        Usage::
+
+            async with AsyncB1Client(config) as b1:
+                # Intercept writes for just this block
+                with b1.dry_run():
+                    await b1.items.create(new_item)  # intercepted
+
+                # Force real execution even if global dry_run is True
+                with b1.dry_run(enabled=False):
+                    await b1.items.update(item)  # sent to SAP
+
+        Note:
+            Use ``with`` (sync CM), **not** ``async with``, even in async code.
+            This is correct Python — the CM guards a state variable, not I/O.
+        """
+        return self._adapter.dry_run(enabled)
+
     async def connect(self) -> None:
         """
         Initializes the underlying HTTP client and logs in.

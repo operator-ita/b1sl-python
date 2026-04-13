@@ -1,3 +1,5 @@
+# Configuration
+
 ## Overview
 The SDK uses a **hierarchical and environment-agnostic** configuration system. This allows you to switch between a local dev environment (`B1SL_ENV=dev`), a QA environment (`B1SL_ENV=test`), or a production environment (`B1SL_ENV=prod`) without changing a single line of business logic.
 
@@ -17,6 +19,32 @@ The SDK uses a typed `B1Env` enum to represent these states:
 - `B1Env.DEV`: Human-readable logs, standard environment.
 - `B1Env.TEST`: Identical to DEV, signals test isolation.
 - `B1Env.PROD`: **Structured JSON logs** enabled automatically for observability pipelines.
+
+### 3. Dry Run Mode
+To prevent accidental data modification during development or debugging, the SDK includes a global **Dry Run** flag.
+
+- `B1SL_DRY_RUN`: Set to `1` to enable.
+
+When enabled, all writing requests (`POST`, `PATCH`, `DELETE`) are intercepted by the adapter. The SDK will log the intended action and return a dummy success result (`204 No Content`) without actually hitting the SAP Service Layer. `GET` and `Login` requests continue to work normally.
+
+```python
+# Enable via code (Global)
+config = B1Config.from_env()
+config.dry_run = True
+
+# Temporary Dry Run (Pythonic Context Manager)
+# This is Task-Safe via ContextVar: it only affects the current task/thread.
+async with AsyncB1Client(config) as b1:
+    with b1.dry_run():
+        await b1.items.update("A0001", item) # Intercepted
+
+    # Or force execution if global dry_run is True
+    with b1.dry_run(enabled=False):
+        await b1.items.update("A0001", item) # Sent to SAP
+
+# IMPORTANT: Always use 'with' (sync), NOT 'async with', 
+# even in async code blocks.
+```
 
 ## Test Data Profiles
 One of the most powerful features is the **Test Data Profile**. Instead of hardcoding item codes or customer IDs in your tests or examples, use the `test_data` object in your JSON config:

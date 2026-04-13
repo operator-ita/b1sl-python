@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class ValueMappingService(GenericResource[Any]):
     endpoint = "ValueMappingService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -32,7 +30,7 @@ class ValueMappingService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ValueMappingService_GetMappedB1Value", data=payload)
+        return self._adapter.post(f"ValueMappingService_GetMappedB1Value", data=payload)
 
     def get_third_party_values_for_b1_value(self, payload: dict | None = None) -> Any:
         """POST ValueMappingService_GetThirdPartyValuesForB1Value
@@ -47,7 +45,7 @@ class ValueMappingService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ValueMappingService_GetThirdPartyValuesForB1Value", data=payload)
+        return self._adapter.post(f"ValueMappingService_GetThirdPartyValuesForB1Value", data=payload)
 
     def remove_mapped_value(self, payload: dict | None = None) -> Any:
         """POST ValueMappingService_RemoveMappedValue
@@ -63,4 +61,4 @@ class ValueMappingService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ValueMappingService_RemoveMappedValue", data=payload)
+        return self._adapter.post(f"ValueMappingService_RemoveMappedValue", data=payload)

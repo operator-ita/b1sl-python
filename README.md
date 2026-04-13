@@ -19,7 +19,9 @@ b1sl is a high-performance SDK designed for the SAP B1 Service Layer, focusing o
 *   **Smart Session Management**: Automatic 401 re-authentication with internal locking to prevent license exhaustion.
 *   **Session Hydration**: Reuse existing `B1SESSION` IDs across serverless functions or Temporal activities.
 *   **Optimistic Concurrency**: Automated ETag handling with smart cache invalidation on 412 conflicts.
+*   **Pythonic Querying**: Fluent OData builder with operator overloading and type-safe fields.
 *   **Observability**: Structured logging and event hooks for performance monitoring.
+*   **Safe Development**: Global and per-request **Dry Run** mode to intercept writing requests.
 
 ---
 
@@ -46,11 +48,38 @@ async def main():
     
     async with AsyncB1Client(config) as b1:
         # Full type hints for items and major entities
-        item = await b1.items.get("C1000")
-        print(f"Item: {item.ItemName}")
+        item = await b1.items.get("I1000")
+        
+        # 1. Native Pythonic access (snake_case)
+        print(f"Item: {item.item_name}")
+        
+        # 2. Dynamic access by SAP Alias (perfect for UDFs!)
+        print(f"Stock: {item.get('QuantityOnStock')}")
 
 if __name__ == "__main__":
     asyncio.run(main())
+```
+
+---
+
+## Pythonic Querying
+
+Experience the best way to interact with SAP Service Layer. No more string concatenation!
+
+```python
+from b1sl.b1sl.fields import Item
+from datetime import date
+
+# Fluent queries are type-safe, readable, and support IDE autocomplete
+items = await b1.items.filter(
+    (Item.quantity_on_stock > 0) & (Item.valid_from >= date(2024, 1, 1))
+).select(
+    Item.item_code, 
+    Item.item_name
+).top(5).execute()
+
+for item in items:
+    print(f"[{item.item_code}] {item.item_name}")
 ```
 
 ---

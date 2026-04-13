@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class MobileAppService(GenericResource[Any]):
     endpoint = "MobileAppService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -20,7 +18,7 @@ class MobileAppService(GenericResource[Any]):
         """POST MobileAppService_GetCurrentServerDateTime
         Invoke the method 'GetCurrentServerDateTime' on this service.
         """
-        return self._adapter.post("MobileAppService_GetCurrentServerDateTime", data=payload)
+        return self._adapter.post(f"MobileAppService_GetCurrentServerDateTime", data=payload)
 
     def get_dpp_change_params(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_GetDppChangeParams
@@ -36,7 +34,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_GetDppChangeParams", data=payload)
+        return self._adapter.post(f"MobileAppService_GetDppChangeParams", data=payload)
 
     def get_employee_full_names(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_GetEmployeeFullNames
@@ -58,7 +56,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_GetEmployeeFullNames", data=payload)
+        return self._adapter.post(f"MobileAppService_GetEmployeeFullNames", data=payload)
 
     def get_sales_app_setting(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_GetSalesAppSetting
@@ -74,7 +72,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_GetSalesAppSetting", data=payload)
+        return self._adapter.post(f"MobileAppService_GetSalesAppSetting", data=payload)
 
     def get_service_app_report(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_GetServiceAppReport
@@ -90,7 +88,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_GetServiceAppReport", data=payload)
+        return self._adapter.post(f"MobileAppService_GetServiceAppReport", data=payload)
 
     def get_service_app_report_content(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_GetServiceAppReportContent
@@ -106,7 +104,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_GetServiceAppReportContent", data=payload)
+        return self._adapter.post(f"MobileAppService_GetServiceAppReportContent", data=payload)
 
     def get_technician_schedulings(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_GetTechnicianSchedulings
@@ -123,7 +121,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_GetTechnicianSchedulings", data=payload)
+        return self._adapter.post(f"MobileAppService_GetTechnicianSchedulings", data=payload)
 
     def get_technician_settings(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_GetTechnicianSettings
@@ -136,7 +134,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_GetTechnicianSettings", data=payload)
+        return self._adapter.post(f"MobileAppService_GetTechnicianSettings", data=payload)
 
     def get_technician_settings_group(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_GetTechnicianSettingsGroup
@@ -152,7 +150,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_GetTechnicianSettingsGroup", data=payload)
+        return self._adapter.post(f"MobileAppService_GetTechnicianSettingsGroup", data=payload)
 
     def update_sales_app_setting(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_UpdateSalesAppSetting
@@ -168,7 +166,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_UpdateSalesAppSetting", data=payload)
+        return self._adapter.post(f"MobileAppService_UpdateSalesAppSetting", data=payload)
 
     def update_service_app_report(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_UpdateServiceAppReport
@@ -184,7 +182,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_UpdateServiceAppReport", data=payload)
+        return self._adapter.post(f"MobileAppService_UpdateServiceAppReport", data=payload)
 
     def update_service_app_report_content(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_UpdateServiceAppReportContent
@@ -203,7 +201,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_UpdateServiceAppReportContent", data=payload)
+        return self._adapter.post(f"MobileAppService_UpdateServiceAppReportContent", data=payload)
 
     def update_technician_settings(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_UpdateTechnicianSettings
@@ -216,7 +214,7 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_UpdateTechnicianSettings", data=payload)
+        return self._adapter.post(f"MobileAppService_UpdateTechnicianSettings", data=payload)
 
     def update_technician_settings_group(self, payload: dict | None = None) -> Any:
         """POST MobileAppService_UpdateTechnicianSettingsGroup
@@ -239,4 +237,4 @@ class MobileAppService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("MobileAppService_UpdateTechnicianSettingsGroup", data=payload)
+        return self._adapter.post(f"MobileAppService_UpdateTechnicianSettingsGroup", data=payload)

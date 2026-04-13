@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class CashDiscountsService(GenericResource[Any]):
     endpoint = "CashDiscountsService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -20,4 +18,4 @@ class CashDiscountsService(GenericResource[Any]):
         """POST CashDiscountsService_GetCashDiscountList
         Invoke the method 'GetCashDiscountList' on this service.
         """
-        return self._adapter.post("CashDiscountsService_GetCashDiscountList", data=payload)
+        return self._adapter.post(f"CashDiscountsService_GetCashDiscountList", data=payload)
