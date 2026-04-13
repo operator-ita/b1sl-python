@@ -7,7 +7,10 @@ Unified base classes for SAP B1 resources.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
+
+if TYPE_CHECKING:
+    from b1sl.b1sl.resources.odata import QueryBuilder
 
 from b1sl.b1sl.adapter_protocol import RestAdapterProtocol
 from b1sl.b1sl.exceptions.exceptions import B1NotFoundError
@@ -80,6 +83,36 @@ class GenericResource(Generic[T]):
 
     def __init__(self, adapter: RestAdapterProtocol) -> None:
         self._adapter = adapter
+
+    # ── fluent query builder ────────────────────────────────────────────────
+    
+    def by_id(self, key: Any) -> QueryBuilder[T]:
+        from b1sl.b1sl.resources.odata import QueryBuilder
+        return QueryBuilder(self).by_id(key)
+
+    def filter(self, expression: str) -> QueryBuilder[T]:
+        from b1sl.b1sl.resources.odata import QueryBuilder
+        return QueryBuilder(self).filter(expression)
+
+    def select(self, *fields: str) -> QueryBuilder[T]:
+        from b1sl.b1sl.resources.odata import QueryBuilder
+        return QueryBuilder(self).select(*fields)
+
+    def top(self, value: int) -> QueryBuilder[T]:
+        from b1sl.b1sl.resources.odata import QueryBuilder
+        return QueryBuilder(self).top(value)
+
+    def skip(self, value: int) -> QueryBuilder[T]:
+        from b1sl.b1sl.resources.odata import QueryBuilder
+        return QueryBuilder(self).skip(value)
+
+    def orderby(self, expression: str) -> QueryBuilder[T]:
+        from b1sl.b1sl.resources.odata import QueryBuilder
+        return QueryBuilder(self).orderby(expression)
+
+    def expand(self, value: list[str] | dict[str, list[str]]) -> QueryBuilder[T]:
+        from b1sl.b1sl.resources.odata import QueryBuilder
+        return QueryBuilder(self).expand(value)
 
     # ── Collection ───────────────────────────────────────────────────────────
 

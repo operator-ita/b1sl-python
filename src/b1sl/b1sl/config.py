@@ -33,6 +33,7 @@ class B1Config:
         max_page_size (int, optional): Default 20.
         connect_timeout (float, optional): TCP timeout (seconds).
         read_timeout (float, optional): Read timeout (seconds).
+        dry_run (bool, optional): If True, POST/PATCH/DELETE requests are intercepted and logged without being sent to SAP. Defaults to False.
     """
 
     base_url: str
@@ -47,6 +48,7 @@ class B1Config:
     connect_timeout: float = 10.0  # seconds to establish TCP connection
     read_timeout: float = 60.0  # seconds to wait for SAP to respond
     etag_cache_size: int = 256
+    dry_run: bool = False
 
     def __post_init__(self) -> None:
         """Validates all required parameters are present after initialisation."""
@@ -104,6 +106,7 @@ class B1Config:
             "connect_timeout": float(os.environ.get("B1SL_CONNECT_TIMEOUT", 10)),
             "read_timeout": float(os.environ.get("B1SL_READ_TIMEOUT", 60)),
             "environment": B1Env(os.environ.get("B1SL_ENV", "dev").lower()),
+            "dry_run": os.environ.get("B1SL_DRY_RUN", "0") == "1",
         }
 
         return cls(**kwargs)
@@ -135,4 +138,5 @@ class B1Config:
             etag_cache_size=int(getattr(settings, "B1SL_ETAG_CACHE_SIZE", 256)),
             connect_timeout=float(getattr(settings, "B1SL_CONNECT_TIMEOUT", 10)),
             read_timeout=float(getattr(settings, "B1SL_READ_TIMEOUT", 60)),
+            dry_run=getattr(settings, "B1SL_DRY_RUN", False),
         )

@@ -40,6 +40,10 @@ def run_example():
     # This ensures that your logs match your loaded environment.
     logger = setup_logging(env=current_env)
 
+    # 4. Dry Run Detection.
+    if env.config.dry_run:
+         logger.warning("🛡️ DRY RUN mode is enabled via B1SL_DRY_RUN=1")
+
     # Let's see some logs!
     logger.info(f"Initialized SDK with URL: {env.config.base_url}")
     logger.debug("Testing debug output (only visible if level is set to DEBUG)")
@@ -53,13 +57,13 @@ def run_example():
 
 if __name__ == "__main__":
     # Ensure some defaults for the example if not present
-    if "SAPB1CLIENT_BASE_URL" not in os.environ:
-        os.environ["SAPB1CLIENT_BASE_URL"] = "https://localhost:50000/b1s/v2"
-    if "SAPB1CLIENT_USERNAME" not in os.environ:
-        os.environ["SAPB1CLIENT_USERNAME"] = "manager"
-    if "SAPB1CLIENT_PASSWORD" not in os.environ:
-        os.environ["SAPB1CLIENT_PASSWORD"] = "sap"
-    if "SAPB1CLIENT_COMPANY_DB" not in os.environ:
-        os.environ["SAPB1CLIENT_COMPANY_DB"] = "SBODemoMX"
+    if "B1SL_BASE_URL" not in os.environ:
+        os.environ["B1SL_BASE_URL"] = "https://localhost:50000/b1s/v2"
+    if "B1SL_USERNAME" not in os.environ:
+        os.environ["B1SL_USERNAME"] = "manager"
+    if "B1SL_PASSWORD" not in os.environ:
+        os.environ["B1SL_PASSWORD"] = "sap"
+    if "B1SL_COMPANY_DB" not in os.environ:
+        os.environ["B1SL_COMPANY_DB"] = "SBODemoMX"
 
     run_example()

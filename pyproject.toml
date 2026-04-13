@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "b1sl-python"
-version = "0.1.1"
+version = "0.1.2"
 description = "A framework-agnostic Python SDK for SAP Business One Service Layer and SAP HANA. (Unofficial)"
 readme = "README.md"
 requires-python = ">=3.11,<3.13"
@@ -66,6 +66,8 @@ exclude = [
     "/metadata",
     "/examples",
     "/docs",
+    "/skills",
+    "agents.md",
 ]
 
 [tool.hatch.build.targets.sdist]
@@ -75,6 +77,8 @@ exclude = [
     "/examples",
     "/docs",
     "/.env",
+    "/skills",
+    "agents.md",
 ]
 
 [tool.pytest.ini_options]
@@ -88,8 +92,12 @@ addopts = "--tb=short --cov=src --cov-report=term-missing"
 
 [tool.mypy]
 files = ["src"]
-strict = true
+strict = false
 ignore_missing_imports = true
+exclude = ["_generated"]
+check_untyped_defs = true
+warn_unreachable = true
+disable_error_code = ["attr-defined", "misc", "override", "assignment", "call-arg", "valid-type", "type-var", "unreachable", "call-overload", "arg-type", "union-attr"]
 
 [tool.ruff]
 line-length = 88

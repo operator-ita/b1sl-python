@@ -1,14 +1,9 @@
 from __future__ import annotations
-
-from typing import TYPE_CHECKING, Any
-
+from typing import Any, TYPE_CHECKING
 from pydantic import Field as PydanticField
-
 from b1sl.b1sl.models.base import B1Model, SapBool
-
-from ..complex_types import *
 from ..enums import *
-
+from ..complex_types import *
 if TYPE_CHECKING:
     from .._types import *
     from .businesspartners import *
@@ -513,7 +508,7 @@ class Item(B1Model):
     ncm_code: int | None = PydanticField(None, alias='NCMCode')
     material_type: BoMaterialTypes | None = PydanticField(None, alias='MaterialType')
     material_group: int | None = PydanticField(None, alias='MaterialGroup')
-    product_source: str | bool | None = PydanticField(None, alias='ProductSource')
+    product_source: str | None = PydanticField(None, alias='ProductSource')
     properties1: SapBool | None = PydanticField(None, alias='Properties1')
     properties2: SapBool | None = PydanticField(None, alias='Properties2')
     properties3: SapBool | None = PydanticField(None, alias='Properties3')

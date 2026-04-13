@@ -28,7 +28,7 @@ async def test_async_rest_adapter_login(b1_config):
 
     async with AsyncRestAdapter.from_config(b1_config) as adapter:
         assert adapter.is_session_active is True
-        assert adapter._token_expiry is not None
+        assert adapter.token_expiry is not None
 
 
 @pytest.mark.asyncio

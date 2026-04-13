@@ -236,11 +236,16 @@ class RestAdapter(BaseRestAdapter):
         is_success = False
 
         try:
-            response = self._execute_request(
-                http_method, full_url, headers, ep_params, data
-            )
-            response.raise_for_status()
-            is_success = True
+            if self._dry_run_active and http_method in {"POST", "PATCH", "DELETE"} and not _is_login:
+                self._logger.info(f"[{req_id}] [DRY RUN] Intercepting {http_method} {full_url}")
+                is_success = True
+                response = httpx.Response(204, request=httpx.Request(http_method, full_url))
+            else:
+                response = self._execute_request(
+                    http_method, full_url, headers, ep_params, data
+                )
+                response.raise_for_status()
+                is_success = True
         except httpx.HTTPStatusError as e:
             if response is not None and response.status_code == 401 and not _is_login:
                 self._logger.warning(f"[{req_id}] 401 Unauthorized - retrying login...")

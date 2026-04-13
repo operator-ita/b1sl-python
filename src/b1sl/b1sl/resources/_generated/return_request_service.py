@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class ReturnRequestService(GenericResource[Any]):
     endpoint = "ReturnRequestService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -19,22 +17,22 @@ class ReturnRequestService(GenericResource[Any]):
     def approve_and_add(self, payload: dict | None = None) -> Any:
         """POST ReturnRequestService_ApproveAndAdd
         """
-        return self._adapter.post("ReturnRequestService_ApproveAndAdd", data=payload)
+        return self._adapter.post(f"ReturnRequestService_ApproveAndAdd", data=payload)
 
     def approve_and_update(self, payload: dict | None = None) -> Any:
         """POST ReturnRequestService_ApproveAndUpdate
         """
-        return self._adapter.post("ReturnRequestService_ApproveAndUpdate", data=payload)
+        return self._adapter.post(f"ReturnRequestService_ApproveAndUpdate", data=payload)
 
     def close_by_date(self, payload: dict | None = None) -> Any:
         """POST ReturnRequestService_CloseByDate
         """
-        return self._adapter.post("ReturnRequestService_CloseByDate", data=payload)
+        return self._adapter.post(f"ReturnRequestService_CloseByDate", data=payload)
 
     def export_e_way_bill(self, payload: dict | None = None) -> Any:
         """POST ReturnRequestService_ExportEWayBill
         """
-        return self._adapter.post("ReturnRequestService_ExportEWayBill", data=payload)
+        return self._adapter.post(f"ReturnRequestService_ExportEWayBill", data=payload)
 
     def get_approval_templates(self, payload: dict | None = None) -> Any:
         """POST ReturnRequestService_GetApprovalTemplates
@@ -57,15 +55,15 @@ class ReturnRequestService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ReturnRequestService_GetApprovalTemplates", data=payload)
+        return self._adapter.post(f"ReturnRequestService_GetApprovalTemplates", data=payload)
 
     def handle_approval_request(self, payload: dict | None = None) -> Any:
         """POST ReturnRequestService_HandleApprovalRequest
         Invoke the method 'HandleApprovalRequest' on this service.
         """
-        return self._adapter.post("ReturnRequestService_HandleApprovalRequest", data=payload)
+        return self._adapter.post(f"ReturnRequestService_HandleApprovalRequest", data=payload)
 
     def init_data(self, payload: dict | None = None) -> Any:
         """POST ReturnRequestService_InitData
         """
-        return self._adapter.post("ReturnRequestService_InitData", data=payload)
+        return self._adapter.post(f"ReturnRequestService_InitData", data=payload)

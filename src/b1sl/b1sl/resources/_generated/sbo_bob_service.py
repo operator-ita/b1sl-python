@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class SBOBobService(GenericResource[Any]):
     endpoint = "SBOBobService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -29,7 +27,7 @@ class SBOBobService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SBOBobService_SetCurrencyRate", data=payload)
+        return self._adapter.post(f"SBOBobService_SetCurrencyRate", data=payload)
 
     def set_system_permission(self, payload: dict | None = None) -> Any:
         """POST SBOBobService_SetSystemPermission
@@ -44,7 +42,7 @@ class SBOBobService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SBOBobService_SetSystemPermission", data=payload)
+        return self._adapter.post(f"SBOBobService_SetSystemPermission", data=payload)
 
     # --- Functions ---
 
@@ -52,40 +50,40 @@ class SBOBobService(GenericResource[Any]):
         """POST SBOBobService_Format_MoneyToString(params)
         Invoke the method 'Format_MoneyToString' on this service by specifying the payload 'InMoney,InPrecision' in the JSON format.
         """
-        return self._function("SBOBobService_Format_MoneyToString", params)
+        return self._function(f"SBOBobService_Format_MoneyToString", params)
 
     def get_currency_rate(self, params: dict | None = None) -> Any:
         """POST SBOBobService_GetCurrencyRate(params)
         Invoke the method 'GetCurrencyRate' on this service by specifying the payload 'Currency,Date' in the JSON format.
         """
-        return self._function("SBOBobService_GetCurrencyRate", params)
+        return self._function(f"SBOBobService_GetCurrencyRate", params)
 
     def get_due_date(self, params: dict | None = None) -> Any:
         """POST SBOBobService_GetDueDate(params)
         Invoke the method 'GetDueDate' on this service by specifying the payload 'CardCode,RefDate' in the JSON format.
         """
-        return self._function("SBOBobService_GetDueDate", params)
+        return self._function(f"SBOBobService_GetDueDate", params)
 
     def get_index_rate(self, params: dict | None = None) -> Any:
         """POST SBOBobService_GetIndexRate(params)
         Invoke the method 'GetIndexRate' on this service by specifying the payload 'Index,Date' in the JSON format.
         """
-        return self._function("SBOBobService_GetIndexRate", params)
+        return self._function(f"SBOBobService_GetIndexRate", params)
 
     def get_local_currency(self, params: dict | None = None) -> Any:
         """POST SBOBobService_GetLocalCurrency(params)
         Invoke the method 'GetLocalCurrency' on this service.
         """
-        return self._function("SBOBobService_GetLocalCurrency", params)
+        return self._function(f"SBOBobService_GetLocalCurrency", params)
 
     def get_system_currency(self, params: dict | None = None) -> Any:
         """POST SBOBobService_GetSystemCurrency(params)
         Invoke the method 'GetSystemCurrency' on this service.
         """
-        return self._function("SBOBobService_GetSystemCurrency", params)
+        return self._function(f"SBOBobService_GetSystemCurrency", params)
 
     def get_system_permission(self, params: dict | None = None) -> Any:
         """POST SBOBobService_GetSystemPermission(params)
         Invoke the method 'GetSystemPermission' on this service by specifying the payload 'UserCode,PermissionID' in the JSON format.
         """
-        return self._function("SBOBobService_GetSystemPermission", params)
+        return self._function(f"SBOBobService_GetSystemPermission", params)

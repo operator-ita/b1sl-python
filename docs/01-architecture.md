@@ -20,7 +20,7 @@ Every entity inherits from `B1Model`, which provides global data normalization:
 ### 3. Service-Resource Pattern
 The SDK creates dedicated "Service" classes (e.g., `ItemsService`, `OrdersService`) that group:
 - **Standard CRUD**: `get()`, `list()`, `update()`, `create()`, `delete()`.
-- **Typed OData**: Integration with `ODataQuery` for type-safe filtering and expansions.
+- **Typed OData**: Integration with a fluent, pythonic `QueryBuilder` that supports operator overloading on field constants for type-safe filtering and expansions.
 - **Unbound Actions**: Business logic methods (like `Cancel`, `Close`, `Reopen`) extracted from the SAP API Reference.
 
 ### 4. Metadata Integrity (The "Vanilla" Policy)

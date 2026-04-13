@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class ReturnsService(GenericResource[Any]):
     endpoint = "ReturnsService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -19,12 +17,12 @@ class ReturnsService(GenericResource[Any]):
     def approve_and_add(self, payload: dict | None = None) -> Any:
         """POST ReturnsService_ApproveAndAdd
         """
-        return self._adapter.post("ReturnsService_ApproveAndAdd", data=payload)
+        return self._adapter.post(f"ReturnsService_ApproveAndAdd", data=payload)
 
     def approve_and_update(self, payload: dict | None = None) -> Any:
         """POST ReturnsService_ApproveAndUpdate
         """
-        return self._adapter.post("ReturnsService_ApproveAndUpdate", data=payload)
+        return self._adapter.post(f"ReturnsService_ApproveAndUpdate", data=payload)
 
     def cancel2(self, payload: dict | None = None) -> Any:
         """POST ReturnsService_Cancel2
@@ -40,17 +38,17 @@ class ReturnsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ReturnsService_Cancel2", data=payload)
+        return self._adapter.post(f"ReturnsService_Cancel2", data=payload)
 
     def close_by_date(self, payload: dict | None = None) -> Any:
         """POST ReturnsService_CloseByDate
         """
-        return self._adapter.post("ReturnsService_CloseByDate", data=payload)
+        return self._adapter.post(f"ReturnsService_CloseByDate", data=payload)
 
     def export_e_way_bill(self, payload: dict | None = None) -> Any:
         """POST ReturnsService_ExportEWayBill
         """
-        return self._adapter.post("ReturnsService_ExportEWayBill", data=payload)
+        return self._adapter.post(f"ReturnsService_ExportEWayBill", data=payload)
 
     def get_approval_templates(self, payload: dict | None = None) -> Any:
         """POST ReturnsService_GetApprovalTemplates
@@ -73,15 +71,15 @@ class ReturnsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("ReturnsService_GetApprovalTemplates", data=payload)
+        return self._adapter.post(f"ReturnsService_GetApprovalTemplates", data=payload)
 
     def handle_approval_request(self, payload: dict | None = None) -> Any:
         """POST ReturnsService_HandleApprovalRequest
         Invoke the method 'HandleApprovalRequest' on this service.
         """
-        return self._adapter.post("ReturnsService_HandleApprovalRequest", data=payload)
+        return self._adapter.post(f"ReturnsService_HandleApprovalRequest", data=payload)
 
     def init_data(self, payload: dict | None = None) -> Any:
         """POST ReturnsService_InitData
         """
-        return self._adapter.post("ReturnsService_InitData", data=payload)
+        return self._adapter.post(f"ReturnsService_InitData", data=payload)

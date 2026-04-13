@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class AssetRetirementService(GenericResource[Any]):
     endpoint = "AssetRetirementService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -30,10 +28,10 @@ class AssetRetirementService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("AssetRetirementService_Cancel", data=payload)
+        return self._adapter.post(f"AssetRetirementService_Cancel", data=payload)
 
     def get_list(self, payload: dict | None = None) -> Any:
         """POST AssetRetirementService_GetList
         Invoke the method 'GetList' on this service.
         """
-        return self._adapter.post("AssetRetirementService_GetList", data=payload)
+        return self._adapter.post(f"AssetRetirementService_GetList", data=payload)

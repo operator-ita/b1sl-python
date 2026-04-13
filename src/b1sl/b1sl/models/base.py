@@ -135,8 +135,7 @@ class B1Model(BaseModel):
                         .isoformat()
                     )
                 else:
-                    # 2. Check for Booleans
-                    coerced[key] = _coerce_sap_boolean(val)
+                    coerced[key] = val
             else:
                 coerced[key] = val
         return coerced

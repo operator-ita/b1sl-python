@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class SelfInvoiceService(GenericResource[Any]):
     endpoint = "SelfInvoiceService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -19,22 +17,22 @@ class SelfInvoiceService(GenericResource[Any]):
     def approve_and_add(self, payload: dict | None = None) -> Any:
         """POST SelfInvoiceService_ApproveAndAdd
         """
-        return self._adapter.post("SelfInvoiceService_ApproveAndAdd", data=payload)
+        return self._adapter.post(f"SelfInvoiceService_ApproveAndAdd", data=payload)
 
     def approve_and_update(self, payload: dict | None = None) -> Any:
         """POST SelfInvoiceService_ApproveAndUpdate
         """
-        return self._adapter.post("SelfInvoiceService_ApproveAndUpdate", data=payload)
+        return self._adapter.post(f"SelfInvoiceService_ApproveAndUpdate", data=payload)
 
     def close_by_date(self, payload: dict | None = None) -> Any:
         """POST SelfInvoiceService_CloseByDate
         """
-        return self._adapter.post("SelfInvoiceService_CloseByDate", data=payload)
+        return self._adapter.post(f"SelfInvoiceService_CloseByDate", data=payload)
 
     def export_e_way_bill(self, payload: dict | None = None) -> Any:
         """POST SelfInvoiceService_ExportEWayBill
         """
-        return self._adapter.post("SelfInvoiceService_ExportEWayBill", data=payload)
+        return self._adapter.post(f"SelfInvoiceService_ExportEWayBill", data=payload)
 
     def get_approval_templates(self, payload: dict | None = None) -> Any:
         """POST SelfInvoiceService_GetApprovalTemplates
@@ -57,15 +55,15 @@ class SelfInvoiceService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SelfInvoiceService_GetApprovalTemplates", data=payload)
+        return self._adapter.post(f"SelfInvoiceService_GetApprovalTemplates", data=payload)
 
     def handle_approval_request(self, payload: dict | None = None) -> Any:
         """POST SelfInvoiceService_HandleApprovalRequest
         Invoke the method 'HandleApprovalRequest' on this service.
         """
-        return self._adapter.post("SelfInvoiceService_HandleApprovalRequest", data=payload)
+        return self._adapter.post(f"SelfInvoiceService_HandleApprovalRequest", data=payload)
 
     def init_data(self, payload: dict | None = None) -> Any:
         """POST SelfInvoiceService_InitData
         """
-        return self._adapter.post("SelfInvoiceService_InitData", data=payload)
+        return self._adapter.post(f"SelfInvoiceService_InitData", data=payload)

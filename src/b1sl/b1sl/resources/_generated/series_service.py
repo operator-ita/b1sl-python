@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class SeriesService(GenericResource[Any]):
     endpoint = "SeriesService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -27,7 +25,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_AddElectronicSeries", data=payload)
+        return self._adapter.post(f"SeriesService_AddElectronicSeries", data=payload)
 
     def add_series(self, payload: dict | None = None) -> Any:
         """POST SeriesService_AddSeries
@@ -60,7 +58,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_AddSeries", data=payload)
+        return self._adapter.post(f"SeriesService_AddSeries", data=payload)
 
     def attach_series_to_document(self, payload: dict | None = None) -> Any:
         """POST SeriesService_AttachSeriesToDocument
@@ -73,7 +71,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_AttachSeriesToDocument", data=payload)
+        return self._adapter.post(f"SeriesService_AttachSeriesToDocument", data=payload)
 
     def change_document_menu_name(self, payload: dict | None = None) -> Any:
         """POST SeriesService_ChangeDocumentMenuName
@@ -86,7 +84,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_ChangeDocumentMenuName", data=payload)
+        return self._adapter.post(f"SeriesService_ChangeDocumentMenuName", data=payload)
 
     def get_default_electronic_series(self, payload: dict | None = None) -> Any:
         """POST SeriesService_GetDefaultElectronicSeries
@@ -99,7 +97,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_GetDefaultElectronicSeries", data=payload)
+        return self._adapter.post(f"SeriesService_GetDefaultElectronicSeries", data=payload)
 
     def get_default_series(self, payload: dict | None = None) -> Any:
         """POST SeriesService_GetDefaultSeries
@@ -112,7 +110,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_GetDefaultSeries", data=payload)
+        return self._adapter.post(f"SeriesService_GetDefaultSeries", data=payload)
 
     def get_document_changed_menu_name(self, payload: dict | None = None) -> Any:
         """POST SeriesService_GetDocumentChangedMenuName
@@ -125,7 +123,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_GetDocumentChangedMenuName", data=payload)
+        return self._adapter.post(f"SeriesService_GetDocumentChangedMenuName", data=payload)
 
     def get_document_series(self, payload: dict | None = None) -> Any:
         """POST SeriesService_GetDocumentSeries
@@ -141,7 +139,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_GetDocumentSeries", data=payload)
+        return self._adapter.post(f"SeriesService_GetDocumentSeries", data=payload)
 
     def get_electronic_series(self, payload: dict | None = None) -> Any:
         """POST SeriesService_GetElectronicSeries
@@ -154,7 +152,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_GetElectronicSeries", data=payload)
+        return self._adapter.post(f"SeriesService_GetElectronicSeries", data=payload)
 
     def get_series(self, payload: dict | None = None) -> Any:
         """POST SeriesService_GetSeries
@@ -167,7 +165,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_GetSeries", data=payload)
+        return self._adapter.post(f"SeriesService_GetSeries", data=payload)
 
     def remove_electronic_series(self, payload: dict | None = None) -> Any:
         """POST SeriesService_RemoveElectronicSeries
@@ -180,7 +178,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_RemoveElectronicSeries", data=payload)
+        return self._adapter.post(f"SeriesService_RemoveElectronicSeries", data=payload)
 
     def remove_series(self, payload: dict | None = None) -> Any:
         """POST SeriesService_RemoveSeries
@@ -213,7 +211,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_RemoveSeries", data=payload)
+        return self._adapter.post(f"SeriesService_RemoveSeries", data=payload)
 
     def set_default_electronic_series(self, payload: dict | None = None) -> Any:
         """POST SeriesService_SetDefaultElectronicSeries
@@ -226,7 +224,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_SetDefaultElectronicSeries", data=payload)
+        return self._adapter.post(f"SeriesService_SetDefaultElectronicSeries", data=payload)
 
     def set_default_series_for_all_users(self, payload: dict | None = None) -> Any:
         """POST SeriesService_SetDefaultSeriesForAllUsers
@@ -239,7 +237,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_SetDefaultSeriesForAllUsers", data=payload)
+        return self._adapter.post(f"SeriesService_SetDefaultSeriesForAllUsers", data=payload)
 
     def set_default_series_for_current_user(self, payload: dict | None = None) -> Any:
         """POST SeriesService_SetDefaultSeriesForCurrentUser
@@ -252,7 +250,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_SetDefaultSeriesForCurrentUser", data=payload)
+        return self._adapter.post(f"SeriesService_SetDefaultSeriesForCurrentUser", data=payload)
 
     def set_default_series_for_user(self, payload: dict | None = None) -> Any:
         """POST SeriesService_SetDefaultSeriesForUser
@@ -265,7 +263,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_SetDefaultSeriesForUser", data=payload)
+        return self._adapter.post(f"SeriesService_SetDefaultSeriesForUser", data=payload)
 
     def unattach_series_from_document(self, payload: dict | None = None) -> Any:
         """POST SeriesService_UnattachSeriesFromDocument
@@ -278,7 +276,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_UnattachSeriesFromDocument", data=payload)
+        return self._adapter.post(f"SeriesService_UnattachSeriesFromDocument", data=payload)
 
     def update_electronic_series(self, payload: dict | None = None) -> Any:
         """POST SeriesService_UpdateElectronicSeries
@@ -291,7 +289,7 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_UpdateElectronicSeries", data=payload)
+        return self._adapter.post(f"SeriesService_UpdateElectronicSeries", data=payload)
 
     def update_series(self, payload: dict | None = None) -> Any:
         """POST SeriesService_UpdateSeries
@@ -304,4 +302,4 @@ class SeriesService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("SeriesService_UpdateSeries", data=payload)
+        return self._adapter.post(f"SeriesService_UpdateSeries", data=payload)

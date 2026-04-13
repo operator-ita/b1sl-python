@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class InventoryTransferRequestsService(GenericResource[Any]):
     endpoint = "InventoryTransferRequestsService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -36,10 +34,10 @@ class InventoryTransferRequestsService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("InventoryTransferRequestsService_GetApprovalTemplates", data=payload)
+        return self._adapter.post(f"InventoryTransferRequestsService_GetApprovalTemplates", data=payload)
 
     def handle_approval_request(self, payload: dict | None = None) -> Any:
         """POST InventoryTransferRequestsService_HandleApprovalRequest
         Invoke the method 'HandleApprovalRequest' on this service.
         """
-        return self._adapter.post("InventoryTransferRequestsService_HandleApprovalRequest", data=payload)
+        return self._adapter.post(f"InventoryTransferRequestsService_HandleApprovalRequest", data=payload)

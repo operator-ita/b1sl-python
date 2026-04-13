@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from enum import Enum, StrEnum
-
 
 class AccountCategorySourceEnum(StrEnum):
     acsBalanceSheet = 'acsBalanceSheet'

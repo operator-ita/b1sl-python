@@ -64,6 +64,27 @@ class B1Client(B1ClientMixin):
         """
         return self._adapter.session_id
 
+    def dry_run(self, enabled: bool = True):
+        """
+        Context manager to temporarily enable or disable Dry Run mode
+        **for the current thread only** (thread-safe via ContextVar).
+
+        Usage::
+
+            with B1Client(config) as b1:
+                # Intercept writes for just this block
+                with b1.dry_run():
+                    b1.items.create(new_item)  # intercepted
+
+                # Force real execution even if global dry_run is True
+                with b1.dry_run(enabled=False):
+                    b1.items.update(item)  # sent to SAP
+
+        Note:
+            Use ``with`` (sync CM), **not** ``async with``.
+        """
+        return self._adapter.dry_run(enabled)
+
     def connect(self) -> None:
         """
         No-op for the sync client as connection is per-request,

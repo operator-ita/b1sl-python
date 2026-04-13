@@ -8,6 +8,9 @@ from b1sl.b1sl.client import B1Client
 from b1sl.b1sl.config import B1Config
 from tests.fakes.fake_rest_adapter import FakeRestAdapter
 
+# Load common test fixtures
+pytest_plugins = ["tests.fixtures.test_data"]
+
 # ── Mock hdbcli (SAP HANA driver) ──────────────────────────────────────────
 # This is always mocked at the top level to avoid installation requirements
 _hdbcli_mock = type("MockHdbcli", (), {"dbapi": type("MockDbApi", (), {})})

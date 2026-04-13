@@ -1,7 +1,5 @@
 from __future__ import annotations
-
 from typing import TYPE_CHECKING, Any
-
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
@@ -9,7 +7,7 @@ if TYPE_CHECKING:
 
 class WorkflowTaskService(GenericResource[Any]):
     endpoint = "WorkflowTaskService"
-
+    
     def __init__(self, adapter):
         self.model = None
         super().__init__(adapter)
@@ -31,7 +29,7 @@ class WorkflowTaskService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("WorkflowTaskService_Complete", data=payload)
+        return self._adapter.post(f"WorkflowTaskService_Complete", data=payload)
 
     def get_approval_task_list(self, payload: dict | None = None) -> Any:
         """POST WorkflowTaskService_GetApprovalTaskList
@@ -46,4 +44,4 @@ class WorkflowTaskService(GenericResource[Any]):
         }
         ```
         """
-        return self._adapter.post("WorkflowTaskService_GetApprovalTaskList", data=payload)
+        return self._adapter.post(f"WorkflowTaskService_GetApprovalTaskList", data=payload)

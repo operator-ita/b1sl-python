@@ -9,6 +9,7 @@ The SAP B1 Python SDK is built for high-concurrency environments (like FastAPI a
 - **Environment Aware**: Automatic switching between human-friendly console logs and machine-friendly JSON.
 - **Redaction by Default**: Passwords and sensitive credentials are automatically masked in all log outputs.
 - **High-Performance Infrastructure**: Observability primitives (hooks & timing) are handled via non-blocking, defensive dispatchers.
+- **Safety Mode (Dry Run)**: Logs automatically prefix intercepted write operations with `[DRY RUN]` for clear auditability.
 
 ---
 
@@ -158,4 +159,4 @@ When `B1SL_ENV=prod` is set, or `setup_logging(env=B1Env.PROD)` is called, logs 
 
 ## 6. Practical Example
 For a complete, interactive demonstration of custom hooks and context extras, see:
-👉 **[examples/observability.py](file:///home/dlara/code/github/sap-b1-python/examples/observability.py)**
+👉 **[examples/observability.py](../examples/observability.py)**
