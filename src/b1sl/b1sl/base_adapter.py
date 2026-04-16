@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from b1sl.b1sl.config import B1Config
 import asyncio
+import json
 import logging
 import uuid
 from collections import OrderedDict
@@ -56,6 +57,8 @@ class HookContext:
     user: str
     status_code: Optional[int]  # None if network exception occurred
     duration_ms: float
+    payload: Optional[Dict[str, Any]] = None  # Redacted request body
+    if_match: Optional[str] = None  # ETag sent in If-Match
     extra: Dict[str, Any] = field(default_factory=dict)
     exc: Optional[Exception] = None
 
@@ -75,6 +78,8 @@ class HookContext:
             "user": self.user,
             "status_code": self.status_code,
             "duration_ms": round(self.duration_ms, 3),
+            "payload": self.payload,
+            "if_match": self.if_match,
             **self.extra,
         }
 
@@ -390,6 +395,19 @@ class BaseRestAdapter:
 
         clean_endpoint = ctx.endpoint.lstrip("/")
         msg = f"[{ctx.req_id}][{ctx.user}] [{ctx.http_method} /{clean_endpoint}]{status_label} ({ctx.duration_ms:.1f}ms){slow_label}"
+        
+        # In Dry Run or Debug mode, we might want to see the body in the main message
+        meta_info = []
+        if ctx.if_match:
+            meta_info.append(f"ETag: {ctx.if_match}")
+            
+        if ctx.extra.get("is_dry_run") and ctx.payload:
+            payload_str = json.dumps(ctx.payload)
+            meta_info.append(f"Body: {payload_str}")
+            
+        if meta_info:
+            msg += f" | {' | '.join(meta_info)}"
+            
         self._logger.log(level, msg, extra=ctx.to_log_extra())
 
     # ── URL Helpers ──────────────────────────────────────────────────────── #
@@ -419,7 +437,13 @@ class BaseRestAdapter:
             return "unknown", http_fallback
 
         error_node = body.get("error")
-        if not error_node or not isinstance(error_node, dict):
+        if not error_node:
+            return "unknown", http_fallback
+
+        if isinstance(error_node, str):
+            return "unknown", error_node
+
+        if not isinstance(error_node, dict):
             return "unknown", http_fallback
 
         sap_code = str(error_node.get("code", "unknown"))
@@ -435,3 +459,4 @@ class BaseRestAdapter:
             sap_message = http_fallback
 
         return sap_code, sap_message
+

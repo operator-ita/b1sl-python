@@ -47,7 +47,8 @@ def test_odata_field_operators():
 
 def test_query_builder_fluent_interface():
     adapter = MagicMock()
-    resource = GenericResource(adapter)
+    from typing import Any
+    resource: GenericResource[Any] = GenericResource(adapter)
     resource.endpoint = "Items"
     resource.model = MockModel
     

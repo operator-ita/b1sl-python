@@ -16,7 +16,7 @@ Highly recommended for production. It uses `fields` (generated as `F`) to map at
 from b1sl.b1sl import fields as F
 
 # Simple fetch
-sc = await client.service_calls.get(TEST_ID, select=[F.ServiceCall.subject])
+bp = await client.business_partners.get("C0001", select=[F.BusinessPartner.card_name])
 
 # Fluent query (Advanced)
 results = await client.items.filter(F.Item.item_code.startswith("A")) \
@@ -25,26 +25,43 @@ results = await client.items.filter(F.Item.item_code.startswith("A")) \
                             .execute()
 ```
 
+> [!TIP]
+> **Preferred Mutation Pattern: Surgical Deltas**.
+> Although you *can* modify a fetched object and send it back, the recommended pattern is to create a fresh, minimal instance of the model for updates (e.g., `en.Item(item_name="New")`). This generates a "Delta" payload, which is safer, faster, and avoids overwrite conflicts. See [Architecture](./01-architecture.md) for the technical rationale.
+
 ## 2. Pattern: Hybrid (UDF Support)
 Use this when you need an SAP core entity mixed with User-Defined Fields.
 
 ```python
-sc = await client.service_calls.get(
-    TEST_ID,
-    select=[F.ServiceCall.subject, "U_OTFecha"], # Mix!
+bp = await client.business_partners.get(
+    "C0001",
+    select=[F.BusinessPartner.card_name, "U_Segmento"], # Mix!
 )
-custom_val = sc.get("U_OTFecha")
+custom_val = bp.get("U_Segmento")
 ```
 
 ## 3. Pattern: SAP-Pure (Documentation Style)
 Best for testing or copy-pasting code snippets from official SAP documentation or Postman collections.
 
 ```python
-sc = await client.service_calls.get(
-    TEST_ID,
-    select=["Subject", "CustomerCode"],
-    expand=["BusinessPartner($select=CardCode)"]
+bp = await client.business_partners.get(
+    "C0001",
+    select=["CardName", "CardType"],
+    expand=["ContactEmployees($select=Name)"]
 )
+```
+
+## 4. Pattern: Generic Resource Binding (Non-Elite Endpoints)
+The SDK intentionally exposes only ~20 critical, ETag-protected endpoints as physical properties on the client (e.g., `client.items`). To interact with the other ~1000 standard Service Layer endpoints, you import the target model and dynamically bind it using `get_resource`.
+
+```python
+from b1sl.b1sl import entities as en
+
+# Step 1: Bind the model to its Service Layer Endpoint string
+users_resource = client.get_resource(en.User, "Users")
+
+# Step 2: Use it just like an elite property
+active_users = await users_resource.filter(F.User.locked == "tNO").execute()
 ```
 
 The recommended way to build complex OData requests is using the fluent **Query Builder**:

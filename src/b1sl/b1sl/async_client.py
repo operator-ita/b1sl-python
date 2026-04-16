@@ -12,13 +12,8 @@ if TYPE_CHECKING:
         Activity,
         BusinessPartner,
     )
-    from b1sl.b1sl.models._generated.entities.finance import JournalEntry
-    from b1sl.b1sl.models._generated.entities.general import Document, Payment, User
-
-    # Models for typing convenience aliases
+    from b1sl.b1sl.models._generated.entities.general import Document
     from b1sl.b1sl.models._generated.entities.inventory import Item
-    from b1sl.b1sl.models._generated.entities.production import ProductionOrder
-    from b1sl.b1sl.models._generated.entities.sales import ServiceCall
     from b1sl.b1sl.models.base import B1Model
     from b1sl.b1sl.resources.async_base import AsyncGenericResource
     from b1sl.b1sl.resources.udo import AsyncUDOResource
@@ -34,6 +29,12 @@ class AsyncB1Client:
 
     AI Role: Recommended for modern web apps.
     Use 'async with AsyncB1Client(config) as b1:' to ensure session cleanup.
+
+    Concurrency-Elite Aliases (Elite Citizens):
+        Only entities with ETag support are exposed as direct properties.
+        This ensures state-safety and clear architectural boundaries.
+        Objects without ETag support must be accessed via 'get_resource()'
+        or 'udo()'.
 
     Example:
         async with AsyncB1Client(config) as b1:
@@ -59,9 +60,10 @@ class AsyncB1Client:
             version (str): API version (defaults to 'v2').
             session_id (str, optional): An existing B1SESSION cookie to reuse.
         """
+        self._logger = logger or logging.getLogger(f"b1sl.{self.__class__.__name__}")
         self._adapter = AsyncRestAdapter(
             config,
-            logger=logger,
+            logger=self._logger,
             version=version,
             observability=observability,
             session_id=session_id,
@@ -72,9 +74,6 @@ class AsyncB1Client:
     def session_id(self) -> str | None:
         """
         Retrieves the current SAP session ID.
-
-        Returns:
-            str: B1SESSION cookie value or None.
         """
         return self._adapter.session_id
 
@@ -96,7 +95,6 @@ class AsyncB1Client:
 
         Note:
             Use ``with`` (sync CM), **not** ``async with``, even in async code.
-            This is correct Python — the CM guards a state variable, not I/O.
         """
         return self._adapter.dry_run(enabled)
 
@@ -117,7 +115,6 @@ class AsyncB1Client:
     async def __aenter__(self) -> AsyncB1Client:
         """
         Entry point for the async context manager.
-        Logins and prepares the session.
         """
         await self.connect()
         return self
@@ -125,7 +122,6 @@ class AsyncB1Client:
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
         """
         Exit point for the async context manager.
-        Ensures logout and connection pool cleanup.
         """
         await self.aclose()
 
@@ -149,145 +145,194 @@ class AsyncB1Client:
         return DynamicResource(self._adapter)
 
     # --------------------------------------------------------------------------
-    # Thin Aliases for common endpoints (Developer Experience)
+    # Concurrency-Elite Aliases (First-Class Citizens with ETag support)
     # --------------------------------------------------------------------------
+
+    # --- Master Data ---
 
     @property
     def items(self) -> "AsyncGenericResource[Item]":
-        """Convenience alias for get_resource(Item, 'Items')."""
-        from b1sl.b1sl.models._generated.entities.inventory import Item
-
+        """Access the 'Items' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities import Item
         return self.get_resource(Item, "Items")
 
     @property
     def business_partners(self) -> "AsyncGenericResource[BusinessPartner]":
-        """Convenience alias for get_resource(BusinessPartner, 'BusinessPartners')."""
-        from b1sl.b1sl.models._generated.entities.businesspartners import (
-            BusinessPartner,
-        )
-
+        """Access the 'BusinessPartners' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities import BusinessPartner
         return self.get_resource(BusinessPartner, "BusinessPartners")
 
     @property
-    def invoices(self) -> "AsyncGenericResource[Document]":
-        """Convenience alias for get_resource(Document, 'Invoices')."""
-        from b1sl.b1sl.models._generated.entities.general import Document
+    def activities(self) -> "AsyncGenericResource[Activity]":
+        """Access the 'Activities' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities import Activity
+        return self.get_resource(Activity, "Activities")
 
-        return self.get_resource(Document, "Invoices")
+    # --- Sales Documents ---
 
     @property
     def quotations(self) -> "AsyncGenericResource[Document]":
-        """Convenience alias for get_resource(Document, 'Quotations')."""
+        """Access the 'Quotations' entity (supports ETags)."""
         from b1sl.b1sl.models._generated.entities.general import Document
-
         return self.get_resource(Document, "Quotations")
 
     @property
     def orders(self) -> "AsyncGenericResource[Document]":
-        """Convenience alias for get_resource(Document, 'Orders')."""
+        """Access the 'Orders' entity (supports ETags)."""
         from b1sl.b1sl.models._generated.entities.general import Document
-
         return self.get_resource(Document, "Orders")
 
     @property
     def delivery_notes(self) -> "AsyncGenericResource[Document]":
-        """Convenience alias for get_resource(Document, 'DeliveryNotes')."""
+        """Access the 'DeliveryNotes' entity (supports ETags)."""
         from b1sl.b1sl.models._generated.entities.general import Document
-
         return self.get_resource(Document, "DeliveryNotes")
 
     @property
-    def purchase_orders(self) -> "AsyncGenericResource[Document]":
-        """Convenience alias for get_resource(Document, 'PurchaseOrders')."""
+    def invoices(self) -> "AsyncGenericResource[Document]":
+        """Access the 'Invoices' entity (supports ETags)."""
         from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "Invoices")
 
+    @property
+    def returns(self) -> "AsyncGenericResource[Document]":
+        """Access the 'Returns' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "Returns")
+
+    @property
+    def return_request(self) -> "AsyncGenericResource[Document]":
+        """Access the 'ReturnRequest' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "ReturnRequest")
+
+    @property
+    def credit_notes(self) -> "AsyncGenericResource[Document]":
+        """Access the 'CreditNotes' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "CreditNotes")
+
+    @property
+    def down_payments(self) -> "AsyncGenericResource[Document]":
+        """Access the 'DownPayments' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "DownPayments")
+
+    @property
+    def goods_return_request(self) -> "AsyncGenericResource[Document]":
+        """Access the 'GoodsReturnRequest' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "GoodsReturnRequest")
+
+    # --- Purchasing Documents ---
+
+    @property
+    def purchase_requests(self) -> "AsyncGenericResource[Document]":
+        """Access the 'PurchaseRequests' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseRequests")
+
+    @property
+    def purchase_quotations(self) -> "AsyncGenericResource[Document]":
+        """Access the 'PurchaseQuotations' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseQuotations")
+
+    @property
+    def purchase_orders(self) -> "AsyncGenericResource[Document]":
+        """Access the 'PurchaseOrders' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
         return self.get_resource(Document, "PurchaseOrders")
 
     @property
     def purchase_delivery_notes(self) -> "AsyncGenericResource[Document]":
-        """Convenience alias for get_resource(Document, 'PurchaseDeliveryNotes')."""
+        """Access the 'PurchaseDeliveryNotes' entity (supports ETags)."""
         from b1sl.b1sl.models._generated.entities.general import Document
-
         return self.get_resource(Document, "PurchaseDeliveryNotes")
 
     @property
     def purchase_invoices(self) -> "AsyncGenericResource[Document]":
-        """Convenience alias for get_resource(Document, 'PurchaseInvoices')."""
+        """Access the 'PurchaseInvoices' entity (supports ETags)."""
         from b1sl.b1sl.models._generated.entities.general import Document
-
         return self.get_resource(Document, "PurchaseInvoices")
 
     @property
-    def incoming_payments(self) -> "AsyncGenericResource[Payment]":
-        """Convenience alias for get_resource(Payment, 'IncomingPayments')."""
-        from b1sl.b1sl.models._generated.entities.general import Payment
-
-        return self.get_resource(Payment, "IncomingPayments")
-
-    @property
-    def vendor_payments(self) -> "AsyncGenericResource[Payment]":
-        """Convenience alias for get_resource(Payment, 'VendorPayments')."""
-        from b1sl.b1sl.models._generated.entities.general import Payment
-
-        return self.get_resource(Payment, "VendorPayments")
+    def purchase_returns(self) -> "AsyncGenericResource[Document]":
+        """Access the 'PurchaseReturns' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseReturns")
 
     @property
-    def users(self) -> "AsyncGenericResource[User]":
-        """Convenience alias for get_resource(User, 'Users')."""
-        from b1sl.b1sl.models._generated.entities.general import User
-
-        return self.get_resource(User, "Users")
-
-    # --- Producción & Operaciones ---
+    def purchase_credit_notes(self) -> "AsyncGenericResource[Document]":
+        """Access the 'PurchaseCreditNotes' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseCreditNotes")
 
     @property
-    def production_orders(self) -> "AsyncGenericResource[ProductionOrder]":
-        """Convenience alias for get_resource(ProductionOrder, 'ProductionOrders')."""
-        from b1sl.b1sl.models._generated.entities.production import ProductionOrder
+    def purchase_down_payments(self) -> "AsyncGenericResource[Document]":
+        """Access the 'PurchaseDownPayments' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseDownPayments")
 
-        return self.get_resource(ProductionOrder, "ProductionOrders")
-
-    # --- Contabilidad & Finanzas ---
-
-    @property
-    def journal_entries(self) -> "AsyncGenericResource[JournalEntry]":
-        """Convenience alias for get_resource(JournalEntry, 'JournalEntries')."""
-        from b1sl.b1sl.models._generated.entities.finance import JournalEntry
-
-        return self.get_resource(JournalEntry, "JournalEntries")
-
-    # --- Servicio Post-Venta ---
+    # --- Inventory & Specialized ---
 
     @property
-    def service_calls(self) -> "AsyncGenericResource[ServiceCall]":
-        """Convenience alias for get_resource(ServiceCall, 'ServiceCalls')."""
-        from b1sl.b1sl.models._generated.entities.sales import ServiceCall
-
-        return self.get_resource(ServiceCall, "ServiceCalls")
-
-    # --- CRM & Seguimiento ---
+    def inventory_gen_entries(self) -> "AsyncGenericResource[Document]":
+        """Access the 'InventoryGenEntries' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "InventoryGenEntries")
 
     @property
-    def activities(self) -> "AsyncGenericResource[Activity]":
-        """Convenience alias for get_resource(Activity, 'Activities')."""
-        from b1sl.b1sl.models._generated.entities.businesspartners import Activity
+    def inventory_gen_exits(self) -> "AsyncGenericResource[Document]":
+        """Access the 'InventoryGenExits' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "InventoryGenExits")
 
-        return self.get_resource(Activity, "Activities")
+    @property
+    def drafts(self) -> "AsyncGenericResource[Document]":
+        """Access the 'Drafts' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "Drafts")
+
+    @property
+    def additional_expenses(self) -> "AsyncGenericResource[B1Model]":
+        """Access the 'AdditionalExpenses' entity (supports ETags)."""
+        from b1sl.b1sl.models.base import B1Model
+        return self.get_resource(B1Model, "AdditionalExpenses")
+
+    # --- Correction marketing documents ---
+
+    @property
+    def correction_invoice(self) -> "AsyncGenericResource[Document]":
+        """Access the 'CorrectionInvoice' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "CorrectionInvoice")
+
+    @property
+    def correction_invoice_reversal(self) -> "AsyncGenericResource[Document]":
+        """Access the 'CorrectionInvoiceReversal' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "CorrectionInvoiceReversal")
+
+    @property
+    def correction_purchase_invoice(self) -> "AsyncGenericResource[Document]":
+        """Access the 'CorrectionPurchaseInvoice' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "CorrectionPurchaseInvoice")
+
+    @property
+    def correction_purchase_invoice_reversal(self) -> "AsyncGenericResource[Document]":
+        """Access the 'CorrectionPurchaseInvoiceReversal' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "CorrectionPurchaseInvoiceReversal")
 
     def udo(self, table_name: str) -> "AsyncUDOResource":
         """
         Asynchronously access a User Defined Object (UDO) or User Table.
 
         AI Role: Dynamic accessor for entities not pre-defined in the client.
-
-        Args:
-            table_name (str): The UDO name in SAP B1.
-
-        Returns:
-            AsyncUDOResource: A resource object bound to the UDO.
         """
         from b1sl.b1sl.resources.udo import AsyncUDOResource
-
         return AsyncUDOResource(adapter=self._adapter, table_name=table_name)
 
 

@@ -60,6 +60,7 @@ def test_adapter_auto_relogin_on_401(adapter):
     # Validamos que obtuvimos la data del retry exitoso
     assert isinstance(result, Result)
     assert result.status_code == 200
+    assert isinstance(result.data, dict)
     assert result.data["value"][0]["ItemCode"] == "A1000"
 
     # Validamos el flujo de llamadas

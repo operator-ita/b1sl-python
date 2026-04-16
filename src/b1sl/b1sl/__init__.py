@@ -5,6 +5,7 @@ b1sl.b1sl — SDK for SAP B1 Service Layer (OData).
 import logging
 import warnings
 
+from b1sl.b1sl import entities
 from b1sl.b1sl.async_client import AsyncB1Client
 from b1sl.b1sl.async_rest_adapter import AsyncRestAdapter
 from b1sl.b1sl.base_adapter import HookContext, ObservabilityConfig
@@ -18,6 +19,11 @@ from b1sl.b1sl.resources.base import GenericResource, ODataQuery
 from b1sl.b1sl.rest_adapter import RestAdapter
 
 try:
+    from b1sl.b1sl import fields  # type: ignore
+except ImportError:
+    fields = None  # type: ignore
+
+try:
     from pydantic import ArbitraryTypeWarning
 
     warnings.filterwarnings("ignore", category=ArbitraryTypeWarning, module=r"b1sl\..*")  # type: ignore
@@ -26,16 +32,6 @@ except ImportError:
 
 # Standard library pattern: prevent "No handlers could be found"
 logging.getLogger("b1sl").addHandler(logging.NullHandler())
-
-try:
-    from b1sl.b1sl import entities  # type: ignore
-except ImportError:
-    entities = None  # type: ignore # Before code generation
-
-try:
-    from b1sl.b1sl import fields  # type: ignore
-except ImportError:
-    fields = None  # type: ignore
 
 __all__ = [
     "AsyncB1Client",

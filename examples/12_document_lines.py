@@ -1,6 +1,6 @@
 """
-Refactored Document & Navigation Example
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Example 12: Document & Navigation Patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Demonstrates how to fetch complex documents (Invoices) and seamlessly 
 navigate to associated entities (BusinessPartners) using the SDK's typed models.
 """

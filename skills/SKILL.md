@@ -99,7 +99,20 @@ with b1.dry_run(enabled=False):
 
 ---
 
-## Async Client (`AsyncB1Client`)
+## ❗ Critical Guidelines: Flat Namespace & Enums
+Always use the flat public namespace for models and enums to ensure clean code and IDE support. Never import from `_generated` internal paths.
+
+```python
+# ✅ Best Practice
+from b1sl.b1sl import entities as en, fields as F
+
+# Enums are automatically available in 'en'
+open_status = en.BoStatus.bost_Open
+new_item = en.Item(item_code="A100")
+```
+
+---
+
 
 The recommended client for all production use cases.
 
@@ -176,6 +189,82 @@ The SDK uses a shared `httpx.AsyncClient` and an `asyncio.Lock` to prevent sessi
 - **401 Auto-Retry**: Expired sessions are transparently renewed and the original request is retried once.
 - **Session Hydration**: Reuse an existing `B1SESSION` token across serverless functions or Temporal activities.
 - **Optimistic Concurrency (ETags)**: Automated ETag handling with smart cache invalidation on `412` conflicts.
+
+---
+
+## CRUD Operations (Master Data & Transactions)
+
+The SDK provides a consistent set of methods for interacting with resources.
+
+### Create (POST)
+Instantiate a model and pass it to the `.create()` method.
+
+```python
+from b1sl.b1sl import entities as en
+
+new_item = en.Item(item_code="A0001", item_name="New Item")
+await b1.items.create(new_item)
+```
+
+### Read (GET)
+Fetch by ID or check for existence.
+
+```python
+# Fast existence check
+if await b1.items.exists("A0001"):
+    pass
+
+# Count total records
+total = await b1.items.count()
+```
+
+### Optimistic Concurrency (ETags)
+The SDK manages ETags behind the scenes. Every model instance has a `.etag` property.
+
+```python
+item = await b1.items.get("P001")
+print(item.etag) # Displays the server-side version token
+```
+
+### Update (PATCH) - The "Surgical Delta" Pattern
+**Best Practice**: Never resubmit a full object. Only send the fields you want to change.
+
+```python
+# Create a minimal object for the update
+delta = en.Item(item_name="Updated Name")
+
+# This sends ONLY the name change to SAP
+await b1.items.update("A0001", delta)
+```
+
+### Delete (DELETE)
+```python
+await b1.items.delete("A0001")
+```
+
+---
+
+## Error Handling
+
+The SDK maps Service Layer HTTP errors to specialized Python exceptions for cleaner flow control:
+
+- **`B1NotFoundError`**: Resource missing (404).
+- **`B1ValidationError`**: Bad request or validation failure (400).
+- **`SAPConcurrencyError`**: ETag version mismatch (412).
+- **`B1AuthError`**: Authentication or session failure (401).
+- **`B1Exception`**: Base class for all SDK-specific errors.
+
+### Pattern: Safe Existence Check
+Instead of catching 404s manually, use the `.exists()` helper:
+
+```python
+if await b1.items.exists("A0001"):
+    # item exists, proceed with logic
+    pass
+```
+
+### Pattern: Defensive Error Parsing
+The SDK handles cases where SAP returns string-based error nodes instead of dictionaries, ensuring `e.details` is always safe to inspect if it contains valid JSON.
 
 ---
 

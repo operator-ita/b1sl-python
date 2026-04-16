@@ -4,6 +4,7 @@ from datetime import date, datetime, time
 from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 if TYPE_CHECKING:
+    from b1sl.b1sl.resources.async_base import AsyncGenericResource
     from b1sl.b1sl.resources.base import GenericResource
 
 T = TypeVar("T")
@@ -43,6 +44,8 @@ class ODataField(str):
     Represents an OData field name with operator overloading 
     to build ODataExpression strings.
     """
+    __hash__ = str.__hash__
+
 
     def __eq__(self, other: Any) -> ODataExpression:
         return ODataExpression(f"{self} eq {format_odata_value(other)}")
@@ -116,8 +119,11 @@ class QueryBuilder(Generic[T]):
         self._select.extend(fields)
         return self
 
-    def orderby(self, expression: str) -> QueryBuilder[T]:
-        self._orderby = expression
+    def orderby(self, expression: str, desc: bool = False) -> QueryBuilder[T]:
+        expr = str(expression)
+        if desc:
+            expr = f"{expr} desc"
+        self._orderby = expr
         return self
 
     def top(self, value: int) -> QueryBuilder[T]:
@@ -162,4 +168,80 @@ class QueryBuilder(Generic[T]):
     def first(self) -> T | None:
         """Execute the query and return the first result, if any."""
         results = self.top(1).all()
+        return results[0] if results else None
+
+
+class AsyncQueryBuilder(Generic[T]):
+    """
+    Asynchronous fluent interface for building OData queries.
+    """
+
+    def __init__(self, resource: AsyncGenericResource[T]):
+        self._resource = resource
+        self._key: Any | None = None
+        self._filter: str | None = None
+        self._select: list[str] = []
+        self._orderby: str | None = None
+        self._top: int | None = None
+        self._skip: int | None = None
+        self._expand: list[str] | dict[str, list[str]] | None = None
+
+    def by_id(self, key: Any) -> AsyncQueryBuilder[T]:
+        self._key = key
+        return self
+
+    def filter(self, expression: str) -> AsyncQueryBuilder[T]:
+        self._filter = str(expression)
+        return self
+
+    def select(self, *fields: str) -> AsyncQueryBuilder[T]:
+        self._select.extend(fields)
+        return self
+
+    def orderby(self, expression: str | ODataField, desc: bool = False) -> AsyncQueryBuilder[T]:
+        expr = str(expression)
+        if desc:
+            expr = f"{expr} desc"
+        self._orderby = expr
+        return self
+
+    def top(self, value: int) -> AsyncQueryBuilder[T]:
+        self._top = value
+        return self
+
+    def skip(self, value: int) -> AsyncQueryBuilder[T]:
+        self._skip = value
+        return self
+
+    def expand(self, value: list[str] | dict[str, list[str]]) -> AsyncQueryBuilder[T]:
+        self._expand = value
+        return self
+
+    async def execute(self) -> list[T] | T:
+        """Execute the query asynchronously."""
+        from b1sl.b1sl.resources.base import ODataQuery
+
+        if self._key is not None:
+            return await self._resource.get(
+                key=self._key,
+                select=self._select or None,
+                expand=self._expand
+            )
+
+        query = ODataQuery(
+            filter=self._filter,
+            select=self._select or None,
+            orderby=self._orderby,
+            top=self._top,
+            skip=self._skip,
+            expand=self._expand
+        )
+        return await self._resource.list(query=query)
+
+    async def all(self) -> list[T]:
+        res = await self.execute()
+        return res if isinstance(res, list) else [res]
+
+    async def first(self) -> T | None:
+        results = await self.top(1).all()
         return results[0] if results else None

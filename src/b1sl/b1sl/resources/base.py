@@ -147,11 +147,14 @@ class GenericResource(Generic[T]):
         return self.model.model_validate(result.data)
 
     def exists(self, key: Any) -> bool:
-        """Check if an entity exists by attempting to fetch its minimal representation."""
+        """Check if an entity exists by attempting to fetch it.
+        
+        Note: We avoid $select=1 as it's not supported by all SAP SL versions/entities
+        and results in 'SAP Error 201: Not supported query string'.
+        """
         id_str = f"'{key}'" if isinstance(key, str) else str(key)
         try:
-            # We use a minimal $select to avoid fetching massive payloads
-            self._adapter.get(f"{self.endpoint}({id_str})", ep_params={"$select": "1"})
+            self._adapter.get(f"{self.endpoint}({id_str})")
             return True
         except B1NotFoundError:
             return False
@@ -159,18 +162,41 @@ class GenericResource(Generic[T]):
     # ── Mutations ─────────────────────────────────────────────────────────────
 
     def create(self, entity: T) -> T:
-        result = self._adapter.post(
-            f"{self.endpoint}", data=entity.model_dump(exclude_none=True, by_alias=True)
-        )
+        # POST: send all non-None fields. SAP requires a complete payload on creation.
+        # model_dump returns native Python bools; re-encode them to tYES/tNO.
+        from b1sl.b1sl.models.base import _SAP_NO, _SAP_YES
+
+        payload = entity.model_dump(exclude_none=True, by_alias=True)
+        encoded = {
+            k: (_SAP_YES if v is True else _SAP_NO if v is False else v)
+            for k, v in payload.items()
+        }
+        result = self._adapter.post(f"{self.endpoint}", data=encoded)
         return self.model.model_validate(result.data)
 
     def update(self, key: Any, entity: T) -> None:
-        """PATCH — partial update, SAP SL returns 204 No Content."""
+        """PATCH — partial update, SAP SL returns 204 No Content.
+
+        Uses to_api_payload() (exclude_unset) so only fields explicitly set
+        by the developer are sent — the correct delta semantics for PATCH.
+        Booleans are automatically encoded to tYES/tNO.
+
+        After a successful PATCH, the server-side ETag is guaranteed to have
+        changed (a new version was created), but SAP SL returns 204 No Content
+        without a new ETag header. Keeping the old (now stale) ETag in cache
+        would cause a predictable 412 conflict on the next PATCH or DELETE.
+        We proactively invalidate it so the next mutating call either sends no
+        ETag (blind write) or forces a fresh GET first.
+        """
         id_str = f"'{key}'" if isinstance(key, str) else str(key)
+        endpoint_path = f"/{self.endpoint}({id_str})"
         self._adapter.patch(
             f"{self.endpoint}({id_str})",
-            data=entity.model_dump(exclude_none=True, by_alias=True),
+            data=entity.to_api_payload(),
         )
+        # Proactively invalidate the stale ETag: SAP issued a 204 with no
+        # new ETag header, so anything in cache is now a lie.
+        self._adapter._clear_etag(endpoint_path)
 
     def delete(self, key: Any) -> None:
         id_str = f"'{key}'" if isinstance(key, str) else str(key)

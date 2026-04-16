@@ -1,7 +1,7 @@
 # b1sl-python
 ### Modern, async-first Python SDK for SAP Business One Service Layer.
 
-![b1sl Banner](https://raw.githubusercontent.com/operator-ita/b1sl-python/refs/heads/main/docs/assets/hero_banner.png)
+![b1sl Banner](docs/assets/hero-banner.png.png)
 
 [![Python Version](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)

@@ -6,28 +6,39 @@ from typing import TYPE_CHECKING
 from b1sl.b1sl.adapter_protocol import RestAdapterProtocol
 from b1sl.b1sl.base_adapter import ObservabilityConfig
 from b1sl.b1sl.config import B1Config
-from b1sl.b1sl.resources._generated.client_mixin import B1ClientMixin
 from b1sl.b1sl.rest_adapter import RestAdapter
 
 if TYPE_CHECKING:
+    from b1sl.b1sl.models._generated.entities.businesspartners import (
+        Activity,
+        BusinessPartner,
+    )
+    from b1sl.b1sl.models._generated.entities.general import Document
+    from b1sl.b1sl.models._generated.entities.inventory import Item
+    from b1sl.b1sl.models.base import B1Model
+    from b1sl.b1sl.resources.base import GenericResource
     from b1sl.b1sl.resources.udo import UDOResource
 
 
-class B1Client(B1ClientMixin):
+class B1Client:
     """
     Main synchronous entry point for the SAP B1 Service Layer SDK.
 
-    This class provides a typed interface to access SAP resources (Items,
-    Orders, etc.) and custom UDOs. It orchestrates the underlying RestAdapter
-    for session management and HTTP transport.
+    This client is designed for synchronous scripts, CLI tools, and legacy apps.
+    It uses a context manager for automated session management.
 
     AI Role: Primary interface for synchronous scripts and legacy apps.
-    Use properties (e.g. client.items) to access SAP entities.
+    Use 'with B1Client(config) as b1:' to ensure session cleanup.
+
+    Concurrency-Elite Aliases (Elite Citizens):
+        Only entities with ETag support are exposed as direct properties.
+        This ensures state-safety and clear architectural boundaries.
+        Objects without ETag support must be accessed via 'get_resource()'
+        or 'udo()'.
 
     Example:
-        config = B1Config.from_env()
-        client = B1Client(config)
-        item = client.items.get("A0001")
+        with B1Client(config) as b1:
+            item = b1.items.get("A0001")
     """
 
     def __init__(
@@ -51,7 +62,6 @@ class B1Client(B1ClientMixin):
                 mocking or dependency injection.
         """
         self._logger = logger or logging.getLogger(f"b1sl.{self.__class__.__name__}")
-        # Private: consumers use properties from B1ClientMixin
         self._adapter = adapter or RestAdapter(
             config, logger=self._logger, version=version, observability=observability
         )
@@ -109,24 +119,220 @@ class B1Client(B1ClientMixin):
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """
         Exit point for the context manager.
-        Ensures connection pool cleanup.
         """
         self.close()
+
+    def get_resource(
+        self, model: type["B1Model"], endpoint: str
+    ) -> "GenericResource":
+        """
+        Instantiates a generic resource accessor for the given SAP entity.
+
+        AI Role: This is the primary, canonical way to map any Pydantic model
+        to an arbitrary Service Layer endpoint synchronously.
+        """
+        from b1sl.b1sl.resources.base import GenericResource
+
+        class DynamicResource(GenericResource):
+            pass
+
+        DynamicResource.endpoint = endpoint
+        DynamicResource.model = model
+
+        return DynamicResource(self._adapter)
+
+    # --------------------------------------------------------------------------
+    # Concurrency-Elite Aliases (First-Class Citizens with ETag support)
+    # --------------------------------------------------------------------------
+
+    # --- Master Data ---
+
+    @property
+    def items(self) -> "GenericResource[Item]":
+        """Access the 'Items' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities import Item
+        return self.get_resource(Item, "Items")
+
+    @property
+    def business_partners(self) -> "GenericResource[BusinessPartner]":
+        """Access the 'BusinessPartners' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities import BusinessPartner
+        return self.get_resource(BusinessPartner, "BusinessPartners")
+
+    @property
+    def activities(self) -> "GenericResource[Activity]":
+        """Access the 'Activities' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities import Activity
+        return self.get_resource(Activity, "Activities")
+
+    # --- Sales Documents ---
+
+    @property
+    def quotations(self) -> "GenericResource[Document]":
+        """Access the 'Quotations' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "Quotations")
+
+    @property
+    def orders(self) -> "GenericResource[Document]":
+        """Access the 'Orders' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "Orders")
+
+    @property
+    def delivery_notes(self) -> "GenericResource[Document]":
+        """Access the 'DeliveryNotes' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "DeliveryNotes")
+
+    @property
+    def invoices(self) -> "GenericResource[Document]":
+        """Access the 'Invoices' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "Invoices")
+
+    @property
+    def returns(self) -> "GenericResource[Document]":
+        """Access the 'Returns' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "Returns")
+
+    @property
+    def return_request(self) -> "GenericResource[Document]":
+        """Access the 'ReturnRequest' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "ReturnRequest")
+
+    @property
+    def credit_notes(self) -> "GenericResource[Document]":
+        """Access the 'CreditNotes' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "CreditNotes")
+
+    @property
+    def down_payments(self) -> "GenericResource[Document]":
+        """Access the 'DownPayments' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "DownPayments")
+
+    @property
+    def goods_return_request(self) -> "GenericResource[Document]":
+        """Access the 'GoodsReturnRequest' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "GoodsReturnRequest")
+
+    # --- Purchasing Documents ---
+
+    @property
+    def purchase_requests(self) -> "GenericResource[Document]":
+        """Access the 'PurchaseRequests' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseRequests")
+
+    @property
+    def purchase_quotations(self) -> "GenericResource[Document]":
+        """Access the 'PurchaseQuotations' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseQuotations")
+
+    @property
+    def purchase_orders(self) -> "GenericResource[Document]":
+        """Access the 'PurchaseOrders' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseOrders")
+
+    @property
+    def purchase_delivery_notes(self) -> "GenericResource[Document]":
+        """Access the 'PurchaseDeliveryNotes' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseDeliveryNotes")
+
+    @property
+    def purchase_invoices(self) -> "GenericResource[Document]":
+        """Access the 'PurchaseInvoices' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseInvoices")
+
+    @property
+    def purchase_returns(self) -> "GenericResource[Document]":
+        """Access the 'PurchaseReturns' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseReturns")
+
+    @property
+    def purchase_credit_notes(self) -> "GenericResource[Document]":
+        """Access the 'PurchaseCreditNotes' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseCreditNotes")
+
+    @property
+    def purchase_down_payments(self) -> "GenericResource[Document]":
+        """Access the 'PurchaseDownPayments' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "PurchaseDownPayments")
+
+    # --- Inventory & Specialized ---
+
+    @property
+    def inventory_gen_entries(self) -> "GenericResource[Document]":
+        """Access the 'InventoryGenEntries' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "InventoryGenEntries")
+
+    @property
+    def inventory_gen_exits(self) -> "GenericResource[Document]":
+        """Access the 'InventoryGenExits' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "InventoryGenExits")
+
+    @property
+    def drafts(self) -> "GenericResource[Document]":
+        """Access the 'Drafts' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "Drafts")
+
+    @property
+    def additional_expenses(self) -> "GenericResource[B1Model]":
+        """Access the 'AdditionalExpenses' entity (supports ETags)."""
+        from b1sl.b1sl.models.base import B1Model
+        return self.get_resource(B1Model, "AdditionalExpenses")
+
+    # --- Correction marketing documents ---
+
+    @property
+    def correction_invoice(self) -> "GenericResource[Document]":
+        """Access the 'CorrectionInvoice' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "CorrectionInvoice")
+
+    @property
+    def correction_invoice_reversal(self) -> "GenericResource[Document]":
+        """Access the 'CorrectionInvoiceReversal' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "CorrectionInvoiceReversal")
+
+    @property
+    def correction_purchase_invoice(self) -> "GenericResource[Document]":
+        """Access the 'CorrectionPurchaseInvoice' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "CorrectionPurchaseInvoice")
+
+    @property
+    def correction_purchase_invoice_reversal(self) -> "GenericResource[Document]":
+        """Access the 'CorrectionPurchaseInvoiceReversal' entity (supports ETags)."""
+        from b1sl.b1sl.models._generated.entities.general import Document
+        return self.get_resource(Document, "CorrectionPurchaseInvoiceReversal")
 
     def udo(self, table_name: str) -> "UDOResource":
         """
         Access a User Defined Object (UDO) or User Table dynamically.
 
         AI Role: Use this for any SAP entity not present in the pre-defined
-        service properties. Handles @U_ prefixing internally if required
-        by specific UDO implementations.
+        service properties.
 
         Args:
             table_name (str): The UDO table name as registered in SAP B1
                 (e.g., "CT_SDK_ASSETS").
-
-        Returns:
-            UDOResource: A resource object bound to the specified UDO.
         """
         from b1sl.b1sl.resources.udo import UDOResource
 

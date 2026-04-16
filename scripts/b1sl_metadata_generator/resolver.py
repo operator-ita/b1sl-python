@@ -19,14 +19,14 @@ if TYPE_CHECKING:
     try:
         from .parser import ParsedMetadata
     except (ImportError, ValueError):
-        from parser import ParsedMetadata
+        from parser import ParsedMetadata  # type: ignore[no-redef]
 
 
 def build_dependency_graph(metadata: ParsedMetadata) -> dict[str, set[str]]:
     graph: dict[str, set[str]] = {}
 
     for name, entity in metadata.entities.items():
-        deps: set[str] = set()
+        deps = set()
         for prop in entity.properties:
             clean_type = prop.edm_type.split(".")[-1]
             if clean_type in metadata.complex_types or clean_type in metadata.enums:
@@ -37,7 +37,7 @@ def build_dependency_graph(metadata: ParsedMetadata) -> dict[str, set[str]]:
         graph[name] = deps
 
     for name, ct in metadata.complex_types.items():
-        deps: set[str] = set()
+        deps = set()
         for prop in ct.properties:
             clean_type = prop.edm_type.split(".")[-1]
             if clean_type in metadata.complex_types or clean_type in metadata.enums:

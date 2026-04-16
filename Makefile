@@ -49,8 +49,8 @@ coverage-html: test-ci
 
 lint:
 	@echo "🧹 Linting code..."
-	$(VENV)/bin/ruff check src tests
-	$(VENV)/bin/mypy src
+	$(VENV)/bin/ruff check .
+	$(VENV)/bin/mypy .
 
 # Release automation (Pro mode)
 # Usage: make release v=0.1.x

@@ -16,8 +16,10 @@
 **Proposal:**
 - Implement a `BatchBuilder` utility that allows queuing operations and submitting them together to drastically reduce HTTP overhead for bulk sync processes.
 
-## 4. OData Query Builder Enhancements
-**Context:** We have constants for fields (`F.Item.item_code`), but filter construction might still rely on strings (`$filter=ItemCode eq 'A001'`).
-**Proposal:**
-- Allow pythonic operator overloading on the `F` schema constants to automatically build OData strings. 
-- Example: `client.items.filter(F.Item.item_code == 'A001' & F.Item.valid == 'tYES')`
+---
+
+## ✅ Recently Completed
+
+- **OData Query Builder (Fluent API)**: Implemented Pythonic operator overloading on `F` schema constants.
+- **Example Usage:** `client.items.filter((F.Item.on_hand > 5) & (F.Item.item_name.contains("QUESO")))`
+

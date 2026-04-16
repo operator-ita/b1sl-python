@@ -1,6 +1,6 @@
 """
-Refactored ServiceCall Master Guide
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Example 11: Service Call Interaction Patterns
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Demonstrates the 3 styles of interaction supported by the SDK:
 1. Pythonic (using F constants) - THE PREFERRED WAY
 2. Hybrid (Mixed F and Strings) - For UDFs
@@ -15,6 +15,7 @@ sys.path.append(str(Path(__file__).parent))
 
 from utils import use_sap_b1
 
+from b1sl.b1sl import entities as en
 from b1sl.b1sl import fields as F
 from b1sl.b1sl.resources.base import ODataQuery
 
@@ -22,10 +23,11 @@ from b1sl.b1sl.resources.base import ODataQuery
 def main():
     with use_sap_b1("ServiceCall Interaction Patterns") as runner:
         client = runner.client
+        service_calls = client.get_resource(en.ServiceCall, "ServiceCalls")
 
         # 0. DYNAMIC ID DISCOVERY
         runner.info("Fetching latest ServiceCall ID...")
-        latest = client.service_calls.list(ODataQuery(
+        latest = service_calls.list(ODataQuery(
             select=[F.ServiceCall.service_call_id],
             orderby=f"{F.ServiceCall.service_call_id} desc",
             top=1
@@ -42,7 +44,7 @@ def main():
         runner.header("Pattern 1: Pythonic (F Constants)")
         runner.info("Best for Type Safety and IDE Autocomplete.")
 
-        sc_f = client.service_calls.get(
+        sc_f = service_calls.get(
             TEST_ID,
             select=[F.ServiceCall.subject, F.ServiceCall.customer_code],
             expand={
@@ -60,7 +62,7 @@ def main():
         runner.header("Pattern 2: Hybrid (F + Raw Strings)")
         runner.info("Best for queries involving User Defined Fields (U_UDF).")
 
-        sc_mix = client.service_calls.get(
+        sc_mix = service_calls.get(
             TEST_ID,
             select=[F.ServiceCall.subject, "U_OTFecha"],
             expand={
@@ -75,7 +77,7 @@ def main():
         runner.header("Pattern 3: SAP-Pure (Raw Strings)")
         runner.info("Best for porting existing OData snippets directly.")
 
-        sc_sap = client.service_calls.get(
+        sc_sap = service_calls.get(
             TEST_ID,
             select=["Subject", "CustomerCode"],
             expand=["BusinessPartner($select=CardCode)", "Item($select=ItemCode,ItemName)"]
@@ -92,7 +94,7 @@ def main():
             expand={F.ServiceCall.business_partner: [F.BusinessPartner.card_code]},
             top=3
         )
-        for call in client.service_calls.list(query):
+        for call in service_calls.list(query):
              bp = call.business_partner.card_code if call.business_partner else "Unknown"
              print(f"  [#{call.service_call_id:<8}] ({bp:<20}) {call.subject[:40]}...")
 

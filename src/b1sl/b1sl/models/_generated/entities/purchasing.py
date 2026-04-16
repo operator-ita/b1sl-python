@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Literal
 from pydantic import Field as PydanticField
 from b1sl.b1sl.models.base import B1Model, SapBool
 from ..enums import *
@@ -20,7 +20,7 @@ class LandedCost(B1Model):
     vendor_name: str | None = PydanticField(None, alias='VendorName')
     broker: str | None = PydanticField(None, alias='Broker')
     broker_name: str | None = PydanticField(None, alias='BrokerName')
-    closed_document: LandedCostDocStatusEnum | None = PydanticField(None, alias='ClosedDocument')
+    closed_document: LandedCostDocStatusEnum | Literal['lcOpen', 'lcClosed'] | None = PydanticField(None, alias='ClosedDocument')
     file_number: str | None = PydanticField(None, alias='FileNumber')
     remarks: str | None = PydanticField(None, alias='Remarks')
     reference: str | None = PydanticField(None, alias='Reference')
@@ -60,5 +60,5 @@ class LandedCostsCode(B1Model):
     """SAP LandedCostsCode Entity"""
     code: str | None = PydanticField(None, alias='Code')
     name: str | None = PydanticField(None, alias='Name')
-    allocation_by: BoAllocationByEnum | None = PydanticField(None, alias='AllocationBy')
+    allocation_by: BoAllocationByEnum | Literal['ab_CashValueAfterCustoms', 'ab_CashValueBeforeCustoms', 'ab_Equal', 'ab_Quantity', 'ab_Volume', 'ab_Weight'] | None = PydanticField(None, alias='AllocationBy')
     landed_costs_allocation_account: str | None = PydanticField(None, alias='LandedCostsAllocationAccount')

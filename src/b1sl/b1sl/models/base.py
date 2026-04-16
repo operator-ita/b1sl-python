@@ -47,7 +47,7 @@ from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Annotated, Any
 
-from pydantic import BaseModel, BeforeValidator, ConfigDict, model_validator
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, model_validator
 
 # SAP boolean sentinel values — exact set used by the Service Layer.
 _SAP_YES: str = "tYES"
@@ -105,6 +105,16 @@ class B1Model(BaseModel):
         extra="allow",  # preserve unknown SAP UDFs (U_* fields)
         arbitrary_types_allowed=True,
     )
+
+    # Common OData version fields
+    # Note: alias is @odata.etag which is standard in SAP B1 v2 (OData V4)
+    odata_etag: str | None = Field(None, alias="@odata.etag", repr=False)
+
+    @property
+    def etag(self) -> str | None:
+        """Returns the ETag (optimistic concurrency token) for this record."""
+        return self.odata_etag or self.get("@odata.etag")
+
 
     # ── Inbound coercion (SAP → Python) ─────────────────────────────────── #
 

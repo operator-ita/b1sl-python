@@ -172,3 +172,8 @@ class FakeRestAdapter(RestAdapterProtocol):
     ) -> Result:
         """Simulate a DELETE request."""
         return self._handle_request("DELETE", endpoint, ep_params, data)
+
+    def _clear_etag(self, *args, **kwargs):
+        """Mock ETag invalidation."""
+        pass
+

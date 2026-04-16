@@ -275,7 +275,10 @@ class AsyncRestAdapter(BaseRestAdapter):
             self._raise_if_concurrency_error(
                 e.response.status_code, sap_code, sap_msg, endpoint_path, body
             )
-            raise B1Exception(f"SAP Error {sap_code}: {sap_msg}") from e
+            
+            # Use specialized exception based on status code if available
+            exc_cls = _HTTP_STATUS_TO_EXC.get(e.response.status_code, B1Exception)
+            raise exc_cls(f"SAP Error {sap_code}: {sap_msg}", details=body) from e
         except Exception as e:
             exc_captured = e
             raise B1Exception(f"Request failed: {e}") from e
@@ -290,6 +293,10 @@ class AsyncRestAdapter(BaseRestAdapter):
                 duration_ms = (time.perf_counter() - start_time) * 1000
                 status_code = response.status_code if response is not None else None
 
+                # Prepare context extras
+                context_extras = dict(self._obs.context_extras)
+                context_extras["is_dry_run"] = self._dry_run_active and http_method in {"POST", "PATCH", "DELETE"} and not _is_login
+
                 ctx = HookContext(
                     req_id=req_id,
                     http_method=http_method,
@@ -300,7 +307,9 @@ class AsyncRestAdapter(BaseRestAdapter):
                     user=self._username,
                     status_code=status_code,
                     duration_ms=duration_ms,
-                    extra=dict(self._obs.context_extras),
+                    payload=log_data if http_method in {"POST", "PATCH"} else None,
+                    if_match=headers.get("If-Match"),
+                    extra=context_extras,
                     exc=exc_captured,
                 )
 
