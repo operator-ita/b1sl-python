@@ -215,6 +215,7 @@ class AsyncRestAdapter(BaseRestAdapter):
         endpoint: str,
         ep_params=None,
         data=None,
+        headers: dict | None = None,
         _is_login: bool = False,
         _retry_once=True,
     ) -> Result:
@@ -240,7 +241,9 @@ class AsyncRestAdapter(BaseRestAdapter):
 
         try:
             # ── ETag: inject If-None-Match (GET) or If-Match (PATCH/DELETE/POST) ──
-            headers = self._build_headers(http_method, endpoint_path)
+            req_headers = self._build_headers(http_method, endpoint_path)
+            if headers:
+                req_headers.update(headers)
 
             if self._dry_run_active and http_method in {"POST", "PATCH", "DELETE"} and not _is_login:
                 self._logger.info(f"[{req_id}] [DRY RUN] Intercepting {http_method} {full_url}")
@@ -250,7 +253,7 @@ class AsyncRestAdapter(BaseRestAdapter):
             else:
                 response = await self._client.request(
                     method=http_method, url=full_url, params=ep_params, json=data,
-                    headers=headers,
+                    headers=req_headers,
                 )
 
             if response.status_code == 401 and _retry_once and not _is_login:
@@ -259,7 +262,7 @@ class AsyncRestAdapter(BaseRestAdapter):
                 # Recursive call will handle its own finally block,
                 # but we need to return here to avoid double-logging/hooking.
                 return await self._do(
-                    http_method, endpoint, ep_params, data, _is_login, _retry_once=False
+                    http_method, endpoint, ep_params, data, headers, _is_login, _retry_once=False
                 )
 
             response.raise_for_status()
@@ -308,7 +311,7 @@ class AsyncRestAdapter(BaseRestAdapter):
                     status_code=status_code,
                     duration_ms=duration_ms,
                     payload=log_data if http_method in {"POST", "PATCH"} else None,
-                    if_match=headers.get("If-Match"),
+                    if_match=req_headers.get("If-Match"),
                     extra=context_extras,
                     exc=exc_captured,
                 )
@@ -347,18 +350,33 @@ class AsyncRestAdapter(BaseRestAdapter):
                 f"HTTP Error {response.status_code if response else 'Unknown'}"
             )
 
-    async def get(self, endpoint, ep_params=None, data=None):
+    async def get(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute an asynchronous GET request."""
-        return await self._do("GET", endpoint, ep_params, data)
+        return await self._do("GET", endpoint, ep_params, data, headers=headers)
 
-    async def post(self, endpoint, ep_params=None, data=None):
+    async def post(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute an asynchronous POST request."""
-        return await self._do("POST", endpoint, ep_params, data)
+        return await self._do("POST", endpoint, ep_params, data, headers=headers)
 
-    async def patch(self, endpoint, ep_params=None, data=None):
+    async def patch(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute an asynchronous PATCH request."""
-        return await self._do("PATCH", endpoint, ep_params, data)
+        return await self._do("PATCH", endpoint, ep_params, data, headers=headers)
 
-    async def delete(self, endpoint, ep_params=None, data=None):
+    async def delete(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute an asynchronous DELETE request."""
-        return await self._do("DELETE", endpoint, ep_params, data)
+        return await self._do("DELETE", endpoint, ep_params, data, headers=headers)
+
+    async def post_batch(self, body: str, headers: dict) -> httpx.Response:
+        """
+        Special method to send raw multipart content for $batch operations.
+        """
+        await self.ensure_session()
+        if not self._client:
+             raise B1Exception("AsyncRestAdapter not initialized.")
+        
+        url = f"{self.raw_base_url}/$batch"
+        # Combine with session headers if necessary,
+        # although httpx already handles them via cookies.
+        response = await self._client.post(url, content=body, headers=headers)
+        response.raise_for_status()
+        return response

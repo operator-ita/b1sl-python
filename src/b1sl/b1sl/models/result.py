@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict
 
 
 class Result(BaseModel):
     status_code: int
     message: str = ""
-    data: dict | None = None
+    data: Any = None
     next_link: str | None = None
     next_params: dict | None = None
     metadata: str | None = None

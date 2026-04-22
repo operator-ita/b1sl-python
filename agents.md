@@ -48,3 +48,12 @@ Provide a high-performance, async-first, and metadata-driven Python SDK for SAP 
 8. **Generated Code Policy**:
    - NEVER edit files in `_generated/` folders.
    - Use overrides in `_overrides/` to inject custom logic or fix model resolution issues (e.g., using `model_rebuild()`).
+
+9. **Batch & Transactional Context**:
+   - **Proxy-Recording Pattern**: `BatchClient` uses a `ResourceProxy` to intercept resource calls. It stores them in a `_pending` queue instead of executing them immediately.
+   - **Atomic vs. Independent**: $batch supports both independent operations (partial success) and `changeset()` (atomic rollback). 
+   - **No-Exception Policy**: `batch.execute()` MUST NOT raise exceptions for individual operation failures. This is the "Defensive Analysis" pattern essential for handling partial successes.
+   - **Future Maintenance**:
+     - **Streaming Parser**: The current `BatchParser` uses line-scanning. For extremely large batches (>100 operations), consider implementing a streaming multipart parser to reduce memory overhead.
+     - **Binary/Media Support**: Currently, batch handles JSON payloads. Future agents should consider how to handle multipart/form-data attachments inside a $batch if SAP supports it.
+     - **Traceability**: Always maintain the `r.index` property in results to allow mapping back to the original request order.

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from datetime import date, datetime, time
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Generator, Generic, TypeVar
 
 if TYPE_CHECKING:
     from b1sl.b1sl.resources.async_base import AsyncGenericResource
-    from b1sl.b1sl.resources.base import GenericResource
+    from b1sl.b1sl.resources.base import GenericResource, ODataQuery
 
 T = TypeVar("T")
 
@@ -91,6 +91,30 @@ class ODataField(str):
         vals = ", ".join(format_odata_value(v) for v in values)
         return ODataExpression(f"{self} in ({vals})")
 
+    # def __getattr__(self, name: str) -> ODataField:
+    #     """Support nested field access: F.DocumentLines.ItemCode -> 'DocumentLines/ItemCode'.
+    #
+    #     Note: Use the '/' operator (e.g. F.DocumentLines / F.ItemCode) when composing
+    #     paths inside select/expand — it is more explicit. This __getattr__ hook is a
+    #     convenience shorthand, but it is guarded against dunder names to avoid
+    #     interfering with pickle, copy, and framework introspection.
+    #     """
+    #     if name.startswith("__"):
+    #         raise AttributeError(name)
+    #     return ODataField(f"{self}/{name}")
+
+
+class FieldProxy:
+    """
+    Virtual proxy to create ODataField objects via attribute access.
+    Usage: F.ItemCode == 'A001' -> "ItemCode eq 'A001'"
+    """
+    def __getattr__(self, name: str) -> ODataField:
+        return ODataField(name)
+
+
+F = FieldProxy()
+
 class QueryBuilder(Generic[T]):
     """
     Fluent interface for building OData queries.
@@ -105,6 +129,11 @@ class QueryBuilder(Generic[T]):
         self._top: int | None = None
         self._skip: int | None = None
         self._expand: list[str] | dict[str, list[str]] | None = None
+        self._schema: str | None = None
+
+    def with_schema(self, name: str) -> QueryBuilder[T]:
+        self._schema = name
+        return self
 
     def by_id(self, key: Any) -> QueryBuilder[T]:
         """Sets the query to fetch a single entity by its primary key."""
@@ -138,10 +167,29 @@ class QueryBuilder(Generic[T]):
         self._expand = value
         return self
 
+    def _build_query(self) -> ODataQuery:
+        """Internal helper to build the ODataQuery object."""
+        from b1sl.b1sl.resources.base import ODataQuery
+        return ODataQuery(
+            filter=self._filter,
+            select=self._select or None,
+            orderby=self._orderby,
+            top=self._top,
+            skip=self._skip,
+            expand=self._expand
+        )
+
     def execute(self) -> list[T] | T:
         """Execute the query. Returns a list for collections or a single instance if by_id() was used."""
-        from b1sl.b1sl.resources.base import ODataQuery
+        adapter = self._resource._adapter
         
+        # We check if adapter has with_schema method. Some legacy mock adapters might not.
+        if self._schema and hasattr(adapter, "with_schema"):
+            with adapter.with_schema(self._schema):
+                return self._execute_internal()
+        return self._execute_internal()
+
+    def _execute_internal(self) -> list[T] | T:
         # If by_id was used, it's a single entity GET
         if self._key is not None:
             return self._resource.get(
@@ -150,24 +198,36 @@ class QueryBuilder(Generic[T]):
                 expand=self._expand
             )
 
-        query = ODataQuery(
-            filter=self._filter,
-            select=self._select or None,
-            orderby=self._orderby,
-            top=self._top,
-            skip=self._skip,
-            expand=self._expand
-        )
-        return self._resource.list(query=query)
+        return self._resource.list(query=self._build_query())
 
-    def all(self) -> list[T]:
-        """Alias for execute() when expecting a collection."""
-        res = self.execute()
-        return res if isinstance(res, list) else [res]
+    def stream(
+        self, 
+        page_size: int | None = None, 
+        max_pages: int | None = None
+    ) -> Generator[T, None, None]:
+        """
+        Execute the query and return a generator that automatically fetches 
+        next pages via odata.nextLink.
+        """
+        adapter = self._resource._adapter
+        if self._schema and hasattr(adapter, "with_schema"):
+            with adapter.with_schema(self._schema):
+                yield from self._resource.stream(
+                    query=self._build_query(), 
+                    page_size=page_size, 
+                    max_pages=max_pages
+                )
+        else:
+            yield from self._resource.stream(
+                query=self._build_query(), 
+                page_size=page_size, 
+                max_pages=max_pages
+            )
 
     def first(self) -> T | None:
         """Execute the query and return the first result, if any."""
-        results = self.top(1).all()
+        res = self.top(1).execute()
+        results = res if isinstance(res, list) else [res]
         return results[0] if results else None
 
 
@@ -185,6 +245,11 @@ class AsyncQueryBuilder(Generic[T]):
         self._top: int | None = None
         self._skip: int | None = None
         self._expand: list[str] | dict[str, list[str]] | None = None
+        self._schema: str | None = None
+
+    def with_schema(self, name: str) -> AsyncQueryBuilder[T]:
+        self._schema = name
+        return self
 
     def by_id(self, key: Any) -> AsyncQueryBuilder[T]:
         self._key = key
@@ -217,18 +282,10 @@ class AsyncQueryBuilder(Generic[T]):
         self._expand = value
         return self
 
-    async def execute(self) -> list[T] | T:
-        """Execute the query asynchronously."""
+    def _build_query(self) -> ODataQuery:
+        """Internal helper to build the ODataQuery object."""
         from b1sl.b1sl.resources.base import ODataQuery
-
-        if self._key is not None:
-            return await self._resource.get(
-                key=self._key,
-                select=self._select or None,
-                expand=self._expand
-            )
-
-        query = ODataQuery(
+        return ODataQuery(
             filter=self._filter,
             select=self._select or None,
             orderby=self._orderby,
@@ -236,12 +293,57 @@ class AsyncQueryBuilder(Generic[T]):
             skip=self._skip,
             expand=self._expand
         )
-        return await self._resource.list(query=query)
 
-    async def all(self) -> list[T]:
-        res = await self.execute()
-        return res if isinstance(res, list) else [res]
+    async def execute(self) -> list[T] | T:
+        """Execute the query asynchronously."""
+        adapter = self._resource._adapter
+        if self._schema and hasattr(adapter, "with_schema"):
+            with adapter.with_schema(self._schema):
+                return await self._execute_internal()
+        return await self._execute_internal()
+
+    async def _execute_internal(self) -> list[T] | T:
+        if self._key is not None:
+            return await self._resource.get(
+                key=self._key,
+                select=self._select or None,
+                expand=self._expand
+            )
+
+        return await self._resource.list(query=self._build_query())
+
+    def stream(
+        self, 
+        page_size: int | None = None, 
+        max_pages: int | None = None
+    ) -> AsyncGenerator[T, None]:
+        """
+        Execute the query and return an async generator that automatically 
+        fetches next pages via odata.nextLink.
+        """
+        adapter = self._resource._adapter
+        
+        async def _generator_with_context():
+            if self._schema and hasattr(adapter, "with_schema"):
+                with adapter.with_schema(self._schema):
+                    async for item in self._resource.stream(
+                        query=self._build_query(), 
+                        page_size=page_size, 
+                        max_pages=max_pages
+                    ):
+                        yield item
+            else:
+                async for item in self._resource.stream(
+                    query=self._build_query(), 
+                    page_size=page_size, 
+                    max_pages=max_pages
+                ):
+                    yield item
+
+        return _generator_with_context()
 
     async def first(self) -> T | None:
-        results = await self.top(1).all()
+        """Execute the query and return the first result, if any."""
+        res = await self.top(1).execute()
+        results = res if isinstance(res, list) else [res]
         return results[0] if results else None

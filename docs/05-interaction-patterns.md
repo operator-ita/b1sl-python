@@ -15,14 +15,13 @@ Highly recommended for production. It uses `fields` (generated as `F`) to map at
 ```python
 from b1sl.b1sl import fields as F
 
-# Simple fetch
-bp = await client.business_partners.get("C0001", select=[F.BusinessPartner.card_name])
-
 # Fluent query (Advanced)
-results = await client.items.filter(F.Item.item_code.startswith("A")) \
-                            .select(F.Item.item_code, F.Item.item_name) \
-                            .top(5) \
-                            .execute()
+# .stream() handles all pages automatically
+async for item in client.items.filter(F.Item.item_code.startswith("A")).stream():
+    print(item.item_name)
+    
+# .execute() returns only the first page
+results = await client.items.top(5).execute()
 ```
 
 > [!TIP]
@@ -37,6 +36,11 @@ bp = await client.business_partners.get(
     "C0001",
     select=[F.BusinessPartner.card_name, "U_Segmento"], # Mix!
 )
+
+# Recommended: Explicit UDF access via the .udfs mapping
+custom_val = bp.udfs["U_Segmento"]
+
+# Legacy: Fallback access using .get()
 custom_val = bp.get("U_Segmento")
 ```
 
@@ -71,6 +75,7 @@ from b1sl.b1sl import fields as F
 from datetime import date
 
 # Fluent queries are type-safe and pythonic!
+# Use .execute() for single-page results
 results = await client.items.filter(
     (F.Item.quantity_on_stock > 0) & (F.Item.valid_from >= date(2024, 1, 1))
 ).select(
@@ -79,6 +84,10 @@ results = await client.items.filter(
 ).orderby(
     F.Item.item_code
 ).top(3).execute()
+
+# Use .stream() for full collections
+async for item in client.items.filter(F.Item.quantity_on_stock > 100).stream():
+    process(item)
 ```
 
 For more details on operators and logic composition, see [10-odata-query-builder.md](./10-odata-query-builder.md).

@@ -97,6 +97,7 @@ class FakeRestAdapter(RestAdapterProtocol):
         endpoint: str,
         params: dict[str, Any] | None = None,
         data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
     ) -> Result:
         """Internal router to record the call and return the next queued response.
 
@@ -105,6 +106,7 @@ class FakeRestAdapter(RestAdapterProtocol):
             endpoint: Target endpoint.
             params: Query parameters.
             data: Request body.
+            headers: Request headers.
 
         Returns:
             The next Result registered for this route.
@@ -113,7 +115,7 @@ class FakeRestAdapter(RestAdapterProtocol):
             ValueError: If no response is registered for the given route.
         """
         self.calls.append(
-            {"method": method, "endpoint": endpoint, "params": params, "data": data}
+            {"method": method, "endpoint": endpoint, "params": params, "data": data, "headers": headers}
         )
 
         # Normalize for lookup
@@ -142,36 +144,40 @@ class FakeRestAdapter(RestAdapterProtocol):
         endpoint: str,
         ep_params: dict[str, Any] | None = None,
         data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
     ) -> Result:
         """Simulate a GET request."""
-        return self._handle_request("GET", endpoint, ep_params, data)
+        return self._handle_request("GET", endpoint, ep_params, data, headers)
 
     def post(
         self,
         endpoint: str,
         ep_params: dict[str, Any] | None = None,
         data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
     ) -> Result:
         """Simulate a POST request."""
-        return self._handle_request("POST", endpoint, ep_params, data)
+        return self._handle_request("POST", endpoint, ep_params, data, headers)
 
     def patch(
         self,
         endpoint: str,
         ep_params: dict[str, Any] | None = None,
         data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
     ) -> Result:
         """Simulate a PATCH request."""
-        return self._handle_request("PATCH", endpoint, ep_params, data)
+        return self._handle_request("PATCH", endpoint, ep_params, data, headers)
 
     def delete(
         self,
         endpoint: str,
         ep_params: dict[str, Any] | None = None,
         data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
     ) -> Result:
         """Simulate a DELETE request."""
-        return self._handle_request("DELETE", endpoint, ep_params, data)
+        return self._handle_request("DELETE", endpoint, ep_params, data, headers)
 
     def _clear_etag(self, *args, **kwargs):
         """Mock ETag invalidation."""

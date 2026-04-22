@@ -43,6 +43,8 @@ overwrites on PATCH requests:
 from __future__ import annotations
 
 import re
+import warnings
+from collections.abc import Iterator, MutableMapping
 from datetime import date, datetime, timezone
 from enum import Enum
 from typing import Annotated, Any
@@ -71,6 +73,51 @@ SapBool = Annotated[bool, BeforeValidator(_coerce_sap_boolean)]
 
 # /Date(milliseconds_since_epoch)/ — the OData v2 date format SAP uses.
 _SAP_DATE_RE = re.compile(r"^/Date\((\d+)\)/$")
+
+
+class UDFMapping(MutableMapping):
+    """
+    A mapping proxy that protects the underlying __pydantic_extra__ dictionary,
+    enforcing that all keys must start with "U_".
+    """
+    def __init__(self, model: "B1Model") -> None:
+        self.model = model
+
+    def __getitem__(self, key: str) -> Any:
+        if not key.startswith("U_"):
+            raise KeyError(f"UDF mapping only supports 'U_' keys, got '{key}'")
+        if self.model.__pydantic_extra__ is None:
+            raise KeyError(key)
+        val = self.model.__pydantic_extra__.get(key)
+        if val is None and key not in self.model.__pydantic_extra__:
+            raise KeyError(key)
+        return val
+
+    def __setitem__(self, key: str, value: Any) -> None:
+        if not key.startswith("U_"):
+            raise KeyError(f"UDF mapping only supports 'U_' keys, got '{key}'")
+        # __pydantic_extra__ is guaranteed non-None at runtime because B1Model
+        # always uses extra="allow"; initialise lazily as a safety net.
+        if self.model.__pydantic_extra__ is None:
+            self.model.__pydantic_extra__ = {}
+        self.model.__pydantic_extra__[key] = value
+
+    def __delitem__(self, key: str) -> None:
+        if not key.startswith("U_"):
+            raise KeyError(f"UDF mapping only supports 'U_' keys, got '{key}'")
+        if self.model.__pydantic_extra__ is None or key not in self.model.__pydantic_extra__:
+            raise KeyError(key)
+        del self.model.__pydantic_extra__[key]
+
+    def __iter__(self) -> Iterator[str]:
+        if self.model.__pydantic_extra__ is None:
+            return iter([])
+        return (k for k in self.model.__pydantic_extra__ if k.startswith("U_"))
+
+    def __len__(self) -> int:
+        if self.model.__pydantic_extra__ is None:
+            return 0
+        return sum(1 for k in self.model.__pydantic_extra__ if k.startswith("U_"))
 
 
 class B1Model(BaseModel):
@@ -115,6 +162,17 @@ class B1Model(BaseModel):
         """Returns the ETag (optimistic concurrency token) for this record."""
         return self.odata_etag or self.get("@odata.etag")
 
+    @property
+    def udfs(self) -> UDFMapping:
+        """
+        Provides safe, dictionary-like access to User-Defined Fields (UDFs).
+        Enforces that all interactions use the 'U_' prefix.
+        
+        Example:
+            item.udfs["U_MyCustomField"] = "Value"
+        """
+        return UDFMapping(self)
+
 
     # ── Inbound coercion (SAP → Python) ─────────────────────────────────── #
 
@@ -132,7 +190,14 @@ class B1Model(BaseModel):
         if not isinstance(data, dict):
             return data
 
+        # Work on a shallow copy so we never mutate the caller's dict.
+        # Pydantic usually passes a fresh dict in mode='before', but some
+        # code paths (model_copy, re-validation) may reuse the same object.
+        data = dict(data)
+        udfs_arg = data.pop("udfs", None)
+
         coerced: dict[str, Any] = {}
+
         for key, val in data.items():
             if isinstance(val, str):
                 # 1. Check for Dates
@@ -148,6 +213,19 @@ class B1Model(BaseModel):
                     coerced[key] = val
             else:
                 coerced[key] = val
+
+        if isinstance(udfs_arg, dict):
+            for k, v in udfs_arg.items():
+                if not k.startswith("U_"):
+                    raise ValueError(f"UDF keys must start with 'U_', got '{k}'")
+                if k in coerced:
+                    warnings.warn(
+                        f"Constructor conflict: {k} was passed both dynamically and inside `udfs`. The explicit value will be overwritten.",
+                        RuntimeWarning,
+                        stacklevel=2,
+                    )
+                coerced[k] = v
+
         return coerced
 
     # ── Outbound serialisation (Python → SAP) ───────────────────────────── #

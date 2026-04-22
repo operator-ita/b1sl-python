@@ -103,12 +103,15 @@ with b1.dry_run(enabled=False):
 Always use the flat public namespace for models and enums to ensure clean code and IDE support. Never import from `_generated` internal paths.
 
 ```python
-# ✅ Best Practice
-from b1sl.b1sl import entities as en, fields as F
+# ✅ Best Practice: Flat namespace for data models
+from b1sl.b1sl import entities as en
 
-# Enums are automatically available in 'en'
-open_status = en.BoStatus.bost_Open
-new_item = en.Item(item_code="A100")
+# ✅ Best Practice: Field referencing
+from b1sl.b1sl.resources.odata import F  # Dynamic "Elite" Proxy
+from b1sl.b1sl.fields import Item          # Static "Pythonic" Fields
+
+# Use 'en' for model instantiation
+new_item = en.Item(item_code="A100", item_name="New Item")
 ```
 
 ---
@@ -244,6 +247,84 @@ await b1.items.delete("A0001")
 
 ---
 
+## Transparent Pagination Streams
+
+When dealing with large datasets, SAP Service Layer automatically paginates results. The SDK provides a `.stream()` method to transparently handle these pages using Python generators.
+
+### Usage
+Available on any resource or builder.
+
+```python
+# 1. Async iteration (using Dynamic 'F' proxy)
+async for item in b1.items.filter(F.OnHand > 0).stream(page_size=100):
+    process(item)
+
+# 2. Sync iteration (using Static 'Item' constants)
+from b1sl.b1sl.fields import Item
+for item in b1.items.filter(Item.on_hand > 5).stream():
+    process(item)
+```
+
+### Configuration
+- **`page_size`**: Controls `B1-PageSize` header (HTTP efficiency).
+- **`max_pages`**: Safety limit on number of HTTP requests.
+- **`.top(N)`**: Hard global limit on total items yielded across all pages.
+
+### Common Patterns
+- **Progress**: `total = await b1.items.count(); async for i in b1.items.stream(): ...`
+- **Collect**: `items = [i async for i in b1.items.stream()]`
+- **Safety**: `.stream(max_pages=5)`
+
+### Guarantee
+The SDK ensures that all query parameters (`$filter`, `$select`, etc.) are re-applied to every subsequent page fetch, even if SAP omits them in the `nextLink`.
+
+---
+
+## OData $batch Operations (Performance & Atomicity)
+
+The SDK supports grouping multiple operations into a single HTTP request using a Proxy-based recording pattern.
+
+### Use Case
+1. **High Concurrency**: Fetching hundreds of records using generic queries in one Go.
+2. **Transaction Integrity**: Ensuring multiple creates/updates succeed or fail together as a unit.
+
+### Basic Pattern
+```python
+async with b1.batch() as batch:
+    # Operations are enqueued via Recording Proxy
+    await batch.items.top(1).execute()
+    
+    # Atomic ChangeSet scope
+    async with batch.changeset() as cs:
+        await cs.items.create(en.Item(item_code="B1001"))
+        await cs.orders.create(new_order)
+    
+    # Dispatch and parse results
+    results = await batch.execute()
+```
+
+### Result Analysis
+Results are flattened and indexed according to their original enqueueing order.
+```python
+if results.all_ok:
+    print(f"Operation 0 found {len(results[0].entity)} items")
+    print(f"New Item Code: {results[2].entity.item_code}")
+else:
+    for r in results.failed:
+        print(f"Op {r.index} failed: {r.error}")
+```
+
+### Error Handling & Atomicity
+- **Partial Success**: Top-level operations are independent. If one fails, others still succeed.
+- **Atomic ChangeSets**: If one operation inside a `changeset()` fails, the **entire** ChangeSet is rolled back.
+- **No Exceptions**: `batch.execute()` returns results even on failure. Use `results.all_ok` or `results.failed`.
+
+> [!IMPORTANT]
+> **OData Rule**: `GET` operations are **not permitted** inside a `changeset()` block. The SDK will raise a `ValueError` if this is attempted.
+
+
+---
+
 ## Error Handling
 
 The SDK maps Service Layer HTTP errors to specialized Python exceptions for cleaner flow control:
@@ -296,56 +377,47 @@ async def get_item(item_code: str):
 
 ## OData Query Builder
 
-Fluent, type-safe interface. No string concatenation needed.
+Fluent, type-safe interface. No string concatenation needed. You can choose between the **Dynamic `F` Proxy** or **Static Field Constants**.
 
-### Import Styles
+### Field Referencing Styles
 
-```python
-# Direct (good for simple scripts)
-from b1sl.b1sl.fields import Item
+| Style | Variable | Import | Case | Autocomplete |
+| :--- | :--- | :--- | :--- | :--- |
+| **Dynamic** | `F` | `from b1sl.b1sl.resources.odata import F` | **SAP CamelCase** | ❌ None |
+| **Static** | `Item`, etc. | `from b1sl.b1sl.fields import Item` | **Pythonic snake_case** | ✅ Full |
 
-# Aliased (recommended for complex queries — avoids name collisions)
-from b1sl.b1sl import fields as F
-```
-
-### Filtering
+### Basic Examples
 
 ```python
+from b1sl.b1sl.resources.odata import F
 from b1sl.b1sl.fields import Item
-from datetime import date
 
-results = client.items.filter(
-    (Item.quantity_on_stock > 0) & (Item.valid_from >= date(2024, 1, 1))
-).select(
-    Item.item_code,
-    Item.item_name
-).orderby(
-    Item.item_code
-).top(5).execute()
+# 1. Using F (Dynamic, zero-import, uses SAP names)
+results = await b1.items.filter(F.QuantityOnStock > 0).execute()
+
+# 2. Using Static Constants (Autocomplete, uses snake_case)
+results = await b1.items.filter(Item.quantity_on_stock > 0).execute()
 ```
 
 ### Operator Reference
 
-| Python Operator | OData | Example |
+| Python Operator | OData Equivalent | Example |
 | :--- | :--- | :--- |
 | `==` | `eq` | `Item.item_code == 'A001'` |
-| `!=` | `ne` | `Item.item_code != 'A001'` |
-| `>` | `gt` | `Item.quantity_on_stock > 10` |
-| `>=` | `ge` | `Item.price >= 100.5` |
-| `<` | `lt` | `Item.on_hand < 10` |
-| `<=` | `le` | `Item.on_hand <= 5` |
+| `!=` | `ne` | `F.CardCode != 'C001'` |
+| `>` | `gt` | `Item.quantity_on_stock > 0` |
+| `>=` | `ge` | `F.Price >= 100.5` |
 | `&` | `and` | `(A) & (B)` |
 | `\|` | `or` | `(A) \| (B)` |
 | `~` | `not` | `~(A)` |
 
-> **Parentheses are mandatory** when composing expressions: `(A) & (B)`, not `A & B`.
+> **IMPORTANT**: Parentheses are mandatory for logical composition: `(A) & (B)`.
 
 ### String Functions
 
 ```python
-client.items.filter(Item.item_name.contains("Cheese")).execute()
-client.items.filter(Item.item_code.startswith("A")).execute()
-client.items.filter(Item.item_code.endswith("01")).execute()
+# .contains, .startswith, .endswith
+await b1.items.filter(F.ItemName.contains("Cheese")).execute()
 ```
 
 ### Expansions (Surgical)
@@ -354,61 +426,63 @@ client.items.filter(Item.item_code.endswith("01")).execute()
 from b1sl.b1sl.fields import ServiceCall, BusinessPartner
 
 # Dictionary expand — fetches only selected fields from the related entity
-sc = client.service_calls.by_id(1).expand({
+sc = await client.service_calls.by_id(1).expand({
     ServiceCall.business_partner: [BusinessPartner.card_code, BusinessPartner.card_name]
 }).execute()
 
 # Path-based selection using '/' operator
-sc = client.service_calls.by_id(1).select(
-    ServiceCall.subject,
-    ServiceCall.business_partner / BusinessPartner.card_code
-).expand([ServiceCall.business_partner]).execute()
+sc = await client.service_calls.by_id(1).select(
+    F.Subject,
+    F.BusinessPartner / F.CardCode
+).expand([F.BusinessPartner]).execute()
 ```
 
 ### Terminal Methods
 
-| Method | Behavior |
-| :--- | :--- |
-| `.execute()` | Returns `list` or single object |
-| `.first()` | Adds `$top=1`, returns first result or `None` |
+| Method | Source | Returns | Behavior |
+| :--- | :--- | :--- | :--- |
+| **`.execute()`** | Builder | `list[T] \| T` | Executes query, returns **one page** (list) or single object. |
+| **`.list()`** | Resource | `list[T]` | Low-level fetch of **one page**. |
+| **`.stream()`** | Either | `Generator` | **Transparent**. Fetches every page until exhaustion. |
+| **`.first()`** | Builder | `T \| None` | Adds `$top=1`, executed, returns first or `None`. |
 
 ---
 
 ## Interaction Patterns
 
-| Style | Tooling | Type Safety | Best For |
-| :--- | :--- | :--- | :--- |
-| **Pythonic** | `fields` (F constants) | High | Enterprise, complex queries |
-| **Hybrid** | F + raw strings | Medium | UDFs, Custom Tables |
-| **SAP-Pure** | Raw OData strings | Low | Porting from API docs / Postman |
-
-```python
-# Hybrid: mix typed fields with a UDF
-sc = client.service_calls.get(
-    TEST_ID,
-    select=[F.ServiceCall.subject, "U_OTFecha"]
-)
-custom_val = sc.get("U_OTFecha")
-```
+| Style | Tooling | Discovery | Case | Best For |
+| :--- | :--- | :--- | :--- | :--- |
+| **Pythonic** | `fields` | ✅ Full IDE | snake_case | Enterprise applications, complex logic. |
+| **Elite** | `F` Proxy | ❌ None | CamelCase | UDFs, quick queries, generic tools. |
+| **Hybrid** | F + Raw | ❌ None | Mixed | Custom tables, advanced OData. |
 
 ---
 
 ## UDF (User-Defined Field) Handling
 
-The core SDK follows a "Vanilla" policy — `U_*` fields are excluded from generated models to
-maintain version stability. Two patterns cover UDF access:
+The core SDK follows a "Vanilla" policy — `U_*` fields are excluded from generated models to maintain version stability. Three patterns cover UDF access:
 
-### Pattern A — Spontaneous Access (no setup required)
-
-`B1Model` uses `extra="allow"`. All UDFs returned by SAP are available via `.get()`:
+### Pattern A — Dynamic `.udfs` Mapping (Recommended)
+The most professional way to handle UDFs. Provides a protected namespace on every model.
 
 ```python
-item = client.items.get("C100")
-color = item.get("U_Color", "Not Found")
+item = b1.items.get("C100")
+
+# Read/Write via the .udfs proxy (Strictly requires 'U_' prefix)
+item.udfs["U_Color"] = "Vibrant Red"
+current_color = item.udfs["U_Color"]
+
+# Constructor injection
+new_bp = en.BusinessPartner(
+    card_code="C2000",
+    udfs={"U_Priority": "High"}
+)
 ```
 
-### Pattern B — Typed UDFs (for heavy UDF users)
+> [!IMPORTANT]
+> The `.udfs` mapping **strictly enforces** the `U_` prefix. Attempting to access or set a non-UDF field via this proxy will raise a `KeyError`.
 
+### Pattern B — Typed UDFs (for heavy UDF users)
 Declare UDFs as first-class fields in the Override system:
 
 ```python
@@ -420,6 +494,40 @@ class Item(_Item):
     my_color: str | None = Field(None, alias="U_RealColor")
     #  ^ Now fully typed with IDE autocomplete
 ```
+
+### Pattern C — Spontaneous Access (Legacy)
+`B1Model` uses `extra="allow"`. All UDFs returned by SAP are available via `.get()`:
+
+```python
+item = client.items.get("C100")
+color = item.get("U_Color", "Not Found")
+```
+
+### Pattern D — Dynamic Schema & Validation (Advanced)
+Discovery and validation using the metadata-driven `UDFSchema` container.
+
+```python
+# 1. Fetch the schema for the resource
+schema = await b1.business_partners.get_udf_schema()
+
+# 2. Introspection
+if "U_Age" in schema:
+    print(f"U_Age info: {schema['U_Age'].description}")
+
+# 3. Validation Loop (the safest way to PATCH)
+try:
+    # Validates data against SAP metadata (types, sizes) and returns a clean payload
+    payload = schema.validate_and_dump({"U_Age": 25, "U_Color": "Red"})
+    
+    # Surgical Patch using the validated payload
+    await b1.business_partners.update(card_code, {"udfs": payload})
+except Exception as e:
+    print(f"Validation failed: {e}")
+```
+
+> [!TIP]
+> Use `validate_and_dump` when building UIs or integrations where incoming raw data needs to be verified against the current SAP environment's schema before submission.
+
 
 ---
 
@@ -491,6 +599,8 @@ adapter = get_rest_adapter()  # Thread-safe singleton
 | Async Client | [04-async-client.md](https://github.com/operator-ita/b1sl-python/blob/main/docs/04-async-client.md) |
 | Interaction Patterns | [05-interaction-patterns.md](https://github.com/operator-ita/b1sl-python/blob/main/docs/05-interaction-patterns.md) |
 | OData Query Builder | [10-odata-query-builder.md](https://github.com/operator-ita/b1sl-python/blob/main/docs/10-odata-query-builder.md) |
+| Batching Operations | [13-batching.md](https://github.com/operator-ita/b1sl-python/blob/main/docs/13-batching.md) |
+| Pagination Streams | [14-pagination-streams.md](https://github.com/operator-ita/b1sl-python/blob/main/docs/14-pagination-streams.md) |
 | UDFs & Overrides | [07-overrides-and-udfs.md](https://github.com/operator-ita/b1sl-python/blob/main/docs/07-overrides-and-udfs.md) |
 | Contributing | [09-contributing.md](https://github.com/operator-ita/b1sl-python/blob/main/docs/09-contributing.md) |
 | Repository | [operator-ita/b1sl-python](https://github.com/operator-ita/b1sl-python) |

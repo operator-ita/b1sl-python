@@ -12,17 +12,17 @@ class RestAdapterProtocol(Protocol):
     """
 
     def get(
-        self, endpoint: str, ep_params: dict | None = None, data: dict | None = None
+        self, endpoint: str, ep_params: dict | None = None, data: dict | None = None, headers: dict | None = None
     ) -> Result: ...
 
     def post(
-        self, endpoint: str, ep_params: dict | None = None, data: dict | None = None
+        self, endpoint: str, ep_params: dict | None = None, data: dict | None = None, headers: dict | None = None
     ) -> Result: ...
 
     def patch(
-        self, endpoint: str, ep_params: dict | None = None, data: dict | None = None
+        self, endpoint: str, ep_params: dict | None = None, data: dict | None = None, headers: dict | None = None
     ) -> Result: ...
 
     def delete(
-        self, endpoint: str, ep_params: dict | None = None, data: dict | None = None
+        self, endpoint: str, ep_params: dict | None = None, data: dict | None = None, headers: dict | None = None
     ) -> Result: ...

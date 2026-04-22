@@ -1,40 +1,70 @@
 # OData Query Builder Guide
 
-The SAP B1 Python SDK provides a pythonic, type-safe fluent interface for building OData queries. This guide explains how to use the `QueryBuilder` and field constants to create precise and maintainable requests.
-
-## Key Features
-- **Operator Overloading**: Use standard Python operators (`==`, `!=`, `>`, etc.) for filtering.
-- **Fluent Interface**: Chain methods like `.filter()`, `.select()`, `.top()`, and `.execute()`.
-- **Type Safety**: Use descriptive entity constants instead of strings to avoid typos.
-- **Path-based Navigation**: Use the `/` operator to access nested properties in filters and selections.
+The SAP B1 Python SDK provides a pythonic, type-safe fluent interface for building OData queries. You can choose between two primary ways to reference fields: the dynamic **`F` Proxy** or **Static Field Constants**.
 
 ---
 
-## Basic Usage
+## 1. The `F` Global Proxy (Dynamic)
 
-Import the field constants for the entity you are working with.
+The `F` variable is a virtual proxy that allows you to reference any SAP field without imports. 
+
+- **Syntax**: `F.FieldName` (uses **SAP CamelCase** names).
+- **Pros**: Zero imports, supports UDFs automatically, very fast for quick scripts.
+- **Cons**: No IDE autocomplete.
+
+```python
+from b1sl.b1sl.resources.odata import F
+
+# F requires the exact SAP name (CamelCase)
+items = await b1.items.filter(F.QuantityOnStock > 10).execute()
+
+# Excellent for UDFs
+results = await b1.business_partners.filter(F.U_Category == "VIP").execute()
+```
+
+---
+
+## 2. Static Field Constants (Type-Safe)
+
+Each elite entity has a corresponding field class with explicit attributes.
+
+- **Syntax**: `Entity.field_name` (uses **Pythonic snake_case**).
+- **Pros**: Full IDE autocomplete, type discovery, less prone to typos.
+- **Cons**: Requires importing the specific entity field class.
 
 ```python
 from b1sl.b1sl.fields import Item
 
-# Fetch the top 5 items
-items = client.items.select(Item.item_code, Item.item_name).top(5).execute()
+# Static constants map snake_case to SAP's CamelCase internally
+items = await b1.items.filter(Item.quantity_on_stock > 10).execute()
 ```
+
+---
+
+## Field Referencing Comparison
+
+| Feature | `F` Proxy | Static Constants (`Item`, `BP`, etc.) |
+| :--- | :--- | :--- |
+| **Naming Style** | **SAP CamelCase** (`F.ItemCode`) | **Pythonic snake_case** (`Item.item_code`) |
+| **Autocomplete** | ❌ None | ✅ Full IDE Support |
+| **Imports** | `from ...odata import F` | `from ...fields import Item` |
+| **UDF Support** | ✅ Native (`F.U_MyField`) | ❌ Requires manual extension |
+| **Deep Paths** | ✅ `F.Lines.Quantity` | ✅ `Order.document_lines / Line.quantity` |
 
 ---
 
 ## Filtering with Operators
 
-You can use standard comparison operators on any field constant.
+You can use standard comparison operators on any field constant or `F` proxy.
 
 | Operator | OData Equivalent | Example |
 | :--- | :--- | :--- |
 | `==` | `eq` | `Item.item_code == 'A001'` |
-| `!=` | `ne` | `Item.item_code != 'A001'` |
+| `!=` | `ne` | `F.CardCode != 'C001'` |
 | `>` | `gt` | `Item.quantity_on_stock > 10` |
-| `>=` | `ge` | `Item.price >= 100.5` |
+| `>=` | `ge` | `F.Price >= 100.5` |
 | `<` | `lt` | `Item.on_hand < 10` |
-| `<=` | `le` | `Item.on_hand <= 5` |
+| `<=` | `le` | `F.OnHand <= 5` |
 
 ### String Functions
 - `.contains(value)`
@@ -43,8 +73,18 @@ You can use standard comparison operators on any field constant.
 
 Example:
 ```python
-results = client.items.filter(Item.item_name.contains("Cheese")).execute()
+results = await b1.items.filter(F.ItemName.contains("Cheese")).execute()
 ```
+
+---
+
+## Logic Composition (AND / OR)
+
+Both patterns use bitwise operators `&` (AND), `|` (OR), and `~` (NOT).
+
+> [!IMPORTANT]
+> **Parentheses are mandatory** due to Python operator precedence.
+> - **Correct**: `(Item.items_group_code == 100) & (F.QuantityOnStock > 0)`
 
 ---
 
@@ -57,7 +97,7 @@ Recommended when fetching **multiple fields** from a related entity.
 from b1sl.b1sl.fields import ServiceCall, BusinessPartner
 
 # GET /ServiceCalls(1)?$expand=BusinessPartner($select=CardCode,CardName)
-sc = client.service_calls.by_id(1).expand({
+sc = await client.service_calls.by_id(1).expand({
     ServiceCall.business_partner: [BusinessPartner.card_code, BusinessPartner.card_name]
 }).execute()
 ```
@@ -67,37 +107,18 @@ Recommended for flat selections or building nested filters.
 
 ```python
 # GET /ServiceCalls(1)?$select=Subject,BusinessPartner/CardCode&$expand=BusinessPartner
-sc = client.service_calls.by_id(1).select(
-    ServiceCall.subject,
-    ServiceCall.business_partner / BusinessPartner.card_code
-).expand([ServiceCall.business_partner]).execute()
-```
-
----
-
-## Logic Composition (AND / OR)
-
-Use bitwise operators `&` (AND), `|` (OR), and `~` (NOT).
-
-> [!IMPORTANT]
-> **Parentheses are mandatory.** 
-> - **Correct**: `(Item.active == 'tYES') & (Item.on_hand > 0)`
-
----
-
-## Date and Time Handling
-
-The SDK automatically formats Python `datetime` types.
-
-```python
-from datetime import date
-
-orders = client.orders.filter(Item.doc_date >= date(2024, 1, 1)).execute()
+sc = await client.service_calls.by_id(1).select(
+    F.Subject,
+    F.BusinessPartner / F.CardCode
+).expand([F.BusinessPartner]).execute()
 ```
 
 ---
 
 ## Terminal Methods
 
-- **`.execute()`**: Triggers the request. Returns a `list` or a single object.
-- **`.first()`**: Adds `$top=1` and returns the first result or `None`.
+| Method | Returns | Behavior |
+| :--- | :--- | :--- |
+| **`.execute()`** | `list[T] \| T` | Executes the query and returns a single page (list) or single object (by_id). |
+| **`.stream()`** | `AsyncGenerator` | Returns a generator that automatically fetches **all pages** via `nextLink`. |
+| **`.first()`** | `T \| None` | Adds `$top=1` and returns the first result or `None`. |

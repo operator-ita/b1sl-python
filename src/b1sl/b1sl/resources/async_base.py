@@ -1,9 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Generic, TypeVar
+
+if TYPE_CHECKING:
+    from b1sl.b1sl.schemas.udf import UDFSchema
 
 from b1sl.b1sl.exceptions.exceptions import B1NotFoundError
 from b1sl.b1sl.models.base import B1Model
+from b1sl.b1sl.pagination import build_next_params
 from b1sl.b1sl.resources.base import ODataQuery, _build_expand
 
 if TYPE_CHECKING:
@@ -14,7 +18,7 @@ T = TypeVar("T", bound=B1Model)
 
 
 class AsyncGenericResource(Generic[T]):
-    """Version asíncrona de GenericResource para uso con AsyncRestAdapter."""
+    """Async counterpart of GenericResource for use with AsyncRestAdapter."""
 
     endpoint: str
     model: type[T]
@@ -22,7 +26,38 @@ class AsyncGenericResource(Generic[T]):
     def __init__(self, adapter: AsyncRestAdapter) -> None:
         self._adapter = adapter
 
+    async def get_udf_schema(self, table_name: str | None = None) -> "UDFSchema":
+        """
+        Retrieves the User Defined Field (UDF) schema for this entity asynchronously.
+        Returns a UDFSchema wrapper for easy introspection and validation.
+
+        Args:
+            table_name: Optional override for the underlying SAP B1 table.
+                        If not provided, uses the mapping for elite entities.
+        """
+        from b1sl.b1sl.models._generated.entities.general import UserFieldMD
+        from b1sl.b1sl.resources.base import _UDF_TABLE_MAPPING
+        from b1sl.b1sl.schemas.udf import UDFSchema
+
+        target_table = table_name or _UDF_TABLE_MAPPING.get(self.endpoint)
+        if not target_table:
+            raise ValueError(
+                f"No default table mapping known for endpoint '{self.endpoint}'. "
+                "Please provide the 'table_name' argument manually (e.g., table_name='@MY_UDO')."
+            )
+
+        params = {"$filter": f"TableName eq '{target_table}'"}
+        result = await self._adapter.get("UserFieldsMD", ep_params=params)
+        data = result.data or {}
+
+        raw_list = [UserFieldMD.model_validate(item) for item in data.get("value", [])]
+        return UDFSchema(target_table, raw_list)
+
     # ── fluent query builder ────────────────────────────────────────────────
+    
+    def with_schema(self, name: str) -> AsyncQueryBuilder[T]:
+        from b1sl.b1sl.resources.odata import AsyncQueryBuilder
+        return AsyncQueryBuilder(self).with_schema(name)
 
     def by_id(self, key: Any) -> AsyncQueryBuilder[T]:
         from b1sl.b1sl.resources.odata import AsyncQueryBuilder
@@ -62,10 +97,61 @@ class AsyncGenericResource(Generic[T]):
         return AsyncQueryBuilder(self).expand(value)
 
     async def list(self, query: ODataQuery | None = None) -> list[T]:
+        """
+        Retrieves a single page of results based on the provided query.
+        
+        Note: Use .stream() for automatic pagination across multiple pages.
+        """
         params = query.to_params() if query else {}
         result = await self._adapter.get(f"{self.endpoint}", ep_params=params)
         data = result.data or {}
         return [self.model.model_validate(item) for item in data.get("value", [])]
+
+    async def stream(
+        self, 
+        query: ODataQuery | None = None, 
+        page_size: int | None = None, 
+        max_pages: int | None = None
+    ) -> AsyncGenerator[T, None]:
+        """
+        Execute the query asynchronously and yield individual entities, 
+        automatically fetching next pages until dataset exhausted or limits hit.
+        """
+
+        params = query.to_params() if query else {}
+        headers = {"B1-PageSize": str(page_size)} if page_size else {}
+        
+        global_top = query.top if query else None
+        yielded_count = 0
+        pages_fetched = 0
+        
+        current_params = params
+        
+        while True:
+            result = await self._adapter.get(
+                self.endpoint, 
+                ep_params=current_params, 
+                headers=headers
+            )
+            data = result.data or {}
+            items = data.get("value", [])
+            pages_fetched += 1
+            
+            for raw_item in items:
+                yield self.model.model_validate(raw_item)
+                yielded_count += 1
+                
+                if global_top is not None and yielded_count >= global_top:
+                    return
+
+            next_link = result.next_link
+            if not next_link:
+                break
+                
+            if max_pages is not None and pages_fetched >= max_pages:
+                break
+                
+            current_params = build_next_params(current_params, next_link)
 
     async def count(self) -> int:
         """GET Endpoint/$count"""

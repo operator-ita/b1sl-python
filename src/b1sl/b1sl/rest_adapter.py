@@ -213,6 +213,7 @@ class RestAdapter(BaseRestAdapter):
         endpoint: str,
         ep_params: dict | None = None,
         data: dict | None = None,
+        headers: dict | None = None,
         _is_login: bool = False,
     ) -> Result:
         """
@@ -225,7 +226,9 @@ class RestAdapter(BaseRestAdapter):
         full_url = self.raw_base_url + endpoint_path
 
         # ── ETag: inject If-None-Match (GET) or If-Match (PATCH/DELETE/POST) ──
-        headers = self._build_headers(http_method, endpoint_path)
+        req_headers = self._build_headers(http_method, endpoint_path)
+        if headers:
+            req_headers.update(headers)
 
         log_data = self._redact_data(data)
         self._logger.debug(f"[{req_id}] data={log_data}")
@@ -242,7 +245,7 @@ class RestAdapter(BaseRestAdapter):
                 response = httpx.Response(204, request=httpx.Request(http_method, full_url))
             else:
                 response = self._execute_request(
-                    http_method, full_url, headers, ep_params, data
+                    http_method, full_url, req_headers, ep_params, data
                 )
                 response.raise_for_status()
                 is_success = True
@@ -255,7 +258,7 @@ class RestAdapter(BaseRestAdapter):
                         if self.token_expiry == old_token_expiry:
                             self._login()
                     response = self._execute_request(
-                        http_method, full_url, headers, ep_params, data
+                        http_method, full_url, req_headers, ep_params, data
                     )
                     response.raise_for_status()
                     is_success = True
@@ -301,7 +304,7 @@ class RestAdapter(BaseRestAdapter):
                 status_code=status_code,
                 duration_ms=duration_ms,
                 payload=log_data if http_method in {"POST", "PATCH"} else None,
-                if_match=headers.get("If-Match"),
+                if_match=req_headers.get("If-Match"),
                 extra=context_extras,
                 exc=exc_captured,
             )
@@ -340,21 +343,21 @@ class RestAdapter(BaseRestAdapter):
             )
 
     @handle_token()
-    def get(self, endpoint, ep_params=None, data=None):
+    def get(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute a synchronous GET request."""
-        return self._do("GET", endpoint, ep_params, data)
+        return self._do("GET", endpoint, ep_params, data, headers=headers)
 
     @handle_token()
-    def post(self, endpoint, ep_params=None, data=None):
+    def post(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute a synchronous POST request."""
-        return self._do("POST", endpoint, ep_params, data)
+        return self._do("POST", endpoint, ep_params, data, headers=headers)
 
     @handle_token()
-    def patch(self, endpoint, ep_params=None, data=None):
+    def patch(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute a synchronous PATCH request."""
-        return self._do("PATCH", endpoint, ep_params, data)
+        return self._do("PATCH", endpoint, ep_params, data, headers=headers)
 
     @handle_token()
-    def delete(self, endpoint, ep_params=None, data=None):
+    def delete(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute a synchronous DELETE request."""
-        return self._do("DELETE", endpoint, ep_params, data)
+        return self._do("DELETE", endpoint, ep_params, data, headers=headers)

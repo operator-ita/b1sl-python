@@ -16,7 +16,7 @@ from enum import StrEnum
 from utils import use_sap_b1
 
 from b1sl.b1sl import entities as en
-from b1sl.b1sl import fields as F
+from b1sl.b1sl.fields import ServiceCall, ServiceCallStatus
 from b1sl.b1sl.resources.base import ODataQuery
 
 
@@ -24,13 +24,13 @@ def main():
     with use_sap_b1("Status Mapping & Resolution Patterns") as runner:
         client = runner.client
         service_calls = client.get_resource(en.ServiceCall, "ServiceCalls")
-        service_call_status = client.get_resource(en.ServiceCallStatus, "ServiceCallStatuses")
+        service_call_statuses = client.get_resource(en.ServiceCallStatus, "ServiceCallStatuses")
 
         # 0. SETUP DYNAMIC DATA
         runner.info("Fetching a test ServiceCall ID...")
         latest = service_calls.list(ODataQuery(
-            select=[F.ServiceCall.service_call_id],
-            orderby=f"{F.ServiceCall.service_call_id} desc",
+            select=[ServiceCall.service_call_id],
+            orderby=f"{ServiceCall.service_call_id} desc",
             top=1
         ))
         if not latest:
@@ -47,7 +47,7 @@ def main():
             PENDING = "-2"
             CLOSED = "-3"
 
-        sc_1 = service_calls.get(test_id, select=[F.ServiceCall.status])
+        sc_1 = service_calls.get(test_id, select=[ServiceCall.status])
         status_label = LocalStatus(str(sc_1.status)).name
         runner.result("ID", sc_1.status)
         runner.result("Resolution", status_label)
@@ -58,9 +58,9 @@ def main():
 
         sc_2 = service_calls.get(
             test_id,
-            select=[F.ServiceCall.subject, F.ServiceCall.status],
+            select=[ServiceCall.subject, ServiceCall.status],
             expand={
-                F.ServiceCall.service_call_status: [F.ServiceCallStatus.name]
+                ServiceCall.service_call_status: [ServiceCallStatus.name]
             }
         )
         status_name = sc_2.service_call_status.name if sc_2.service_call_status else "Not Defined"
@@ -72,13 +72,13 @@ def main():
         runner.info("Best for Lists/Grid views with hundreds of rows.")
 
         # 3.1 Fetch master list once
-        all_statuses = service_call_status.list()
+        all_statuses = service_call_statuses.list()
         status_map = {s.status_id: s.name for s in all_statuses}
         runner.success(f"Cached {len(status_map)} status definitions.")
 
         # 3.2 List multiple calls and map locally
         calls = service_calls.list(ODataQuery(
-            select=[F.ServiceCall.service_call_id, F.ServiceCall.status],
+            select=[ServiceCall.service_call_id, ServiceCall.status],
             top=5
         ))
 

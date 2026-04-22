@@ -14,8 +14,8 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 from b1sl.b1sl import AsyncB1Client, B1Environment
-from b1sl.b1sl import fields as F
 from b1sl.b1sl.logging_utils import setup_logging
+from b1sl.b1sl.resources.odata import F
 
 
 async def main():

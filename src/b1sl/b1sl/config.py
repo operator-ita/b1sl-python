@@ -49,6 +49,7 @@ class B1Config:
     read_timeout: float = 60.0  # seconds to wait for SAP to respond
     etag_cache_size: int = 256
     dry_run: bool = False
+    b1s_schema: str | None = None
 
     def __post_init__(self) -> None:
         """Validates all required parameters are present after initialisation."""
@@ -107,6 +108,7 @@ class B1Config:
             "read_timeout": float(os.environ.get("B1SL_READ_TIMEOUT", 60)),
             "environment": B1Env(os.environ.get("B1SL_ENV", "dev").lower()),
             "dry_run": os.environ.get("B1SL_DRY_RUN", "0") == "1",
+            "b1s_schema": os.environ.get("B1SL_SCHEMA"),
         }
 
         return cls(**kwargs)
@@ -139,4 +141,5 @@ class B1Config:
             connect_timeout=float(getattr(settings, "B1SL_CONNECT_TIMEOUT", 10)),
             read_timeout=float(getattr(settings, "B1SL_READ_TIMEOUT", 60)),
             dry_run=getattr(settings, "B1SL_DRY_RUN", False),
+            b1s_schema=getattr(settings, "B1SL_SCHEMA", None),
         )

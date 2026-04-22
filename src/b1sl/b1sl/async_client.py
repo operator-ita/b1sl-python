@@ -8,6 +8,7 @@ from b1sl.b1sl.base_adapter import ObservabilityConfig
 from b1sl.b1sl.config import B1Config
 
 if TYPE_CHECKING:
+    from b1sl.b1sl.batch.client import BatchClient
     from b1sl.b1sl.models._generated.entities.businesspartners import (
         Activity,
         BusinessPartner,
@@ -97,6 +98,30 @@ class AsyncB1Client:
             Use ``with`` (sync CM), **not** ``async with``, even in async code.
         """
         return self._adapter.dry_run(enabled)
+
+    def with_schema(self, name: str):
+        """
+        Context manager to temporarily set the B1S-Schema header
+        **for the current asyncio.Task only** (task-safe via ContextVar).
+        
+        Usage::
+        
+            async with AsyncB1Client(config) as b1:
+                async with b1.with_schema("demo.schema"):
+                    await b1.items.get("A0001")
+        """
+        return self._adapter.with_schema(name)
+
+    def batch(self) -> BatchClient:
+        """
+        Returns a context manager that groups multiple resource operations
+        into a single OData $batch HTTP request.
+
+        Use this for high-concurrency scenarios (bulk GETs) or transactional
+        integrity (atomic ChangeSets). See :class:`BatchClient` for details.
+        """
+        from b1sl.b1sl.batch.client import BatchClient
+        return BatchClient(self)
 
     async def connect(self) -> None:
         """

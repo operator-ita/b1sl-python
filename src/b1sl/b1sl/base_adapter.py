@@ -185,11 +185,19 @@ class BaseRestAdapter:
         self._dry_run_var: ContextVar[bool] = ContextVar(
             f"dry_run_{id(self)}", default=config.dry_run
         )
+        self._b1s_schema_var: ContextVar[str | None] = ContextVar(
+            f"b1s_schema_{id(self)}", default=config.b1s_schema
+        )
 
     @property
     def _dry_run_active(self) -> bool:
         """Returns the current effective dry_run state for this task/thread."""
         return self._dry_run_var.get()
+
+    @property
+    def _schema_active(self) -> str | None:
+        """Returns the current effective schema state for this task/thread."""
+        return self._b1s_schema_var.get()
 
     @contextmanager
     def dry_run(self, enabled: bool = True):
@@ -219,6 +227,28 @@ class BaseRestAdapter:
             yield
         finally:
             self._dry_run_var.reset(token)
+
+    @contextmanager
+    def with_schema(self, schema: str | None):
+        """
+        Context manager to temporarily override the B1S-Schema header
+        **for the current asyncio task / thread only**.
+
+        Usage::
+
+            # Use a specific schema for this block
+            with client.with_schema("demo.schema"):
+                await client.items.get("A0001")
+
+        Note:
+            Use ``with``, not ``async with`` — the context manager is
+            synchronous even in async code, which is correct and idiomatic.
+        """
+        token = self._b1s_schema_var.set(schema)
+        try:
+            yield
+        finally:
+            self._b1s_schema_var.reset(token)
 
     @classmethod
     def from_config(
@@ -327,6 +357,10 @@ class BaseRestAdapter:
         elif http_method in {"PATCH", "DELETE", "POST"} and cached_etag:
             # POST covers OData Actions (e.g. /BusinessPartners('C20000')/Cancel)
             headers["If-Match"] = cached_etag
+
+        active_schema = self._schema_active
+        if active_schema:
+            headers["B1S-Schema"] = active_schema
 
         if extra_headers:
             headers.update(extra_headers)

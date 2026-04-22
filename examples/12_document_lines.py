@@ -13,7 +13,7 @@ sys.path.append(str(Path(__file__).parent))
 
 from utils import use_sap_b1
 
-from b1sl.b1sl import fields as F
+from b1sl.b1sl.fields import BusinessPartner, Document
 from b1sl.b1sl.resources.base import ODataQuery
 
 
@@ -27,19 +27,19 @@ def main():
 
         query = ODataQuery(
             select=[
-                F.Document.doc_entry,
-                F.Document.doc_num,
-                F.Document.doc_total,
-                F.Document.doc_currency
+                Document.doc_entry,
+                Document.doc_num,
+                Document.doc_total,
+                Document.doc_currency
             ],
             expand={
-                F.Document.business_partner: [
-                    F.BusinessPartner.card_code,
-                    F.BusinessPartner.card_name,
-                    F.BusinessPartner.current_account_balance
+                Document.business_partner: [
+                    BusinessPartner.card_code,
+                    BusinessPartner.card_name,
+                    BusinessPartner.current_account_balance
                 ]
             },
-            orderby=f"{F.Document.doc_entry} desc",
+            orderby=f"{Document.doc_entry} desc",
             top=1
         )
 

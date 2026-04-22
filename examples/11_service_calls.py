@@ -16,8 +16,9 @@ sys.path.append(str(Path(__file__).parent))
 from utils import use_sap_b1
 
 from b1sl.b1sl import entities as en
-from b1sl.b1sl import fields as F
+from b1sl.b1sl import fields
 from b1sl.b1sl.resources.base import ODataQuery
+from b1sl.b1sl.resources.odata import F
 
 
 def main():
@@ -46,10 +47,10 @@ def main():
 
         sc_f = service_calls.get(
             TEST_ID,
-            select=[F.ServiceCall.subject, F.ServiceCall.customer_code],
+            select=[fields.ServiceCall.subject, fields.ServiceCall.customer_code],
             expand={
-                F.ServiceCall.business_partner: [F.BusinessPartner.card_code],
-                F.ServiceCall.item:             [F.Item.item_code, F.Item.item_name]
+                fields.ServiceCall.business_partner: [fields.BusinessPartner.card_code],
+                fields.ServiceCall.item:             [fields.Item.item_code, fields.Item.item_name]
             }
         )
 
@@ -64,10 +65,10 @@ def main():
 
         sc_mix = service_calls.get(
             TEST_ID,
-            select=[F.ServiceCall.subject, "U_OTFecha"],
+            select=[fields.ServiceCall.subject, "U_OTFecha"],
             expand={
                 "BusinessPartner": ["CardCode"],
-                F.ServiceCall.item: ["ItemCode", "ItemName"]
+                fields.ServiceCall.item: ["ItemCode", "ItemName"]
             }
         )
         runner.result("Subject", sc_mix.subject)
@@ -90,8 +91,8 @@ def main():
         runner.info("Fetching the last 3 calls with their BusinessPartners in one request.")
 
         query = ODataQuery(
-            select=[F.ServiceCall.subject, F.ServiceCall.service_call_id],
-            expand={F.ServiceCall.business_partner: [F.BusinessPartner.card_code]},
+            select=[fields.ServiceCall.subject, fields.ServiceCall.service_call_id],
+            expand={fields.ServiceCall.business_partner: [fields.BusinessPartner.card_code]},
             top=3
         )
         for call in service_calls.list(query):
