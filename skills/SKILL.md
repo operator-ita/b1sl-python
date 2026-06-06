@@ -375,6 +375,167 @@ async def get_item(item_code: str):
 
 ---
 
+## SQL Queries
+
+Execute stored SQL definitions via the `SQLQueries` endpoint.  Use `client.sql_queries` (Elite alias) on both sync and async clients.
+
+### Running a stored query
+
+```python
+from b1sl.b1sl import B1Client, B1Config
+
+with B1Client(B1Config.from_env()) as client:
+    # No parameters — returns first page
+    result = client.sql_queries.run("sql04")
+    print(f"{len(result)} rows, has_more={result.has_more}")
+
+    # Named parameters (match :name placeholders in SqlText, case-sensitive)
+    result = client.sql_queries.run("sql01", docTotal=100.0, docPartner="C001")
+
+    # Stream all pages
+    for row in client.sql_queries.run_stream("sql04", page_size=50, max_pages=10):
+        process(row)
+```
+
+### Typed rows via Pydantic
+
+```python
+from pydantic import BaseModel
+
+class ItemRow(BaseModel):
+    ItemCode: str
+    OnHand: float | None = None
+
+result = client.sql_queries.run("sql04")
+typed = result.to_pydantic(ItemRow)
+print(typed[0].ItemCode)
+```
+
+### Async client
+
+```python
+async with AsyncB1Client(config) as b1:
+    result = await b1.sql_queries.run("sql04")
+    async for row in b1.sql_queries.run_stream("sql04", page_size=50):
+        await process(row)
+```
+
+### Error handling
+
+| SAP code | Exception | Cause |
+| :--- | :--- | :--- |
+| `"702"` | `B1SqlNotAllowedError` | Table not in `b1s_sqltable.conf` allowlist |
+| `"703"` | `B1SqlNotAllowedError` | Column in `ColumnExcludeList` |
+| `"704"` | `B1SqlParamError` | Wrong parameter name, count, or type |
+
+Both `B1SqlNotAllowedError` and `B1SqlParamError` are subclasses of `B1ValidationError`.
+
+```python
+from b1sl.b1sl.exceptions.exceptions import B1SqlNotAllowedError, B1SqlParamError
+
+try:
+    result = client.sql_queries.run("sql04", wrongParam=1)
+except B1SqlNotAllowedError as e:
+    print(f"Table/column blocked [{e.sap_code}]: {e}")
+except B1SqlParamError as e:
+    print(f"Parameter error: {e}")
+```
+
+> Reference: `docs/reference/sl/sql-queries.md`
+
+---
+
+## SQL Query Composer (MCP / AI Agent helpers)
+
+`b1sl.contrib.mcp` provides grammar constants and prompt helpers that let an
+LLM (Claude, GPT, etc.) generate valid SAP SL SQL without hallucinating
+unsupported constructs.
+
+### The problem
+
+LLMs frequently write SQL that SAP SL silently rejects:
+
+| LLM writes | SL response |
+|---|---|
+| `CASE WHEN … END` | parse error |
+| `COALESCE(col, 0)` | parse error |
+| `WITH cte AS (…)` | parse error |
+| `ROW_NUMBER() OVER (…)` | parse error |
+| `FROM (SELECT …) AS sub` | parse error |
+
+### Ground the LLM before asking it to write SQL
+
+```python
+from b1sl.contrib.mcp.grammar import sql_grammar_system_prompt
+
+# Prepend to your LLM system prompt
+system = sql_grammar_system_prompt()          # includes table list
+system_no_tables = sql_grammar_system_prompt(include_tables=False)
+
+messages = [
+    {"role": "system", "content": system},
+    {"role": "user", "content": "Write SQL to get all items with stock > 0"},
+]
+# LLM will only use: SELECT, WHERE, ISNULL, LOWER, etc. — no CASE WHEN
+```
+
+### Grammar constants for validation
+
+```python
+from b1sl.contrib.mcp import (
+    SUPPORTED_KEYWORDS,   # frozenset — SELECT, JOIN, GROUP BY, UNION…
+    SUPPORTED_FUNCTIONS,  # frozenset — SUM, AVG, ISNULL, LOWER…
+    UNSUPPORTED_COMMON,   # frozenset — CASE WHEN, COALESCE, CTE, CAST…
+)
+
+# Post-validate generated SQL before sending to SAP
+sql_upper = generated_sql.upper()
+violations = [kw for kw in UNSUPPORTED_COMMON if kw in sql_upper]
+if violations:
+    raise ValueError(f"Unsupported constructs: {violations}")
+```
+
+### Full MCP agent loop: describe → generate → store → run
+
+```python
+from b1sl.contrib.mcp.grammar import sql_grammar_system_prompt
+from b1sl.contrib.mcp.schemas import sql_query_tool_definition
+from b1sl.contrib.mcp.formatters import format_sql_result
+
+# 1. Ground the LLM
+system_prompt = sql_grammar_system_prompt()
+
+# 2. LLM generates SQL → store in SAP
+with B1Client(config) as b1:
+    b1.sql_queries.create(en.SQLQuery(
+        sql_code="agent_items_low_stock",
+        sql_name="Agent: Items with low stock",
+        sql_text='SELECT "ItemCode", "ItemName", "OnHand" FROM "OITM" WHERE "OnHand" < :threshold',
+        param_list="threshold",
+    ))
+
+    # 3. Describe and expose as MCP tool
+    info = b1.sql_queries.describe("agent_items_low_stock")
+    tool = sql_query_tool_definition(info)
+    # → {"name": "sql_agent_items_low_stock", "inputSchema": {"required": ["threshold"], …}}
+
+    # 4. Agent calls the tool → run and format for LLM context
+    result = b1.sql_queries.run("agent_items_low_stock", threshold=10)
+    context = format_sql_result(result, title="Low Stock Items")
+```
+
+### Key SQL rules to embed in your prompts
+
+| Rule | Detail |
+|---|---|
+| Write unquoted identifiers | SL normalises `ItemCode` → `"ItemCode"` (HANA) / `[ItemCode]` (MSSQL) |
+| Always alias columns | Aliases become JSON keys — `SELECT ItemCode as Code` → `{"Code": "…"}` |
+| Use `:paramName` for params | `WHERE "DocTotal" > :docTotal` — pass at `run(code, docTotal=100)` |
+| `ISNULL` = `IFNULL` | Both are cross-backend; SL normalises transparently |
+| No subquery aliases | `FROM (SELECT …) AS sub` is NOT supported |
+
+---
+
 ## OData Query Builder
 
 Fluent, type-safe interface. No string concatenation needed. You can choose between the **Dynamic `F` Proxy** or **Static Field Constants**.

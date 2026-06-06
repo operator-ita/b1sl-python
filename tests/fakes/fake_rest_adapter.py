@@ -183,3 +183,105 @@ class FakeRestAdapter(RestAdapterProtocol):
         """Mock ETag invalidation."""
         pass
 
+
+class FakeAsyncRestAdapter:
+    """Async version of FakeRestAdapter for unit testing async resources.
+
+    Drop-in replacement for AsyncRestAdapter in unit tests — same registration
+    API as FakeRestAdapter but all HTTP methods are coroutines.
+    """
+
+    def __init__(self) -> None:
+        self._routes: dict[tuple[str, str], list[Any]] = {}
+        self.calls: list[dict[str, Any]] = []
+
+    def register(
+        self,
+        method: str,
+        endpoint: str,
+        response_data: Any = None,
+        status: int = 200,
+        raises: Exception | None = None,
+    ) -> None:
+        """Register a mock response for a specific HTTP method and endpoint."""
+        normalized_ep = endpoint.lstrip("/")
+        key = (method.upper(), normalized_ep)
+        if key not in self._routes:
+            self._routes[key] = []
+        if raises:
+            self._routes[key].append(raises)
+        else:
+            self._routes[key].append(
+                Result(
+                    status_code=status,
+                    message="OK" if status < 400 else "Error",
+                    data=response_data,
+                )
+            )
+
+    def _handle_request(
+        self,
+        method: str,
+        endpoint: str,
+        params: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
+    ) -> Result:
+        self.calls.append(
+            {"method": method, "endpoint": endpoint, "params": params, "data": data, "headers": headers}
+        )
+        normalized_ep = endpoint.lstrip("/")
+        key = (method.upper(), normalized_ep)
+        if key not in self._routes or not self._routes[key]:
+            key_alt = (method.upper(), "/" + normalized_ep)
+            if key_alt in self._routes and self._routes[key_alt]:
+                key = key_alt
+            else:
+                raise ValueError(
+                    f"FakeAsyncRestAdapter: No response registered for {method} {endpoint}. "
+                    f"Registered routes: {list(self._routes.keys())}"
+                )
+        response = self._routes[key].pop(0)
+        if isinstance(response, Exception):
+            raise response
+        return response
+
+    async def get(
+        self,
+        endpoint: str,
+        ep_params: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
+    ) -> Result:
+        return self._handle_request("GET", endpoint, ep_params, data, headers)
+
+    async def post(
+        self,
+        endpoint: str,
+        ep_params: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
+    ) -> Result:
+        return self._handle_request("POST", endpoint, ep_params, data, headers)
+
+    async def patch(
+        self,
+        endpoint: str,
+        ep_params: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
+    ) -> Result:
+        return self._handle_request("PATCH", endpoint, ep_params, data, headers)
+
+    async def delete(
+        self,
+        endpoint: str,
+        ep_params: dict[str, Any] | None = None,
+        data: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
+    ) -> Result:
+        return self._handle_request("DELETE", endpoint, ep_params, data, headers)
+
+    def _clear_etag(self, *args, **kwargs):
+        pass
+

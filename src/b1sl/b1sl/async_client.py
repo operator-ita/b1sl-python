@@ -17,6 +17,11 @@ if TYPE_CHECKING:
     from b1sl.b1sl.models._generated.entities.inventory import Item
     from b1sl.b1sl.models.base import B1Model
     from b1sl.b1sl.resources.async_base import AsyncGenericResource
+    from b1sl.b1sl.resources.crossjoin import (
+        AsyncCrossJoinQueryBuilder,
+        AsyncQueryServiceBuilder,
+    )
+    from b1sl.b1sl.resources.sql_queries import AsyncSQLQueriesResource
     from b1sl.b1sl.resources.udo import AsyncUDOResource
 
 
@@ -351,6 +356,15 @@ class AsyncB1Client:
         from b1sl.b1sl.models._generated.entities.general import Document
         return self.get_resource(Document, "CorrectionPurchaseInvoiceReversal")
 
+    # --- SQL Queries ---
+
+    @property
+    def sql_queries(self) -> "AsyncSQLQueriesResource":
+        """Access the 'SQLQueries' endpoint (supports ETags, run() / run_stream())."""
+        from b1sl.b1sl.resources.sql_queries import AsyncSQLQueriesResource
+        resource = AsyncSQLQueriesResource(self._adapter)
+        return resource
+
     def udo(self, table_name: str) -> "AsyncUDOResource":
         """
         Asynchronously access a User Defined Object (UDO) or User Table.
@@ -359,5 +373,46 @@ class AsyncB1Client:
         """
         from b1sl.b1sl.resources.udo import AsyncUDOResource
         return AsyncUDOResource(adapter=self._adapter, table_name=table_name)
+
+    def crossjoin(self, *entities: str) -> "AsyncCrossJoinQueryBuilder":
+        """Build an async ``$crossjoin`` query (SAP HANA only, B1 9.2 patch 07+).
+
+        At least 2 entity names are required.  A bare crossjoin without
+        ``$expand`` or ``$apply`` will raise ``ValueError`` before the request.
+
+        Example::
+
+            rows = await (
+                client.crossjoin("Orders", "BusinessPartners")
+                .expand({"Orders": ["DocEntry", "DocNum"], "BusinessPartners": ["CardCode"]})
+                .filter("Orders/CardCode eq BusinessPartners/CardCode")
+                .execute()
+            )
+        """
+        from b1sl.b1sl.resources.crossjoin import AsyncCrossJoinQueryBuilder
+
+        return AsyncCrossJoinQueryBuilder(self._adapter, *entities)
+
+    def query_service(self, query_path: str) -> "AsyncQueryServiceBuilder":
+        """Async ``QueryService_PostQuery`` row-level filter (SAP HANA only, B1 9.2 PL11+).
+
+        Example::
+
+            rows = await (
+                client.query_service("$crossjoin(Orders,Orders/DocumentLines)")
+                .expand({
+                    "Orders": ["DocEntry", "DocNum"],
+                    "Orders/DocumentLines": ["ItemCode", "LineNum"],
+                })
+                .filter(
+                    "Orders/DocEntry eq Orders/DocumentLines/DocEntry"
+                    " and Orders/DocumentLines/ItemCode eq 'WIDGET'"
+                )
+                .execute()
+            )
+        """
+        from b1sl.b1sl.resources.crossjoin import AsyncQueryServiceBuilder
+
+        return AsyncQueryServiceBuilder(self._adapter, query_path)
 
 

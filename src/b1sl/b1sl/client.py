@@ -18,6 +18,8 @@ if TYPE_CHECKING:
     from b1sl.b1sl.models._generated.entities.inventory import Item
     from b1sl.b1sl.models.base import B1Model
     from b1sl.b1sl.resources.base import GenericResource
+    from b1sl.b1sl.resources.crossjoin import CrossJoinQueryBuilder, QueryServiceBuilder
+    from b1sl.b1sl.resources.sql_queries import SQLQueriesResource
     from b1sl.b1sl.resources.udo import UDOResource
 
 
@@ -348,6 +350,15 @@ class B1Client:
         from b1sl.b1sl.models._generated.entities.general import Document
         return self.get_resource(Document, "CorrectionPurchaseInvoiceReversal")
 
+    # --- SQL Queries ---
+
+    @property
+    def sql_queries(self) -> "SQLQueriesResource":
+        """Access the 'SQLQueries' endpoint (supports ETags, run() / run_stream())."""
+        from b1sl.b1sl.resources.sql_queries import SQLQueriesResource
+        resource = SQLQueriesResource(self._adapter)
+        return resource
+
     def udo(self, table_name: str) -> "UDOResource":
         """
         Access a User Defined Object (UDO) or User Table dynamically.
@@ -362,3 +373,48 @@ class B1Client:
         from b1sl.b1sl.resources.udo import UDOResource
 
         return UDOResource(adapter=self._adapter, table_name=table_name)
+
+    def crossjoin(self, *entities: str) -> "CrossJoinQueryBuilder":
+        """Build a ``$crossjoin`` query across entity sets (SAP HANA only, B1 9.2 patch 07+).
+
+        At least 2 entity names are required.  A bare crossjoin without
+        ``$expand`` or ``$apply`` will raise ``ValueError`` before the request.
+
+        Example::
+
+            rows = (
+                client.crossjoin("Orders", "BusinessPartners")
+                .expand({"Orders": ["DocEntry", "DocNum"], "BusinessPartners": ["CardCode"]})
+                .filter("Orders/CardCode eq BusinessPartners/CardCode")
+                .execute()
+            )
+        """
+        from b1sl.b1sl.resources.crossjoin import CrossJoinQueryBuilder
+
+        return CrossJoinQueryBuilder(self._adapter, *entities)
+
+    def query_service(self, query_path: str) -> "QueryServiceBuilder":
+        """Build a ``QueryService_PostQuery`` row-level filter (SAP HANA only, B1 9.2 PL11+).
+
+        Joins a document header with its navigation lines via POST.  Use this
+        when you need to filter by line-level fields (ItemCode, LineNum, etc.)
+        combined with header fields — which regular ``$filter`` cannot do.
+
+        Example::
+
+            rows = (
+                client.query_service("$crossjoin(Orders,Orders/DocumentLines)")
+                .expand({
+                    "Orders": ["DocEntry", "DocNum"],
+                    "Orders/DocumentLines": ["ItemCode", "LineNum"],
+                })
+                .filter(
+                    "Orders/DocEntry eq Orders/DocumentLines/DocEntry"
+                    " and Orders/DocumentLines/ItemCode eq 'WIDGET'"
+                )
+                .execute()
+            )
+        """
+        from b1sl.b1sl.resources.crossjoin import QueryServiceBuilder
+
+        return QueryServiceBuilder(self._adapter, query_path)

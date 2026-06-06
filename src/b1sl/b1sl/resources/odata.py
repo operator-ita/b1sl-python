@@ -130,6 +130,7 @@ class QueryBuilder(Generic[T]):
         self._skip: int | None = None
         self._expand: list[str] | dict[str, list[str]] | None = None
         self._schema: str | None = None
+        self._apply: str | None = None
 
     def with_schema(self, name: str) -> QueryBuilder[T]:
         self._schema = name
@@ -167,6 +168,25 @@ class QueryBuilder(Generic[T]):
         self._expand = value
         return self
 
+    def apply(self, expression: str) -> QueryBuilder[T]:
+        """Set $apply for server-side aggregation/groupby (SAP HANA only).
+
+        Supports aggregation::
+
+            qb.apply("aggregate(DocTotal with sum as TotalDocTotal)")
+            qb.apply("aggregate($count as OrdersCount)")
+
+        Groupby with aggregation (B1 9.2 PL03+)::
+
+            qb.apply("groupby((CardCode), aggregate(DocNum with sum as Total))")
+
+        Chained filter + groupby::
+
+            qb.apply("filter(DocStatus eq 'O')/groupby((CardCode), aggregate(DocNum with sum as Total))")
+        """
+        self._apply = expression
+        return self
+
     def _build_query(self) -> ODataQuery:
         """Internal helper to build the ODataQuery object."""
         from b1sl.b1sl.resources.base import ODataQuery
@@ -176,7 +196,8 @@ class QueryBuilder(Generic[T]):
             orderby=self._orderby,
             top=self._top,
             skip=self._skip,
-            expand=self._expand
+            expand=self._expand,
+            apply=self._apply,
         )
 
     def execute(self) -> list[T] | T:
@@ -246,6 +267,7 @@ class AsyncQueryBuilder(Generic[T]):
         self._skip: int | None = None
         self._expand: list[str] | dict[str, list[str]] | None = None
         self._schema: str | None = None
+        self._apply: str | None = None
 
     def with_schema(self, name: str) -> AsyncQueryBuilder[T]:
         self._schema = name
@@ -282,6 +304,21 @@ class AsyncQueryBuilder(Generic[T]):
         self._expand = value
         return self
 
+    def apply(self, expression: str) -> AsyncQueryBuilder[T]:
+        """Set $apply for server-side aggregation/groupby (SAP HANA only).
+
+        Supports aggregation::
+
+            qb.apply("aggregate(DocTotal with sum as TotalDocTotal)")
+            qb.apply("aggregate($count as OrdersCount)")
+
+        Groupby with aggregation (B1 9.2 PL03+)::
+
+            qb.apply("groupby((CardCode), aggregate(DocNum with sum as Total))")
+        """
+        self._apply = expression
+        return self
+
     def _build_query(self) -> ODataQuery:
         """Internal helper to build the ODataQuery object."""
         from b1sl.b1sl.resources.base import ODataQuery
@@ -291,7 +328,8 @@ class AsyncQueryBuilder(Generic[T]):
             orderby=self._orderby,
             top=self._top,
             skip=self._skip,
-            expand=self._expand
+            expand=self._expand,
+            apply=self._apply,
         )
 
     async def execute(self) -> list[T] | T:

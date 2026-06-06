@@ -80,6 +80,71 @@ def test_query_builder_fluent_interface():
     assert args[0] == "Items('A001')"
     assert kwargs["ep_params"] == {"$select": "ItemCode,ItemName"}
 
+def test_odata_query_apply_in_params():
+    from b1sl.b1sl.resources.base import ODataQuery
+    q = ODataQuery(apply="aggregate(DocTotal with sum as Total)")
+    params = q.to_params()
+    assert params["$apply"] == "aggregate(DocTotal with sum as Total)"
+    assert "$filter" not in params
+
+
+def test_odata_query_apply_none_omitted():
+    from b1sl.b1sl.resources.base import ODataQuery
+    q = ODataQuery(filter="DocStatus eq 'O'")
+    params = q.to_params()
+    assert "$apply" not in params
+
+
+def test_query_builder_apply_fluent():
+    from typing import Any
+    from unittest.mock import MagicMock
+    adapter = MagicMock()
+    adapter.get.return_value = MagicMock(data={"value": [{"TotalDocTotal": 42000}]})
+    resource: GenericResource[Any] = GenericResource(adapter)
+    resource.endpoint = "Orders"
+    resource.model = MockModel
+
+    resource.apply("aggregate(DocTotal with sum as TotalDocTotal)").execute()
+
+    call_params = adapter.get.call_args[1]["ep_params"]
+    assert call_params["$apply"] == "aggregate(DocTotal with sum as TotalDocTotal)"
+    assert "$filter" not in call_params
+
+
+def test_query_builder_apply_with_filter():
+    from typing import Any
+    from unittest.mock import MagicMock
+    adapter = MagicMock()
+    adapter.get.return_value = MagicMock(data={"value": [{"CardCode": "c001", "Total": 8}]})
+    resource: GenericResource[Any] = GenericResource(adapter)
+    resource.endpoint = "Orders"
+    resource.model = MockModel
+
+    expr = (
+        "filter(DocStatus eq 'O')"
+        "/groupby((CardCode), aggregate(DocNum with sum as Total))"
+    )
+    resource.apply(expr).execute()
+
+    call_params = adapter.get.call_args[1]["ep_params"]
+    assert call_params["$apply"] == expr
+
+
+def test_query_builder_apply_count_virtual():
+    from typing import Any
+    from unittest.mock import MagicMock
+    adapter = MagicMock()
+    adapter.get.return_value = MagicMock(data={"value": [{"OrdersCount": 4}]})
+    resource: GenericResource[Any] = GenericResource(adapter)
+    resource.endpoint = "Orders"
+    resource.model = MockModel
+
+    resource.apply("aggregate($count as OrdersCount)").execute()
+
+    call_params = adapter.get.call_args[1]["ep_params"]
+    assert call_params["$apply"] == "aggregate($count as OrdersCount)"
+
+
 if __name__ == "__main__":
     # Manual check since I don't want to rely on the test runner for this quick validation
     test_odata_field_operators()

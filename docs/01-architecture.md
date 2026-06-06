@@ -35,6 +35,8 @@ Each resource, whether Elite or Generic, provides:
 - **Typed OData**: A fluent, Pythonic `QueryBuilder` with operator overloading on `fields` constants for type-safe filtering and expansions.
 - **Unbound Actions**: SAP business logic methods (like `Cancel`, `Close`, `Reopen`) extracted from the OData metadata.
 
+A small number of SAP endpoints expose **bounded functions** — operations scoped to a specific entity key (e.g. `SQLQueries('sql04')/List`). These require logic beyond generic CRUD. The pattern for implementing them is a hand-written resource class that extends `GenericResource` or `AsyncGenericResource` and calls `_action()` directly. `SQLQueriesResource` (`resources/sql_queries.py`) is the canonical reference: it adds `run()` and `run_stream()` on top of inherited CRUD, reusing the same ETag, dry-run, and 401-retry infrastructure. See [15-sql-queries.md](./15-sql-queries.md).
+
 ### 4. Metadata Integrity (The "Vanilla" Policy)
 By default, the generator filters out all User-Defined Fields (`U_*`) and User-Defined Tables (`@*`). This ensures the core SDK remains version-agnostic and clean. Customizations are handled locally via the Override system or the Hybrid interaction pattern described in [05-interaction-patterns.md](./05-interaction-patterns.md).
 

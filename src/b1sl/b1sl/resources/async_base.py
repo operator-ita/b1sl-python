@@ -96,6 +96,11 @@ class AsyncGenericResource(Generic[T]):
 
         return AsyncQueryBuilder(self).expand(value)
 
+    def apply(self, expression: str) -> AsyncQueryBuilder[T]:
+        from b1sl.b1sl.resources.odata import AsyncQueryBuilder
+
+        return AsyncQueryBuilder(self).apply(expression)
+
     async def list(self, query: ODataQuery | None = None) -> list[T]:
         """
         Retrieves a single page of results based on the provided query.
@@ -107,51 +112,53 @@ class AsyncGenericResource(Generic[T]):
         data = result.data or {}
         return [self.model.model_validate(item) for item in data.get("value", [])]
 
-    async def stream(
-        self, 
-        query: ODataQuery | None = None, 
-        page_size: int | None = None, 
-        max_pages: int | None = None
-    ) -> AsyncGenerator[T, None]:
-        """
-        Execute the query asynchronously and yield individual entities, 
-        automatically fetching next pages until dataset exhausted or limits hit.
-        """
+    async def _iter_pages(
+        self,
+        url: str,
+        params: dict,
+        headers: dict,
+        max_pages: int | None = None,
+    ) -> AsyncGenerator[dict, None]:
+        """Yield raw item dicts from a paginated OData endpoint, following nextLink.
 
-        params = query.to_params() if query else {}
-        headers = {"B1-PageSize": str(page_size)} if page_size else {}
-        
-        global_top = query.top if query else None
-        yielded_count = 0
-        pages_fetched = 0
-        
+        Async counterpart of ``GenericResource._iter_pages``.  Shared by
+        ``stream()`` and ``AsyncSQLQueriesResource.run_stream()``.
+        """
         current_params = params
-        
+        pages_fetched = 0
         while True:
-            result = await self._adapter.get(
-                self.endpoint, 
-                ep_params=current_params, 
-                headers=headers
-            )
+            result = await self._adapter.get(url, ep_params=current_params, headers=headers)
             data = result.data or {}
-            items = data.get("value", [])
             pages_fetched += 1
-            
-            for raw_item in items:
-                yield self.model.model_validate(raw_item)
-                yielded_count += 1
-                
-                if global_top is not None and yielded_count >= global_top:
-                    return
-
+            for item in data.get("value", []):
+                yield item
             next_link = result.next_link
             if not next_link:
                 break
-                
             if max_pages is not None and pages_fetched >= max_pages:
                 break
-                
             current_params = build_next_params(current_params, next_link)
+
+    async def stream(
+        self,
+        query: ODataQuery | None = None,
+        page_size: int | None = None,
+        max_pages: int | None = None
+    ) -> AsyncGenerator[T, None]:
+        """
+        Execute the query asynchronously and yield individual entities,
+        automatically fetching next pages until dataset exhausted or limits hit.
+        """
+        params = query.to_params() if query else {}
+        headers = {"B1-PageSize": str(page_size)} if page_size else {}
+        global_top = query.top if query else None
+        yielded_count = 0
+
+        async for raw_item in self._iter_pages(self.endpoint, params, headers, max_pages):
+            yield self.model.model_validate(raw_item)
+            yielded_count += 1
+            if global_top is not None and yielded_count >= global_top:
+                return
 
     async def count(self) -> int:
         """GET Endpoint/$count"""
@@ -222,12 +229,33 @@ class AsyncGenericResource(Generic[T]):
 
     # ── Actions / Functions ───────────────────────────────────────────────────
 
-    async def _action(self, key: Any, name: str, payload: dict | None = None) -> Any:
-        """POST Endpoint(key)/ActionName"""
+    async def _action(
+        self,
+        key: Any,
+        name: str,
+        payload: dict | None = None,
+        *,
+        params: dict | None = None,
+        headers: dict | None = None,
+        method: str = "POST",
+    ) -> Any:
+        """Invoke a bound action or function on a keyed entity.
+
+        Covers two SAP OData patterns:
+        - POST Endpoint('key')/ActionName  (default, side-effecting actions)
+        - GET  Endpoint('key')/FunctionName (read-only bounded functions, e.g. /List)
+
+        The full response ``data`` dict is returned — callers needing
+        ``@odata.nextLink`` should inspect it directly.
+        """
         id_str = f"'{key}'" if isinstance(key, str) else str(key)
-        result = await self._adapter.post(
-            f"{self.endpoint}({id_str})/{name}", data=payload or {}
-        )
+        url = f"{self.endpoint}({id_str})/{name}"
+        if method == "GET":
+            result = await self._adapter.get(url, ep_params=params, headers=headers)
+        else:
+            result = await self._adapter.post(
+                url, ep_params=params, data=payload or {}, headers=headers
+            )
         return result.data if result else None
 
     async def _function(self, name: str, params: dict | None = None) -> Any:

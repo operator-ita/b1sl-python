@@ -16,7 +16,12 @@ from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional
 from urllib.parse import parse_qs, urlencode, urlparse
 
-from b1sl.b1sl.exceptions.exceptions import SAPConcurrencyError
+from b1sl.b1sl.exceptions.exceptions import (
+    B1SqlNotAllowedError,
+    B1SqlParamError,
+    B1SqlSyntaxError,
+    SAPConcurrencyError,
+)
 
 
 @dataclass
@@ -400,6 +405,44 @@ class BaseRestAdapter:
                 sap_code=sap_code,
                 etag_sent=etag_sent,
                 endpoint=endpoint,
+                details=response_body,
+            )
+
+    @staticmethod
+    def _raise_if_sql_error(
+        status_code: int,
+        sap_code: str,
+        sap_message: str,
+        response_body: dict | None,
+    ) -> None:
+        """Convert SAP 400 responses with SQL-specific codes into typed exceptions.
+
+        SAP error codes handled:
+        - ``"702"`` / ``"703"`` → ``B1SqlNotAllowedError`` (table or column blocked)
+        - ``"704"`` → ``B1SqlParamError`` (missing, extra, or mis-typed parameter)
+
+        Called from ``_do`` in both sync and async adapters, right before the
+        generic ``B1ValidationError`` fallback, so callers can catch the
+        granular subclass or the broader ``B1ValidationError``.
+
+        Note: SAP returns ``code`` as a JSON string (e.g. ``"702"``), not an int.
+        """
+        if status_code != 400:
+            return
+        if sap_code == B1SqlSyntaxError.SAP_ERROR_CODE:
+            raise B1SqlSyntaxError(
+                f"SAP SQL syntax error: {sap_message}",
+                details=response_body,
+            )
+        if sap_code in ("702", "703"):
+            raise B1SqlNotAllowedError(
+                f"SAP SQL allowlist violation [{sap_code}]: {sap_message}",
+                sap_code=sap_code,
+                details=response_body,
+            )
+        if sap_code == B1SqlParamError.SAP_ERROR_CODE:
+            raise B1SqlParamError(
+                f"SAP SQL parameter error: {sap_message}",
                 details=response_body,
             )
 

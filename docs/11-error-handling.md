@@ -14,6 +14,8 @@ graph TD
     B1Exception --> B1NotFoundError
     B1Exception --> B1ValidationError
     B1Exception --> SAPConcurrencyError
+    B1ValidationError --> B1SqlNotAllowedError
+    B1ValidationError --> B1SqlParamError
 ```
 
 ### 1. `B1Exception` (Base)
@@ -42,17 +44,31 @@ Raised when an optimistic concurrency conflict occurs (ETag mismatch).
 ### 5. `B1AuthError` (401)
 Raised when authentication fails (invalid credentials) or when a session has expired and cannot be automatically refreshed.
 
+### 6. `B1SqlNotAllowedError` (400, codes 702/703)
+Subclass of `B1ValidationError`. Raised when a `SQLQueries` execution is blocked by the server-side allowlist.
+- Code `"702"`: the queried table is not in `b1s_sqltable.conf`.
+- Code `"703"`: the queried column is in `ColumnExcludeList`.
+
+The `sap_code` attribute identifies which restriction triggered the error.
+
+### 7. `B1SqlParamError` (400, code 704)
+Subclass of `B1ValidationError`. Raised when a `/List` invocation fails due to parameter problems — wrong name, wrong count, or type mismatch. Check that the kwargs passed to `run()` match the `:name` placeholders in `SqlText`.
+
+See [15-sql-queries.md](./15-sql-queries.md) for full usage and error-handling examples.
+
 ## Automatic Mapping
 
 The SDK's adapters (`RestAdapter` and `AsyncRestAdapter`) automatically map HTTP status codes to these specialized exceptions:
 
-| HTTP Status | Exception Class |
-|-------------|-----------------|
-| 400 | `B1ValidationError` |
-| 401 | `B1AuthError` |
-| 404 | `B1NotFoundError` |
-| 412 | `SAPConcurrencyError` (with OData code -2039) |
-| others | `B1Exception` |
+| HTTP Status | SAP Code | Exception Class |
+|-------------|----------|-----------------|
+| 400 | `"702"` / `"703"` | `B1SqlNotAllowedError` (→ `B1ValidationError`) |
+| 400 | `"704"` | `B1SqlParamError` (→ `B1ValidationError`) |
+| 400 | other | `B1ValidationError` |
+| 401 | — | `B1AuthError` |
+| 404 | — | `B1NotFoundError` |
+| 412 | `"-2039"` | `SAPConcurrencyError` |
+| others | — | `B1Exception` |
 
 ## The `exists()` Pattern
 

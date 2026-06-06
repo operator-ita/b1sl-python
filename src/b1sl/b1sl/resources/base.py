@@ -59,6 +59,7 @@ class ODataQuery:
     top: int | None = None
     expand: list[str] | dict[str, list[str]] | None = None
     count: bool = False  # $count=true inline
+    apply: str | None = None  # $apply for aggregation/groupby (SAP HANA only)
 
     def to_params(self) -> dict[str, str]:
         p: dict[str, str] = {}
@@ -76,6 +77,8 @@ class ODataQuery:
             p["$expand"] = _build_expand(self.expand)
         if self.count:
             p["$count"] = "true"
+        if self.apply:
+            p["$apply"] = self.apply
         return p
 
 
@@ -173,6 +176,10 @@ class GenericResource(Generic[T]):
         from b1sl.b1sl.resources.odata import QueryBuilder
         return QueryBuilder(self).expand(value)
 
+    def apply(self, expression: str) -> QueryBuilder[T]:
+        from b1sl.b1sl.resources.odata import QueryBuilder
+        return QueryBuilder(self).apply(expression)
+
     # ── Collection ───────────────────────────────────────────────────────────
 
     def list(self, query: ODataQuery | None = None) -> list[T]:
@@ -187,59 +194,61 @@ class GenericResource(Generic[T]):
         data = result.data or {}
         return [self.model.model_validate(item) for item in data.get("value", [])]
 
+    def _iter_pages(
+        self,
+        url: str,
+        params: dict,
+        headers: dict,
+        max_pages: int | None = None,
+    ) -> Generator[dict, None, None]:
+        """Yield raw item dicts from a paginated OData endpoint, following nextLink.
+
+        Shared pagination primitive used by both ``stream()`` (typed entity iteration)
+        and ``SQLQueriesResource.run_stream()`` (raw dict iteration).  Stops when SAP
+        returns no ``@odata.nextLink`` / ``odata.nextLink``, or when ``max_pages`` is hit.
+        """
+        current_params = params
+        pages_fetched = 0
+        while True:
+            result = self._adapter.get(url, ep_params=current_params, headers=headers)
+            data = result.data or {}
+            pages_fetched += 1
+            yield from data.get("value", [])
+            next_link = result.next_link
+            if not next_link:
+                break
+            if max_pages is not None and pages_fetched >= max_pages:
+                break
+            current_params = build_next_params(current_params, next_link)
+
     def stream(
-        self, 
-        query: ODataQuery | None = None, 
-        page_size: int | None = None, 
+        self,
+        query: ODataQuery | None = None,
+        page_size: int | None = None,
         max_pages: int | None = None
     ) -> Generator[T, None, None]:
         """
-        Execute the query and yield individual entities, automatically 
+        Execute the query and yield individual entities, automatically
         fetching next pages until the dataset is exhausted or limits are hit.
-        
+
         Args:
             query: The ODataQuery options (filter, select, top, etc.).
             page_size: Number of records per HTTP request (B1-PageSize header).
             max_pages: Safety bound for maximum number of HTTP requests.
-            
+
         Yields:
             T: Typed B1Model instances.
         """
-
         params = query.to_params() if query else {}
         headers = {"B1-PageSize": str(page_size)} if page_size else {}
-        
         global_top = query.top if query else None
         yielded_count = 0
-        pages_fetched = 0
-        
-        current_params = params
-        
-        while True:
-            result = self._adapter.get(
-                self.endpoint, 
-                ep_params=current_params, 
-                headers=headers
-            )
-            data = result.data or {}
-            items = data.get("value", [])
-            pages_fetched += 1
-            
-            for raw_item in items:
-                yield self.model.model_validate(raw_item)
-                yielded_count += 1
-                
-                if global_top is not None and yielded_count >= global_top:
-                    return
 
-            next_link = result.next_link
-            if not next_link:
-                break
-                
-            if max_pages is not None and pages_fetched >= max_pages:
-                break
-                
-            current_params = build_next_params(current_params, next_link)
+        for raw_item in self._iter_pages(self.endpoint, params, headers, max_pages):
+            yield self.model.model_validate(raw_item)
+            yielded_count += 1
+            if global_top is not None and yielded_count >= global_top:
+                return
 
     def count(self) -> int:
         """GET Endpoint/$count"""
@@ -322,12 +331,33 @@ class GenericResource(Generic[T]):
 
     # ── Actions / Functions ───────────────────────────────────────────────────
 
-    def _action(self, key: Any, name: str, payload: dict | None = None) -> Any:
-        """POST Endpoint(key)/ActionName"""
+    def _action(
+        self,
+        key: Any,
+        name: str,
+        payload: dict | None = None,
+        *,
+        params: dict | None = None,
+        headers: dict | None = None,
+        method: str = "POST",
+    ) -> Any:
+        """Invoke a bound action or function on a keyed entity.
+
+        Covers two SAP OData patterns:
+        - POST Endpoint('key')/ActionName  (default, side-effecting actions)
+        - GET  Endpoint('key')/FunctionName (read-only bounded functions, e.g. /List)
+
+        The full response ``data`` dict is returned — callers needing
+        ``@odata.nextLink`` should inspect it directly.
+        """
         id_str = f"'{key}'" if isinstance(key, str) else str(key)
-        result = self._adapter.post(
-            f"{self.endpoint}({id_str})/{name}", data=payload or {}
-        )
+        url = f"{self.endpoint}({id_str})/{name}"
+        if method == "GET":
+            result = self._adapter.get(url, ep_params=params, headers=headers)
+        else:
+            result = self._adapter.post(
+                url, ep_params=params, data=payload or {}, headers=headers
+            )
         return result.data if result else None
 
     def _function(self, name: str, params: dict | None = None) -> Any:

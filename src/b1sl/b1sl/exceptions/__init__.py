@@ -4,6 +4,9 @@ from b1sl.b1sl.exceptions.exceptions import (
     B1Exception,
     B1NotFoundError,
     B1ResponseError,
+    B1SqlNotAllowedError,
+    B1SqlParamError,
+    B1SqlSyntaxError,
     B1ValidationError,
     SAPConcurrencyError,
 )
@@ -14,6 +17,9 @@ __all__ = [
     "B1ConnectionError",
     "B1NotFoundError",
     "B1ValidationError",
+    "B1SqlSyntaxError",
+    "B1SqlNotAllowedError",
+    "B1SqlParamError",
     "B1ResponseError",
     "SAPConcurrencyError",
 ]

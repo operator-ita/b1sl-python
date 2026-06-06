@@ -1,6 +1,18 @@
 from urllib.parse import parse_qs, urlparse
 
 
+def extract_next_link(data: dict) -> str | None:
+    """Return the OData nextLink from a response body, tolerating v3 and v4 formats.
+
+    SAP Service Layer uses different key names depending on the OData version:
+    - OData v3 (``b1s/v1``): ``"odata.nextLink"``
+    - OData v4 (``b1s/v2``): ``"@odata.nextLink"``
+
+    Returns the first non-empty value found, or ``None``.
+    """
+    return data.get("@odata.nextLink") or data.get("odata.nextLink") or None
+
+
 def extract_skip(next_link: str) -> int | None:
     """
     Extracts the $skip value from an odata.nextLink string.

@@ -88,6 +88,101 @@ class B1ValidationError(B1Exception):
     """
 
 
+class B1SqlNotAllowedError(B1ValidationError):
+    """Raised when SAP rejects a SQLQuery because a table or column is blocked.
+
+    SAP error codes:
+    - ``"702"`` — table not in the server allowlist (``b1s_sqltable.conf``).
+    - ``"703"`` — column excluded via ``ColumnExcludeList`` in the same config.
+
+    Neither condition can be fixed at runtime; the SQL text or the server
+    configuration must change.  The ``sap_code`` attribute lets callers
+    distinguish table-level from column-level blocks::
+
+        try:
+            result = client.sql_queries.run("sql04")
+        except B1SqlNotAllowedError as e:
+            if e.sap_code == "702":
+                print(f"Table blocked: {e}")
+            else:
+                print(f"Column blocked: {e}")
+    """
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        sap_code: str = "702",
+        details: dict | None = None,
+    ) -> None:
+        super().__init__(message, details=details)
+        self.sap_code = sap_code
+
+
+class B1SqlSyntaxError(B1ValidationError):
+    """Raised when SAP rejects a SQL definition or execution due to invalid syntax.
+
+    SAP error code ``"701"`` — covers multiple sub-cases, all requiring a fix
+    to the SQL text itself (no runtime adjustment can resolve a 701 error):
+
+    - **Grammar error**: typos like ``ORDER BY x dsc`` instead of ``DESC``.
+    - **Unsupported function**: e.g. ``length()``, ``CASE WHEN``, ``COALESCE``.
+    - **``SELECT *`` in the top-level query**: only allowed inside subqueries.
+    - **Computed column without alias**: ``SUM(col)`` must be aliased as
+      ``SUM(col) AS total``.
+    - **Duplicate alias**: two columns sharing the same alias are rejected.
+    - **DML statement**: ``UPDATE``, ``INSERT``, ``DELETE``, ``ALTER``, etc. —
+      the ``SQLQueries`` endpoint accepts only ``SELECT`` queries.
+
+    The SAP error message includes the character position and a description::
+
+        try:
+            client.sql_queries.create(en.SQLQuery(sql_code="q1",
+                                                   sql_text="select * from ORDR"))
+        except B1SqlSyntaxError as e:
+            print(e)  # "Invalid SQL syntax: ..., Cannot support asterisk(*)..."
+    """
+
+    SAP_ERROR_CODE = "701"
+
+    def __init__(self, message: str, *, details: dict | None = None) -> None:
+        super().__init__(message, details=details)
+        self.sap_code = self.SAP_ERROR_CODE
+
+
+class B1SqlParamError(B1ValidationError):
+    """Raised when SAP rejects a ``/List`` invocation due to parameter problems.
+
+    SAP error code ``"704"`` — covers missing parameters, extra parameters, or
+    type mismatches.  Unlike ``B1SqlNotAllowedError``, this is fixable by the
+    caller: check that the kwargs passed to ``run()`` / ``run_stream()`` match
+    the ``ParamList`` declared in the stored ``SqlText``::
+
+        try:
+            rows = client.sql_queries.run("sql01", doc_total=100)
+        except B1SqlParamError:
+            # Wrong param name — SAP expects :docTotal, not :doc_total
+            rows = client.sql_queries.run("sql01", docTotal=100)
+
+    Note: SAP returns a generic ``"Parameter error."`` message without naming
+    the offending parameter.  Inspect the stored query's ``ParamList`` field
+    to cross-reference.
+    """
+
+    SAP_ERROR_CODE = "704"
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        details: dict | None = None,
+        expected_params: list[str] | None = None,
+    ) -> None:
+        super().__init__(message, details=details)
+        self.sap_code = self.SAP_ERROR_CODE
+        self.expected_params: list[str] | None = expected_params
+
+
 class B1ResponseError(B1Exception):
     """Raised for unexpected non-2xx responses not covered by other subclasses."""
 

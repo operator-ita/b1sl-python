@@ -13,9 +13,20 @@ from b1sl.b1sl.client import B1Client
 from b1sl.b1sl.config import B1Config
 from b1sl.b1sl.config_manager import B1Environment
 from b1sl.b1sl.environment import B1Env
-from b1sl.b1sl.exceptions.exceptions import SAPConcurrencyError
+from b1sl.b1sl.exceptions.exceptions import (
+    B1SqlNotAllowedError,
+    B1SqlParamError,
+    B1SqlSyntaxError,
+    SAPConcurrencyError,
+)
 from b1sl.b1sl.resources.async_base import AsyncGenericResource
 from b1sl.b1sl.resources.base import GenericResource, ODataQuery
+from b1sl.b1sl.resources.sql_queries import (
+    DEFAULT_ACCESSIBLE_TABLES,
+    KNOWN_INACCESSIBLE_PATTERNS,
+    SQLQueryInfo,
+    SQLRunResult,
+)
 from b1sl.b1sl.rest_adapter import RestAdapter
 
 try:
@@ -42,9 +53,16 @@ __all__ = [
     "RestAdapter",
     "B1Env",
     "SAPConcurrencyError",
+    "B1SqlSyntaxError",
+    "B1SqlNotAllowedError",
+    "B1SqlParamError",
     "AsyncGenericResource",
     "GenericResource",
     "ODataQuery",
+    "DEFAULT_ACCESSIBLE_TABLES",
+    "KNOWN_INACCESSIBLE_PATTERNS",
+    "SQLQueryInfo",
+    "SQLRunResult",
     "entities",
     "fields",
     "HookContext",

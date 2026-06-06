@@ -16,6 +16,7 @@ from b1sl.b1sl.exceptions.exceptions import (
     B1ValidationError,
 )
 from b1sl.b1sl.models.result import Result
+from b1sl.b1sl.pagination import extract_next_link
 
 _HTTP_STATUS_TO_EXC: dict[int, type] = {
     400: B1ValidationError,
@@ -278,7 +279,10 @@ class RestAdapter(BaseRestAdapter):
                 self._raise_if_concurrency_error(
                     response.status_code, sap_code, sap_msg, endpoint_path, body
                 )
-                
+                self._raise_if_sql_error(
+                    response.status_code, sap_code, sap_msg, body
+                )
+
                 # Use specialized exception based on status code if available
                 exc_cls = _HTTP_STATUS_TO_EXC.get(response.status_code, B1Exception)
                 raise exc_cls(f"SAP Error {sap_code}: {sap_msg}", details=body) from e
@@ -320,15 +324,14 @@ class RestAdapter(BaseRestAdapter):
                     data_out = response.json()
                     # ── ETag: extract from header (preferred) or body fallback ──
                     self._extract_etag(endpoint_path, dict(response.headers), data_out)
+                    _next_link = extract_next_link(data_out)
                     return Result(
                         status_code=response.status_code,
                         message=response.reason_phrase,
                         data=data_out,
-                        next_link=data_out.get("odata.nextLink"),
-                        next_params=self._get_ep_params(data_out.get("odata.nextLink"))
-                        if data_out.get("odata.nextLink")
-                        else None,
-                        metadata=data_out.get("odata.metadata"),
+                        next_link=_next_link,
+                        next_params=self._get_ep_params(_next_link) if _next_link else None,
+                        metadata=data_out.get("@odata.context") or data_out.get("odata.metadata"),
                     )
                 except Exception:
                     raise B1Exception("Bad JSON response")

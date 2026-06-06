@@ -49,14 +49,25 @@ class BatchSerializer:
             lines.append(f"{req.method} /b1s/v2/{clean_endpoint} HTTP/1.1")
             
             # 5. Internal Headers
-            if req.data:
+            # Any caller-supplied per-part headers (e.g. Prefer:
+            # odata.maxpagesize, If-Match) — skip Content-Type, we set our own
+            # below whenever a body is present.
+            if req.headers:
+                for hk, hv in req.headers.items():
+                    if hk.lower() == "content-type":
+                        continue
+                    lines.append(f"{hk}: {hv}")
+            # A body is present whenever data is not None — note an empty dict
+            # ({}) is a valid, required body for some bounded functions (e.g.
+            # the SQLQueries /List POST), so we must not skip it on falsiness.
+            if req.data is not None:
                 lines.append("Content-Type: application/json")
             lines.append("") # End of internal headers
 
             # 6. Body
-            if req.data:
+            if req.data is not None:
                 lines.append(json.dumps(req.data))
-            
+
             lines.append("")  # Blank line after body (OData multipart spec)
 
         # Close the last changeset if it remained open
