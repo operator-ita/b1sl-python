@@ -4,8 +4,8 @@ b1sl.b1sl — SDK for SAP B1 Service Layer (OData).
 
 import logging
 import warnings
+from typing import TYPE_CHECKING, Any
 
-from b1sl.b1sl import entities
 from b1sl.b1sl.async_client import AsyncB1Client
 from b1sl.b1sl.async_rest_adapter import AsyncRestAdapter
 from b1sl.b1sl.base_adapter import HookContext, ObservabilityConfig
@@ -33,6 +33,31 @@ try:
     from b1sl.b1sl import fields  # type: ignore
 except ImportError:
     fields = None  # type: ignore
+
+if TYPE_CHECKING:
+    # Static analysers / IDEs still resolve ``b1sl.b1sl.entities`` even though it
+    # is loaded lazily at runtime (see ``__getattr__`` below).
+    from b1sl.b1sl import entities
+
+
+def __getattr__(name: str) -> Any:
+    """PEP 562 lazy attribute access.
+
+    ``entities`` blends ~280 SAP models whose Pydantic core-schemas take ~14s to
+    compile. Importing it eagerly here forced *every* consumer — including
+    ``from b1sl.b1sl import B1Client`` — to pay that cost at import time (a fresh
+    14s on every Django StatReloader hot-reload). Deferring it means the cost is
+    only paid when entity models are actually touched (``en.Item``), not when the
+    client/adapters are imported.
+    """
+    if name == "entities":
+        import importlib
+
+        # ``import_module`` loads the submodule directly via sys.modules instead of
+        # the ``from b1sl.b1sl import entities`` form, whose fromlist machinery would
+        # re-enter this ``__getattr__`` and recurse infinitely.
+        return importlib.import_module("b1sl.b1sl.entities")
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 try:
     from pydantic import ArbitraryTypeWarning
