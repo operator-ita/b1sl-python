@@ -167,11 +167,48 @@ class B1Model(BaseModel):
         """
         Provides safe, dictionary-like access to User-Defined Fields (UDFs).
         Enforces that all interactions use the 'U_' prefix.
-        
+
         Example:
             item.udfs["U_MyCustomField"] = "Value"
         """
         return UDFMapping(self)
+
+    @classmethod
+    def model_rebuild(  # type: ignore[override]
+        cls,
+        *,
+        force: bool = False,
+        raise_errors: bool = True,
+        _parent_namespace_depth: int = 2,
+        _types_namespace: dict[str, Any] | None = None,
+    ) -> bool | None:
+        """``model_rebuild`` with the SDK's master entity namespace injected.
+
+        Entity core schemas are built lazily on first use (building all ~280
+        eagerly costs ~2.4 GiB RSS). Pydantic auto-calls ``model_rebuild()``
+        when an unbuilt model is first validated, but cross-domain forward
+        references (e.g. line models in other modules) only resolve against
+        the master namespace assembled by the generated entities package —
+        without this hook, direct model use would raise ``PydanticUserError``.
+        """
+        if _types_namespace is None:
+            import sys
+
+            _gen = sys.modules.get("b1sl.b1sl.models._generated.entities")
+            # The accessor only exists once the generated package finished
+            # importing; during its own import, fall back to default behavior.
+            _get_namespace = getattr(_gen, "master_namespace", None)
+            if _get_namespace is not None:
+                _types_namespace = _get_namespace()
+            else:
+                # Preserve caller-frame semantics: this override adds a frame.
+                _parent_namespace_depth += 1
+        return super().model_rebuild(
+            force=force,
+            raise_errors=raise_errors,
+            _parent_namespace_depth=_parent_namespace_depth,
+            _types_namespace=_types_namespace,
+        )
 
 
     # ── Inbound coercion (SAP → Python) ─────────────────────────────────── #

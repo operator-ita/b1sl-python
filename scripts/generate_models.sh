@@ -42,4 +42,20 @@ uv run -m scripts.b1sl_metadata_generator.generator \
     --service-doc "$SERVICE_JSON" \
     --ref-cache "$BASE_DIR/reference_cache.json"
 
+# 3. Normalize generated output to the repo's canonical (ruff) style so that
+#    regeneration is reproducible: raw generator output differs only in
+#    formatting, and this step folds it back to what is committed.
+#    Scope: only generator outputs that ruff actually lints — models/_generated
+#    and resources/_generated are in ruff's extend-exclude and stay raw.
+#    fields/base.py is hand-written and deliberately not touched here.
+echo "  - Normalizing formatting (ruff check --fix + ruff format)..."
+uv run ruff check --fix --quiet \
+    src/b1sl/b1sl/fields/__init__.py \
+    src/b1sl/b1sl/fields/_generated \
+    src/b1sl/b1sl/entities/__init__.py
+uv run ruff format --quiet \
+    src/b1sl/b1sl/fields/__init__.py \
+    src/b1sl/b1sl/fields/_generated \
+    src/b1sl/b1sl/entities/__init__.py
+
 echo "✨ Done! SDK models and resources have been updated using SAP $VERSION metadata."

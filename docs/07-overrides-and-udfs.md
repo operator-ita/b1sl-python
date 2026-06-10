@@ -4,7 +4,7 @@
 While the core SDK is fully automated, the most common developer tasks involve **extending** the generated models. The SDK provides two elegant ways to handle this.
 
 ## 1. The Override System (Permanent)
-The `models/_overrides/` directory allows you to permanently extend any generated entity without touching the `_generated/` core.
+The `models/_overrides/` directory allows you to permanently extend any generated entity without touching the `_generated/` core. `_generated/` is wiped on every metadata regeneration (new Service Layer versions); `_overrides/` survives — that is the whole point of the split.
 
 ### How to use it:
 1.  **Inherit**: Create a new file (e.g., `inventory.py`) in `_overrides/`.
@@ -22,7 +22,58 @@ class Item(_Item):
         return (self.quantity_on_stock or 0.0) - ...
 ```
 
-The generator will automatically detect your `Item` class and promote it to the public `entities` facade, replacing the vanilla generated version.
+That's it — **no registration step**. Discovery is dynamic at runtime: on the first entity access, the SDK scans `_overrides/`, and any class that
+
+- is defined in a module directly under `_overrides/`,
+- has the **same name** as a generated entity, and
+- **subclasses** that generated entity
+
+replaces the generated class everywhere: `en.Item`, nested validation inside other models, and resource deserialization (`client.items.get(...)` returns *your* `Item`). A class that shadows an entity name **without** subclassing it is ignored, and a warning is emitted on the `b1sl` logger.
+
+You do **not** need to re-run the generator for an override to take effect. Re-running `./scripts/generate_models.sh` additionally refreshes the facade's `TYPE_CHECKING` imports so IDEs and type checkers resolve `en.Item` to your subclass (runtime behavior is identical either way).
+
+Two rules keep the layering clean:
+- Overrides import from `_generated/` (inheritance) — never the other way around. The generated code only discovers overrides lazily, after imports settle, so importing your override module directly (`from b1sl.b1sl.models._overrides.inventory import Item`) is safe in any import order.
+- By convention, one module per domain mirrors `_generated/entities/` (`inventory.py`, `sales.py`, …), but any module name under `_overrides/` is scanned.
+
+### Worked example: a brand-new override from scratch
+
+Suppose you want every sales document to expose its freight total (SAP
+splits freight into `DocumentAdditionalExpenses` lines instead of a single
+field). Creating this one file **is the whole task** — no registration, no
+map, no generator run:
+
+```python
+# models/_overrides/sales.py  ← just create this file. That's the whole task.
+from .._generated.entities.general import Document as _Document
+
+
+class Document(_Document):
+    @property
+    def freight_total(self) -> float:
+        """Sum of all additional-expense lines (freight, insurance, ...)."""
+        expenses = self.document_additional_expenses or []
+        return sum(expense.line_total or 0.0 for expense in expenses)
+```
+
+It takes effect immediately, everywhere the entity is served:
+
+```python
+from b1sl.b1sl import entities as en
+
+order = client.orders.get(123)            # Elite resource → returns YOUR Document
+print(order.freight_total)
+
+quote = en.Quotation(card_code="C001")    # aliases too: Quotation IS Document,
+print(quote.freight_total)                # so Order, Invoice, DeliveryNote, …
+                                          # all gain the property
+```
+
+Note the reach of this particular example: `Order`, `Invoice`, `Quotation`,
+`DeliveryNote`, etc. are all entity-set aliases of the single `Document`
+model, so overriding `Document` extends every marketing document at once.
+If you want behavior for only one document type, put the logic behind a
+check on `doc_object_code` instead of relying on the class name.
 
 ## 2. Managing UDFs (Dynamic)
 The SDK's "Vanilla" policy excludes `U_` fields from the core to maintain stability. However, you can still interact with them effortlessly:

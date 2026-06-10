@@ -95,7 +95,7 @@ class BatchParser:
         
         body = None
         msg_normalized = message.replace("\r\n", "\n")
-        header_body_split = re.split(r"\n\s*\n", msg_normalized, 1)
+        header_body_split = re.split(r"\n\s*\n", msg_normalized, maxsplit=1)
         
         if len(header_body_split) > 1:
             json_str = header_body_split[1].strip()

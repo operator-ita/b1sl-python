@@ -1,6 +1,8 @@
 # AUTO-GENERATED — do not edit by hand.
 from __future__ import annotations
 
+import threading
+
 from . import businesspartners
 from . import finance
 from . import general
@@ -433,8 +435,7 @@ _ALL_MODELS.append(inventory.InventoryCountingDraft)
 _ALL_MODELS.append(general.InventoryCycles)
 _ALL_MODELS.append(inventory.InventoryOpeningBalance)
 _ALL_MODELS.append(inventory.InventoryPosting)
-from ..._overrides.inventory import Item
-_ALL_MODELS.append(Item)
+_ALL_MODELS.append(inventory.Item)
 _ALL_MODELS.append(inventory.ItemGroups)
 _ALL_MODELS.append(inventory.ItemImage)
 _ALL_MODELS.append(inventory.ItemProperty)
@@ -576,6 +577,91 @@ _ALL_MODELS.append(general.WizardPaymentMethod)
 # Master namespace for cross-domain resolution
 _NAMESPACE = {m.__name__: m for m in _ALL_MODELS}
 
-# Rebuild models to resolve circular dependencies
-for model in _ALL_MODELS:
-    model.model_rebuild(_types_namespace=_NAMESPACE)
+_REBUILD_LOCK = threading.RLock()
+_OVERRIDES_APPLIED = False
+
+
+def _apply_overrides():
+    """Blend hand-written ``_overrides`` subclasses into the master namespace.
+
+    Discovery is dynamic: any class defined in a
+    ``b1sl.b1sl.models._overrides.<module>`` that shares its name with a
+    generated entity and subclasses it replaces the generated class —
+    no registration or regeneration required.
+
+    Runs once, lazily, after this package has fully imported: importing
+    overrides at package-init time would create a circular import whenever
+    an override module is itself the first thing imported.
+    """
+    global _OVERRIDES_APPLIED
+    if _OVERRIDES_APPLIED:
+        return
+    with _REBUILD_LOCK:
+        if _OVERRIDES_APPLIED:
+            return
+        import importlib
+        import logging
+        import pkgutil
+
+        from ... import _overrides
+
+        for module_info in pkgutil.iter_modules(_overrides.__path__):
+            module = importlib.import_module(
+                f"{_overrides.__name__}.{module_info.name}"
+            )
+            for attr, obj in list(vars(module).items()):
+                base = _NAMESPACE.get(attr)
+                if (
+                    base is None
+                    or not isinstance(obj, type)
+                    or obj.__module__ != module.__name__
+                ):
+                    continue
+                if not issubclass(obj, base):
+                    # logging, not warnings: b1sl/__init__ installs a broad
+                    # ignore filter for warnings raised from b1sl modules.
+                    logging.getLogger(__name__).warning(
+                        "Override %s.%s shadows entity %r but does not"
+                        " subclass it — ignored.",
+                        module.__name__,
+                        attr,
+                        attr,
+                    )
+                    continue
+                _NAMESPACE[attr] = obj
+                globals()[attr] = obj
+        _OVERRIDES_APPLIED = True
+
+
+def master_namespace():
+    """Override-aware name → model mapping used for forward-ref resolution."""
+    _apply_overrides()
+    return _NAMESPACE
+
+
+def resolve(name):
+    """Return the override-aware, schema-built model class for *name*."""
+    return ensure_built(master_namespace()[name])
+
+
+def ensure_built(model):
+    """Build the model's pydantic core schema on first use (thread-safe, idempotent).
+
+    Building eagerly for every entity costs gigabytes of RSS; each model's
+    transitive closure is rebuilt only when first accessed via the facade.
+    """
+    if not model.__pydantic_complete__:
+        namespace = master_namespace()
+        with _REBUILD_LOCK:
+            if not model.__pydantic_complete__:
+                model.model_rebuild(_types_namespace=namespace)
+    return model
+
+
+def preload():
+    """Eagerly build every entity model (the full graph: several GiB, ~10s+).
+
+    Opt-in warm-up for deployments that prefer paying the cost at startup.
+    """
+    for _model in master_namespace().values():
+        ensure_built(_model)

@@ -3,7 +3,6 @@ b1sl.b1sl — SDK for SAP B1 Service Layer (OData).
 """
 
 import logging
-import warnings
 from typing import TYPE_CHECKING, Any
 
 from b1sl.b1sl.async_client import AsyncB1Client
@@ -43,12 +42,12 @@ if TYPE_CHECKING:
 def __getattr__(name: str) -> Any:
     """PEP 562 lazy attribute access.
 
-    ``entities`` blends ~280 SAP models whose Pydantic core-schemas take ~14s to
-    compile. Importing it eagerly here forced *every* consumer — including
-    ``from b1sl.b1sl import B1Client`` — to pay that cost at import time (a fresh
-    14s on every Django StatReloader hot-reload). Deferring it means the cost is
-    only paid when entity models are actually touched (``en.Item``), not when the
-    client/adapters are imported.
+    ``entities`` blends ~280 SAP models. Deferring the module import keeps
+    ``from b1sl.b1sl import B1Client`` fast, and the facade itself is also lazy:
+    each model's Pydantic core-schema is compiled on first attribute access
+    (``en.Item``), never for the whole graph at once — building all ~280 schemas
+    eagerly used to cost ~14s and ~2.4 GiB RSS. Call ``entities.preload()`` to
+    opt into eager warm-up at startup.
     """
     if name == "entities":
         import importlib
@@ -58,13 +57,6 @@ def __getattr__(name: str) -> Any:
         # re-enter this ``__getattr__`` and recurse infinitely.
         return importlib.import_module("b1sl.b1sl.entities")
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-try:
-    from pydantic import ArbitraryTypeWarning
-
-    warnings.filterwarnings("ignore", category=ArbitraryTypeWarning, module=r"b1sl\..*")  # type: ignore
-except ImportError:
-    warnings.filterwarnings("ignore", module=r"b1sl\..*|pydantic\..*")
 
 # Standard library pattern: prevent "No handlers could be found"
 logging.getLogger("b1sl").addHandler(logging.NullHandler())

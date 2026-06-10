@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Tooling and commands
 
 - **Package manager: `uv` exclusively.** `uv sync` (or `uv sync --all-extras --dev`) for installs. The venv lives at `.venv/`.
-- **Python: 3.11–3.12** (`requires-python = ">=3.11,<3.13"`).
+- **Python: 3.11–3.14** (`requires-python = ">=3.11,<3.15"`).
 - Common targets (see `Makefile`):
   - `make test` — unit tests only, no network (`pytest -m "not (integration or vcr)"`).
   - `make test-vcr` — replay recorded cassettes offline (`--record-mode=none`). Requires the `vcr` marker.
@@ -30,6 +30,8 @@ The SDK is **metadata-driven**. Most of `src/b1sl/b1sl/models/` and `src/b1sl/b1
 - `models/_generated/`, `resources/_generated/` — **NEVER edit**. Wiped on every regeneration. Any structural fix belongs in the generator at `scripts/b1sl_metadata_generator/` (run via `./scripts/generate_models.sh <version>`).
 - `models/_overrides/` — hand-written extensions, calculated properties, `model_rebuild()` calls, metadata quirk fixes.
 - `entities/__init__.py` — the public facade. Blends generated + overridden models. **All public consumption goes through `from b1sl.b1sl import entities as en`**, never from `_generated/` directly.
+- **Lazy schema build**: the facade resolves entities via PEP 562 `__getattr__`; each model's pydantic core schema is built on first access (`resolve()`/`ensure_built()` in `_generated/entities/__init__.py`). Building all ~280 graphs eagerly costs ~10s+/~2.4 GiB, so never reintroduce an eager `model_rebuild()` loop. `entities.preload()` is the opt-in eager warm-up. `B1Model.model_rebuild()` injects the override-aware `master_namespace()` so pydantic's auto-rebuild also works for models imported directly from `_generated/` (e.g. `client.py`'s Elite properties).
+- **Override blending is lazy and dynamic** (`_apply_overrides()`): on first entity access, `_overrides/` modules are scanned; same-name subclasses replace generated classes in the namespace. The generated package must never import `_overrides` at init time (circular import when an override module is imported first). Adding an override requires no regeneration — regen only refreshes the facade's `TYPE_CHECKING` imports for IDE typing. See `docs/07-overrides-and-udfs.md`.
 
 Production metadata should not be committed: place it as `metadata/<version>/metadata_document.real.xml` / `service_document.real.json`. The generator prioritizes `.real.*` over the public files; `.real.*` is gitignored.
 

@@ -41,7 +41,7 @@ from b1sl.b1sl.resources.async_base import AsyncGenericResource
 from b1sl.b1sl.resources.base import GenericResource
 
 if TYPE_CHECKING:
-    pass
+    from b1sl.b1sl.models._generated.entities.general import SQLQuery  # noqa: F401
 
 
 # ── Allowlist constants ────────────────────────────────────────────────────────

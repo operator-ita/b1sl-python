@@ -19,6 +19,8 @@ The codebase is strictly divided into three layers:
   item = en.Item(item_code="A001")
   ```
 
+  The facade is **lazy** (PEP 562): each entity's Pydantic core schema is compiled on first access, not at import time. Importing `entities` costs well under a second and ~80 MiB; each entity you touch adds its own transitive closure (tens of MiB). Compiling all ~280 entity graphs eagerly would cost ~10s+ of CPU and ~2.4 GiB of RSS — if you prefer to pay that once at startup (e.g. to keep request latency flat), call `en.preload()` from your app's warm-up hook.
+
 ### 2. The `B1Model` Base Class
 Every entity inherits from `B1Model`, which provides global data normalization transparently:
 - **Boolean Coercion**: Automatically maps SAP's `"tYES"`/`"tNO"` to Python `bool`.

@@ -38,6 +38,29 @@ else:
         print(f"Error in op {r.index}: {r.error}")
 ```
 
+## SQL Queries (`/List`) inside a Batch
+
+The `SQLQueries` bounded function `/List` (see [15. SQL Queries](15-sql-queries.md)) **is supported inside `$batch`** — verified against a live Service Layer: each part returns an inner `200` with its own row page. The ergonomic path works exactly like any other resource:
+
+```python
+batch = b1.batch()
+await batch.sql_queries.run("EXPENSIVE_QUERY", cardCode="C20000")
+await batch.sql_queries.run("EXPENSIVE_QUERY", cardCode="C30000")
+
+results = await batch.execute()
+for r in results:
+    rows = r.data.get("value", [])   # raw JSON rows, see note below
+```
+
+Each call is enqueued as `POST SQLQueries('CODE')/List` with the `ParamList` body, and `page_size=N` is honored via a per-part `Prefer: odata.maxpagesize=N` header.
+
+Two differences versus a direct `b1.sql_queries.run()`:
+
+-   **Raw rows, not `SQLRunResult`**: batch results come back as the raw response dict — read the rows from `r.data["value"]`. Helpers like `.has_more` are not available.
+-   **First page only**: `odata.nextLink` is not followed inside a batch. For full datasets use `run_stream()` outside the batch.
+
+Since `/List` is a read, enqueue it as a **top-level** batch operation — not inside a `changeset()`.
+
 ## Important Constraints
 
 -   **GET in ChangeSets**: OData V4 prohibits `GET` operations within a ChangeSet. The SDK enforces this at runtime.
