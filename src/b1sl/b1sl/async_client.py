@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from b1sl.b1sl.async_rest_adapter import AsyncRestAdapter
 from b1sl.b1sl.base_adapter import ObservabilityConfig
@@ -52,6 +52,7 @@ class AsyncB1Client:
         config: B1Config,
         logger: logging.Logger | None = None,
         version: str = "v2",
+        adapter: AsyncRestAdapter | None = None,
         *,
         observability: ObservabilityConfig | None = None,
         session_id: str | None = None,
@@ -64,10 +65,12 @@ class AsyncB1Client:
             logger (logging.Logger, optional): Custom logger; defaults
                 to a prefixed 'b1sl.AsyncB1Client' logger.
             version (str): API version (defaults to 'v2').
+            adapter (AsyncRestAdapter, optional): Custom adapter for
+                mocking or dependency injection (parity with B1Client).
             session_id (str, optional): An existing B1SESSION cookie to reuse.
         """
         self._logger = logger or logging.getLogger(f"b1sl.{self.__class__.__name__}")
-        self._adapter = AsyncRestAdapter(
+        self._adapter = adapter or AsyncRestAdapter(
             config,
             logger=self._logger,
             version=version,
@@ -142,7 +145,7 @@ class AsyncB1Client:
         """
         await self._adapter.aclose()
 
-    async def __aenter__(self) -> AsyncB1Client:
+    async def __aenter__(self) -> Self:
         """
         Entry point for the async context manager.
         """

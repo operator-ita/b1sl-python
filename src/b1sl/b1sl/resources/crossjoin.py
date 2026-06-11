@@ -172,7 +172,7 @@ class CrossJoinQueryBuilder:
         """Execute and stream all rows, following ``odata.nextLink`` across pages."""
         self._validate()
         params = self._build_params()
-        headers = {"B1-PageSize": str(page_size)} if page_size else {}
+        headers = {"B1S-PageSize": str(page_size)} if page_size else {}
         global_top = self._top
         yielded = 0
 
@@ -288,7 +288,7 @@ class AsyncCrossJoinQueryBuilder:
         """Stream all rows asynchronously, following ``odata.nextLink``."""
         self._validate()
         params = self._build_params()
-        headers = {"B1-PageSize": str(page_size)} if page_size else {}
+        headers = {"B1S-PageSize": str(page_size)} if page_size else {}
         global_top = self._top
         yielded = 0
 

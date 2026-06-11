@@ -409,9 +409,9 @@ catches all 400s.
 | `bool` | `name=1` or `name=0` |
 | other | `str()` then quoted |
 
-### Why this vs. `saphdb`
+### Why this vs. direct HANA (`hdbcli`)
 
-| | `SQLQueries` (SL endpoint) | `saphdb` (direct HANA) |
+| | `SQLQueries` (SL endpoint) | Direct HANA (`hdbcli`) |
 |---|---|---|
 | Transport | HTTP (same session as rest of SDK) | TCP direct to HANA port |
 | Driver | none | `hdbcli` (extra, proprietary) |

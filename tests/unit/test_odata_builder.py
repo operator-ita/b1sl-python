@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 from b1sl.b1sl.fields._generated.entities.inventory import ItemFields
 from b1sl.b1sl.resources.base import GenericResource
+from b1sl.b1sl.rest_adapter import RestAdapter
 
 
 class MockModel:
@@ -46,7 +47,7 @@ def test_odata_field_operators():
     assert str(expr_or) == "(ItemCode eq 'A001' or ItemCode eq 'A002')"
 
 def test_query_builder_fluent_interface():
-    adapter = MagicMock()
+    adapter = MagicMock(spec=RestAdapter)
     from typing import Any
     resource: GenericResource[Any] = GenericResource(adapter)
     resource.endpoint = "Items"
@@ -54,7 +55,7 @@ def test_query_builder_fluent_interface():
     
     # Configure mock responses
     adapter.get.side_effect = [
-        MagicMock(data={"value": [{"ItemCode": "A001"}]}),
+        MagicMock(data={"value": [{"ItemCode": "A001"}]}, next_link=None, metadata=None),
         MagicMock(data={"ItemCode": "A001", "ItemName": "Fluent Item"})
     ]
     
@@ -98,8 +99,10 @@ def test_odata_query_apply_none_omitted():
 def test_query_builder_apply_fluent():
     from typing import Any
     from unittest.mock import MagicMock
-    adapter = MagicMock()
-    adapter.get.return_value = MagicMock(data={"value": [{"TotalDocTotal": 42000}]})
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = MagicMock(
+        data={"value": [{"TotalDocTotal": 42000}]}, next_link=None, metadata=None
+    )
     resource: GenericResource[Any] = GenericResource(adapter)
     resource.endpoint = "Orders"
     resource.model = MockModel
@@ -114,8 +117,10 @@ def test_query_builder_apply_fluent():
 def test_query_builder_apply_with_filter():
     from typing import Any
     from unittest.mock import MagicMock
-    adapter = MagicMock()
-    adapter.get.return_value = MagicMock(data={"value": [{"CardCode": "c001", "Total": 8}]})
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = MagicMock(
+        data={"value": [{"CardCode": "c001", "Total": 8}]}, next_link=None, metadata=None
+    )
     resource: GenericResource[Any] = GenericResource(adapter)
     resource.endpoint = "Orders"
     resource.model = MockModel
@@ -133,8 +138,10 @@ def test_query_builder_apply_with_filter():
 def test_query_builder_apply_count_virtual():
     from typing import Any
     from unittest.mock import MagicMock
-    adapter = MagicMock()
-    adapter.get.return_value = MagicMock(data={"value": [{"OrdersCount": 4}]})
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = MagicMock(
+        data={"value": [{"OrdersCount": 4}]}, next_link=None, metadata=None
+    )
     resource: GenericResource[Any] = GenericResource(adapter)
     resource.endpoint = "Orders"
     resource.model = MockModel

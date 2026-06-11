@@ -18,7 +18,6 @@ from utils import use_sap_b1
 from b1sl.b1sl import entities as en
 from b1sl.b1sl import fields
 from b1sl.b1sl.resources.base import ODataQuery
-from b1sl.b1sl.resources.odata import F
 
 
 def main():
@@ -29,8 +28,8 @@ def main():
         # 0. DYNAMIC ID DISCOVERY
         runner.info("Fetching latest ServiceCall ID...")
         latest = service_calls.list(ODataQuery(
-            select=[F.ServiceCall.service_call_id],
-            orderby=f"{F.ServiceCall.service_call_id} desc",
+            select=[fields.ServiceCall.service_call_id],
+            orderby=f"{fields.ServiceCall.service_call_id} desc",
             top=1
         ))
 
@@ -60,7 +59,7 @@ def main():
         runner.result("Item Name", sc_f.item.item_name if sc_f.item else "N/A")
 
         # PATTERN 2: HYBRID MODE (UDF SUPPORT)
-        runner.header("Pattern 2: Hybrid (F + Raw Strings)")
+        runner.header("Pattern 2: Hybrid (fields + Raw UDF Strings)")
         runner.info("Best for queries involving User Defined Fields (U_UDF).")
 
         sc_mix = service_calls.get(
@@ -72,7 +71,8 @@ def main():
             }
         )
         runner.result("Subject", sc_mix.subject)
-        runner.result("UDF 'U_OTFecha'", sc_mix.get("U_OTFecha", "None"))
+        # UDF read via the protected .udfs mapping (Mapping API: .get with default)
+        runner.result("UDF 'U_OTFecha'", sc_mix.udfs.get("U_OTFecha", "None"))
 
         # PATTERN 3: SAP-PURE STYLE (RAW ODATA)
         runner.header("Pattern 3: SAP-Pure (Raw Strings)")

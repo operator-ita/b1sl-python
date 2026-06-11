@@ -47,7 +47,7 @@ def test_list_items_mock(mock_client, fake_adapter, mock_responses):
     # 1. Preparar datos
     fake_adapter.register("GET", "Items", response_data=mock_responses("items_list"))
 
-    # 2. Ejecutar - list() devuelve una list[Item] directamente
+    # 2. Ejecutar - list() devuelve un PaginatedResult[Item] (list-like)
     items = mock_client.items.list(query=ODataQuery(top=2))
 
     assert len(items) == 2

@@ -32,9 +32,34 @@ Understanding the semantics of each terminal method is critical for performance 
 
 | Method | Source | Returns | Pagination Behavior |
 | :--- | :--- | :--- | :--- |
-| **`.list()`** | Resource | `list[T]` | **Single Page**. Returns only what SAP sends first. |
-| **`.execute()`** | Builder | `list[T]` | **Single Page**. Triggers the fluent query. |
+| **`.list()`** | Resource | `PaginatedResult[T]` | **Single Page** with metadata (`next_params`, `has_more`). |
+| **`.execute()`** | Builder | `PaginatedResult[T]` | **Single Page** with metadata. Triggers the fluent query. |
 | **`.stream()`** | Either | `Generator` | **Transparent**. Fetches every page until exhaustion. |
+
+---
+
+## Manual Pagination with `PaginatedResult`
+
+`.list()` and `.execute()` return a `PaginatedResult[T]` — it behaves like a
+list (iteration, `len()`, indexing, slicing) and additionally carries the
+OData pagination metadata:
+
+```python
+page = client.items.list(query)
+print(len(page), page[0].item_code)   # list-like access
+
+while page.has_more:
+    page = client.items.list(params=page.next_params)  # fetch next page
+```
+
+- `page.next_params` is the ready-to-use query-param dict for the next page
+  (derived from `odata.nextLink`, with your original `$filter`/`$select`
+  re-injected — see the Filter Persistence Guarantee below). It is `None` on
+  the last page.
+- `page.has_more` is sugar for `page.next_params is not None`.
+- `page.to_list()` returns the records as a plain `list[T]`.
+
+The async client is symmetric: `page = await client.items.list(...)`.
 
 ---
 
@@ -43,7 +68,7 @@ Understanding the semantics of each terminal method is critical for performance 
 You can control the HTTP request behavior and add safety bounds to prevent runaway streams.
 
 ### `page_size`
-Controls the `B1-PageSize` header. 
+Controls the `B1S-PageSize` header. 
 - **Smaller**: Less memory per request, more HTTP calls.
 - **Larger**: More memory per request, fewer HTTP calls (more efficient).
 

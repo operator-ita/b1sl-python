@@ -4,16 +4,18 @@ import asyncio
 import time
 from datetime import datetime, timedelta
 from typing import Optional
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlsplit
 
 import httpx
 
 from b1sl.b1sl.base_adapter import BaseRestAdapter, HookContext
 from b1sl.b1sl.exceptions.exceptions import (
     B1AuthError,
+    B1ConnectionError,
     B1Exception,
     B1NotFoundError,
     B1ValidationError,
+    SAPConcurrencyError,
 )
 from b1sl.b1sl.models.result import Result
 from b1sl.b1sl.pagination import extract_next_link
@@ -22,6 +24,9 @@ _HTTP_STATUS_TO_EXC: dict[int, type] = {
     400: B1ValidationError,
     401: B1AuthError,
     404: B1NotFoundError,
+    # 412 with SAP code -2039 raises earlier via _raise_if_concurrency_error
+    # (richer context); this entry guarantees the semantic type either way.
+    412: SAPConcurrencyError,
 }
 
 
@@ -45,7 +50,8 @@ class AsyncRestAdapter(BaseRestAdapter):
 
         Args:
             session_id (str, optional): An existing B1SESSION cookie to reuse.
-                Prevents a full login if already authenticated.
+                Prevents a full login if already authenticated. A session ID
+                is a bearer-credential equivalent — treat it like a password.
         """
         super().__init__(*args, **kwargs)
         self._initial_session_id = session_id
@@ -85,9 +91,15 @@ class AsyncRestAdapter(BaseRestAdapter):
                 ),
                 follow_redirects=True,
             )
-            # Hydrate session if provided
+            # Hydrate session if provided. Scope the cookie to the SAP host
+            # so it can never be sent to another domain (e.g. via a
+            # cross-host redirect).
             if self._initial_session_id:
-                 self._client.cookies.set("B1SESSION", self._initial_session_id)
+                 self._client.cookies.set(
+                     "B1SESSION",
+                     self._initial_session_id,
+                     domain=urlsplit(self.raw_base_url).hostname or "",
+                 )
                  self.is_session_active = True
                  # We don't have an expiry date, so we set it to None, which
                  # forces the 401-retry logic to handle it if it's already expired.
@@ -224,9 +236,10 @@ class AsyncRestAdapter(BaseRestAdapter):
         Dispatches an asynchronous HTTP request to SAP SL.
         Implements Senior Observability (Timing + Structured Logging + Async Hooks).
         """
-        # Removed redundant imports moved to module level
         if not _is_login:
             await self.ensure_session()
+        if self._client is None:
+            raise B1Exception("AsyncRestAdapter not initialized. Call connect() first.")
 
         req_id = self._generate_req_id()
         endpoint_path = endpoint if endpoint.startswith("/") else f"/{endpoint}"
@@ -240,13 +253,19 @@ class AsyncRestAdapter(BaseRestAdapter):
         response: httpx.Response | None = None
         is_success = False
 
+        is_dry_run = (
+            self._dry_run_active
+            and http_method in {"POST", "PATCH", "DELETE"}
+            and not _is_login
+        )
+
         try:
             # ── ETag: inject If-None-Match (GET) or If-Match (PATCH/DELETE/POST) ──
             req_headers = self._build_headers(http_method, endpoint_path)
             if headers:
                 req_headers.update(headers)
 
-            if self._dry_run_active and http_method in {"POST", "PATCH", "DELETE"} and not _is_login:
+            if is_dry_run:
                 self._logger.info(f"[{req_id}] [DRY RUN] Intercepting {http_method} {full_url}")
                 # We simulate a response object to keep the rest of the logic working (hooks, logs, etc)
                 is_success = True
@@ -286,6 +305,14 @@ class AsyncRestAdapter(BaseRestAdapter):
             # Use specialized exception based on status code if available
             exc_cls = _HTTP_STATUS_TO_EXC.get(e.response.status_code, B1Exception)
             raise exc_cls(f"SAP Error {sap_code}: {sap_msg}", details=body) from e
+        except B1Exception as e:
+            # Already semantic (e.g. raised by the recursive 401-retry call or
+            # by the re-login itself) — propagate without re-wrapping.
+            exc_captured = e
+            raise
+        except (httpx.ConnectError, httpx.TimeoutException, httpx.NetworkError) as e:
+            exc_captured = e
+            raise B1ConnectionError(f"Cannot reach SAP B1: {e}") from e
         except Exception as e:
             exc_captured = e
             raise B1Exception(f"Request failed: {e}") from e
@@ -302,7 +329,7 @@ class AsyncRestAdapter(BaseRestAdapter):
 
                 # Prepare context extras
                 context_extras = dict(self._obs.context_extras)
-                context_extras["is_dry_run"] = self._dry_run_active and http_method in {"POST", "PATCH", "DELETE"} and not _is_login
+                context_extras["is_dry_run"] = is_dry_run
 
                 ctx = HookContext(
                     req_id=req_id,
@@ -327,24 +354,40 @@ class AsyncRestAdapter(BaseRestAdapter):
 
         if _is_login and is_success and response is not None:
             data_out = response.json()
-            timeout_min = data_out.get("SessionTimeout", 30)
+            fallback_min = self.token_timeout.total_seconds() / 60
+            timeout_min = data_out.get("SessionTimeout", fallback_min)
             self.token_expiry = datetime.now() + timedelta(minutes=timeout_min - 2)
             self.is_session_active = True
 
         if is_success and response is not None:
-            data_out = response.json() if response.content else None
+            # ── ETag: proactively drop stale entries after a real write ──
+            if http_method in {"PATCH", "DELETE", "POST"} and not _is_login and not is_dry_run:
+                self._invalidate_etag_after_write(endpoint_path, dict(response.headers))
+            if response.content:
+                try:
+                    data_out = response.json()
+                except Exception:
+                    # Non-JSON success body — e.g. ``GET <Entity>/$count`` returns
+                    # a bare text/plain integer in OData v4. Return the raw text.
+                    data_out = response.text
+            else:
+                data_out = None
             # ── ETag: extract from header (preferred) or body fallback ──
-            self._extract_etag(endpoint_path, dict(response.headers), data_out)
+            self._extract_etag(
+                endpoint_path,
+                dict(response.headers),
+                data_out if isinstance(data_out, dict) else None,
+            )
+            is_dict = isinstance(data_out, dict)
+            _next_link = extract_next_link(data_out) if is_dict else None
             return Result(
                 status_code=response.status_code,
                 message=response.reason_phrase,
                 data=data_out,
-                next_link=extract_next_link(data_out) if isinstance(data_out, dict) else None,
-                next_params=self._get_ep_params(extract_next_link(data_out))
-                if isinstance(data_out, dict) and extract_next_link(data_out)
-                else None,
+                next_link=_next_link,
+                next_params=self._get_ep_params(_next_link) if _next_link else None,
                 metadata=(data_out.get("@odata.context") or data_out.get("odata.metadata"))
-                if isinstance(data_out, dict)
+                if is_dict
                 else None,
             )
         else:
@@ -352,33 +395,70 @@ class AsyncRestAdapter(BaseRestAdapter):
                 f"HTTP Error {response.status_code if response else 'Unknown'}"
             )
 
+    async def _request(self, http_method: str, endpoint, ep_params=None, data=None, headers=None):
+        """Run one public request, honouring per-request logout (reuse_token=False).
+
+        Parity with the sync adapter's ``handle_token`` decorator: when
+        ``reuse_token`` is False the session license is released after every
+        request instead of being held between calls.
+        """
+        try:
+            return await self._do(http_method, endpoint, ep_params, data, headers=headers)
+        finally:
+            if not self.reuse_token:
+                await self.logout()
+
     async def get(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute an asynchronous GET request."""
-        return await self._do("GET", endpoint, ep_params, data, headers=headers)
+        return await self._request("GET", endpoint, ep_params, data, headers=headers)
 
     async def post(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute an asynchronous POST request."""
-        return await self._do("POST", endpoint, ep_params, data, headers=headers)
+        return await self._request("POST", endpoint, ep_params, data, headers=headers)
 
     async def patch(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute an asynchronous PATCH request."""
-        return await self._do("PATCH", endpoint, ep_params, data, headers=headers)
+        return await self._request("PATCH", endpoint, ep_params, data, headers=headers)
 
     async def delete(self, endpoint, ep_params=None, data=None, headers=None):
         """Execute an asynchronous DELETE request."""
-        return await self._do("DELETE", endpoint, ep_params, data, headers=headers)
+        return await self._request("DELETE", endpoint, ep_params, data, headers=headers)
 
-    async def post_batch(self, body: str, headers: dict) -> httpx.Response:
+    async def post_batch(
+        self, body: str, headers: dict, _retry_once: bool = True
+    ) -> httpx.Response:
         """
         Special method to send raw multipart content for $batch operations.
+
+        Failures of the $batch request itself go through the same semantic
+        exception mapping as regular requests (401 → re-login retry,
+        404 → B1NotFoundError, etc.). Per-part failures inside a successful
+        batch never raise — they surface via BatchResults.
         """
         await self.ensure_session()
         if not self._client:
              raise B1Exception("AsyncRestAdapter not initialized.")
-        
+
         url = f"{self.raw_base_url}/$batch"
         # Combine with session headers if necessary,
         # although httpx already handles them via cookies.
         response = await self._client.post(url, content=body, headers=headers)
-        response.raise_for_status()
+
+        if response.status_code == 401 and _retry_once:
+            self._logger.warning("401 Unauthorized on $batch - retrying login...")
+            await self.ensure_session(
+                force_refresh_if_expiry=self.token_expiry, force_refresh=True
+            )
+            return await self.post_batch(body, headers, _retry_once=False)
+
+        try:
+            response.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            sap_code, sap_msg = self._parse_sap_error(e.response)
+            try:
+                err_body = e.response.json() if e.response.content else None
+            except Exception:
+                err_body = None
+            exc_cls = _HTTP_STATUS_TO_EXC.get(e.response.status_code, B1Exception)
+            raise exc_cls(f"SAP Error {sap_code}: {sap_msg}", details=err_body) from e
         return response

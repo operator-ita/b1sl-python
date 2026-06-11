@@ -86,7 +86,7 @@ async def main() -> None:
             print(f"✅ U_CFDi_MetodoPago → type={metodo.type}, desc='{metodo.description}'")
 
         # 4c. Iteration — UDFSchema is a proper iterable
-        float_fields = [u.name for u in schema if u.type == "db_Float"]
+        float_fields = [u.name for u in schema.values() if u.type == "db_Float"]
         print(f"   Float UDFs in OCRD: {float_fields or '(none)'}")
 
 

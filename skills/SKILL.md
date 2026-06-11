@@ -35,7 +35,6 @@ uv add b1sl-python
 pip install b1sl-python
 
 # Optional extras
-uv add "b1sl-python[hana]"     # SAP HANA driver (hdbcli)
 uv add "b1sl-python[django]"   # Django integration
 uv add "b1sl-python[generator]" # Metadata generation pipeline
 ```
@@ -107,8 +106,8 @@ Always use the flat public namespace for models and enums to ensure clean code a
 from b1sl.b1sl import entities as en
 
 # ✅ Best Practice: Field referencing
-from b1sl.b1sl.resources.odata import F  # Dynamic "Elite" Proxy
-from b1sl.b1sl.fields import Item          # Static "Pythonic" Fields
+from b1sl.b1sl.fields import Item, Order   # Static "Pythonic" fields (recommended)
+from b1sl.b1sl.resources.odata import F    # Raw proxy — UDFs / dynamic names only
 
 # Use 'en' for model instantiation
 new_item = en.Item(item_code="A100", item_name="New Item")
@@ -255,18 +254,19 @@ When dealing with large datasets, SAP Service Layer automatically paginates resu
 Available on any resource or builder.
 
 ```python
-# 1. Async iteration (using Dynamic 'F' proxy)
-async for item in b1.items.filter(F.OnHand > 0).stream(page_size=100):
+from b1sl.b1sl.fields import Item
+
+# 1. Async iteration
+async for item in b1.items.filter(Item.quantity_on_stock > 0).stream(page_size=100):
     process(item)
 
-# 2. Sync iteration (using Static 'Item' constants)
-from b1sl.b1sl.fields import Item
-for item in b1.items.filter(Item.on_hand > 5).stream():
+# 2. Sync iteration — same constants, same semantics
+for item in b1.items.filter(Item.quantity_on_stock > 5).stream():
     process(item)
 ```
 
 ### Configuration
-- **`page_size`**: Controls `B1-PageSize` header (HTTP efficiency).
+- **`page_size`**: Controls `B1S-PageSize` header (HTTP efficiency).
 - **`max_pages`**: Safety limit on number of HTTP requests.
 - **`.top(N)`**: Hard global limit on total items yielded across all pages.
 
@@ -318,6 +318,8 @@ else:
 - **Partial Success**: Top-level operations are independent. If one fails, others still succeed.
 - **Atomic ChangeSets**: If one operation inside a `changeset()` fails, the **entire** ChangeSet is rolled back.
 - **No Exceptions**: `batch.execute()` returns results even on failure. Use `results.all_ok` or `results.failed`.
+- **Sync parity**: `B1Client.batch()` works identically with plain `with` blocks and a sync `execute()`.
+- **Dry Run aware**: under `with b1.dry_run():`, `batch.execute()` returns synthesized per-op `204`s without sending anything to SAP.
 
 > [!IMPORTANT]
 > **OData Rule**: `GET` operations are **not permitted** inside a `changeset()` block. The SDK will raise a `ValueError` if this is attempted.
@@ -538,36 +540,46 @@ with B1Client(config) as b1:
 
 ## OData Query Builder
 
-Fluent, type-safe interface. No string concatenation needed. You can choose between the **Dynamic `F` Proxy** or **Static Field Constants**.
+Fluent, type-safe interface. No string concatenation needed. Lead with the **Static Field Constants** (`b1sl.b1sl.fields`); reach for the raw **`F` proxy** only for UDFs and dynamic names.
 
 ### Field Referencing Styles
 
 | Style | Variable | Import | Case | Autocomplete |
 | :--- | :--- | :--- | :--- | :--- |
-| **Dynamic** | `F` | `from b1sl.b1sl.resources.odata import F` | **SAP CamelCase** | ❌ None |
-| **Static** | `Item`, etc. | `from b1sl.b1sl.fields import Item` | **Pythonic snake_case** | ✅ Full |
+| **Static (recommended)** | `Item`, `Order`, etc. | `from b1sl.b1sl.fields import Item, Order` | **Pythonic snake_case** | ✅ Full |
+| **Dynamic (UDFs / raw)** | `F` | `from b1sl.b1sl.resources.odata import F` | **SAP CamelCase**, verbatim | ❌ None |
+
+The static constants carry the metadata-verified SAP names — including
+irregular spellings a naive conversion gets wrong (`service_call_id` →
+`ServiceCallID`, `bplid` → `BPLID`). A typo on a constant raises
+`AttributeError` immediately; a typo through `F` becomes a live SAP -1000
+error at runtime. Entity-set aliases mirror `entities`: `fields.Order`,
+`fields.Invoice`, … resolve to `DocumentFields`.
 
 ### Basic Examples
 
 ```python
-from b1sl.b1sl.resources.odata import F
 from b1sl.b1sl.fields import Item
+from b1sl.b1sl.resources.odata import F
 
-# 1. Using F (Dynamic, zero-import, uses SAP names)
-results = await b1.items.filter(F.QuantityOnStock > 0).execute()
-
-# 2. Using Static Constants (Autocomplete, uses snake_case)
+# 1. Static constants (recommended — autocomplete, snake_case, typo-safe)
 results = await b1.items.filter(Item.quantity_on_stock > 0).execute()
+
+# 2. F proxy — for UDFs, which have no generated constant
+results = await b1.items.filter(F.U_Categoria == "MRO").execute()
 ```
+
+> Never import the module as `F` (`from b1sl.b1sl import fields as F`): that
+> shadows the raw proxy and the two are not interchangeable.
 
 ### Operator Reference
 
 | Python Operator | OData Equivalent | Example |
 | :--- | :--- | :--- |
 | `==` | `eq` | `Item.item_code == 'A001'` |
-| `!=` | `ne` | `F.CardCode != 'C001'` |
+| `!=` | `ne` | `BusinessPartner.card_code != 'C001'` |
 | `>` | `gt` | `Item.quantity_on_stock > 0` |
-| `>=` | `ge` | `F.Price >= 100.5` |
+| `>=` | `ge` | `Order.doc_total >= 100.5` |
 | `&` | `and` | `(A) & (B)` |
 | `\|` | `or` | `(A) \| (B)` |
 | `~` | `not` | `~(A)` |
@@ -578,7 +590,7 @@ results = await b1.items.filter(Item.quantity_on_stock > 0).execute()
 
 ```python
 # .contains, .startswith, .endswith
-await b1.items.filter(F.ItemName.contains("Cheese")).execute()
+await b1.items.filter(Item.item_name.contains("Cheese")).execute()
 ```
 
 ### Expansions (Surgical)
@@ -591,19 +603,19 @@ sc = await client.service_calls.by_id(1).expand({
     ServiceCall.business_partner: [BusinessPartner.card_code, BusinessPartner.card_name]
 }).execute()
 
-# Path-based selection using '/' operator
+# Path-based selection using the '/' operator (never attribute chaining)
 sc = await client.service_calls.by_id(1).select(
-    F.Subject,
-    F.BusinessPartner / F.CardCode
-).expand([F.BusinessPartner]).execute()
+    ServiceCall.subject,
+    ServiceCall.business_partner / BusinessPartner.card_code,
+).expand([ServiceCall.business_partner]).execute()
 ```
 
 ### Terminal Methods
 
 | Method | Source | Returns | Behavior |
 | :--- | :--- | :--- | :--- |
-| **`.execute()`** | Builder | `list[T] \| T` | Executes query, returns **one page** (list) or single object. |
-| **`.list()`** | Resource | `list[T]` | Low-level fetch of **one page**. |
+| **`.execute()`** | Builder | `PaginatedResult[T] \| T` | Executes query, returns **one page** (list-like, with `next_params` / `has_more`) or single object. |
+| **`.list()`** | Resource | `PaginatedResult[T]` | One page with pagination metadata; pass `params=page.next_params` for the next page. |
 | **`.stream()`** | Either | `Generator` | **Transparent**. Fetches every page until exhaustion. |
 | **`.first()`** | Builder | `T \| None` | Adds `$top=1`, executed, returns first or `None`. |
 
@@ -613,9 +625,9 @@ sc = await client.service_calls.by_id(1).select(
 
 | Style | Tooling | Discovery | Case | Best For |
 | :--- | :--- | :--- | :--- | :--- |
-| **Pythonic** | `fields` | ✅ Full IDE | snake_case | Enterprise applications, complex logic. |
-| **Elite** | `F` Proxy | ❌ None | CamelCase | UDFs, quick queries, generic tools. |
-| **Hybrid** | F + Raw | ❌ None | Mixed | Custom tables, advanced OData. |
+| **Pythonic** | `fields` | ✅ Full IDE | snake_case | Default for every metadata field. |
+| **Dynamic** | `F` Proxy | ❌ None | CamelCase | UDFs, runtime-built names, generic tools. |
+| **Hybrid** | `fields` + raw strings | Mixed | Mixed | Custom tables, advanced OData. |
 
 ---
 
@@ -656,15 +668,13 @@ class Item(_Item):
     #  ^ Now fully typed with IDE autocomplete
 ```
 
-### Pattern C — Spontaneous Access (Legacy)
-`B1Model` uses `extra="allow"`. All UDFs returned by SAP are available via `.get()`:
+> [!NOTE]
+> Legacy code may read UDFs via `model.get("U_Color")` (possible because
+> `B1Model` uses `extra="allow"`). Discouraged: it does not enforce the `U_`
+> prefix, so a typo silently reads a core SAP field. Use `.udfs` instead —
+> it supports the full Mapping API, including `.get(key, default)`.
 
-```python
-item = client.items.get("C100")
-color = item.get("U_Color", "Not Found")
-```
-
-### Pattern D — Dynamic Schema & Validation (Advanced)
+### Pattern C — Dynamic Schema & Validation (Advanced)
 Discovery and validation using the metadata-driven `UDFSchema` container.
 
 ```python
@@ -703,7 +713,7 @@ src/b1sl/b1sl/
 ├── resources/
 │   ├── _generated/     # Auto-generated service classes (CRUD + actions)
 │   └── async_base.py   # AsyncGenericResource base
-└── fields.py           # Typed OData field constants (F.Item.item_code, ...)
+└── fields/             # Typed OData field constants (fields.Item.item_code, ...)
 ```
 
 **Key rules:**

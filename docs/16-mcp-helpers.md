@@ -131,6 +131,20 @@ for tool in tools:
     mcp_server.register_tool(**tool)
 ```
 
+> [!WARNING]
+> Registering the full toolset grants the connected LLM **create/update/delete**
+> on the resource — and the grammar system prompts are advisory, not an
+> enforcement layer. If your server only needs queries, pass
+> `read_only=True` to omit the write tools:
+>
+> ```python
+> tools = build_resource_toolset("orders", en.Document, read_only=True)
+> # [orders_list, orders_get]
+> ```
+>
+> If you do expose writes, consider pairing them with `client.dry_run()` or a
+> human-confirmation step.
+
 Or build individual tools:
 
 ```python
@@ -194,9 +208,9 @@ from b1sl.contrib.mcp import format_entity, format_collection, format_odata_erro
 item = client.items.get("A001")
 text = format_entity(item, title="Item A001")
 
-# Collection (one page from .execute())
-page = client.orders.list().filter("DocStatus eq 'bost_Open'").execute()
-text = format_collection(page, title="Open Orders", has_more=True)
+# Collection (one page from .execute() — a list-like PaginatedResult)
+page = client.orders.filter("DocStatus eq 'bost_Open'").execute()
+text = format_collection(page, title="Open Orders", has_more=page.has_more)
 
 # Error handling
 from b1sl.b1sl.exceptions.exceptions import (

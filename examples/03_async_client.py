@@ -13,9 +13,15 @@ from pathlib import Path
 # Add project roots to sys.path for standalone script execution
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from b1sl.b1sl import AsyncB1Client, B1Environment
+from b1sl.b1sl.fields import BusinessPartner
 from b1sl.b1sl.logging_utils import setup_logging
-from b1sl.b1sl.resources.odata import F
 
 
 async def main():
@@ -24,13 +30,13 @@ async def main():
 
     # 1. Async Context Manager
     async with AsyncB1Client(env.config) as b1:
-        
+
         # 2. Sequential Async Query (Fluent)
         print("🔍 [Async] Fetching top deudores...")
         results = await (
             b1.business_partners
-            .select(F.BusinessPartner.card_code, F.BusinessPartner.current_account_balance)
-            .filter(F.BusinessPartner.current_account_balance > 1000)
+            .select(BusinessPartner.card_code, BusinessPartner.current_account_balance)
+            .filter(BusinessPartner.current_account_balance > 1000)
             .top(3)
             .execute()
         )
@@ -47,7 +53,7 @@ async def main():
         items = await asyncio.gather(*tasks, return_exceptions=True)
 
         for res in items:
-            if isinstance(res, Exception):
+            if isinstance(res, BaseException):
                 print(f"  ❌ Error: {res}")
             else:
                 print(f"  ✨ Item: {res.item_name} ({res.item_code})")

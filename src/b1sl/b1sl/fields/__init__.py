@@ -1833,6 +1833,65 @@ from ._generated.entities.sales import (
 from ._generated.entities.sales import ServiceCallStatusFields as ServiceCallStatus
 from ._generated.entities.sales import ServiceCallTypeFields as ServiceCallType
 
+# ── Entity-set aliases (mirror b1sl.b1sl.entities) ──
+AssetCapitalization = AssetDocument  # From: entity set
+AssetCapitalizationCreditMemo = AssetDocument  # From: entity set
+AssetManualDepreciation = AssetDocument  # From: entity set
+AssetRetirement = AssetDocument  # From: entity set
+AssetTransfer = AssetDocument  # From: entity set
+CorrectionInvoice = Document  # From: entity set
+CorrectionInvoiceReversal = Document  # From: entity set
+CorrectionPurchaseInvoice = Document  # From: entity set
+CorrectionPurchaseInvoiceReversal = Document  # From: entity set
+CreditNote = Document  # From: entity set
+DeliveryNote = Document  # From: entity set
+DownPayment = Document  # From: entity set
+Draft = Document  # From: entity set
+EmployeeRolesSetup = EmployeeRoleSetup  # From: entity set
+EmployeesInfo = EmployeeInfo  # From: entity set
+FormPreference = ColumnPreferences  # From: entity set
+GoodsReturnRequest = Document  # From: entity set
+IncomingPayment = Payment  # From: entity set
+IntegrationPackagesConfigure = IntegrationPackageConfigure  # From: entity set
+InventoryCycle = InventoryCycles  # From: entity set
+InventoryGenEntry = Document  # From: entity set
+InventoryGenExit = Document  # From: entity set
+InventoryTransferRequest = StockTransfer  # From: entity set
+Invoice = Document  # From: entity set
+ItemGroup = ItemGroups  # From: entity set
+NCMCodesSetup = NCMCodeSetup  # From: entity set
+OccurrenceCode = OccurenceCode  # From: entity set
+Order = Document  # From: entity set
+PaymentDraft = Payment  # From: entity set
+ProjectManagement = PM_ProjectDocumentData  # From: entity set
+ProjectManagementTimeSheet = PM_TimeSheetData  # From: entity set
+PurchaseCreditNote = Document  # From: entity set
+PurchaseDeliveryNote = Document  # From: entity set
+PurchaseDownPayment = Document  # From: entity set
+PurchaseInvoice = Document  # From: entity set
+PurchaseOrder = Document  # From: entity set
+PurchaseQuotation = Document  # From: entity set
+PurchaseRequest = Document  # From: entity set
+PurchaseReturn = Document  # From: entity set
+Quotation = Document  # From: entity set
+ReportFilter = TaxReportFilter  # From: entity set
+Return = Document  # From: entity set
+ReturnRequest = Document  # From: entity set
+SalesOpportunity = SalesOpportunities  # From: entity set
+SalesOpportunityCompetitorsSetup = SalesOpportunityCompetitorSetup  # From: entity set
+SalesOpportunityInterestsSetup = SalesOpportunityInterestSetup  # From: entity set
+SalesOpportunityReasonsSetup = SalesOpportunityReasonSetup  # From: entity set
+SalesOpportunitySourcesSetup = SalesOpportunitySourceSetup  # From: entity set
+SelfCreditMemo = Document  # From: entity set
+SelfInvoice = Document  # From: entity set
+StockTransferDraft = StockTransfer  # From: entity set
+TaxCodeDeterminationsTCD = TaxCodeDeterminationTCD  # From: entity set
+TransportationDocument = TransportationDocumentData  # From: entity set
+UserFieldsMD = UserFieldMD  # From: entity set
+ValueMappingCommunication = ValueMappingCommunicationData  # From: entity set
+VendorPayment = Payment  # From: entity set
+WitholdingTaxDefinition = WTDCode  # From: entity set
+
 __all__ = [
     "AFEFceAPCheckECM2Entry",
     "AFEFceAPCheckECM2EntryParams",
@@ -2841,4 +2900,61 @@ __all__ = [
     "WorkflowTaskInputObject",
     "WorkflowTaskNote",
     "WorkflowTaskOutputObject",
+    "AssetCapitalization",
+    "AssetCapitalizationCreditMemo",
+    "AssetManualDepreciation",
+    "AssetRetirement",
+    "AssetTransfer",
+    "CorrectionInvoice",
+    "CorrectionInvoiceReversal",
+    "CorrectionPurchaseInvoice",
+    "CorrectionPurchaseInvoiceReversal",
+    "CreditNote",
+    "DeliveryNote",
+    "DownPayment",
+    "Draft",
+    "EmployeeRolesSetup",
+    "EmployeesInfo",
+    "FormPreference",
+    "GoodsReturnRequest",
+    "IncomingPayment",
+    "IntegrationPackagesConfigure",
+    "InventoryCycle",
+    "InventoryGenEntry",
+    "InventoryGenExit",
+    "InventoryTransferRequest",
+    "Invoice",
+    "ItemGroup",
+    "NCMCodesSetup",
+    "OccurrenceCode",
+    "Order",
+    "PaymentDraft",
+    "ProjectManagement",
+    "ProjectManagementTimeSheet",
+    "PurchaseCreditNote",
+    "PurchaseDeliveryNote",
+    "PurchaseDownPayment",
+    "PurchaseInvoice",
+    "PurchaseOrder",
+    "PurchaseQuotation",
+    "PurchaseRequest",
+    "PurchaseReturn",
+    "Quotation",
+    "ReportFilter",
+    "Return",
+    "ReturnRequest",
+    "SalesOpportunity",
+    "SalesOpportunityCompetitorsSetup",
+    "SalesOpportunityInterestsSetup",
+    "SalesOpportunityReasonsSetup",
+    "SalesOpportunitySourcesSetup",
+    "SelfCreditMemo",
+    "SelfInvoice",
+    "StockTransferDraft",
+    "TaxCodeDeterminationsTCD",
+    "TransportationDocument",
+    "UserFieldsMD",
+    "ValueMappingCommunication",
+    "VendorPayment",
+    "WitholdingTaxDefinition",
 ]

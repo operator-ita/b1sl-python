@@ -1,6 +1,7 @@
+import os
 import re
-import sys
 from typing import Any
+from urllib.parse import urlsplit
 
 import pytest
 
@@ -10,12 +11,6 @@ from tests.fakes.fake_rest_adapter import FakeRestAdapter
 
 # Load common test fixtures
 pytest_plugins = ["tests.fixtures.test_data"]
-
-# ── Mock hdbcli (SAP HANA driver) ──────────────────────────────────────────
-# This is always mocked at the top level to avoid installation requirements
-_hdbcli_mock = type("MockHdbcli", (), {"dbapi": type("MockDbApi", (), {})})
-sys.modules.setdefault("hdbcli", _hdbcli_mock)
-sys.modules.setdefault("hdbcli.dbapi", _hdbcli_mock.dbapi)
 
 
 @pytest.fixture
@@ -44,6 +39,24 @@ def b1_client_fake(fake_adapter: FakeRestAdapter) -> B1Client:
     return client
 
 
+def _real_hosts() -> list[str]:
+    """Hosts that must never appear in cassettes.
+
+    During recording the real SAP host is known via B1SL_BASE_URL; collect
+    both ``host:port`` and bare ``host`` so any occurrence (URIs, OData
+    context links, error messages) can be rewritten.
+    """
+    hosts: list[str] = []
+    base = os.environ.get("B1SL_BASE_URL", "")
+    if base:
+        parts = urlsplit(base)
+        if parts.netloc:
+            hosts.append(parts.netloc)
+        if parts.hostname and parts.hostname != parts.netloc:
+            hosts.append(parts.hostname)
+    return hosts
+
+
 @pytest.fixture(scope="session")
 def vcr_config() -> dict[str, Any]:
     """Global VCR configuration with manual scrubbing for total privacy.
@@ -58,8 +71,6 @@ def vcr_config() -> dict[str, Any]:
         placeholder_host = "sap-server.example.com"
 
         # Replace hostname in URI
-        import re
-
         request.uri = re.sub(
             r"https?://[^/]+", f"https://{placeholder_host}", request.uri
         )
@@ -73,8 +84,9 @@ def vcr_config() -> dict[str, Any]:
                 # Try to parse as JSON
                 data = json.loads(body_str)
 
-                # Define keys to redact
-                to_redact = {"password", "companydb", "company_db"}
+                # Define keys to redact (a prod re-record must not leak the
+                # real username either)
+                to_redact = {"password", "companydb", "company_db", "username"}
                 modified = False
 
                 for key in data:
@@ -100,24 +112,32 @@ def vcr_config() -> dict[str, Any]:
 
         # 2. Sanitize Response Body (OData contexts and SessionIds)
         try:
-            import json
-
             body_str = response["body"]["string"].decode("utf-8")
 
-            # Replace any real hostname occurrences in OData context links
             placeholder_host = "sap-server.example.com"
+
+            # Rewrite the real recording host anywhere in the body (not only
+            # in /b1s/ context links — error messages and metadata URLs too)
+            for host in _real_hosts():
+                body_str = body_str.replace(host, placeholder_host)
+
+            # Belt-and-braces: any host followed by a /b1s/ path
             body_str = re.sub(
                 r"https?://[^/]+/b1s/v\d+",
                 f"https://{placeholder_host}/b1s/v2",
                 body_str,
             )
 
-            # Redact explicit SessionId in Login responses
-            if "SessionId" in body_str:
-                data = json.loads(body_str)
-                if "SessionId" in data:
-                    data["SessionId"] = "REDACTED-SESSION-ID"
-                body_str = json.dumps(data)
+            # Redact SessionId at ANY nesting depth (regex, not top-level dict)
+            body_str = re.sub(
+                r'"SessionId"\s*:\s*"[^"]*"',
+                '"SessionId": "REDACTED-SESSION-ID"',
+                body_str,
+            )
+            # Redact raw B1SESSION cookie values echoed in bodies
+            body_str = re.sub(
+                r"B1SESSION=[^;\"'\s]+", "B1SESSION=REDACTED", body_str
+            )
 
             response["body"]["string"] = body_str.encode("utf-8")
         except Exception:

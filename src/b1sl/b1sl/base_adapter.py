@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 import asyncio
 import json
 import logging
+import re
 import uuid
 from collections import OrderedDict
 from dataclasses import dataclass, field
@@ -177,6 +178,14 @@ class BaseRestAdapter:
 
         self._logger = logger or logging.getLogger(f"b1sl.{self.__class__.__name__}")
 
+        if not self._ssl_verify:
+            self._logger.warning(
+                "TLS certificate verification is DISABLED (ssl_verify=False). "
+                "Credentials and the B1SESSION cookie are exposed to "
+                "man-in-the-middle attacks. Prefer installing the server's CA "
+                "certificate and keeping verification on."
+            )
+
         # Observability Setup
         self._obs = observability or ObservabilityConfig()
         self._hooks = HookDispatcher(self._obs.hooks)
@@ -279,10 +288,37 @@ class BaseRestAdapter:
         """Returns the fully normalized Service Layer base URL (including /b1s/v1)."""
         return self.raw_base_url
 
+    # Matches '/Entity(key)/Action' so bound-action POSTs can invalidate the
+    # ETag cached under the keyed parent path '/Entity(key)'.
+    _ACTION_PARENT_RE = re.compile(r"^(.*\([^()]*\))/[^/]+$")
+
     def _clear_etag(self, key: str) -> None:
         """Remove an ETag from the cache (e.g. after a conflict)."""
         if key in self._etag_cache:
             del self._etag_cache[key]
+
+    def _invalidate_etag_after_write(
+        self, endpoint: str, response_headers: dict
+    ) -> None:
+        """Proactively invalidate cached ETags after a successful write.
+
+        SAP SL answers PATCH/DELETE (and most bound Actions) with
+        ``204 No Content`` and no fresh ``ETag`` header, so whatever is
+        cached for the resource is stale the moment the write succeeds.
+        Keeping it would make the next PATCH/DELETE send a dead ``If-Match``
+        and hit a predictable 412. When the response *does* carry a fresh
+        ETag, ``_extract_etag`` keeps the cache current and nothing is
+        dropped here.
+
+        Bound actions target ``/Entity(key)/Action`` while the ETag lives
+        under the keyed parent path, so the parent entry is cleared too.
+        """
+        if response_headers.get("ETag") or response_headers.get("etag"):
+            return
+        self._clear_etag(endpoint)
+        parent = self._ACTION_PARENT_RE.match(endpoint)
+        if parent:
+            self._clear_etag(parent.group(1))
 
     def _set_etag(self, key: str, value: str) -> None:
         """Update the ETag for a given resource in the LRU cache.

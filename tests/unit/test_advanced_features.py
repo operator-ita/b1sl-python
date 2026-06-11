@@ -52,6 +52,10 @@ async def test_etag_workflow(b1_config):
         # Verify If-Match header was sent
         assert patch_route.calls.last.request.headers.get("If-Match") == '"v1"'
 
+        # Proactive invalidation: SAP answered 204 without a fresh ETag, so
+        # the stale cache entry must be gone immediately after the PATCH.
+        assert "/Items('A1')" not in adapter._etag_cache
+
 @pytest.mark.asyncio
 @respx.mock
 async def test_concurrency_error_handling(b1_config):
@@ -82,6 +86,96 @@ async def test_concurrency_error_handling(b1_config):
         assert "Another user has modified" in str(excinfo.value)
         # Verify cache was cleared
         assert "/Items('A1')" not in adapter._etag_cache
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_etag_cleared_after_successful_patch(b1_config):
+    """Contract step 3: a successful PATCH (204, no ETag) must clear the cache."""
+    respx.post("https://sap:50000/b1s/v1/Login").mock(
+        return_value=httpx.Response(200, json={"SessionId": "123", "SessionTimeout": 30})
+    )
+    respx.patch("https://sap:50000/b1s/v1/Items('A1')").mock(
+        return_value=httpx.Response(204)
+    )
+
+    adapter = AsyncRestAdapter(b1_config, session_id="123")
+    adapter._etag_cache["/Items('A1')"] = '"v1"'
+
+    async with adapter:
+        await adapter.patch("Items('A1')", data={"ItemName": "Updated"})
+        assert "/Items('A1')" not in adapter._etag_cache, (
+            "Stale ETag survived a successful PATCH — next DELETE would 412"
+        )
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_etag_cleared_after_successful_delete(b1_config):
+    """A successful DELETE must also clear the cached ETag (recreate-then-PATCH flow)."""
+    respx.post("https://sap:50000/b1s/v1/Login").mock(
+        return_value=httpx.Response(200, json={"SessionId": "123", "SessionTimeout": 30})
+    )
+    respx.delete("https://sap:50000/b1s/v1/Items('A1')").mock(
+        return_value=httpx.Response(204)
+    )
+
+    adapter = AsyncRestAdapter(b1_config, session_id="123")
+    adapter._etag_cache["/Items('A1')"] = '"v1"'
+
+    async with adapter:
+        await adapter.delete("Items('A1')")
+        assert "/Items('A1')" not in adapter._etag_cache
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_etag_parent_cleared_after_bound_action(b1_config):
+    """A bound Action POST ('/Entity(key)/Cancel') must clear the parent's ETag."""
+    respx.post("https://sap:50000/b1s/v1/Login").mock(
+        return_value=httpx.Response(200, json={"SessionId": "123", "SessionTimeout": 30})
+    )
+    respx.post("https://sap:50000/b1s/v1/Orders(1)/Cancel").mock(
+        return_value=httpx.Response(204)
+    )
+
+    adapter = AsyncRestAdapter(b1_config, session_id="123")
+    adapter._etag_cache["/Orders(1)"] = '"v1"'
+
+    async with adapter:
+        await adapter.post("Orders(1)/Cancel")
+        assert "/Orders(1)" not in adapter._etag_cache
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_etag_kept_when_response_carries_fresh_etag(b1_config):
+    """If SAP DOES return a fresh ETag on a write, it must be cached, not dropped."""
+    respx.post("https://sap:50000/b1s/v1/Login").mock(
+        return_value=httpx.Response(200, json={"SessionId": "123", "SessionTimeout": 30})
+    )
+    respx.patch("https://sap:50000/b1s/v1/Items('A1')").mock(
+        return_value=httpx.Response(204, headers={"ETag": '"v2"'})
+    )
+
+    adapter = AsyncRestAdapter(b1_config, session_id="123")
+    adapter._etag_cache["/Items('A1')"] = '"v1"'
+
+    async with adapter:
+        await adapter.patch("Items('A1')", data={"ItemName": "Updated"})
+        assert adapter._etag_cache.get("/Items('A1')") == '"v2"'
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_etag_not_cleared_by_dry_run(b1_config):
+    """Dry Run simulates writes — it must not mutate the real ETag cache."""
+    respx.post("https://sap:50000/b1s/v1/Login").mock(
+        return_value=httpx.Response(200, json={"SessionId": "123", "SessionTimeout": 30})
+    )
+
+    adapter = AsyncRestAdapter(b1_config, session_id="123")
+    adapter._etag_cache["/Items('A1')"] = '"v1"'
+
+    async with adapter:
+        with adapter.dry_run():
+            await adapter.patch("Items('A1')", data={"ItemName": "Simulated"})
+        assert adapter._etag_cache.get("/Items('A1')") == '"v1"'
 
 # ------------------------------------------------------------------------------
 # BATCH CLIENT TESTS
@@ -154,3 +248,29 @@ async def test_batch_changeset_grouping(b1_config):
     assert cs_id is not None
     assert batch._pending[1].changeset_id == cs_id
     assert batch.active_changeset_id is None # Reset after exit
+
+# ------------------------------------------------------------------------------
+# 401-RETRY SEMANTIC EXCEPTION (async)
+# ------------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_async_relogin_retry_preserves_semantic_exception(b1_config):
+    """After 401 → re-login, a failing retry must raise the mapped semantic
+    exception (404 → B1NotFoundError), not a re-wrapped generic B1Exception."""
+    from b1sl.b1sl.exceptions.exceptions import B1NotFoundError
+
+    respx.get("https://sap:50000/b1s/v1/Items('GONE')").mock(
+        side_effect=[
+            httpx.Response(401, json={"error": {"code": 301, "message": {"value": "Invalid session"}}}),
+            httpx.Response(404, json={"error": {"code": -2028, "message": {"value": "No matching records found"}}}),
+        ]
+    )
+    respx.post("https://sap:50000/b1s/v1/Login").mock(
+        return_value=httpx.Response(200, json={"SessionId": "new", "SessionTimeout": 30})
+    )
+
+    adapter = AsyncRestAdapter(b1_config, session_id="123")
+    async with adapter:
+        with pytest.raises(B1NotFoundError):
+            await adapter.get("Items('GONE')")

@@ -24,6 +24,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from b1sl.b1sl.models.base import B1Model
 
 
@@ -135,13 +137,13 @@ def format_entity(
 
 
 def format_collection(
-    models: "list[B1Model]",
+    models: "Sequence[B1Model]",
     *,
     max_rows: int = 50,
     title: str | None = None,
     has_more: bool = False,
 ) -> str:
-    """Format a list of B1Model instances as a markdown table for LLM context.
+    """Format a sequence of B1Model instances as a markdown table for LLM context.
 
     Derives column headers from the first model's scalar (non-navigation) fields.
     Navigation properties (``list`` / ``dict`` values) are excluded from the
@@ -152,7 +154,8 @@ def format_collection(
     pages are available.
 
     Args:
-        models: List of hydrated B1Model instances (e.g. from ``.execute()``).
+        models: Hydrated B1Model instances — a plain list or the
+            ``PaginatedResult`` returned by ``.list()`` / ``.execute()``.
         max_rows: Maximum rows to include in the table.  Rows beyond this are
             summarized as a footnote rather than omitted silently.
         title: Optional H2 heading inserted before the table.
@@ -164,7 +167,7 @@ def format_collection(
     Example::
 
         page = client.orders.execute()
-        text = format_collection(page, title="Open Orders", has_more=True)
+        text = format_collection(page, title="Open Orders", has_more=page.has_more)
         # → "## Open Orders\\n| DocEntry | CardCode | ...\\n..."
     """
     lines: list[str] = []

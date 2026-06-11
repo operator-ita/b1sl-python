@@ -1,21 +1,18 @@
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
 
+from b1sl.b1sl.async_rest_adapter import AsyncRestAdapter
 from b1sl.b1sl.models.base import B1Model
 from b1sl.b1sl.models.result import Result
 from b1sl.b1sl.resources.async_base import AsyncGenericResource
 from b1sl.b1sl.resources.base import GenericResource
+from b1sl.b1sl.rest_adapter import RestAdapter
 
 
 class MockModel(B1Model):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        for k, v in kwargs.items():
-            setattr(self, k, v)
-    @classmethod
-    def model_validate(cls, data):
-        return cls(**data)
+    item_code: str | None = None
+    id: int | None = None
 
 # ------------------------------------------------------------------------------
 # SYNC STREAM TESTS
@@ -23,7 +20,7 @@ class MockModel(B1Model):
 
 def test_sync_stream_multi_page():
     """Verify that .stream() fetches multiple pages correctly."""
-    adapter = MagicMock()
+    adapter = MagicMock(spec=RestAdapter)
     
     # Page 1: has nextLink
     res1 = Result(
@@ -53,7 +50,7 @@ def test_sync_stream_multi_page():
 
 def test_sync_stream_max_pages():
     """Verify that .stream() respects the max_pages limit."""
-    adapter = MagicMock()
+    adapter = MagicMock(spec=RestAdapter)
     
     # Always provide a nextLink
     res = Result(
@@ -75,13 +72,13 @@ def test_sync_stream_max_pages():
 
 def test_sync_stream_top_limit():
     """Verify that .top(N) acts as a hard limit across pages."""
-    adapter = MagicMock()
+    adapter = MagicMock(spec=RestAdapter)
     
     # Page 1: returns 2 items, but user only wants .top(3) and page_size=2
     res1 = Result(
         status_code=200,
         data={"value": [{"id": 1}, {"id": 2}]},
-        next_link="..."
+        next_link="https://localhost/b1s/v1/Items?$skip=2"
     )
     res2 = Result(
         status_code=200,
@@ -108,12 +105,12 @@ def test_sync_stream_top_limit():
 @pytest.mark.asyncio
 async def test_async_stream_multi_page():
     """Verify that .stream() fetches multiple pages correctly in async mode."""
-    adapter = AsyncMock()
+    adapter = MagicMock(spec=AsyncRestAdapter)
     
     res1 = Result(
         status_code=200,
         data={"value": [{"item_code": "A1"}]},
-        next_link="next"
+        next_link="https://localhost/b1s/v1/Items?$skip=2"
     )
     res2 = Result(
         status_code=200,
@@ -135,9 +132,9 @@ async def test_async_stream_multi_page():
 @pytest.mark.asyncio
 async def test_async_stream_top_limit():
     """Verify that .top(N) acts as a hard limit across pages in async mode."""
-    adapter = AsyncMock()
+    adapter = MagicMock(spec=AsyncRestAdapter)
     
-    res1 = Result(status_code=200, data={"value": [{"id": 1}, {"id": 2}]}, next_link="...")
+    res1 = Result(status_code=200, data={"value": [{"id": 1}, {"id": 2}]}, next_link="https://localhost/b1s/v1/Items?$skip=2")
     adapter.get.return_value = res1 # Keep returning more
     
     resource: AsyncGenericResource[MockModel] = AsyncGenericResource(adapter)

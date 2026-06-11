@@ -29,7 +29,10 @@ from __future__ import annotations
 import enum as _enum_module
 import types as _types_module
 from dataclasses import dataclass
-from typing import Any, Union, get_args, get_origin
+from typing import TYPE_CHECKING, Any, Union, get_args, get_origin
+
+if TYPE_CHECKING:
+    from b1sl.b1sl.models.base import B1Model
 
 # ── Data classes ──────────────────────────────────────────────────────────────
 
@@ -163,7 +166,7 @@ def _resolve_type(annotation: Any) -> tuple[str, bool]:
 
 # ── Public introspection API ──────────────────────────────────────────────────
 
-def entity_field_catalog(model: type) -> list[FieldDescriptor]:
+def entity_field_catalog(model: type[B1Model]) -> list[FieldDescriptor]:
     """Introspect a B1Model subclass and return a descriptor for each field.
 
     Derives field names, types, UDF status, and navigation status from Pydantic

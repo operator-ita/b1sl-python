@@ -53,8 +53,17 @@ class B1Exception(Exception):
 class B1ConnectionError(B1Exception):
     """Raised when a network-level failure prevents reaching SAP B1.
 
-    Wraps ``requests.exceptions.ConnectionError`` and
-    ``requests.exceptions.Timeout``.
+    Wraps ``httpx.ConnectError``, ``httpx.TimeoutException`` and other
+    ``httpx`` network errors (DNS failure, refused connection, read timeout).
+    """
+
+
+class B1PaginationError(B1Exception):
+    """Raised when an ``odata.nextLink`` cannot be followed safely.
+
+    Guards against infinite pagination loops: if SAP returns a nextLink whose
+    query carries no recognised cursor (``$skip`` / ``$skiptoken``), following
+    it would fetch the same page forever.
     """
 
 

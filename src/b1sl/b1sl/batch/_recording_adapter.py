@@ -65,6 +65,21 @@ class _RecordingAdapter:
     async def delete(self, endpoint, ep_params=None, data=None, headers=None):
         return self._record("DELETE", endpoint, ep_params, data, headers)
 
-    # Synchronous implementation for GenericResource (compatibility)
-    def get_sync(self, endpoint, ep_params=None, data=None, headers=None):
+
+class _SyncRecordingAdapter(_RecordingAdapter):
+    """
+    Synchronous variant used by ``SyncBatchClient`` so that GenericResource
+    methods (which call the adapter without awaiting) enqueue correctly.
+    """
+
+    def get(self, endpoint, ep_params=None, data=None, headers=None):  # type: ignore[override]
         return self._record("GET", endpoint, ep_params, data, headers)
+
+    def post(self, endpoint, ep_params=None, data=None, headers=None):  # type: ignore[override]
+        return self._record("POST", endpoint, ep_params, data, headers)
+
+    def patch(self, endpoint, ep_params=None, data=None, headers=None):  # type: ignore[override]
+        return self._record("PATCH", endpoint, ep_params, data, headers)
+
+    def delete(self, endpoint, ep_params=None, data=None, headers=None):  # type: ignore[override]
+        return self._record("DELETE", endpoint, ep_params, data, headers)

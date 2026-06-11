@@ -40,8 +40,7 @@ settings.B1SL_PASSWORD = MockSettings.B1SL_PASSWORD
 settings.B1SL_COMPANY_DB = MockSettings.B1SL_COMPANY_DB
 settings.B1SL_ENV = MockSettings.B1SL_ENV
 
-# --- 2. USING THE ADAPTER ---
-from b1sl.b1sl.adapter import get_rest_adapter
+# --- 2. USING THE CLIENT ---
 from b1sl.b1sl.client import B1Client
 from b1sl.b1sl.config import B1Config
 
@@ -52,17 +51,11 @@ def django_view_example():
     """
     print("--- Django Integration Example ---")
 
-    # Method A: Use the legacy shared adapter (Singleton-like)
-    # Useful for porting old scripts quickly.
-    adapter = get_rest_adapter()
-    print(f"Shared Adapter initialized for: {adapter.url}")
-
-    # Method B: Use the B1Client with Django Config (Recommended)
-    # This is the modern, type-safe approach.
+    # Load the SDK config straight from django.conf.settings
     config = B1Config.from_django_settings()
     client = B1Client(config)
 
-    print(f"B1Client connected to {client._adapter.url}")
+    print(f"B1Client configured for {config.base_url}")
     print("Successfully loaded settings from django.conf.settings!")
 
 if __name__ == "__main__":

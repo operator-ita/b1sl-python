@@ -13,7 +13,7 @@ help:
 	@echo "  make test-vcr         - Run integration tests with recorded cassettes (Offline)"
 	@echo "  make test-record      - Record new VCR cassettes against a real SAP server (Requires .env)"
 	@echo "  make test-demo        - Live smoke tests against SAP demo server (APP_ENV=demo)"
-	@echo "  make test-ci          - Full test suite + coverage (for GitHub Actions)"
+	@echo "  make test-ci          - Full offline suite (unit + VCR replay) + coverage"
 	@echo "  make coverage-html    - Run test-ci and open visual HTML gap analysis"
 	@echo "  make lint             - Run static analysis (Ruff + Mypy)"
 	@echo "  make clean            - Remove cache and temporary files"
@@ -36,9 +36,11 @@ test-demo:
 	@echo "🏗️  Running live smoke tests against demo server..."
 	APP_ENV=demo PYTHONPATH=$(PYTHONPATH) $(PYTEST) -m "integration"
 
+# Superset of what CI runs (CI: unit-only matrix, no coverage). Fully offline:
+# --record-mode=none ensures VCR tests replay cassettes and never hit a server.
 test-ci:
-	@echo "⛓️ Running full CI suite (Unit + VCR + Coverage)..."
-	PYTHONPATH=$(PYTHONPATH) $(PYTEST) -m "not integration" --cov=src --cov-report=xml --cov-report=term
+	@echo "⛓️ Running full offline suite (Unit + VCR replay + Coverage)..."
+	PYTHONPATH=$(PYTHONPATH) $(PYTEST) -m "not integration" --record-mode=none --cov=src --cov-report=xml --cov-report=term
 
 coverage-html: test-ci
 	@echo "📊 Generating visual coverage report..."
@@ -59,8 +61,12 @@ release: lint test
 		echo "❌ Error: Version required. Example: make release v=0.1.2"; \
 		exit 1; \
 	fi
+	@grep -q '^version = "$(v)"' pyproject.toml || { \
+		echo "❌ Error: pyproject.toml version does not match $(v). Bump it first."; \
+		exit 1; \
+	}
 	@echo "🚀 Preparing release v$(v)..."
-	git add .
+	git add -u
 	git commit -m "chore: Release v$(v) - Automated build"
 	git tag -a v$(v) -m "v$(v)"
 	@echo "📤 Pushing to GitHub (Branch main + Tags)..."

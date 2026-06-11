@@ -35,7 +35,7 @@ wheels = [
 
 [[package]]
 name = "b1sl-python"
-version = "0.5.0"
+version = "0.6.0"
 source = { editable = "." }
 dependencies = [
     { name = "httpx" },
@@ -47,7 +47,6 @@ dependencies = [
 all = [
     { name = "beautifulsoup4" },
     { name = "django" },
-    { name = "hdbcli" },
     { name = "lxml" },
 ]
 dev = [
@@ -69,16 +68,12 @@ generator = [
     { name = "beautifulsoup4" },
     { name = "lxml" },
 ]
-hana = [
-    { name = "hdbcli" },
-]
 
 [package.metadata]
 requires-dist = [
-    { name = "b1sl-python", extras = ["hana", "django", "generator"], marker = "extra == 'all'" },
+    { name = "b1sl-python", extras = ["django", "generator"], marker = "extra == 'all'" },
     { name = "beautifulsoup4", marker = "extra == 'generator'", specifier = ">=4.14.3" },
     { name = "django", marker = "extra == 'django'", specifier = ">=4.2,<6" },
-    { name = "hdbcli", marker = "extra == 'hana'", specifier = ">=2.20.0,<3" },
     { name = "httpx", specifier = ">=0.28.1,<1" },
     { name = "lxml", marker = "extra == 'generator'", specifier = ">=6.0.2" },
     { name = "mypy", marker = "extra == 'dev'" },
@@ -94,7 +89,7 @@ requires-dist = [
     { name = "respx", marker = "extra == 'dev'", specifier = ">=0.22.0" },
     { name = "ruff", marker = "extra == 'dev'" },
 ]
-provides-extras = ["hana", "django", "generator", "dev", "all"]
+provides-extras = ["django", "generator", "dev", "all"]
 
 [[package]]
 name = "beautifulsoup4"
@@ -341,21 +336,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/01/ee/02a2c011bdab74c6fb3c75474d40b3052059d95df7e73351460c8588d963/h11-0.16.0.tar.gz", hash = "sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1", size = 101250, upload-time = "2025-04-24T03:35:25.427Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl", hash = "sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86", size = 37515, upload-time = "2025-04-24T03:35:24.344Z" },
-]
-
-[[package]]
-name = "hdbcli"
-version = "2.28.19"
-source = { registry = "https://pypi.org/simple" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/96/52/13bfccb15563247ca651da97f462e172cc7fbfdb22d70bcd107798bc04ed/hdbcli-2.28.19-cp38-abi3-macosx_10_15_x86_64.whl", hash = "sha256:911f48316b69f83c87669ee68bf146c761562a7ab8aea1166f0e43610c3e2801", size = 5675973, upload-time = "2026-03-27T13:52:11.539Z" },
-    { url = "https://files.pythonhosted.org/packages/1c/91/54165183d56611f144a14233357b7a8b88b23dad20212b76ca2b7f2e0971/hdbcli-2.28.19-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:cd809b7e904c7e1315d23db9a721b73e9dd5b65a4801d8cabfcca2100b3a151c", size = 5146893, upload-time = "2026-03-27T13:52:14.634Z" },
-    { url = "https://files.pythonhosted.org/packages/df/c4/65b07158fd1a61d9722530ae04c0cc0cba95bf6a2d5047000b5ce5fec116/hdbcli-2.28.19-cp38-abi3-manylinux2014_aarch64.whl", hash = "sha256:6fd7024fd8afbd17efd85da42ee35c0129a688f769c0eb08257f4c9f28d9467f", size = 5629225, upload-time = "2026-03-27T13:52:16.395Z" },
-    { url = "https://files.pythonhosted.org/packages/09/0d/b149f6c7eabd3196b0b75ab5fe0b10befdc87ec154c73bc79234400611cc/hdbcli-2.28.19-cp38-abi3-manylinux2014_ppc64le.whl", hash = "sha256:b88f02736c979e5f8521c958bdd8fe8dc939e9b9562ed084f15a1c98db0542a8", size = 6055747, upload-time = "2026-03-27T13:52:18.877Z" },
-    { url = "https://files.pythonhosted.org/packages/65/fe/c74f8b43efa659b1e62a591435b75de82ec5c26a25e1a9d6bb55e8e15712/hdbcli-2.28.19-cp38-abi3-manylinux2014_x86_64.whl", hash = "sha256:b78699e0492292098ea60c3f123a7e773e56a44735a21e571c71ac282692cadb", size = 5901836, upload-time = "2026-03-27T13:52:21.137Z" },
-    { url = "https://files.pythonhosted.org/packages/40/dd/74ad7bfe55ecb20cacc6a72d00e6ff80ad7fd34533aa60938a81126b4a7f/hdbcli-2.28.19-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:0f0f9baf0105335b594cbdfbbd9d2f7b1d88f111068bb0af12b00dd984d58bef", size = 5805033, upload-time = "2026-03-27T13:52:23.641Z" },
-    { url = "https://files.pythonhosted.org/packages/7d/1a/87d9853610abf3678414c1fa58c6a670b222469c7f8c9830e3b658223806/hdbcli-2.28.19-cp38-abi3-win32.whl", hash = "sha256:715499808eb41226b85696b6f6ac14d766f1ce044fdea531a317e39cbfc5218f", size = 3379622, upload-time = "2026-03-27T13:52:25.207Z" },
-    { url = "https://files.pythonhosted.org/packages/30/f8/1160b1e6eb899b72369cbbc02ec6e997bbc43fa1e9bbc808eaa3728b3021/hdbcli-2.28.19-cp38-abi3-win_amd64.whl", hash = "sha256:6693c84fbf3c97a4345d77c8247fb72da36e300665026ddcda422c2470f8b22b", size = 3684287, upload-time = "2026-03-27T13:52:26.992Z" },
 ]
 
 [[package]]

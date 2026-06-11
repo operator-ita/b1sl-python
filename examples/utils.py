@@ -8,11 +8,7 @@ from b1sl.b1sl import AsyncB1Client, B1Client, B1Environment
 from b1sl.b1sl.testing import B1TestHelper
 
 # Suppress Pydantic warnings for examples
-try:
-    from pydantic import ArbitraryTypeWarning
-    warnings.filterwarnings("ignore", category=ArbitraryTypeWarning)
-except ImportError:
-    warnings.filterwarnings("ignore", module="pydantic")
+warnings.filterwarnings("ignore", module="pydantic")
 
 # Configure logging
 logging.basicConfig(level=logging.ERROR)
@@ -29,6 +25,8 @@ except ImportError:
 
 class ExampleRunner:
     """Helper class to standardize SAP B1 examples."""
+
+    client: B1Client
 
     def __init__(self, name: str, **client_kwargs):
         self.name = name
@@ -64,11 +62,14 @@ def use_sap_b1(example_name: str, **client_kwargs) -> Generator[ExampleRunner, N
         yield runner
     except Exception as e:
         runner.error("Execution failed", e)
-    finally:
-        pass
+        # Propagate a nonzero exit code so failures are visible to CI/scripts
+        # instead of being silently swallowed.
+        raise SystemExit(1) from e
 
 class AsyncExampleRunner(ExampleRunner):
     """Asynchronous version of ExampleRunner."""
+
+    client: AsyncB1Client
 
     def __init__(self, name: str, **client_kwargs):
         self.name = name
@@ -86,8 +87,7 @@ async def use_async_sap_b1(example_name: str, **client_kwargs) -> AsyncGenerator
             yield runner
     except Exception as e:
         runner.error("Execution failed", e)
-    finally:
-        pass
+        raise SystemExit(1) from e
 
 
 def build_async_client():

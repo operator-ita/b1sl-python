@@ -330,8 +330,35 @@ class SDKGenerator:
 
         all_types = sorted(list(self.metadata.entities.keys()) + list(self.metadata.complex_types.keys()))
 
+        # Entity-set aliases (e.g. Order = Document) — mirror b1sl.b1sl.entities
+        # so the fields facade resolves the same names developers use there.
+        def singularize(name: str) -> str:
+            if name.endswith("s"):
+                if name.endswith("ies"): return name[:-3] + "y"
+                return name[:-1]
+            return name
+
+        taken = set(all_types)
+        field_aliases: dict[str, str] = {}
+        for es_name, es in sorted(self.metadata.entity_sets.items()):
+            singular = singularize(es_name)
+            if (
+                singular != es.entity_type
+                and es.entity_type in self.metadata.entities
+                and singular not in taken  # never shadow a real Fields import
+            ):
+                field_aliases[singular] = es.entity_type
+                taken.add(singular)
+
+        if field_aliases:
+            lines += ["", "# ── Entity-set aliases (mirror b1sl.b1sl.entities) ──"]
+            for name in sorted(field_aliases):
+                lines.append(f"{name} = {field_aliases[name]}  # From: entity set")
+
         lines += ["", "__all__ = ["]
         for name in all_types:
+            lines.append(f'    "{name}",')
+        for name in sorted(field_aliases):
             lines.append(f'    "{name}",')
         lines.append("]")
 

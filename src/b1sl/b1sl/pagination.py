@@ -1,5 +1,7 @@
 from urllib.parse import parse_qs, urlparse
 
+from b1sl.b1sl.exceptions.exceptions import B1PaginationError
+
 
 def extract_next_link(data: dict) -> str | None:
     """Return the OData nextLink from a response body, tolerating v3 and v4 formats.
@@ -57,10 +59,21 @@ def build_next_params(current_params: dict, next_link: str) -> dict:
 
     # We start with a copy of current_params to preserve filters/selectors
     new_params = current_params.copy()
-    
-    # We take ONLY $skip from the next_link
+
+    # Take ONLY the cursor parameters from the next_link. SAP normally pages
+    # with $skip; some endpoints/versions page with an opaque $skiptoken —
+    # ignoring it would re-request the same page forever.
     next_skip = next_query_params.get("$skip")
     if next_skip:
         new_params["$skip"] = next_skip[0]
-        
+    next_skiptoken = next_query_params.get("$skiptoken")
+    if next_skiptoken:
+        new_params["$skiptoken"] = next_skiptoken[0]
+
+    if not next_skip and not next_skiptoken:
+        raise B1PaginationError(
+            "odata.nextLink carries no recognised cursor ($skip/$skiptoken); "
+            f"following it would loop on the same page. nextLink={next_link!r}"
+        )
+
     return new_params

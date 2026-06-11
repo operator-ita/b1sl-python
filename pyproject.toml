@@ -1,24 +1,27 @@
 [build-system]
-requires = ["hatchling"]
+# hatchling >= 1.27 required for PEP 639 license metadata
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
 name = "b1sl-python"
-version = "0.5.0"
-description = "A framework-agnostic Python SDK for SAP Business One Service Layer and SAP HANA. (Unofficial)"
+version = "0.6.0"
+description = "A framework-agnostic Python SDK for the SAP Business One Service Layer. (Unofficial)"
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
+# "hana" kept deliberately: SQLQueries runs SQL over HANA via the Service Layer.
 keywords = ["sap", "sap-b1", "service-layer", "hana", "erp", "odata"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
-
     "Typing :: Typed",
 ]
 authors = [
@@ -37,9 +40,9 @@ Homepage = "https://github.com/operator-ita/b1sl-python"
 Repository = "https://github.com/operator-ita/b1sl-python"
 "Bug Tracker" = "https://github.com/operator-ita/b1sl-python/issues"
 Documentation = "https://github.com/operator-ita/b1sl-python/tree/main/docs"
+Changelog = "https://github.com/operator-ita/b1sl-python/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
-hana = ["hdbcli>=2.20.0,<3"]
 django = ["django>=4.2,<6"]
 generator = [
     "beautifulsoup4>=4.14.3",
@@ -59,7 +62,7 @@ dev = [
     "pytest-cov",
 ]
 
-all = ["b1sl-python[hana,django,generator]"]
+all = ["b1sl-python[django,generator]"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/b1sl"]
@@ -79,7 +82,13 @@ exclude = [
     "/examples",
     "/docs",
     "/.env",
+    "/.env.example",
     "/skills",
+    "/tests",
+    "/configs",
+    "/TODO.md",
+    "/ROADMAP.md",
+    "/skills-lock.json",
     "agents.md",
 ]
 
@@ -90,16 +99,22 @@ markers = [
     "integration: tests that require a real SAP B1 Service Layer connection",
     "vcr: tests that use pytest-recording to capture HTTP traffic",
 ]
-addopts = "--tb=short --cov=src --cov-report=term-missing"
+# Coverage instrumentation is opt-in (make test-ci / coverage-html): keeping
+# --cov out of addopts makes plain `pytest` runs and collection fast.
+addopts = "--tb=short"
 
 [tool.mypy]
 files = ["src"]
+plugins = ["pydantic.mypy"]
 strict = false
 ignore_missing_imports = true
 exclude = ["_generated"]
 check_untyped_defs = true
 warn_unreachable = true
-disable_error_code = ["attr-defined", "misc", "override", "assignment", "call-arg", "valid-type", "type-var", "unreachable", "call-overload", "arg-type", "union-attr"]
+# Re-armed (audit P1): attr-defined / arg-type / call-arg / union-attr are
+# ACTIVE — they catch protocol drift and sync/async asymmetries. Only codes
+# that fire en masse on pydantic/generated-model idioms stay disabled.
+disable_error_code = ["misc", "override", "assignment", "valid-type", "type-var", "unreachable", "call-overload"]
 
 [tool.ruff]
 line-length = 88

@@ -76,27 +76,17 @@ If you want behavior for only one document type, put the logic behind a
 check on `doc_object_code` instead of relying on the class name.
 
 ## 2. Managing UDFs (Dynamic)
-The SDK's "Vanilla" policy excludes `U_` fields from the core to maintain stability. However, you can still interact with them effortlessly:
+The SDK's "Vanilla" policy excludes `U_` fields from the core to maintain stability. Three patterns cover UDF access — in order of preference:
 
-### Pattern A: Spontaneous Access (No Setup)
-`B1Model` is configured with `extra="allow"`. Any UDFs returned by SAP are preserved in `model.__pydantic_extra__`.
-
-```python
-item = client.items.get("C100")
-# Use the .get() helper in B1Model for safe UDF access
-color = item.get("U_Color", "Not Found")
-```
-
-Now `item.my_color` is a first-class citizen with full IDE autocompletion and type checking.
-
-### Pattern C: Dynamic `.udfs` Mapping (Recommended for one-offs)
-The most elegant way to handle UDFs without modifying any code is using the `.udfs` property. It provides a protected dictionary-like interface that ensures you only touch `U_` fields.
+### Pattern A: Dynamic `.udfs` Mapping (Recommended)
+The canonical way to handle UDFs without modifying any code is the `.udfs` property. It provides a protected dictionary-like interface that ensures you only touch `U_` fields.
 
 ```python
 item = client.items.get("C100")
 
 # 1. Access UDFs (Strictly requires 'U_' prefix)
 color = item.udfs["U_Color"]
+size = item.udfs.get("U_Size", 0)   # standard Mapping API — default supported
 
 # 2. Update UDFs
 item.udfs["U_Priority"] = "High"
@@ -113,7 +103,21 @@ new_item = en.Item(
 - **Explicitness**: It clearly separates SAP core fields from your implementation's custom fields.
 - **Native Serialization**: Values in `.udfs` are automatically included in the root of the JSON payload when calling `.to_api_payload()`.
 
-### Pattern D: Schema Discovery & Validation (Advanced)
+In `filter()` expressions, reference UDFs through the raw `F` proxy
+(`F.U_Color == "Red"`) — UDFs are not in `$metadata`, so no static constant
+exists for them.
+
+> [!NOTE]
+> Because `B1Model` uses `extra="allow"`, every UDF returned by SAP is
+> preserved internally even without setup, and legacy code may still read them
+> via `model.get("U_Color")`. That accessor is **discouraged**: unlike
+> `.udfs`, it does not enforce the `U_` prefix, so a typo silently reads (or
+> shadows) a core SAP field. New code should always go through `.udfs`.
+
+### Pattern B: Typed UDFs (Stable, heavy use)
+If a UDF is critical to your app logic, declare it as a first-class typed field in the Override system (see section 1): `my_color: str | None = Field(None, alias="U_RealColor")`. You get IDE autocompletion and validation for free.
+
+### Pattern C: Schema Discovery & Validation (Advanced)
 If you need to programmatically discover what UDFs are available in the current environment or validate data against SAP's metadata before sending it, use the `get_udf_schema()` method.
 
 ```python

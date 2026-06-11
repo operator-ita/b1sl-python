@@ -312,22 +312,34 @@ class B1Model(BaseModel):
         any extra UDF fields stored in ``__pydantic_extra__``.
         """
         raw: dict[str, Any] = self.model_dump(by_alias=True, exclude_unset=True)
+        return {key: encode_sap_value(val) for key, val in raw.items()}
 
-        encoded: dict[str, Any] = {}
-        for key, val in raw.items():
-            if isinstance(val, bool):
-                encoded[key] = _SAP_YES if val else _SAP_NO
-            elif isinstance(val, date):
-                encoded[key] = val.isoformat()
-            elif isinstance(val, Enum):
-                # For BoYesNoEnum and others, we might need special handling if they are IntEnums but represent booleans
-                if val.name in ("tYES", "boYES"):
-                    encoded[key] = _SAP_YES
-                elif val.name in ("tNO", "boNO"):
-                    encoded[key] = _SAP_NO
-                else:
-                    encoded[key] = val.value
-            else:
-                encoded[key] = val
 
-        return encoded
+def encode_sap_value(value: Any) -> Any:
+    """Recursively encode a Python value to SAP Service Layer wire format.
+
+    Applied to every value in an outgoing payload — including values nested
+    inside collections such as ``DocumentLines`` — so the encoding rules hold
+    at any depth:
+
+    * ``bool``          → ``"tYES"`` / ``"tNO"``
+    * ``datetime.date`` → ISO string ``"YYYY-MM-DD"``
+    * boolean-like Enums (``tYES``/``boYES``…) → ``"tYES"`` / ``"tNO"``;
+      other Enums → their ``.value``
+    * ``dict`` / ``list`` / ``tuple`` → recursed element-wise
+    """
+    if isinstance(value, bool):
+        return _SAP_YES if value else _SAP_NO
+    if isinstance(value, date):
+        return value.isoformat()
+    if isinstance(value, Enum):
+        if value.name in ("tYES", "boYES"):
+            return _SAP_YES
+        if value.name in ("tNO", "boNO"):
+            return _SAP_NO
+        return value.value
+    if isinstance(value, dict):
+        return {k: encode_sap_value(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [encode_sap_value(v) for v in value]
+    return value

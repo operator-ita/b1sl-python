@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TypeVar
 
 from b1sl.b1sl.models.base import B1Model
+from b1sl.b1sl.models.paginated_result import PaginatedResult
 from b1sl.b1sl.resources.async_base import AsyncGenericResource
 from b1sl.b1sl.resources.base import GenericResource, ODataQuery
 
@@ -34,9 +35,11 @@ class UDOResource(GenericResource[B1Model]):
     def list(
         self,
         query: ODataQuery | None = None,
-    ) -> list[B1Model]:
-        """Paginated list of UDO records."""
-        return super().list(query)
+        *,
+        params: dict | None = None,
+    ) -> PaginatedResult[B1Model]:
+        """Single page of UDO records with pagination metadata."""
+        return super().list(query, params=params)
 
     def create(self, data: B1Model) -> B1Model:
         """POST a new UDO record. Returns the created record as a plain B1Model."""
@@ -53,7 +56,7 @@ class UDOResource(GenericResource[B1Model]):
 
 class AsyncUDOResource(AsyncGenericResource[B1Model]):
     """
-    Versión asíncrona de UDOResource.
+    Async counterpart of UDOResource.
     """
 
     def __init__(self, adapter, *, table_name: str) -> None:
@@ -65,8 +68,13 @@ class AsyncUDOResource(AsyncGenericResource[B1Model]):
     async def get(self, doc_entry: int, *, select: list[str] | None = None) -> B1Model:
         return await super().get(doc_entry, select=select)
 
-    async def list(self, query: ODataQuery | None = None) -> list[B1Model]:
-        return await super().list(query)
+    async def list(
+        self,
+        query: ODataQuery | None = None,
+        *,
+        params: dict | None = None,
+    ) -> PaginatedResult[B1Model]:
+        return await super().list(query, params=params)
 
     async def create(self, data: B1Model) -> B1Model:
         return await super().create(data)

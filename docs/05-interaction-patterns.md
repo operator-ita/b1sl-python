@@ -5,24 +5,30 @@ The SDK supports three distinct "Styles" of interaction. Choosing the right one 
 
 | Style | Key Tool | Best For... | Type Safety |
 | :--- | :--- | :--- | :--- |
-| **Pythonic** | `fields` (F constants) | Enterprise core, complex logic | **High** (Auto-complete) |
-| **Hybrid** | F + Strings | UDFs, Custom Tables | **Medium** |
+| **Pythonic** | `fields` constants | Enterprise core, complex logic | **High** (Auto-complete) |
+| **Hybrid** | `fields` + UDF strings / `F` | UDFs, Custom Tables | **Medium** |
 | **SAP-Pure** | Raw Strings | Porting existing API docs | **Low** |
 
 ## 1. Pattern: Pythonic (The Senior Way)
-Highly recommended for production. It uses `fields` (generated as `F`) to map attributes. This prevents typos and enables IDE and type-checker support.
+Highly recommended for production. It uses the generated `fields` constants to map snake_case attributes to exact SAP names. This prevents typos and enables IDE and type-checker support.
 
 ```python
-from b1sl.b1sl import fields as F
+from b1sl.b1sl import fields
 
 # Fluent query (Advanced)
 # .stream() handles all pages automatically
-async for item in client.items.filter(F.Item.item_code.startswith("A")).stream():
+async for item in client.items.filter(fields.Item.item_code.startswith("A")).stream():
     print(item.item_name)
-    
+
 # .execute() returns only the first page
 results = await client.items.top(5).execute()
 ```
+
+> [!WARNING]
+> Do **not** alias the module as `F` (`from b1sl.b1sl import fields as F`). The
+> SDK also exports a different `F` — the raw proxy in `resources.odata` — and
+> mixing them up produces broken queries: `proxy_F.Item.item_code` raises
+> `AttributeError`, while `fields.Item.item_code` is the real constant.
 
 > [!TIP]
 > **Preferred Mutation Pattern: Surgical Deltas**.
@@ -32,16 +38,24 @@ results = await client.items.top(5).execute()
 Use this when you need an SAP core entity mixed with User-Defined Fields.
 
 ```python
+from b1sl.b1sl import fields
+
 bp = await client.business_partners.get(
     "C0001",
-    select=[F.BusinessPartner.card_name, "U_Segmento"], # Mix!
+    select=[fields.BusinessPartner.card_name, "U_Segmento"], # Mix!
 )
 
-# Recommended: Explicit UDF access via the .udfs mapping
+# UDF access via the protected .udfs mapping
 custom_val = bp.udfs["U_Segmento"]
+```
 
-# Legacy: Fallback access using .get()
-custom_val = bp.get("U_Segmento")
+In `filter()` expressions, UDFs use the `F` proxy (UDFs have no generated
+constant because they are not part of `$metadata`):
+
+```python
+from b1sl.b1sl.resources.odata import F
+
+vip = await client.business_partners.filter(F.U_Segmento == "VIP").execute()
 ```
 
 ## 3. Pattern: SAP-Pure (Documentation Style)
@@ -65,28 +79,29 @@ from b1sl.b1sl import entities as en
 users_resource = client.get_resource(en.User, "Users")
 
 # Step 2: Use it just like an elite property
-active_users = await users_resource.filter(F.User.locked == "tNO").execute()
+active_users = await users_resource.filter(fields.User.locked == "tNO").execute()
 ```
 
 The recommended way to build complex OData requests is using the fluent **Query Builder**:
 
 ```python
-from b1sl.b1sl import fields as F
 from datetime import date
+
+from b1sl.b1sl.fields import Item
 
 # Fluent queries are type-safe and pythonic!
 # Use .execute() for single-page results
 results = await client.items.filter(
-    (F.Item.quantity_on_stock > 0) & (F.Item.valid_from >= date(2024, 1, 1))
+    (Item.quantity_on_stock > 0) & (Item.valid_from >= date(2024, 1, 1))
 ).select(
-    F.Item.item_code, 
-    F.Item.item_name
+    Item.item_code,
+    Item.item_name
 ).orderby(
-    F.Item.item_code
+    Item.item_code
 ).top(3).execute()
 
 # Use .stream() for full collections
-async for item in client.items.filter(F.Item.quantity_on_stock > 100).stream():
+async for item in client.items.filter(Item.quantity_on_stock > 100).stream():
     process(item)
 ```
 
@@ -94,8 +109,12 @@ For more details on operators and logic composition, see [10-odata-query-builder
 
 ### Import Styles
 The SDK supports two equivalent ways to import field constants:
-1. **Direct**: `from b1sl.b1sl.fields import Item` (Simple, used in Quick Starts).
-2. **Aliased**: `from b1sl.b1sl import fields as F` (Recommended for complex queries to avoid name collisions).
+1. **Direct**: `from b1sl.b1sl.fields import Item, Order` (preferred — short and explicit).
+2. **Module**: `from b1sl.b1sl import fields` then `fields.Item.item_code` (useful when touching many entities).
+
+Never alias the module as `F` — that name belongs to the raw proxy in
+`b1sl.b1sl.resources.odata`, and shadowing it is how broken queries like
+`F.Item.item_code` (an `AttributeError` on the proxy) end up in code.
 
 ### Pro Tip: surgical expansion
 **Always `$select` what you need.** Requesting complete objects with `expand` significantly degrades SAP Service Layer performance. Use the SDK's surgical expand (passing a dict) to only fetch the fields you need from the joined entity.

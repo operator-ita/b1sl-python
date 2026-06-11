@@ -24,7 +24,7 @@ def main():
     with use_sap_b1("Status Mapping & Resolution Patterns") as runner:
         client = runner.client
         service_calls = client.get_resource(en.ServiceCall, "ServiceCalls")
-        service_call_statuses = client.get_resource(en.ServiceCallStatus, "ServiceCallStatuses")
+        service_call_statuses = client.get_resource(en.ServiceCallStatus, "ServiceCallStatus")
 
         # 0. SETUP DYNAMIC DATA
         runner.info("Fetching a test ServiceCall ID...")

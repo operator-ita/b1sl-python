@@ -352,7 +352,7 @@ async def test_async_bare_crossjoin_raises():
 
 # ── QueryServiceBuilder ───────────────────────────────────────────────────────
 
-def _mock_post_adapter(response_data: dict) -> MagicMock:
+def _mock_post_adapter(response_data: dict | str) -> MagicMock:
     adapter = MagicMock()
     r = MagicMock()
     r.data = response_data

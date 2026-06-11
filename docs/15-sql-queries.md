@@ -200,21 +200,21 @@ asyncio.run(main())
 
 ---
 
-## SQLQueries vs. `saphdb`
+## SQLQueries vs. direct HANA access
 
-The SDK also ships an optional `saphdb` subpackage for direct HANA connectivity. Here's when to choose each:
+Compared with connecting straight to HANA via `hdbcli`, `SQLQueries` trades raw SQL freedom for portability and SDK integration:
 
-| | `SQLQueries` (this feature) | `saphdb` (direct HANA) |
+| | `SQLQueries` (this feature) | Direct HANA (`hdbcli`) |
 | :--- | :--- | :--- |
 | Transport | HTTP (same session as the rest of the SDK) | TCP direct to HANA port |
-| Driver | None | `hdbcli` (proprietary, extra required) |
+| Driver | None | `hdbcli` (proprietary) |
 | MSSQL support | ✅ (SL normalizes SQL) | ❌ (HANA only) |
 | SQL flexibility | Restricted (allowlist + keyword subset) | Full HANA SQL |
 | Dry-run | ✅ inherited | ❌ |
 | Async | ✅ | ❌ (blocking driver) |
 | ETag on definitions | ✅ | ❌ |
 
-Use `SQLQueries` when you need portability, HTTP transport, and SDK integration. Use `saphdb` when you need unrestricted SQL on HANA and are willing to take on the extra driver dependency.
+Use `SQLQueries` when you need portability, HTTP transport, and SDK integration. Reach for a direct `hdbcli` connection (outside this SDK) only when you need unrestricted SQL on HANA and accept the proprietary driver dependency. (The SDK shipped an optional `saphdb` wrapper for this until it was removed in v0.6.0.)
 
 ---
 

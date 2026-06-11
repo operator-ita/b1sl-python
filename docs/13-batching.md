@@ -26,6 +26,29 @@ async with b1.batch() as batch:
     results = await batch.execute()
 ```
 
+### Sync client
+
+`B1Client.batch()` has full parity — same recording API, plain `with` blocks:
+
+```python
+with B1Client(config) as b1:
+    with b1.batch() as batch:
+        batch.items.top(1).execute()
+
+        with batch.changeset() as cs:
+            cs.items.create(en.Item(item_code="B101", item_name="New Item"))
+            cs.business_partners.update("C20000", update_data)
+
+        results = batch.execute()
+```
+
+### Dry Run
+
+`$batch` honours Dry Run like every other write path: under `B1SL_DRY_RUN=1`
+or inside `with b1.dry_run():`, `batch.execute()` returns a synthesized
+`BatchResults` (one `204` per recorded operation, `index` preserved) without
+sending anything to SAP.
+
 ## Result Inspection
 
 Results are returned as a `BatchResults` container, which flattens all responses (including those from changesets) into a single ordered list.
@@ -65,6 +88,12 @@ Since `/List` is a read, enqueue it as a **top-level** batch operation — not i
 
 -   **GET in ChangeSets**: OData V4 prohibits `GET` operations within a ChangeSet. The SDK enforces this at runtime.
 -   **Explicit Execution**: You must call `await batch.execute()` within the context block to trigger the actual network request.
+-   **No ETag concurrency inside `$batch`**: batch parts never carry an
+    `If-Match` header — the recording proxy bypasses the adapter layer that
+    injects cached ETags. A batched `update()`/`delete()` performs a *last
+    write wins* overwrite, unlike the same call outside a batch (which raises
+    `SAPConcurrencyError` on a stale ETag). If optimistic concurrency matters
+    for a write, execute it as a regular single operation instead.
 
 ### The "Defensive Analysis" Pattern (Recommended)
 

@@ -14,6 +14,12 @@ from pathlib import Path
 # Add project roots to sys.path for standalone script execution
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 from b1sl.b1sl import B1Client, B1Environment
 from b1sl.b1sl.logging_utils import setup_logging
 

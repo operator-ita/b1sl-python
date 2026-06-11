@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`b1sl-python` — an async-first, metadata-driven Python SDK for the SAP Business One Service Layer (OData v4). Published to PyPI. Optional `saphdb` subpackage wraps SAP HANA via `hdbcli`.
+`b1sl-python` — an async-first, metadata-driven Python SDK for the SAP Business One Service Layer (OData v4). Published to PyPI.
 
 ## Tooling and commands
 
@@ -18,7 +18,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `make test-ci` — full CI suite with coverage XML.
   - `make lint` — `ruff check .` + `mypy .` (CI parity).
 - **Single test**: `PYTHONPATH=src:. .venv/bin/pytest tests/unit/test_odata_builder.py::test_name -xvs`. The `PYTHONPATH=src:.` prefix matters — the package lives at `src/b1sl/` and tests import via `b1sl.b1sl.…`.
-- CI (`.github/workflows/ci.yml`) runs only `uv run ruff check .` + `uv run pytest tests/unit/`. `mypy` is enforced locally via `make lint`, not in CI.
+- CI (`.github/workflows/ci.yml`): a `lint` job (ruff + mypy on 3.12) and a `test` job matrix over Python 3.11–3.14 running `pytest -m "not (integration or vcr)"`. `publish.yml` uses PyPI Trusted Publishing (OIDC, no token) and asserts the tag matches the pyproject version before uploading.
 - Release: `make release v=X.Y.Z` commits, tags, pushes; `publish.yml` then publishes to PyPI on tag.
 
 ## Architecture
@@ -63,7 +63,7 @@ SAP returns `204 No Content` on PATCH/DELETE without a fresh `ETag` header. The 
 
 1. GET caches `ETag`.
 2. PATCH/DELETE sends it as `If-Match`.
-3. **On success, the adapter immediately clears the cached ETag** (proactive invalidation). Skipping this step makes a subsequent DELETE-after-UPDATE use a stale ETag and silently break under load.
+3. **On success, the adapter immediately clears the cached ETag** (proactive invalidation). This lives in both adapters' `_do` success path (`_invalidate_etag_after_write` in `base_adapter.py`) and covers PATCH, DELETE, and bound-Action POSTs (which also clear the keyed parent path). Resources must NOT duplicate this; if SAP returns a fresh `ETag` header, it is kept instead. Dry-run writes never touch the cache.
 4. 412 → `SAPConcurrencyError`.
 
 Adapters map HTTP status to semantic exceptions via a standardized dict: 400 → `B1ValidationError`, 401 → `B1AuthError`, 404 → `B1NotFoundError`, 412 → `SAPConcurrencyError`, else `B1Exception`.
@@ -75,10 +75,13 @@ Adapters map HTTP status to semantic exceptions via a standardized dict: 400 →
 - `changeset()` blocks → atomic (all-or-nothing).
 - Top-level batch ops → independent (partial success allowed).
 - **`batch.execute()` must NOT raise on individual op failures.** Callers inspect `results.all_ok` / `results.failed`. Each result preserves `r.index` for traceability.
+- Sync parity: `B1Client.batch()` returns `SyncBatchClient` (plain `with`, sync `execute()`, `_SyncRecordingAdapter`); `RestAdapter.post_batch` mirrors the async one.
+- **`execute()` honours dry-run**: when `_dry_run_active`, it returns synthesized per-op 204s without sending the multipart request.
+- **Batch parts never carry `If-Match`** — no ETag concurrency inside `$batch` (last write wins); see `docs/13-batching.md`. Use single operations when optimistic concurrency matters.
 
 ### Pagination
 
-`.execute()` returns one page. `.stream()` follows `odata.nextLink` via generators (async generators for the async client). `.top(N)` is a global hard cap; `page_size` and `max_pages` are independent safety knobs. Filters survive page boundaries.
+`.list()` / `.execute()` return one page as a `PaginatedResult[T]` (`models/paginated_result.py`) — list-like (`Sequence`: iteration, `len()`, indexing) plus `next_params` / `has_more` metadata. Feed `page.next_params` back via `resource.list(params=...)` for manual paging. `.stream()` follows `odata.nextLink` via generators (async generators for the async client). `.top(N)` is a global hard cap; `page_size` and `max_pages` are independent safety knobs. Filters survive page boundaries (`build_next_params` re-injects them). `build_next_params` carries `$skip`/`$skiptoken` cursors and raises `B1PaginationError` if a nextLink has neither (infinite-loop guard).
 
 ### Configuration
 
@@ -89,17 +92,15 @@ Adapters map HTTP status to semantic exceptions via a standardized dict: 400 →
 - **English only** in code, comments, commits, docs.
 - **Never `pip install`** — use `uv add` / `uv sync`.
 - **Never edit `_generated/`**. Fix the generator or add a `_overrides/` file.
-- **Run `make lint` before proposing changes** — it covers the whole repo (CI only runs ruff, so mypy regressions slip past unless you run it locally).
+- **Run `make lint` before proposing changes** — CI enforces both ruff and mypy, so a local pass avoids red pipelines. mypy runs with the pydantic plugin and `attr-defined`/`arg-type`/`call-arg`/`union-attr` armed; don't re-disable codes to silence an error — fix the type.
 - **Surgical deltas only**: write `client.items.update("A001", en.Item(item_name="New"))`, never round-trip a fetched object.
 - **Don't promote endpoints to Elite without verifying ETag support** — Elite aliases imply concurrency safety.
 - **VCR cassette hygiene**: `tests/conftest.py` redacts hosts, sessions, credentials, and OData context URLs. Before pushing recorded cassettes, sanity-check with `grep -r "B1SESSION" tests/integration/cassettes/`.
-- **`hdbcli` is mocked at top-level in `tests/conftest.py`** so HANA tests don't require the SAP driver. Don't import `hdbcli` outside the `saphdb` subpackage.
 - Pytest markers: `integration` (live SAP), `vcr` (cassette playback). Default `make test` excludes both.
 
 ## Where things live
 
-- `src/b1sl/b1sl/` — Service Layer SDK (the main product).
-- `src/b1sl/saphdb/` — optional HANA direct-SQL adapter (gated by `hana` extra).
+- `src/b1sl/b1sl/` — Service Layer SDK (the main product). The outer `b1sl/__init__.py` lazily re-exports the public surface (`from b1sl import B1Client, entities` works); keep `_FORWARDED` in sync when adding top-level names.
 - `src/b1sl/contrib/` — framework integrations (Django, etc.).
 - `src/b1sl/contrib/mcp/` — MCP helper toolkit (framework-agnostic, no MCP SDK import).
   Seven modules: `discovery.py` (Elite resource catalog + field introspection),

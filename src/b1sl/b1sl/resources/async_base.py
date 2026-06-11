@@ -7,8 +7,9 @@ if TYPE_CHECKING:
 
 from b1sl.b1sl.exceptions.exceptions import B1NotFoundError
 from b1sl.b1sl.models.base import B1Model
+from b1sl.b1sl.models.paginated_result import PaginatedResult
 from b1sl.b1sl.pagination import build_next_params
-from b1sl.b1sl.resources.base import ODataQuery, _build_expand
+from b1sl.b1sl.resources.base import ODataQuery, _build_expand, format_entity_key
 
 if TYPE_CHECKING:
     from b1sl.b1sl.async_rest_adapter import AsyncRestAdapter
@@ -101,16 +102,41 @@ class AsyncGenericResource(Generic[T]):
 
         return AsyncQueryBuilder(self).apply(expression)
 
-    async def list(self, query: ODataQuery | None = None) -> list[T]:
+    async def list(
+        self,
+        query: ODataQuery | None = None,
+        *,
+        params: dict[str, Any] | None = None,
+    ) -> PaginatedResult[T]:
         """
-        Retrieves a single page of results based on the provided query.
-        
+        Retrieve a single page of results with pagination metadata.
+
+        The returned :class:`PaginatedResult` behaves like a list (iteration,
+        ``len()``, indexing) and exposes ``next_params`` for manual paging::
+
+            page = await client.items.list(query)
+            while page.next_params:
+                page = await client.items.list(params=page.next_params)
+
+        Args:
+            query: OData query options for the first page.
+            params: Raw query params — pass ``page.next_params`` to fetch the
+                following page. Mutually exclusive with ``query``.
+
         Note: Use .stream() for automatic pagination across multiple pages.
         """
-        params = query.to_params() if query else {}
-        result = await self._adapter.get(f"{self.endpoint}", ep_params=params)
+        if query is not None and params is not None:
+            raise ValueError("Pass either 'query' or 'params', not both.")
+        request_params = params if params is not None else (query.to_params() if query else {})
+        result = await self._adapter.get(f"{self.endpoint}", ep_params=request_params)
         data = result.data or {}
-        return [self.model.model_validate(item) for item in data.get("value", [])]
+        items = [self.model.model_validate(item) for item in data.get("value", [])]
+        next_link = result.next_link
+        return PaginatedResult(
+            items,
+            metadata=result.metadata,
+            next_params=build_next_params(request_params, next_link) if next_link else None,
+        )
 
     async def _iter_pages(
         self,
@@ -150,7 +176,7 @@ class AsyncGenericResource(Generic[T]):
         automatically fetching next pages until dataset exhausted or limits hit.
         """
         params = query.to_params() if query else {}
-        headers = {"B1-PageSize": str(page_size)} if page_size else {}
+        headers = {"B1S-PageSize": str(page_size)} if page_size else {}
         global_top = query.top if query else None
         yielded_count = 0
 
@@ -173,17 +199,18 @@ class AsyncGenericResource(Generic[T]):
     ) -> T:
         params: dict[str, str] = {}
         if select:
-            params["$select"] = ",".join(str(f) for f in select)
+            select_fields: list[str] = list(select)
+            params["$select"] = ",".join(str(f) for f in select_fields)
         if expand:
             params["$expand"] = _build_expand(expand)
 
-        id_str = f"'{key}'" if isinstance(key, str) else str(key)
+        id_str = format_entity_key(key)
         result = await self._adapter.get(f"{self.endpoint}({id_str})", ep_params=params)
         return self.model.model_validate(result.data)
 
     async def exists(self, key: Any) -> bool:
         """Check if an entity exists by attempting to fetch it."""
-        id_str = f"'{key}'" if isinstance(key, str) else str(key)
+        id_str = format_entity_key(key)
         try:
             await self._adapter.get(f"{self.endpoint}({id_str})")
             return True
@@ -196,11 +223,8 @@ class AsyncGenericResource(Generic[T]):
         # but still encode booleans by delegating through B1Model serialisation.
         payload = entity.model_dump(exclude_none=True, by_alias=True)
         # Re-encode booleans (model_dump returns Python bools, SAP needs tYES/tNO)
-        from b1sl.b1sl.models.base import _SAP_NO, _SAP_YES
-        encoded = {
-            k: (_SAP_YES if v is True else _SAP_NO if v is False else v)
-            for k, v in payload.items()
-        }
+        from b1sl.b1sl.models.base import encode_sap_value
+        encoded = {k: encode_sap_value(v) for k, v in payload.items()}
         result = await self._adapter.post(f"{self.endpoint}", data=encoded)
         return self.model.model_validate(result.data)
 
@@ -210,21 +234,17 @@ class AsyncGenericResource(Generic[T]):
         # delta semantics for a partial update. Booleans are also encoded.
         #
         # After a successful PATCH, the server-side ETag changes but SAP SL
-        # returns 204 No Content without a new ETag header. We proactively
-        # invalidate the stale cache entry so the next PATCH or DELETE does not
-        # hit a predictable 412 conflict.
-        id_str = f"'{key}'" if isinstance(key, str) else str(key)
-        endpoint_path = f"/{self.endpoint}({id_str})"
+        # returns 204 No Content without a new ETag header. The adapter
+        # proactively invalidates the stale cache entry on every successful
+        # write, so the next PATCH or DELETE does not hit a predictable 412.
+        id_str = format_entity_key(key)
         await self._adapter.patch(
             f"{self.endpoint}({id_str})",
             data=entity.to_api_payload(),
         )
-        # Proactively invalidate the stale ETag: SAP issued a 204 with no
-        # new ETag header, so anything in cache is now a lie.
-        self._adapter._clear_etag(endpoint_path)
 
     async def delete(self, key: Any) -> None:
-        id_str = f"'{key}'" if isinstance(key, str) else str(key)
+        id_str = format_entity_key(key)
         await self._adapter.delete(f"{self.endpoint}({id_str})")
 
     # ── Actions / Functions ───────────────────────────────────────────────────
@@ -248,7 +268,7 @@ class AsyncGenericResource(Generic[T]):
         The full response ``data`` dict is returned — callers needing
         ``@odata.nextLink`` should inspect it directly.
         """
-        id_str = f"'{key}'" if isinstance(key, str) else str(key)
+        id_str = format_entity_key(key)
         url = f"{self.endpoint}({id_str})/{name}"
         if method == "GET":
             result = await self._adapter.get(url, ep_params=params, headers=headers)

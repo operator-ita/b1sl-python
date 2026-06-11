@@ -19,7 +19,7 @@ b1sl is a high-performance SDK for the SAP B1 Service Layer, designed around con
 - **Smart Session Management**: Automatic 401 re-authentication with internal locking to prevent license exhaustion.
 - **Session Hydration**: Reuse existing `B1SESSION` IDs across serverless functions or Temporal activities.
 - **Optimistic Concurrency**: Automated ETag handling with smart cache invalidation on 412 conflicts.
-- **Pythonic Querying**: Fluent OData builder with operator overloading (`F.ItemCode == "A001"`) and type-safe field access.
+- **Pythonic Querying**: Fluent OData builder with operator overloading (`Item.item_code == "A001"`) and type-safe snake_case field access.
 - **Transparent Pagination**: Automatic `nextLink` handling via Python generators — `async for item in client.items.stream()`.
 - **`$batch` Support**: Group multiple operations into a single HTTP round-trip with full changeset atomicity.
 - **Dynamic UDFs**: Schema-aware proxy for type-safe interaction with User Defined Fields, including opt-in Pydantic validation.
@@ -44,7 +44,7 @@ uv add b1sl-python
 
 ```python
 import asyncio
-from b1sl.b1sl import AsyncB1Client, B1Config
+from b1sl import AsyncB1Client, B1Config   # top-level re-export (lazy)
 
 async def main():
     config = B1Config.from_env()
@@ -63,31 +63,34 @@ asyncio.run(main())
 
 ## Pythonic Querying
 
-Experience a fluent OData builder that uses operator overloading. You can choose between the zero-import **`F` Proxy** (requires SAP CamelCase names) or **Static Constants** (provides Pythonic snake_case autocomplete).
+Experience a fluent OData builder that uses operator overloading. The recommended style is the **Static Constants** in `b1sl.b1sl.fields` (snake_case, full IDE autocomplete, metadata-verified SAP names); the raw **`F` proxy** covers UDFs and dynamic names.
 
 ```python
-from b1sl.b1sl.resources.odata import F
 from b1sl.b1sl.fields import Item
+from b1sl.b1sl.resources.odata import F
 
-# 1. Dynamic F Proxy (Quick, use SAP field names)
-items = await b1.items.filter(F.QuantityOnStock > 0).top(5).execute()
-
-# 2. Static fields (Type-safe, uses Pythonic snake_case autocomplete)
+# 1. Static fields (recommended — type-safe, snake_case autocomplete)
 items = await b1.items.filter(Item.quantity_on_stock > 0).top(5).execute()
 
+# 2. F proxy — for UDFs, which have no generated constant
+vip = await b1.business_partners.filter(F.U_Categoria == "VIP").top(5).execute()
+
 for item in items:
-    print(f"[{item.item_code}] {item.item_name}")
+    print(f"[{item.item_code}] {item.item_name}")   # same snake_case as the query
 ```
 
 ---
 
 ## Transparent Pagination
 
-`.execute()` returns only the first page SAP gives you. `.stream()` transparently follows every `odata.nextLink` until the dataset is exhausted.
+`.execute()` returns only the first page SAP gives you — as a list-like `PaginatedResult` carrying the next-page metadata. `.stream()` transparently follows every `odata.nextLink` until the dataset is exhausted.
 
 ```python
-# Silently incomplete for large collections:
+# Single page, with pagination metadata:
 first_page = await b1.items.execute()         # → 20 items (SAP's default page)
+len(first_page), first_page[0]                # list-like access
+if first_page.has_more:                       # manual paging when you need it
+    next_page = await b1.items.list(params=first_page.next_params)
 
 # Full dataset, zero boilerplate:
 async for item in b1.items.stream():          # → all items, all pages
@@ -102,7 +105,7 @@ async for item in b1.items.stream(page_size=50, max_pages=5):
     ...  # at most 250 items, at most 5 requests
 
 # Filters are preserved across every page boundary:
-async for item in b1.items.filter(F.ItemType == "itItems").stream():
+async for item in b1.items.filter(Item.item_type == "itItems").stream():
     assert item.item_type == "itItems"  # guaranteed on page 2, 3, ...
 ```
 

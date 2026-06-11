@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from b1sl.b1sl.adapter_protocol import RestAdapterProtocol
 from b1sl.b1sl.base_adapter import ObservabilityConfig
@@ -9,7 +9,7 @@ from b1sl.b1sl.config import B1Config
 from b1sl.b1sl.rest_adapter import RestAdapter
 
 if TYPE_CHECKING:
-    from b1sl.b1sl.batch.client import BatchClient
+    from b1sl.b1sl.batch.client import SyncBatchClient
     from b1sl.b1sl.models._generated.entities.businesspartners import (
         Activity,
         BusinessPartner,
@@ -52,6 +52,7 @@ class B1Client:
         adapter: RestAdapterProtocol | None = None,
         *,
         observability: ObservabilityConfig | None = None,
+        session_id: str | None = None,
     ) -> None:
         """
         Initializes the B1Client.
@@ -63,10 +64,16 @@ class B1Client:
             version (str): Service Layer API version (v1, v2). Defaults to "v2".
             adapter (RestAdapterProtocol, optional): Custom adapter for
                 mocking or dependency injection.
+            session_id (str, optional): An existing B1SESSION cookie to reuse
+                (session hydration — parity with AsyncB1Client).
         """
         self._logger = logger or logging.getLogger(f"b1sl.{self.__class__.__name__}")
         self._adapter = adapter or RestAdapter(
-            config, logger=self._logger, version=version, observability=observability
+            config,
+            logger=self._logger,
+            version=version,
+            observability=observability,
+            session_id=session_id,
         )
         self.version = version
 
@@ -111,16 +118,25 @@ class B1Client:
         """
         return self._adapter.with_schema(name)
 
-    def batch(self) -> BatchClient:
+    def batch(self) -> SyncBatchClient:
         """
         Returns a context manager that groups multiple resource operations
         into a single OData $batch HTTP request.
 
         Use this for high-concurrency scenarios (bulk GETs) or transactional
-        integrity (atomic ChangeSets). See :class:`BatchClient` for details.
+        integrity (atomic ChangeSets). See :class:`SyncBatchClient` for details.
+
+        Usage::
+
+            with B1Client(config) as b1:
+                with b1.batch() as batch:
+                    batch.items.top(1).execute()
+                    with batch.changeset() as cs:
+                        cs.items.update("A001", en.Item(item_name="Renamed"))
+                    results = batch.execute()
         """
-        from b1sl.b1sl.batch.client import BatchClient
-        return BatchClient(self)
+        from b1sl.b1sl.batch.client import SyncBatchClient
+        return SyncBatchClient(self)
 
     def connect(self) -> None:
         """
@@ -136,7 +152,7 @@ class B1Client:
         """
         self._adapter.close()
 
-    def __enter__(self) -> "B1Client":
+    def __enter__(self) -> Self:
         """
         Entry point for the context manager.
         """

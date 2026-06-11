@@ -1,4 +1,6 @@
-from typing import Any
+from contextlib import contextmanager
+from datetime import datetime
+from typing import Any, Iterator
 
 from b1sl.b1sl.adapter_protocol import RestAdapterProtocol
 from b1sl.b1sl.models.result import Result
@@ -37,6 +39,10 @@ class FakeRestAdapter(RestAdapterProtocol):
         self._routes: dict[tuple[str, str], list[Any]] = {}
         # History of calls made for verification in tests
         self.calls: list[dict[str, Any]] = []
+        # Session-state surface required by RestAdapterProtocol
+        self.is_session_active: bool = True
+        self.token_expiry: datetime | None = None
+        self.reuse_token: bool = True
 
     def register(
         self,
@@ -182,6 +188,26 @@ class FakeRestAdapter(RestAdapterProtocol):
     def _clear_etag(self, *args, **kwargs):
         """Mock ETag invalidation."""
         pass
+
+    # ── Protocol lifecycle surface (no-ops for unit tests) ────────────────────
+
+    @property
+    def session_id(self) -> str | None:
+        return "fake-session"
+
+    def close(self) -> None:
+        pass
+
+    def post_batch(self, body: str, headers: dict, _retry_once: bool = True) -> Any:
+        raise NotImplementedError("FakeRestAdapter does not simulate $batch.")
+
+    @contextmanager
+    def dry_run(self, enabled: bool = True) -> Iterator[None]:
+        yield
+
+    @contextmanager
+    def with_schema(self, schema: str | None) -> Iterator[None]:
+        yield
 
 
 class FakeAsyncRestAdapter:

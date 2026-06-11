@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import date, datetime, time
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Generator, Generic, TypeVar
 
+from b1sl.b1sl.models.paginated_result import PaginatedResult
+
 if TYPE_CHECKING:
     from b1sl.b1sl.resources.async_base import AsyncGenericResource
     from b1sl.b1sl.resources.base import GenericResource, ODataQuery
@@ -149,7 +151,7 @@ class QueryBuilder(Generic[T]):
         self._select.extend(fields)
         return self
 
-    def orderby(self, expression: str, desc: bool = False) -> QueryBuilder[T]:
+    def orderby(self, expression: str | ODataField, desc: bool = False) -> QueryBuilder[T]:
         expr = str(expression)
         if desc:
             expr = f"{expr} desc"
@@ -200,17 +202,21 @@ class QueryBuilder(Generic[T]):
             apply=self._apply,
         )
 
-    def execute(self) -> list[T] | T:
-        """Execute the query. Returns a list for collections or a single instance if by_id() was used."""
+    def execute(self) -> PaginatedResult[T] | T:
+        """Execute the query.
+
+        Returns a :class:`PaginatedResult` (list-like, with ``next_params``)
+        for collections, or a single instance if by_id() was used.
+        """
         adapter = self._resource._adapter
-        
+
         # We check if adapter has with_schema method. Some legacy mock adapters might not.
         if self._schema and hasattr(adapter, "with_schema"):
             with adapter.with_schema(self._schema):
                 return self._execute_internal()
         return self._execute_internal()
 
-    def _execute_internal(self) -> list[T] | T:
+    def _execute_internal(self) -> PaginatedResult[T] | T:
         # If by_id was used, it's a single entity GET
         if self._key is not None:
             return self._resource.get(
@@ -248,8 +254,22 @@ class QueryBuilder(Generic[T]):
     def first(self) -> T | None:
         """Execute the query and return the first result, if any."""
         res = self.top(1).execute()
-        results = res if isinstance(res, list) else [res]
-        return results[0] if results else None
+        results = res if isinstance(res, PaginatedResult) else [res]
+        return results[0] if len(results) else None
+
+    def count(self) -> int:
+        """GET Endpoint/$count, honouring the builder's ``$filter``.
+
+        Unlike ``resource.count()`` (whole collection), this counts only the
+        entities matching the current filter::
+
+            pending = client.orders.filter(Document.document_status == "bost_Open").count()
+        """
+        params = {"$filter": self._filter} if self._filter else None
+        result = self._resource._adapter.get(
+            f"{self._resource.endpoint}/$count", ep_params=params
+        )
+        return int(result.data)
 
 
 class AsyncQueryBuilder(Generic[T]):
@@ -332,15 +352,19 @@ class AsyncQueryBuilder(Generic[T]):
             apply=self._apply,
         )
 
-    async def execute(self) -> list[T] | T:
-        """Execute the query asynchronously."""
+    async def execute(self) -> PaginatedResult[T] | T:
+        """Execute the query asynchronously.
+
+        Returns a :class:`PaginatedResult` (list-like, with ``next_params``)
+        for collections, or a single instance if by_id() was used.
+        """
         adapter = self._resource._adapter
         if self._schema and hasattr(adapter, "with_schema"):
             with adapter.with_schema(self._schema):
                 return await self._execute_internal()
         return await self._execute_internal()
 
-    async def _execute_internal(self) -> list[T] | T:
+    async def _execute_internal(self) -> PaginatedResult[T] | T:
         if self._key is not None:
             return await self._resource.get(
                 key=self._key,
@@ -383,5 +407,19 @@ class AsyncQueryBuilder(Generic[T]):
     async def first(self) -> T | None:
         """Execute the query and return the first result, if any."""
         res = await self.top(1).execute()
-        results = res if isinstance(res, list) else [res]
-        return results[0] if results else None
+        results = res if isinstance(res, PaginatedResult) else [res]
+        return results[0] if len(results) else None
+
+    async def count(self) -> int:
+        """GET Endpoint/$count, honouring the builder's ``$filter``.
+
+        Unlike ``resource.count()`` (whole collection), this counts only the
+        entities matching the current filter::
+
+            pending = await client.orders.filter(Document.document_status == "bost_Open").count()
+        """
+        params = {"$filter": self._filter} if self._filter else None
+        result = await self._resource._adapter.get(
+            f"{self._resource.endpoint}/$count", ep_params=params
+        )
+        return int(result.data)

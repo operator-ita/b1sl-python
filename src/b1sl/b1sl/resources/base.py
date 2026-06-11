@@ -10,15 +10,29 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Generator, Generic, TypeVar
 
 if TYPE_CHECKING:
-    from b1sl.b1sl.resources.odata import QueryBuilder
+    from b1sl.b1sl.resources.odata import ODataField, QueryBuilder
     from b1sl.b1sl.schemas.udf import UDFSchema
 
 from b1sl.b1sl.adapter_protocol import RestAdapterProtocol
 from b1sl.b1sl.exceptions.exceptions import B1NotFoundError
 from b1sl.b1sl.models.base import B1Model
+from b1sl.b1sl.models.paginated_result import PaginatedResult
 from b1sl.b1sl.pagination import build_next_params
 
 T = TypeVar("T", bound=B1Model)
+
+
+def format_entity_key(key) -> str:
+    """Format an entity key for interpolation into an OData resource path.
+
+    String keys are single-quoted with OData escaping (' -> ''), so a key
+    containing quotes cannot break out of the path literal (defense in depth —
+    SAP rejects malformed paths anyway, but keys can flow from user input).
+    """
+    if isinstance(key, str):
+        escaped = key.replace("'", "''")
+        return f"'{escaped}'"
+    return str(key)
 
 
 def _build_expand(expand: list[str] | dict[str, list[str]] | None) -> str | None:
@@ -168,9 +182,11 @@ class GenericResource(Generic[T]):
         from b1sl.b1sl.resources.odata import QueryBuilder
         return QueryBuilder(self).skip(value)
 
-    def orderby(self, expression: str) -> QueryBuilder[T]:
+    def orderby(
+        self, expression: str | ODataField, desc: bool = False
+    ) -> QueryBuilder[T]:
         from b1sl.b1sl.resources.odata import QueryBuilder
-        return QueryBuilder(self).orderby(expression)
+        return QueryBuilder(self).orderby(expression, desc=desc)
 
     def expand(self, value: list[str] | dict[str, list[str]]) -> QueryBuilder[T]:
         from b1sl.b1sl.resources.odata import QueryBuilder
@@ -182,17 +198,41 @@ class GenericResource(Generic[T]):
 
     # ── Collection ───────────────────────────────────────────────────────────
 
-    def list(self, query: ODataQuery | None = None) -> list[T]:
+    def list(
+        self,
+        query: ODataQuery | None = None,
+        *,
+        params: dict[str, Any] | None = None,
+    ) -> PaginatedResult[T]:
         """
-        Retrieves a single page of results based on the provided query.
-        
+        Retrieve a single page of results with pagination metadata.
+
+        The returned :class:`PaginatedResult` behaves like a list (iteration,
+        ``len()``, indexing) and exposes ``next_params`` for manual paging::
+
+            page = client.items.list(query)
+            while page.next_params:
+                page = client.items.list(params=page.next_params)
+
+        Args:
+            query: OData query options for the first page.
+            params: Raw query params — pass ``page.next_params`` to fetch the
+                following page. Mutually exclusive with ``query``.
+
         Note: Use .stream() for automatic pagination across multiple pages.
         """
-        params = query.to_params() if query else {}
-        # We assume the adapter returns a RestResponse with a .data dict
-        result = self._adapter.get(f"{self.endpoint}", ep_params=params)
+        if query is not None and params is not None:
+            raise ValueError("Pass either 'query' or 'params', not both.")
+        request_params = params if params is not None else (query.to_params() if query else {})
+        result = self._adapter.get(f"{self.endpoint}", ep_params=request_params)
         data = result.data or {}
-        return [self.model.model_validate(item) for item in data.get("value", [])]
+        items = [self.model.model_validate(item) for item in data.get("value", [])]
+        next_link = result.next_link
+        return PaginatedResult(
+            items,
+            metadata=result.metadata,
+            next_params=build_next_params(request_params, next_link) if next_link else None,
+        )
 
     def _iter_pages(
         self,
@@ -233,14 +273,14 @@ class GenericResource(Generic[T]):
 
         Args:
             query: The ODataQuery options (filter, select, top, etc.).
-            page_size: Number of records per HTTP request (B1-PageSize header).
+            page_size: Number of records per HTTP request (B1S-PageSize header).
             max_pages: Safety bound for maximum number of HTTP requests.
 
         Yields:
             T: Typed B1Model instances.
         """
         params = query.to_params() if query else {}
-        headers = {"B1-PageSize": str(page_size)} if page_size else {}
+        headers = {"B1S-PageSize": str(page_size)} if page_size else {}
         global_top = query.top if query else None
         yielded_count = 0
 
@@ -265,11 +305,12 @@ class GenericResource(Generic[T]):
     ) -> T:
         params: dict[str, str] = {}
         if select:
-            params["$select"] = ",".join(str(f) for f in select)
+            select_fields: list[str] = list(select)
+            params["$select"] = ",".join(str(f) for f in select_fields)
         if expand:
             params["$expand"] = _build_expand(expand)
 
-        id_str = f"'{key}'" if isinstance(key, str) else str(key)
+        id_str = format_entity_key(key)
         result = self._adapter.get(f"{self.endpoint}({id_str})", ep_params=params)
         return self.model.model_validate(result.data)
 
@@ -279,7 +320,7 @@ class GenericResource(Generic[T]):
         Note: We avoid $select=1 as it's not supported by all SAP SL versions/entities
         and results in 'SAP Error 201: Not supported query string'.
         """
-        id_str = f"'{key}'" if isinstance(key, str) else str(key)
+        id_str = format_entity_key(key)
         try:
             self._adapter.get(f"{self.endpoint}({id_str})")
             return True
@@ -291,13 +332,10 @@ class GenericResource(Generic[T]):
     def create(self, entity: T) -> T:
         # POST: send all non-None fields. SAP requires a complete payload on creation.
         # model_dump returns native Python bools; re-encode them to tYES/tNO.
-        from b1sl.b1sl.models.base import _SAP_NO, _SAP_YES
+        from b1sl.b1sl.models.base import encode_sap_value
 
         payload = entity.model_dump(exclude_none=True, by_alias=True)
-        encoded = {
-            k: (_SAP_YES if v is True else _SAP_NO if v is False else v)
-            for k, v in payload.items()
-        }
+        encoded = {k: encode_sap_value(v) for k, v in payload.items()}
         result = self._adapter.post(f"{self.endpoint}", data=encoded)
         return self.model.model_validate(result.data)
 
@@ -310,23 +348,19 @@ class GenericResource(Generic[T]):
 
         After a successful PATCH, the server-side ETag is guaranteed to have
         changed (a new version was created), but SAP SL returns 204 No Content
-        without a new ETag header. Keeping the old (now stale) ETag in cache
-        would cause a predictable 412 conflict on the next PATCH or DELETE.
-        We proactively invalidate it so the next mutating call either sends no
-        ETag (blind write) or forces a fresh GET first.
+        without a new ETag header. The adapter proactively invalidates the
+        stale cached ETag on every successful write (PATCH/DELETE/Action), so
+        the next mutating call either sends no ETag (blind write) or forces a
+        fresh GET first.
         """
-        id_str = f"'{key}'" if isinstance(key, str) else str(key)
-        endpoint_path = f"/{self.endpoint}({id_str})"
+        id_str = format_entity_key(key)
         self._adapter.patch(
             f"{self.endpoint}({id_str})",
             data=entity.to_api_payload(),
         )
-        # Proactively invalidate the stale ETag: SAP issued a 204 with no
-        # new ETag header, so anything in cache is now a lie.
-        self._adapter._clear_etag(endpoint_path)
 
     def delete(self, key: Any) -> None:
-        id_str = f"'{key}'" if isinstance(key, str) else str(key)
+        id_str = format_entity_key(key)
         self._adapter.delete(f"{self.endpoint}({id_str})")
 
     # ── Actions / Functions ───────────────────────────────────────────────────
@@ -350,7 +384,7 @@ class GenericResource(Generic[T]):
         The full response ``data`` dict is returned — callers needing
         ``@odata.nextLink`` should inspect it directly.
         """
-        id_str = f"'{key}'" if isinstance(key, str) else str(key)
+        id_str = format_entity_key(key)
         url = f"{self.endpoint}({id_str})/{name}"
         if method == "GET":
             result = self._adapter.get(url, ep_params=params, headers=headers)

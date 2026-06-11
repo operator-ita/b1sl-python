@@ -35,6 +35,7 @@ except ImportError:
 from b1sl.b1sl import B1Client, B1Environment
 from b1sl.b1sl import entities as en
 from b1sl.b1sl.exceptions.exceptions import B1Exception
+from b1sl.b1sl.resources.odata import QueryBuilder
 from b1sl.contrib.mcp import (
     build_resource_toolset,
     format_collection,
@@ -115,7 +116,7 @@ def dispatch_tool_call(
 
     try:
         if verb == "list":
-            qb = resource.list()
+            qb = QueryBuilder(resource)
             if args.get("filter"):
                 qb = qb.filter(args["filter"])
             if args.get("select"):
@@ -130,11 +131,18 @@ def dispatch_tool_call(
                 qb = qb.expand(args["expand"])
             if args.get("apply"):
                 qb = qb.apply(args["apply"])
-            page = qb.execute(
-                page_size=args.get("page_size"),
-                max_pages=args.get("max_pages"),
+            if args.get("page_size") or args.get("max_pages"):
+                # Streaming mode: follow nextLink across pages, bounded by max_pages.
+                rows = list(qb.stream(
+                    page_size=args.get("page_size"),
+                    max_pages=args.get("max_pages"),
+                ))
+                return format_collection(rows, title=f"{alias} list")
+            # Single-page mode: PaginatedResult knows whether more pages exist.
+            page = qb.execute()
+            return format_collection(
+                page, title=f"{alias} list", has_more=page.has_more
             )
-            return format_collection(page, title=f"{alias} list")
 
         elif verb == "get":
             key = args[key_field]
@@ -321,12 +329,11 @@ def demo_live(client: B1Client) -> None:
     section("6. Live: list first 3 items with $select")
     resource = client.items
     page = (
-        resource.list()
-        .select("ItemCode,ItemName,OnHand")
+        resource.select("ItemCode,ItemName,QuantityOnStock")
         .top(3)
         .execute()
     )
-    text = format_collection(page, title="Items (first 3)")
+    text = format_collection(page, title="Items (first 3)", has_more=page.has_more)
     print(f"\n{text}")
 
     if page:
@@ -348,7 +355,7 @@ if __name__ == "__main__":
     try:
         env = B1Environment.load()
         print("\n\nSAP credentials found — running live demo...")
-        with B1Client(env) as client:
+        with B1Client(env.config) as client:
             demo_live(client)
     except Exception as e:
         print(f"\n\n[Live demo skipped — no SAP connection: {e}]")

@@ -12,7 +12,9 @@ class BatchParser:
         self.content = content
         self.boundary = boundary
 
-    def parse(self, expected_models: list[Type] | None = None) -> list[BatchResult]:
+    def parse(
+        self, expected_models: list[Type | None] | None = None
+    ) -> list[BatchResult]:
         results = []
         parts = self._split_parts(self.content, self.boundary)
 

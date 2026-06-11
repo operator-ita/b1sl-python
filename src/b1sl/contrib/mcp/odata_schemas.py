@@ -611,30 +611,44 @@ def odata_crossjoin_tool_definition() -> dict:
     }
 
 
-def build_resource_toolset(alias: str, model: type) -> list[dict]:
-    """Build all 5 CRUD tool definitions for an Elite resource.
+def build_resource_toolset(
+    alias: str, model: type, *, read_only: bool = False
+) -> list[dict]:
+    """Build the CRUD tool definitions for an Elite resource.
 
     Returns one tool per operation in registration order:
-    ``list``, ``get``, ``patch``, ``create``, ``delete``.
+    ``list``, ``get``, ``patch``, ``create``, ``delete`` — or only the two
+    read tools when ``read_only=True``.
+
+    Exposing write tools grants the connected LLM create/update/delete on the
+    resource; the grammar system prompts are advisory only, so deployers who
+    do not need writes should pass ``read_only=True`` (and those who do are
+    encouraged to pair writes with ``client.dry_run()`` or a confirmation
+    layer).
 
     Args:
         alias: Elite resource alias (e.g. ``"orders"``).
         model: B1Model subclass for the resource.
+        read_only: When True, omit the ``patch``/``create``/``delete`` tools.
 
     Returns:
-        List of 5 MCP-compatible tool definition dicts.
+        List of MCP-compatible tool definition dicts (5, or 2 if read-only).
 
     Example::
 
         from b1sl.b1sl import entities as en
-        tools = build_resource_toolset("orders", en.Document)
+        tools = build_resource_toolset("orders", en.Document, read_only=True)
         for tool in tools:
             mcp_server.register_tool(**tool)
     """
-    return [
+    tools = [
         odata_list_tool_definition(alias, model),
         odata_get_tool_definition(alias, model),
-        odata_patch_tool_definition(alias, model),
-        odata_create_tool_definition(alias, model),
-        odata_delete_tool_definition(alias, model),
     ]
+    if not read_only:
+        tools.extend([
+            odata_patch_tool_definition(alias, model),
+            odata_create_tool_definition(alias, model),
+            odata_delete_tool_definition(alias, model),
+        ])
+    return tools

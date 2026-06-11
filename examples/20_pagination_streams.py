@@ -30,7 +30,7 @@ except ImportError:
     pass
  
 from b1sl.b1sl import AsyncB1Client, B1Client, B1Environment
-from b1sl.b1sl.resources.odata import F
+from b1sl.b1sl.fields import Item
  
  
 def section(title: str) -> None:
@@ -55,24 +55,27 @@ async def demo_why_stream(client: AsyncB1Client) -> None:
     # Without stream: you get whatever SAP's default page size returns.
     # This is silently incomplete for large collections.
     first_page = await client.items.list()
+    total = await client.items.count()
     print(f"  .list()     → {len(first_page)} items  (one page, possibly incomplete)")
- 
-    # With stream: every page is fetched and every item is yielded.
-    total = 0
-    async for _ in client.items.stream():
-        total += 1
-    
-    print(f"  .stream()   → {total} items  (full collection, all pages consumed)")
+    print(f"  .count()    → {total} items  (the real collection size)")
+
+    # With stream: every page is fetched and every item is yielded until
+    # exhaustion. Bounded here with max_pages to keep the demo fast on
+    # large databases — drop max_pages to walk the full collection.
+    streamed = 0
+    async for _ in client.items.stream(page_size=100, max_pages=3):
+        streamed += 1
+    print(f"  .stream()   → {streamed} items  (3 pages of 100 — remove max_pages for all {total})")
     print()
-    print("  ⚠️  If these numbers differ, your .list() calls were silently")
-    print("      truncating results. That's the bug .stream() prevents.")
+    print("  ⚠️  If .list() returned fewer items than .count(), your code was")
+    print("      silently truncating results. That's the bug .stream() prevents.")
  
  
 async def demo_page_size(client: AsyncB1Client) -> None:
     """
     Scenario 2: page_size controls HTTP requests, not total results.
  
-    page_size injects the B1-PageSize header into each request.
+    page_size injects the B1S-PageSize header into each request.
     Smaller page_size → more HTTP requests, less memory per request.
     Larger page_size → fewer HTTP requests, more memory per request.
     Both yield the same total number of items.
@@ -126,9 +129,9 @@ async def demo_filter_survives_pages(client: AsyncB1Client) -> None:
     section("4. .filter().stream() — Filters Survive Page Boundaries")
  
     # Standard OData filter using operator overloading
-    target_type = "itItems" 
+    target_type = "itItems"
     count = 0
-    async for item in client.items.filter(F.ItemType == target_type).stream(page_size=10):
+    async for item in client.items.filter(Item.item_type == target_type).stream(page_size=10):
         count += 1
         # Spot-check: every item must match the filter.
         if item.item_type != target_type:
@@ -164,15 +167,17 @@ async def demo_aggregation_patterns(client: AsyncB1Client) -> None:
     """
     section("7. Aggregation Patterns — Count, Collect, First-Match")
  
-    # Pattern A: Total count (compare with .count() for verification)
+    # Pattern A: Bounded count (compare with .count() for verification).
+    # Bounded with max_pages so the demo stays fast on large databases.
+    total_count = await client.items.count()
     total_streamed = 0
-    async for _ in client.items.stream(page_size=100):
+    async for _ in client.items.stream(page_size=100, max_pages=5):
         total_streamed += 1
-        
-    total_count    = await client.items.count()
-    print(f"  Total via .stream() : {total_streamed}")
-    print(f"  Total via .count()  : {total_count}")
-    print(f"  Match: {'✅' if total_streamed == total_count else '❌'}")
+
+    expected = min(total_count, 500)
+    print(f"  Total via .count()              : {total_count}")
+    print(f"  Streamed (page_size=100, ≤5 pgs): {total_streamed}")
+    print(f"  Match vs expected ({expected}): {'✅' if total_streamed == expected else '❌'}")
  
     # Pattern B: First item matching a runtime condition
     first_long_name = None
@@ -182,9 +187,13 @@ async def demo_aggregation_patterns(client: AsyncB1Client) -> None:
             break
     print(f"\n  First item with name > 30 chars: {first_long_name.item_code if first_long_name else '(nonefound)'}")
  
-    # Pattern C: Collect a specific field across the entire collection
-    all_codes = [item.item_code async for item in client.items.stream(page_size=100)]
-    print(f"\n  All item codes collected: {len(all_codes)} total")
+    # Pattern C: Collect a specific field across the collection
+    # (bounded demo — remove max_pages to collect from every page)
+    all_codes = [
+        item.item_code
+        async for item in client.items.stream(page_size=100, max_pages=5)
+    ]
+    print(f"\n  Item codes collected: {len(all_codes)} (first 5 pages)")
  
  
 # ─────────────────────────────────────────────────────────────────────────────
@@ -198,8 +207,8 @@ def demo_sync_parity(env: B1Environment) -> None:
     section("8. Sync Client — Full Feature Parity")
  
     with B1Client(env.config) as client:
-        total = sum(1 for _ in client.items.stream(page_size=50))
-        print(f"  Sync .stream() total: {total} items")
+        total = sum(1 for _ in client.items.stream(page_size=50, max_pages=4))
+        print(f"  Sync .stream() (≤4 pages): {total} items")
  
         top5 = [item.item_code for item in client.items.top(5).stream(page_size=2)]
         print(f"  Sync .top(5).stream(page_size=2): {top5}")

@@ -18,6 +18,7 @@ from pydantic import Field
 from b1sl.b1sl.async_rest_adapter import AsyncRestAdapter
 from b1sl.b1sl.config import B1Config
 from b1sl.b1sl.models.base import B1Model
+from b1sl.b1sl.models.paginated_result import PaginatedResult
 from b1sl.b1sl.resources.base import GenericResource
 from b1sl.b1sl.rest_adapter import RestAdapter
 
@@ -214,7 +215,7 @@ class TestSchemaHeaderAsync:
 class TestQueryBuilderSchema:
     def test_query_builder_with_schema(self):
         """QueryBuilder fluent API must correctly trigger the adapter context manager."""
-        adapter = MagicMock()
+        adapter = MagicMock(spec=RestAdapter)
         
         # We need a context manager mock for `with_schema`
         cm_mock = MagicMock()
@@ -226,12 +227,14 @@ class TestQueryBuilderSchema:
         resource.model = MockModel
 
         # Setup mock return value
-        adapter.get.return_value = MagicMock(data={"value": [{"ItemCode": "A001"}]})
+        adapter.get.return_value = MagicMock(
+            data={"value": [{"ItemCode": "A001"}]}, next_link=None, metadata=None
+        )
 
         # Execute query with schema
         results = resource.with_schema("fluent.schema").top(5).execute()
 
-        assert isinstance(results, list)
+        assert isinstance(results, PaginatedResult)
         assert len(results) == 1
         assert results[0].item_code == "A001"
         
@@ -244,7 +247,7 @@ class TestQueryBuilderSchema:
 
     def test_query_builder_stream_with_schema(self):
         """QueryBuilder stream must correctly trigger the adapter context manager."""
-        adapter = MagicMock()
+        adapter = MagicMock(spec=RestAdapter)
         cm_mock = MagicMock()
         adapter.with_schema.return_value = cm_mock
         cm_mock.__enter__.return_value = cm_mock

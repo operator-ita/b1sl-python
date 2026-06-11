@@ -1,3 +1,5 @@
+from typing import Any, cast
+
 import pytest
 
 from b1sl.b1sl.batch._recording_adapter import PendingRequest
@@ -58,7 +60,7 @@ def test_batch_parser_four_ops():
 
 def test_get_in_changeset_raises_value_error():
     """_RecordingAdapter must reject GET ops when a ChangeSet is active (OData spec)."""
-    batch = BatchClient(MockB1Client())
+    batch = BatchClient(cast(Any, MockB1Client()))
     batch.active_changeset_id = "changeset_test_123"
     adapter = batch._adapter
 

@@ -21,7 +21,6 @@ class B1JSONFormatter(logging.Formatter):
         - req_id (Tracing ID)
         - user (SAP B1 User)
         - db (Company Database)
-        - session_id (SAP Session)
         - http_method
         - endpoint
         - status_code
@@ -45,12 +44,13 @@ class B1JSONFormatter(logging.Formatter):
             "message": record.getMessage(),
         }
 
-        # Extract structured fields from 'extra' if provided
+        # Extract structured fields from 'extra' if provided.
+        # 'session_id' is deliberately NOT extracted: the B1SESSION cookie is
+        # a bearer-credential equivalent and must never reach log storage.
         for field in [
             "req_id",
             "user",
             "db",
-            "session_id",
             "sap_error",
             "http_method",
             "endpoint",

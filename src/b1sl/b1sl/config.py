@@ -25,12 +25,15 @@ class B1Config:
         password (str): B1 user password.
         company_db (str): Target Company Database.
         environment (B1Env): Deployment stage. Defaults to B1Env.DEV.
-            Controls log format (JSON in PROD, human-readable otherwise).
-            Set via the ``B1SL_ENV`` environment variable.
+            Set via the ``B1SL_ENV`` environment variable. Note: the SDK
+            never installs log handlers by itself — call
+            ``b1sl.b1sl.logging_utils.setup_logging()`` (standalone scripts
+            only) to opt in to PROD JSON / DEV text formatting.
         ssl_verify (bool, optional): Default True.
         reuse_token (bool, optional): Default True.
-        token_timeout (timedelta, optional): Default 900s.
-        max_page_size (int, optional): Default 20.
+        token_timeout (timedelta, optional): Fallback session lifetime used
+            only when SAP's Login response omits ``SessionTimeout``.
+            Default 900s.
         connect_timeout (float, optional): TCP timeout (seconds).
         read_timeout (float, optional): Read timeout (seconds).
         dry_run (bool, optional): If True, POST/PATCH/DELETE requests are intercepted and logged without being sent to SAP. Defaults to False.
@@ -38,13 +41,14 @@ class B1Config:
 
     base_url: str
     username: str
-    password: str
+    # repr=False: keeps the live password out of repr()/str(), tracebacks,
+    # and APM frame captures. Never log this field.
+    password: str = field(repr=False)
     company_db: str
     environment: B1Env = B1Env.DEV
     ssl_verify: bool = True
     reuse_token: bool = True
     token_timeout: timedelta = field(default_factory=lambda: timedelta(seconds=900))
-    max_page_size: int = 20
     connect_timeout: float = 10.0  # seconds to establish TCP connection
     read_timeout: float = 60.0  # seconds to wait for SAP to respond
     etag_cache_size: int = 256
@@ -70,8 +74,16 @@ class B1Config:
 
         Args:
             strict (bool): If True (default), raises EnvironmentError if
-                required variables are missing. If False, returns a dummy
-                config for testing/VCR playback.
+                required variables are missing.
+
+                .. warning:: ``strict=False`` silently fills missing
+                   variables with DUMMY credentials (``dummy`` /
+                   ``https://dummy:50000``). It exists ONLY for unit tests
+                   and VCR cassette playback, where no request reaches a
+                   real server. Never use it in production code paths — a
+                   misconfigured deployment would fail with confusing auth
+                   errors against a nonexistent host instead of failing
+                   fast here.
 
         Returns:
             B1Config: Loaded instance.
@@ -92,26 +104,23 @@ class B1Config:
                 f"Missing required SAP B1 config env vars: {missing}"
             )
 
-        kwargs = {
-            "base_url": os.environ.get("B1SL_BASE_URL", "https://dummy:50000/b1s/v2"),
-            "username": os.environ.get("B1SL_USERNAME", "dummy"),
-            "password": os.environ.get("B1SL_PASSWORD", "dummy"),
-            "company_db": os.environ.get("B1SL_COMPANY_DB", "SBODemoMX"),
-            "ssl_verify": os.environ.get("B1SL_SSL_VERIFY", "1") == "1",
-            "reuse_token": os.environ.get("B1SL_REUSE_TOKEN", "1") == "1",
-            "token_timeout": timedelta(
-                seconds=int(os.environ.get("B1SL_TOKEN_TIMEOUT", 900))
+        return cls(
+            base_url=os.environ.get("B1SL_BASE_URL", "https://dummy:50000/b1s/v2"),
+            username=os.environ.get("B1SL_USERNAME", "dummy"),
+            password=os.environ.get("B1SL_PASSWORD", "dummy"),
+            company_db=os.environ.get("B1SL_COMPANY_DB", "SBODemoMX"),
+            ssl_verify=os.environ.get("B1SL_SSL_VERIFY", "1") == "1",
+            reuse_token=os.environ.get("B1SL_REUSE_TOKEN", "1") == "1",
+            token_timeout=timedelta(
+                seconds=int(os.environ.get("B1SL_TOKEN_TIMEOUT", "900"))
             ),
-            "max_page_size": int(os.environ.get("B1SL_MAX_PAGE_SIZE", 20)),
-            "etag_cache_size": int(os.environ.get("B1SL_ETAG_CACHE_SIZE", 256)),
-            "connect_timeout": float(os.environ.get("B1SL_CONNECT_TIMEOUT", 10)),
-            "read_timeout": float(os.environ.get("B1SL_READ_TIMEOUT", 60)),
-            "environment": B1Env(os.environ.get("B1SL_ENV", "dev").lower()),
-            "dry_run": os.environ.get("B1SL_DRY_RUN", "0") == "1",
-            "b1s_schema": os.environ.get("B1SL_SCHEMA"),
-        }
-
-        return cls(**kwargs)
+            etag_cache_size=int(os.environ.get("B1SL_ETAG_CACHE_SIZE", "256")),
+            connect_timeout=float(os.environ.get("B1SL_CONNECT_TIMEOUT", "10")),
+            read_timeout=float(os.environ.get("B1SL_READ_TIMEOUT", "60")),
+            environment=B1Env(os.environ.get("B1SL_ENV", "dev").lower()),
+            dry_run=os.environ.get("B1SL_DRY_RUN", "0") == "1",
+            b1s_schema=os.environ.get("B1SL_SCHEMA"),
+        )
 
     @classmethod
     def from_django_settings(cls) -> "B1Config":
@@ -136,7 +145,6 @@ class B1Config:
             token_timeout=timedelta(
                 seconds=int(getattr(settings, "B1SL_TOKEN_TIMEOUT", 900))
             ),
-            max_page_size=int(getattr(settings, "B1SL_MAX_PAGE_SIZE", 20)),
             etag_cache_size=int(getattr(settings, "B1SL_ETAG_CACHE_SIZE", 256)),
             connect_timeout=float(getattr(settings, "B1SL_CONNECT_TIMEOUT", 10)),
             read_timeout=float(getattr(settings, "B1SL_READ_TIMEOUT", 60)),

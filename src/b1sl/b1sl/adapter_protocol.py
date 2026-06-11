@@ -1,4 +1,8 @@
-from typing import Protocol
+from __future__ import annotations
+
+from contextlib import AbstractContextManager
+from datetime import datetime
+from typing import Any, Protocol
 
 from b1sl.b1sl.models.result import Result
 
@@ -9,7 +13,21 @@ class RestAdapterProtocol(Protocol):
     against SAP B1 Service Layer and return Result objects.
 
     Implemented statically by both the real RestAdapter and its Fakes.
+    Declares the full surface that B1Client and the resource layer rely on —
+    keeping it complete lets mypy catch drift between the protocol, the real
+    adapter, and the test fakes.
     """
+
+    # ── Session state ─────────────────────────────────────────────────────────
+
+    is_session_active: bool
+    token_expiry: datetime | None
+    reuse_token: bool
+
+    @property
+    def session_id(self) -> str | None: ...
+
+    # ── HTTP verbs ────────────────────────────────────────────────────────────
 
     def get(
         self, endpoint: str, ep_params: dict | None = None, data: dict | None = None, headers: dict | None = None
@@ -26,3 +44,13 @@ class RestAdapterProtocol(Protocol):
     def delete(
         self, endpoint: str, ep_params: dict | None = None, data: dict | None = None, headers: dict | None = None
     ) -> Result: ...
+
+    def post_batch(self, body: str, headers: dict, _retry_once: bool = True) -> Any: ...
+
+    # ── Lifecycle & per-context modes ────────────────────────────────────────
+
+    def close(self) -> None: ...
+
+    def dry_run(self, enabled: bool = True) -> AbstractContextManager[None]: ...
+
+    def with_schema(self, schema: str | None) -> AbstractContextManager[None]: ...
