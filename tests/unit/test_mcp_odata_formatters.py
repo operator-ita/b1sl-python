@@ -153,13 +153,20 @@ def test_format_collection_truncation_footnote():
 def test_format_collection_has_more_hint():
     items = [_Item(ItemCode="A001")]
     text = format_collection(items, has_more=True)
-    assert "More pages available" in text
+    assert "More rows available" in text
 
 
 def test_format_collection_no_has_more_hint_by_default():
     items = [_Item(ItemCode="A001")]
     text = format_collection(items)
-    assert "More pages" not in text
+    assert "More rows available" not in text
+
+
+def test_format_collection_surfaces_total_count_and_next_skip():
+    items = [_Item(ItemCode="A001")]
+    text = format_collection(items, has_more=True, total_count=273, next_skip=20)
+    assert "Total matching rows: 273" in text
+    assert "skip=20" in text
 
 
 def test_format_collection_navigation_fields_excluded_from_headers():

@@ -126,7 +126,11 @@ def odata_list_tool_definition(alias: str, model: type) -> dict:
                 },
                 "top": {
                     "type": "integer",
-                    "description": "Hard cap on total rows returned ($top). Overrides pagination.",
+                    "description": (
+                        "Total rows to return ($top, a hard cap). The SDK eager-fills "
+                        "up to N across server pages; use instead of page_size/max_pages "
+                        "for a bounded result."
+                    ),
                 },
                 "skip": {
                     "type": "integer",

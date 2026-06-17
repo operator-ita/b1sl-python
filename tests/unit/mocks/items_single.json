@@ -1,6 +1,6 @@
 {
-    "ItemCode": "9990140071261",
-    "ItemName": "QUESO OAXACA PREMIUM",
+    "ItemCode": "TEST-ITEM-001",
+    "ItemName": "Demo Item 01",
     "QuantityOnStock": 100.0,
     "Price": 150.0
 }

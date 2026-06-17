@@ -1,13 +1,13 @@
 {
     "value": [
         {
-            "ItemCode": "9990140071261",
-            "ItemName": "QUESO OAXACA PREMIUM",
+            "ItemCode": "TEST-ITEM-001",
+            "ItemName": "Demo Item 01",
             "QuantityOnStock": 150.5
         },
         {
-            "ItemCode": "9990140071262",
-            "ItemName": "QUESO MANCHEGO",
+            "ItemCode": "TEST-ITEM-002",
+            "ItemName": "Demo Item 02",
             "QuantityOnStock": 45.0
         }
     ],

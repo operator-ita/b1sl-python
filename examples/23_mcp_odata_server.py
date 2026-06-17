@@ -138,10 +138,12 @@ def dispatch_tool_call(
                     max_pages=args.get("max_pages"),
                 ))
                 return format_collection(rows, title=f"{alias} list")
-            # Single-page mode: PaginatedResult knows whether more pages exist.
+            # Eager mode: .top(N) returns up to N rows across server pages;
+            # PaginatedResult carries has_more / next_skip / total_count.
             page = qb.execute()
             return format_collection(
-                page, title=f"{alias} list", has_more=page.has_more
+                page, title=f"{alias} list", has_more=page.has_more,
+                total_count=page.total_count, next_skip=page.next_skip,
             )
 
         elif verb == "get":

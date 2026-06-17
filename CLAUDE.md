@@ -95,7 +95,7 @@ Adapters map HTTP status to semantic exceptions via a standardized dict: 400 →
 - **Run `make lint` before proposing changes** — CI enforces both ruff and mypy, so a local pass avoids red pipelines. mypy runs with the pydantic plugin and `attr-defined`/`arg-type`/`call-arg`/`union-attr` armed; don't re-disable codes to silence an error — fix the type.
 - **Surgical deltas only**: write `client.items.update("A001", en.Item(item_name="New"))`, never round-trip a fetched object.
 - **Don't promote endpoints to Elite without verifying ETag support** — Elite aliases imply concurrency safety.
-- **VCR cassette hygiene**: `tests/conftest.py` redacts hosts, sessions, credentials, and OData context URLs. Before pushing recorded cassettes, sanity-check with `grep -r "B1SESSION" tests/integration/cassettes/`.
+- **VCR cassette hygiene**: `tests/conftest.py` redacts hosts, sessions, credentials, OData context URLs, **and business-data/PII field values in response bodies** (`_scrub_response_data`: names, accounts, UDFs `U_*`, barcodes/freetext, addresses, GL account codes — identifiers/enums kept). Before pushing recorded cassettes, sanity-check with `grep -r "B1SESSION" tests/integration/cassettes/`.
 - Pytest markers: `integration` (live SAP), `vcr` (cassette playback). Default `make test` excludes both.
 
 ## Where things live

@@ -3,6 +3,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from b1sl.b1sl.models.paginated_result import PaginatedResult
 from b1sl.b1sl.resources.crossjoin import (
     AsyncCrossJoinQueryBuilder,
     CrossJoinQueryBuilder,
@@ -172,7 +173,7 @@ def test_orderby_desc():
     assert params["$orderby"] == "Orders/DocNum desc"
 
 
-def test_top_and_skip():
+def test_skip_forwarded_and_top_is_client_side():
     adapter = _mock_adapter([{"value": []}])
     (
         CrossJoinQueryBuilder(adapter, "Orders", "BusinessPartners")
@@ -182,13 +183,47 @@ def test_top_and_skip():
         .execute()
     )
     params = adapter.get.call_args[1]["ep_params"]
-    assert params["$top"] == "10"
     assert params["$skip"] == "20"
+    # .top() is a client-side total cap (OData semantics), never sent as $top.
+    assert "$top" not in params
+
+
+def test_execute_top_eager_fills_across_pages():
+    # top(3) must collect across server pages, not stop at the first page.
+    page1 = {"value": [{"Orders": {"DocNum": 1}}, {"Orders": {"DocNum": 2}}]}
+    page2 = {"value": [{"Orders": {"DocNum": 3}}, {"Orders": {"DocNum": 4}}]}
+    adapter = _mock_adapter([page1, page2])
+    rows = (
+        CrossJoinQueryBuilder(adapter, "Orders", "BusinessPartners")
+        .expand({"Orders": ["DocNum"]})
+        .top(3)
+        .execute()
+    )
+    assert [r["Orders"]["DocNum"] for r in rows] == [1, 2, 3]
+    assert isinstance(rows, PaginatedResult)
+    assert rows.has_more is True          # a 4th row existed beyond the cap
+    assert rows.next_skip == 3            # gap-free cursor at base_skip + top
+    for call in adapter.get.call_args_list:
+        assert "$top" not in (call.kwargs.get("ep_params") or {})
+
+
+def test_execute_without_top_returns_single_page():
+    # No .top() → unchanged: one server page, one request.
+    page1 = {"value": [{"Orders": {"DocNum": 1}}, {"Orders": {"DocNum": 2}}]}
+    page2 = {"value": [{"Orders": {"DocNum": 3}}]}
+    adapter = _mock_adapter([page1, page2])
+    rows = (
+        CrossJoinQueryBuilder(adapter, "Orders", "BusinessPartners")
+        .expand({"Orders": ["DocNum"]})
+        .execute()
+    )
+    assert [r["Orders"]["DocNum"] for r in rows] == [1, 2]
+    assert adapter.get.call_count == 1
 
 
 # ── execute return type ───────────────────────────────────────────────────────
 
-def test_execute_returns_list_of_dicts():
+def test_execute_returns_paginated_result_of_dicts():
     row = {"Orders": {"DocEntry": 2, "DocNum": 1}, "BusinessPartners": {"CardCode": "c001"}}
     adapter = _mock_adapter([{"value": [row]}])
     rows = (
@@ -197,9 +232,13 @@ def test_execute_returns_list_of_dicts():
         .filter("Orders/CardCode eq BusinessPartners/CardCode")
         .execute()
     )
-    assert isinstance(rows, list)
+    # PaginatedResult is list-like (Sequence): iteration, len, indexing, ==.
+    assert isinstance(rows, PaginatedResult)
+    assert rows == [row]
     assert rows[0] == row
     assert isinstance(rows[0], dict)
+    assert rows.has_more is False
+    assert rows.next_skip is None
 
 
 def test_execute_empty_result():
@@ -370,6 +409,20 @@ async def test_async_stream_follows_next_link():
         rows.append(row)
     assert len(rows) == 3
     assert adapter.get.call_count == 2
+
+
+@pytest.mark.asyncio
+async def test_async_execute_top_eager_fills_across_pages():
+    page1 = {"value": [{"Orders": {"DocNum": 1}}, {"Orders": {"DocNum": 2}}]}
+    page2 = {"value": [{"Orders": {"DocNum": 3}}, {"Orders": {"DocNum": 4}}]}
+    adapter = _mock_async_adapter([page1, page2])
+    rows = await (
+        AsyncCrossJoinQueryBuilder(adapter, "Orders", "BusinessPartners")
+        .expand({"Orders": ["DocNum"]})
+        .top(3)
+        .execute()
+    )
+    assert [r["Orders"]["DocNum"] for r in rows] == [1, 2, 3]
 
 
 @pytest.mark.asyncio

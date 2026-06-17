@@ -141,6 +141,6 @@ sc = await client.service_calls.by_id(1).select(
 
 | Method | Returns | Behavior |
 | :--- | :--- | :--- |
-| **`.execute()`** | `PaginatedResult[T] \| T` | Executes the query and returns a single page (list-like, exposing `next_params` / `has_more`) or a single object (by_id). |
-| **`.stream()`** | `AsyncGenerator` | Returns a generator that automatically fetches **all pages** via `nextLink`. |
+| **`.execute()`** | `PaginatedResult[T] \| T` | Runs the query: a `PaginatedResult` (list-like; exposes `has_more` / `next_skip` / `total_count`) or a single object (`by_id`). With `.top(N)` it **eager-fills up to N rows** across server pages (`.top()` = total cap); without `.top()`, one server page. |
+| **`.stream()`** | `AsyncGenerator` | Returns a generator that automatically fetches **all pages** via `nextLink`; `.top(N)` is a global row cap. |
 | **`.first()`** | `T \| None` | Adds `$top=1` and returns the first result or `None`. |

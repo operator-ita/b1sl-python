@@ -1,7 +1,7 @@
 {
     "test_data": {
         "items": {
-            "simple": "9990140071261",
+            "simple": "TEST-ITEM-001",
             "batch": "BATCH-001",
             "service": "SERV-002"
         },

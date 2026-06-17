@@ -245,7 +245,55 @@ class GenericResource(Generic[T]):
         else:
             next_params = build_next_params(request_params, next_link) if next_link else None
         items = [self.model.model_validate(item) for item in raw]
-        return PaginatedResult(items, metadata=result.metadata, next_params=next_params)
+        return PaginatedResult(
+            items, metadata=result.metadata, next_params=next_params,
+            total_count=result.total_count,
+        )
+
+    def _list_capped(
+        self, query: ODataQuery, top: int, page_size: int | None
+    ) -> PaginatedResult[T]:
+        """Eagerly collect up to ``top`` rows, following ``nextLink`` across server
+        pages (``$top`` enforced client-side, never sent to SAP — same contract as
+        ``stream()``).
+
+        Backs ``QueryBuilder.execute()`` when ``.top(N)`` is set so that ``.top()``
+        means a *total cap* everywhere (OData ``$top`` semantics), not "one server
+        page". ``has_more`` / ``next_skip`` are computed at the ``N`` boundary via a
+        one-row overflow probe.
+        """
+        params = query.to_params()
+        params.pop("$top", None)
+        base_skip = int(params.get("$skip") or 0)
+        headers = {"B1S-PageSize": str(page_size)} if page_size else {}
+
+        collected: list[Any] = []
+        metadata: str | None = None
+        total_count: int | None = None
+        overflow = False
+        current_params = dict(params)
+        while True:
+            result = self._adapter.get(self.endpoint, ep_params=current_params, headers=headers)
+            if metadata is None:
+                metadata = result.metadata  # preserve the first page's @odata.context
+            if total_count is None:
+                total_count = result.total_count
+            for raw in (result.data or {}).get("value", []):
+                collected.append(raw)
+                if len(collected) > top:  # one row beyond the cap → more pages exist
+                    overflow = True
+                    break
+            if overflow or not result.next_link:
+                break
+            current_params = build_next_params(current_params, result.next_link)
+
+        items = [self.model.model_validate(item) for item in collected[:top]]
+        next_params: dict[str, Any] | None = None
+        if overflow:
+            next_params = {**params, "$skip": str(base_skip + top)}
+        return PaginatedResult(
+            items, metadata=metadata, next_params=next_params, total_count=total_count
+        )
 
     def _iter_pages(
         self,

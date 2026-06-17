@@ -208,9 +208,13 @@ from b1sl.contrib.mcp import format_entity, format_collection, format_odata_erro
 item = client.items.get("A001")
 text = format_entity(item, title="Item A001")
 
-# Collection (one page from .execute() — a list-like PaginatedResult)
-page = client.orders.filter("DocStatus eq 'bost_Open'").execute()
-text = format_collection(page, title="Open Orders", has_more=page.has_more)
+# Collection — a list-like PaginatedResult. With .top(N) it eager-fills up to N
+# rows; surface has_more / next_skip / total_count so the agent can continue.
+page = client.orders.filter("DocStatus eq 'bost_Open'").top(50).execute()
+text = format_collection(
+    page, title="Open Orders", has_more=page.has_more,
+    total_count=page.total_count, next_skip=page.next_skip,
+)
 
 # Error handling
 from b1sl.b1sl.exceptions.exceptions import (

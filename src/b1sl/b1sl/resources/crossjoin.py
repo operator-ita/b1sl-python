@@ -49,6 +49,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Generator
 
+from b1sl.b1sl.models.paginated_result import PaginatedResult
 from b1sl.b1sl.pagination import build_next_params
 from b1sl.b1sl.resources.base import _build_expand
 
@@ -172,14 +173,61 @@ class CrossJoinQueryBuilder:
 
     # ── execution ─────────────────────────────────────────────────────────────
 
-    def execute(self) -> list[dict[str, Any]]:
-        """Execute the crossjoin query and return all rows from the first page."""
+    def execute(self) -> PaginatedResult[dict[str, Any]]:
+        """Execute the crossjoin query and return a :class:`PaginatedResult` of rows.
+
+        The result is list-like (iteration, ``len()``, indexing) and exposes
+        ``has_more`` / ``next_skip`` / ``total_count``.
+
+        ``.top(N)`` is a **total cap** (OData ``$top`` semantics): when set, this
+        eagerly collects up to N rows across server pages. Without ``.top()`` it
+        returns one server page (use ``.stream()`` to iterate everything).
+        """
         self._validate()
+        if self._top is not None:
+            return self._execute_capped(self._top)
         result = self._adapter.get(
             self._path, ep_params=self._build_params(), headers=self._page_size_headers() or None
         )
-        data = result.data or {}
-        return list(data.get("value", []))
+        rows = list((result.data or {}).get("value", []))
+        next_params = (
+            build_next_params(self._build_params(), result.next_link)
+            if result.next_link else None
+        )
+        return PaginatedResult(
+            rows, metadata=result.metadata, next_params=next_params,
+            total_count=result.total_count,
+        )
+
+    def _execute_capped(self, top: int) -> PaginatedResult[dict[str, Any]]:
+        """Eager-collect up to ``top`` rows across pages ($top enforced client-side)."""
+        params = self._build_params()
+        params.pop("$top", None)
+        base_skip = int(params.get("$skip") or 0)
+        headers = self._page_size_headers()
+        collected: list[dict[str, Any]] = []
+        metadata: str | None = None
+        total_count: int | None = None
+        overflow = False
+        current_params = dict(params)
+        while True:
+            result = self._adapter.get(self._path, ep_params=current_params, headers=headers)
+            if metadata is None:
+                metadata = result.metadata
+            if total_count is None:
+                total_count = result.total_count
+            for raw in (result.data or {}).get("value", []):
+                collected.append(raw)
+                if len(collected) > top:
+                    overflow = True
+                    break
+            if overflow or not result.next_link:
+                break
+            current_params = build_next_params(current_params, result.next_link)
+        next_params = {**params, "$skip": str(base_skip + top)} if overflow else None
+        return PaginatedResult(
+            collected[:top], metadata=metadata, next_params=next_params, total_count=total_count
+        )
 
     def stream(
         self,
@@ -312,14 +360,61 @@ class AsyncCrossJoinQueryBuilder:
                 "Add .expand({...}) to project fields or .apply(...) for aggregation."
             )
 
-    async def execute(self) -> list[dict[str, Any]]:
-        """Execute the crossjoin query and return all rows from the first page."""
+    async def execute(self) -> PaginatedResult[dict[str, Any]]:
+        """Execute the crossjoin query and return a :class:`PaginatedResult` of rows.
+
+        The result is list-like (iteration, ``len()``, indexing) and exposes
+        ``has_more`` / ``next_skip`` / ``total_count``.
+
+        ``.top(N)`` is a **total cap** (OData ``$top`` semantics): when set, this
+        eagerly collects up to N rows across server pages. Without ``.top()`` it
+        returns one server page (use ``.stream()`` to iterate everything).
+        """
         self._validate()
+        if self._top is not None:
+            return await self._execute_capped(self._top)
         result = await self._adapter.get(
             self._path, ep_params=self._build_params(), headers=self._page_size_headers() or None
         )
-        data = result.data or {}
-        return list(data.get("value", []))
+        rows = list((result.data or {}).get("value", []))
+        next_params = (
+            build_next_params(self._build_params(), result.next_link)
+            if result.next_link else None
+        )
+        return PaginatedResult(
+            rows, metadata=result.metadata, next_params=next_params,
+            total_count=result.total_count,
+        )
+
+    async def _execute_capped(self, top: int) -> PaginatedResult[dict[str, Any]]:
+        """Eager-collect up to ``top`` rows across pages ($top enforced client-side)."""
+        params = self._build_params()
+        params.pop("$top", None)
+        base_skip = int(params.get("$skip") or 0)
+        headers = self._page_size_headers()
+        collected: list[dict[str, Any]] = []
+        metadata: str | None = None
+        total_count: int | None = None
+        overflow = False
+        current_params = dict(params)
+        while True:
+            result = await self._adapter.get(self._path, ep_params=current_params, headers=headers)
+            if metadata is None:
+                metadata = result.metadata
+            if total_count is None:
+                total_count = result.total_count
+            for raw in (result.data or {}).get("value", []):
+                collected.append(raw)
+                if len(collected) > top:
+                    overflow = True
+                    break
+            if overflow or not result.next_link:
+                break
+            current_params = build_next_params(current_params, result.next_link)
+        next_params = {**params, "$skip": str(base_skip + top)} if overflow else None
+        return PaginatedResult(
+            collected[:top], metadata=metadata, next_params=next_params, total_count=total_count
+        )
 
     async def stream(
         self,
@@ -481,7 +576,12 @@ class QueryServiceBuilder:
     # ── execution ─────────────────────────────────────────────────────────────
 
     def execute(self) -> list[dict[str, Any]]:
-        """POST to ``QueryService_PostQuery`` and return all rows."""
+        """POST to ``QueryService_PostQuery`` and return one server page of rows.
+
+        This is the low-level escape hatch: unlike ``crossjoin().execute()`` it
+        does not eager-fill ``.top(N)`` across pages. ``.top()`` is forwarded as
+        ``$top`` and SAP returns at most one server page.
+        """
         self._validate()
         payload = {
             "QueryPath": self._query_path,
@@ -571,7 +671,12 @@ class AsyncQueryServiceBuilder:
             )
 
     async def execute(self) -> list[dict[str, Any]]:
-        """POST to ``QueryService_PostQuery`` and return all rows."""
+        """POST to ``QueryService_PostQuery`` and return one server page of rows.
+
+        This is the low-level escape hatch: unlike ``crossjoin().execute()`` it
+        does not eager-fill ``.top(N)`` across pages. ``.top()`` is forwarded as
+        ``$top`` and SAP returns at most one server page.
+        """
         self._validate()
         payload = {
             "QueryPath": self._query_path,

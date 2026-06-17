@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from typing import Any
@@ -57,6 +58,56 @@ def _real_hosts() -> list[str]:
     return hosts
 
 
+_REDACTED = "[REDACTED]"
+
+# Field-name substrings (case-insensitive) whose string VALUES are business data
+# or PII and must be scrubbed from recorded response bodies. Keys (codes, DocEntry)
+# and enums (tYES/tNO/...) are deliberately kept so cassettes still validate.
+_SENSITIVE_FIELD_HINTS = (
+    "name", "account", "barcode", "freetext", "remark", "comment", "note",
+    "address", "street", "city", "zip", "county", "block", "country",
+    "phone", "fax", "mail", "website", "contact", "owner",
+    "taxid", "lictradnum", "vatregnum", "federaltax", "ident",
+    "supplier", "vendor", "catalog", "description",
+)
+# Value patterns redacted wherever they appear (e.g. GL account codes
+# "NNN-NNN-NNN-NNN"), independent of the field name.
+_VALUE_PATTERNS = (re.compile(r"\b\d{3}(?:-\d{3}){2,}\b"),)
+
+
+def _is_sensitive_field(key: str) -> bool:
+    """True when a field's string value should be redacted from a cassette."""
+    kl = key.lower()
+    if kl.startswith("u_"):  # user-defined fields routinely hold PII/business data
+        return True
+    return any(hint in kl for hint in _SENSITIVE_FIELD_HINTS)
+
+
+def _scrub_response_data(obj: Any) -> Any:
+    """Recursively redact business-data / PII values in a parsed JSON body.
+
+    Mutates ``obj`` in place. Skips ``@odata.*`` keys (handled by host scrubbing)
+    and leaves identifiers/enums intact so the cassette stays valid for replay.
+    """
+    if isinstance(obj, dict):
+        for key, val in obj.items():
+            if key.startswith("@odata") or key in ("SessionId",):
+                continue
+            if isinstance(val, (dict, list)):
+                _scrub_response_data(val)
+            elif isinstance(val, str) and val:
+                if _is_sensitive_field(key):
+                    obj[key] = _REDACTED
+                else:
+                    for pat in _VALUE_PATTERNS:
+                        val = pat.sub(_REDACTED, val)
+                    obj[key] = val
+    elif isinstance(obj, list):
+        for item in obj:
+            _scrub_response_data(item)
+    return obj
+
+
 @pytest.fixture(scope="session")
 def vcr_config() -> dict[str, Any]:
     """Global VCR configuration with manual scrubbing for total privacy.
@@ -78,8 +129,6 @@ def vcr_config() -> dict[str, Any]:
         # 3. Sanitize Request Body (especially Login credentials)
         if request.body:
             try:
-                import json
-
                 body_str = request.body.decode("utf-8")
                 # Try to parse as JSON
                 data = json.loads(body_str)
@@ -110,11 +159,22 @@ def vcr_config() -> dict[str, Any]:
             if header_name.lower() in sensitive_headers:
                 headers[header_name] = ["[REDACTED]"]
 
-        # 2. Sanitize Response Body (OData contexts and SessionIds)
+        # 2. Sanitize Response Body (OData contexts, SessionIds, and DATA)
         try:
             body_str = response["body"]["string"].decode("utf-8")
 
             placeholder_host = "sap-server.example.com"
+
+            # Scrub business-data / PII field values (names, accounts, UDFs,
+            # addresses, …) so a re-record never re-leaks real master data. Only
+            # applies to JSON bodies; plain-text bodies ($count) fall through to
+            # the regex scrubs below.
+            try:
+                data = json.loads(body_str)
+                _scrub_response_data(data)
+                body_str = json.dumps(data)
+            except (json.JSONDecodeError, TypeError):
+                pass
 
             # Rewrite the real recording host anywhere in the body (not only
             # in /b1s/ context links — error messages and metadata URLs too)
@@ -173,7 +233,6 @@ def mock_responses() -> Any:
         Callable[[str], Any]: A function that takes a filename (without .json)
         and returns the parsed JSON content.
     """
-    import json
     from pathlib import Path
 
     def _loader(filename: str) -> Any:

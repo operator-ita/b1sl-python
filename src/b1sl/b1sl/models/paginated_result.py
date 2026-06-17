@@ -38,6 +38,10 @@ class PaginatedResult(Sequence[T]):
         next_params: Query-param dict for the next page (derived from
                      ``odata.nextLink``), or ``None`` if this is the last page.
                      Feed it back via ``resource.list(params=...)``.
+        total_count: Total rows matching the query (``@odata.count``), populated
+                     only when the request asked for it (``$count=true`` /
+                     ``ODataQuery(count=True)``); otherwise ``None``. Independent
+                     of paging — the full result-set size, not the page size.
     """
 
     def __init__(
@@ -45,10 +49,12 @@ class PaginatedResult(Sequence[T]):
         data: Iterable[T],
         metadata: str | None = None,
         next_params: dict[str, Any] | None = None,
+        total_count: int | None = None,
     ) -> None:
         self._data: list[T] = list(data)
         self.metadata = metadata
         self.next_params = next_params
+        self.total_count = total_count
 
     # ── Sequence protocol ──────────────────────────────────────────────────
 
@@ -90,6 +96,21 @@ class PaginatedResult(Sequence[T]):
     def has_more(self) -> bool:
         """``True`` when SAP reported a further page via ``odata.nextLink``."""
         return self.next_params is not None
+
+    @property
+    def next_skip(self) -> int | None:
+        """The absolute ``$skip`` to pass for the next page, or ``None`` on the
+        last page.
+
+        This is the gap-free cursor — ``skip + len(items_returned)``, already
+        baked into ``next_params``. Prefer it over computing ``skip + top``
+        yourself: when a server page is smaller than the requested ``$top`` those
+        two values diverge and the manual form silently skips records.
+        """
+        if self.next_params is None:
+            return None
+        raw = self.next_params.get("$skip")
+        return int(raw) if raw is not None else None
 
     def to_list(self) -> list[T]:
         """Return the page's records as a new plain ``list``."""

@@ -12,6 +12,7 @@ class Result(BaseModel):
     next_link: str | None = None
     next_params: dict | None = None
     metadata: str | None = None
+    total_count: int | None = None  # @odata.count (only when $count=true requested)
 
     # Update configuration for Pydantic V2
     model_config = ConfigDict(

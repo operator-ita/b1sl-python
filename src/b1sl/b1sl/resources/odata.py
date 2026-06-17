@@ -241,6 +241,13 @@ class QueryBuilder(Generic[T]):
                 expand=self._expand
             )
 
+        # .top(N) is a total cap (OData $top semantics): eagerly collect up to N
+        # rows across server pages rather than returning a single server page.
+        if self._top is not None:
+            return self._resource._list_capped(
+                self._build_query(), self._top, self._page_size
+            )
+
         return self._resource.list(query=self._build_query(), page_size=self._page_size)
 
     def stream(
@@ -403,6 +410,13 @@ class AsyncQueryBuilder(Generic[T]):
                 key=self._key,
                 select=self._select or None,
                 expand=self._expand
+            )
+
+        # .top(N) is a total cap (OData $top semantics): eagerly collect up to N
+        # rows across server pages rather than returning a single server page.
+        if self._top is not None:
+            return await self._resource._list_capped(
+                self._build_query(), self._top, self._page_size
             )
 
         return await self._resource.list(query=self._build_query(), page_size=self._page_size)

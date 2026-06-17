@@ -38,7 +38,7 @@ def test_odata_field_operators():
     assert str(SC.item / ItemFields.item_code) == "Item/ItemCode"
     
     # Test string methods
-    assert str(ItemFields.item_name.contains("QUESO")) == "contains(ItemName, 'QUESO')"
+    assert str(ItemFields.item_name.contains("Widget")) == "contains(ItemName, 'Widget')"
     assert str(ItemFields.item_name.startswith("Q")) == "startswith(ItemName, 'Q')"
     
     # Boolean fields are BoYesNoEnum — Python bools must render as tYES/tNO.

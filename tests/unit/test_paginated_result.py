@@ -279,6 +279,52 @@ async def test_async_page_size_builder_sets_header():
 
 
 # ------------------------------------------------------------------------------
+# total_count — @odata.count exposure
+# ------------------------------------------------------------------------------
+
+def test_total_count_propagates_on_list():
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = Result(
+        status_code=200, data={"value": [{"item_code": "A1"}]}, total_count=273
+    )
+    page = _make_resource(adapter).list()
+    assert page.total_count == 273
+
+
+def test_total_count_is_none_when_not_requested():
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = Result(status_code=200, data={"value": []})
+    page = _make_resource(adapter).list()
+    assert page.total_count is None
+
+
+def test_total_count_captured_from_first_page_on_eager_top():
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.side_effect = [
+        Result(
+            status_code=200,
+            data={"value": [{"item_code": "A0"}, {"item_code": "A1"}]},
+            next_link="https://localhost/b1s/v1/Items?$skip=2",
+            total_count=10,  # only the first page carries @odata.count
+        ),
+        Result(status_code=200, data={"value": [{"item_code": "A2"}, {"item_code": "A3"}]}),
+    ]
+    page = _make_resource(adapter).top(3).execute()
+    assert isinstance(page, PaginatedResult)
+    assert len(page) == 3
+    assert page.total_count == 10
+
+
+def test_extract_odata_count_tolerates_v3_v4_and_missing():
+    from b1sl.b1sl.pagination import extract_odata_count
+
+    assert extract_odata_count({"@odata.count": 42}) == 42   # v4
+    assert extract_odata_count({"odata.count": "7"}) == 7     # v3, string
+    assert extract_odata_count({"value": []}) is None         # absent
+    assert extract_odata_count({"@odata.count": "x"}) is None  # non-numeric
+
+
+# ------------------------------------------------------------------------------
 # QueryBuilder integration
 # ------------------------------------------------------------------------------
 

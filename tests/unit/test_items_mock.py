@@ -31,14 +31,14 @@ def test_get_item_mock(mock_client, fake_adapter, mock_responses):
     """Prueba unitaria: GET Item usando snake_case attributes."""
     # 1. Preparar datos
     fake_json = mock_responses("items_single")
-    fake_adapter.register("GET", "Items('9990140071261')", response_data=fake_json)
+    fake_adapter.register("GET", "Items('TEST-ITEM-001')", response_data=fake_json)
 
     # 2. Ejecutar
-    item = mock_client.items.get("9990140071261")
+    item = mock_client.items.get("TEST-ITEM-001")
 
     # 3. Validar - Las propiedades en el SDK son snake_case
-    assert item.item_code == "9990140071261"
-    assert item.item_name == "QUESO OAXACA PREMIUM"
+    assert item.item_code == "TEST-ITEM-001"
+    assert item.item_name == "Demo Item 01"
     assert any("Items" in c["endpoint"] for c in fake_adapter.calls)
 
 
@@ -51,7 +51,7 @@ def test_list_items_mock(mock_client, fake_adapter, mock_responses):
     items = mock_client.items.list(query=ODataQuery(top=2))
 
     assert len(items) == 2
-    assert items[0].item_name == "QUESO OAXACA PREMIUM"
+    assert items[0].item_name == "Demo Item 01"
 
     # 3. Validar la llamada
     assert fake_adapter.calls[0]["method"] == "GET"
@@ -69,12 +69,12 @@ def test_insufficient_stock_error(mock_client, fake_adapter):
         "SAP Error -2035: Fall below zero stock not allowed", details=stock_error
     )
 
-    fake_adapter.register("PATCH", "Items('9990140071261')", raises=error_exc)
+    fake_adapter.register("PATCH", "Items('TEST-ITEM-001')", raises=error_exc)
 
     # 2. Ejecutar y validar que la excepción se propaga
     with pytest.raises(B1ValidationError) as exc_info:
         # Usamos snake_case en el constructor del Item del SDK
-        mock_client.items.update("9990140071261", Item(quantity_on_stock=-10.0))
+        mock_client.items.update("TEST-ITEM-001", Item(quantity_on_stock=-10.0))
 
     # 3. Validar el contenido del error
     assert "-2035" in str(exc_info.value)

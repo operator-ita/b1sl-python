@@ -10,5 +10,5 @@
 - **$batch Request Support**: Implemented a recording-adapter based `BatchClient` that supports multi-resource transactions and complex result parsing.
 - **Dynamic UDF Handling**: Implemented a unified `.udfs` proxy on the `B1Model` base class for type-safe, ergonomic User-Defined Field access.
 - **OData Query Builder (Fluent API)**: Implemented Pythonic operator overloading on `F` schema constants.
-- **Example Usage:** `client.items.filter((F.Item.on_hand > 5) & (F.Item.item_name.contains("QUESO")))`
+- **Example Usage:** `client.items.filter((F.Item.on_hand > 5) & (F.Item.item_name.contains("Widget")))`
 

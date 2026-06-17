@@ -15,6 +15,24 @@ def extract_next_link(data: dict) -> str | None:
     return data.get("@odata.nextLink") or data.get("odata.nextLink") or None
 
 
+def extract_odata_count(data: dict) -> int | None:
+    """Return the OData inline total count from a response body, or ``None``.
+
+    Present only when the request asked for it via ``$count=true``. Tolerates
+    both OData formats: ``"@odata.count"`` (v4) and ``"odata.count"`` (v3). It is
+    the total number of entities matching the query, independent of paging.
+    """
+    raw = data.get("@odata.count")
+    if raw is None:
+        raw = data.get("odata.count")
+    if raw is None:
+        return None
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return None
+
+
 def extract_skip(next_link: str) -> int | None:
     """
     Extracts the $skip value from an odata.nextLink string.

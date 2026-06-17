@@ -142,6 +142,8 @@ def format_collection(
     max_rows: int = 50,
     title: str | None = None,
     has_more: bool = False,
+    total_count: int | None = None,
+    next_skip: int | None = None,
 ) -> str:
     """Format a sequence of B1Model instances as a markdown table for LLM context.
 
@@ -159,7 +161,13 @@ def format_collection(
         max_rows: Maximum rows to include in the table.  Rows beyond this are
             summarized as a footnote rather than omitted silently.
         title: Optional H2 heading inserted before the table.
-        has_more: ``True`` when ``@odata.nextLink`` was present in the response.
+        has_more: ``True`` when more rows exist beyond this page
+            (``page.has_more``).
+        total_count: Full result-set size (``page.total_count`` /
+            ``@odata.count``), surfaced as a footnote when provided. ``None``
+            unless the query opted in with ``$count=true``.
+        next_skip: Absolute ``$skip`` for the next page (``page.next_skip``);
+            when set, the continuation hint tells the agent to pass ``skip=N``.
 
     Returns:
         Markdown-formatted string ready for MCP ``TextContent``.
@@ -167,7 +175,10 @@ def format_collection(
     Example::
 
         page = client.orders.execute()
-        text = format_collection(page, title="Open Orders", has_more=page.has_more)
+        text = format_collection(
+            page, title="Open Orders", has_more=page.has_more,
+            total_count=page.total_count, next_skip=page.next_skip,
+        )
         # → "## Open Orders\\n| DocEntry | CardCode | ...\\n..."
     """
     lines: list[str] = []
@@ -208,9 +219,12 @@ def format_collection(
     footnotes: list[str] = []
     if truncated:
         footnotes.append(f"*{truncated} record(s) omitted (max_rows={max_rows})*")
+    if total_count is not None:
+        footnotes.append(f"*Total matching rows: {total_count}.*")
     if has_more:
+        nxt = f"pass `skip={next_skip}` for the next page, or " if next_skip is not None else ""
         footnotes.append(
-            "*More pages available — pass `page_size` and `max_pages` to stream further.*"
+            f"*More rows available — {nxt}use `page_size`/`max_pages` to stream further.*"
         )
     if footnotes:
         lines.append("\n" + "  ".join(footnotes))

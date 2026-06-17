@@ -7,6 +7,7 @@ SAP B1 datasets.
  
 Scenarios covered:
     1.  Naive .execute() vs .stream() — the "why bother" moment.
+    1b. .top(N).execute() eager-fill — total cap + next_skip / total_count.
     2.  page_size control and its HTTP request implications.
     3.  .top(N) as a hard global limit across pages.
     4.  .filter().stream() — verifying filters survive across pages.
@@ -31,6 +32,7 @@ except ImportError:
  
 from b1sl.b1sl import AsyncB1Client, B1Client, B1Environment
 from b1sl.b1sl.fields import Item
+from b1sl.b1sl.resources.base import ODataQuery
  
  
 def section(title: str) -> None:
@@ -71,6 +73,34 @@ async def demo_why_stream(client: AsyncB1Client) -> None:
     print("      silently truncating results. That's the bug .stream() prevents.")
  
  
+async def demo_execute_eager_fill(client: AsyncB1Client) -> None:
+    """
+    Scenario 1b: .top(N).execute() is a total cap (eager-fill), not one page.
+
+    Unlike .list() (a single server page), .top(N).execute() pages internally
+    and returns up to N items in one call — .top() means "at most N rows" (OData
+    $top semantics), consistent with .stream(). The PaginatedResult also exposes
+    has_more, next_skip (the gap-free absolute cursor) and total_count
+    (@odata.count, no extra round-trip).
+    """
+    section("1b. .top(N).execute() — Eager-Fill Total Cap + next_skip / total_count")
+
+    page = await client.items.top(100).execute()
+    print(f"  .top(100).execute()  → {len(page)} items (eager-filled across server pages)")
+    print(f"  page.has_more        → {page.has_more}")
+    print(f"  page.next_skip       → {page.next_skip}  (absolute cursor for the next 100)")
+
+    # total_count needs the $count=true opt-in — full result-set size, no $count call.
+    counted = await client.items.list(query=ODataQuery(top=5, count=True))
+    print(f"  list($count=true)    → total_count={counted.total_count} (full set), page={len(counted)}")
+
+    # Gap-free continuation: feed next_skip straight back in.
+    if page.next_skip is not None:
+        page2 = await client.items.skip(page.next_skip).top(100).execute()
+        first_overlap = set(i.item_code for i in page) & set(i.item_code for i in page2)
+        print(f"  .skip(next_skip).top(100) → {len(page2)} more items, overlap={len(first_overlap)} (gap-free)")
+
+
 async def demo_page_size(client: AsyncB1Client) -> None:
     """
     Scenario 2: page_size controls HTTP requests, not total results.
@@ -241,6 +271,7 @@ def demo_islice_mental_model(env: B1Environment) -> None:
 async def run_async_demos(env: B1Environment) -> None:
     async with AsyncB1Client(env.config) as client:
         await demo_why_stream(client)
+        await demo_execute_eager_fill(client)
         await demo_page_size(client)
         await demo_top_as_global_limit(client)
         await demo_filter_survives_pages(client)

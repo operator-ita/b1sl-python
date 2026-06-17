@@ -18,7 +18,7 @@ from b1sl.b1sl.exceptions.exceptions import (
     SAPConcurrencyError,
 )
 from b1sl.b1sl.models.result import Result
-from b1sl.b1sl.pagination import extract_next_link
+from b1sl.b1sl.pagination import extract_next_link, extract_odata_count
 
 _HTTP_STATUS_TO_EXC: dict[int, type] = {
     400: B1ValidationError,
@@ -432,6 +432,7 @@ class RestAdapter(BaseRestAdapter):
                     metadata=(data_out.get("@odata.context") or data_out.get("odata.metadata"))
                     if is_dict
                     else None,
+                    total_count=extract_odata_count(data_out) if is_dict else None,
                 )
             else:
                 self._extract_etag(endpoint_path, dict(response.headers), None)

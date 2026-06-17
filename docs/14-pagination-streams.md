@@ -38,6 +38,23 @@ Understanding the semantics of each terminal method is critical for performance 
 
 ---
 
+## What `.top(N)` means
+
+`.top(N)` is a **total cap** — "at most N rows" — everywhere it appears, matching
+the OData `$top` spec and the convention of boto3 (`MaxItems`), google-cloud
+(`max_results`), etc. It is **not** a page size; use `.page_size()` (below) for
+the per-request batch.
+
+| Method | `.top(N)` behaviour | HTTP requests |
+| :--- | :--- | :--- |
+| **`.execute()`** | Eagerly collects up to **N** rows, following `nextLink` across server pages. | `ceil((N+1) / page)` |
+| **`.stream()`** | Global cap on total rows yielded (lazy generator). | as needed |
+| **`.list()`** | Low-level: returns **one server page** (≤ N rows) plus a cursor. | exactly 1 |
+
+So `client.items.top(100).execute()` returns up to 100 rows even though SAP's
+server page is 20 — the SDK pages internally. `.top()` is enforced client-side
+and never sent to SAP as `$top` (which SAP would re-apply per `$skip`).
+
 ## Manual Pagination with `PaginatedResult`
 
 `.list()` and `.execute()` return a `PaginatedResult[T]` — it behaves like a
@@ -45,8 +62,8 @@ list (iteration, `len()`, indexing, slicing) and additionally carries the
 OData pagination metadata:
 
 ```python
-page = client.items.list(query)
-print(len(page), page[0].item_code)   # list-like access
+page = client.items.list(query)        # ONE raw server page
+print(len(page), page[0].item_code)    # list-like access
 
 while page.has_more:
     page = client.items.list(params=page.next_params)  # fetch next page
@@ -56,36 +73,44 @@ while page.has_more:
   (derived from `odata.nextLink`, with your original `$filter`/`$select`
   re-injected — see the Filter Persistence Guarantee below). It is `None` on
   the last page.
+- `page.next_skip` is the **absolute `$skip`** for the next call (gap-free),
+  or `None` on the last page. Prefer it over computing `skip + top` yourself:
+  when a server page is smaller than the requested `$top`, those two diverge and
+  the manual form silently skips records.
 - `page.has_more` is sugar for `page.next_params is not None`.
+- `page.total_count` is the server-side total (`@odata.count`) — the full
+  result-set size, not the page size. It is `None` unless you asked for it with
+  `$count=true` (`ODataQuery(count=True)`), so you get the total without a
+  separate `$count` round-trip.
 - `page.to_list()` returns the records as a plain `list[T]`.
 
 The async client is symmetric: `page = await client.items.list(...)`.
 
-### `$top` and `has_more` (fence-post)
+### `$top` and `has_more` (fence-post, low-level `.list()`)
 
 SAP B1 omits `@odata.nextLink` when the requested `$top` fits within a single
-server page (`top ≤ page size) — from its perspective the request is "satisfied"
+server page (`top ≤ page size`) — from its perspective the request is "satisfied"
 once `$top` rows are returned. A naive `has_more` would therefore read `False`
 under a small `.top(N)` even when more matching rows exist, silently hiding them.
 (Verified against a live 10.0 HANA server: `top=5` on a 10k-row collection
-returns 5 rows and **no** nextLink.) To avoid that, `.list()`/`.execute()`
-transparently request one
-extra row (`$top + 1`), truncate the page back to `N`, and set `has_more=True`
-when the extra row materialises — synthesising the next `$skip` cursor so manual
-paging keeps working:
+returns 5 rows and **no** nextLink.) To avoid that, `.list()` transparently
+requests one extra row (`$top + 1`), truncates the page back to `N`, and sets
+`has_more=True` when the extra row materialises — synthesising the next `$skip`
+cursor so manual paging keeps working:
 
 ```python
-page = client.items.filter("Properties64 eq 'tYES'").top(20).execute()
+page = client.items.list(ODataQuery(filter="Properties64 eq 'tYES'", top=20))
 len(page)        # 20 (the probe's 21st row is truncated away)
 page.has_more    # True when a 21st matching row exists — no false positives
+page.next_skip   # 20
 
 while page.has_more:                                   # paginate in 20-row pages
     page = client.items.list(params=page.next_params)
 ```
 
 This costs at most one extra row over the wire per page and never affects
-requests without `$top`. `.stream()` is unaffected — it follows SAP's own
-nextLink and respects `.top(N)` as a global cap (below).
+requests without `$top`. (`.execute()` builds on this for its first page, then
+keeps paging until it has collected the full `.top(N)`.)
 
 ---
 
