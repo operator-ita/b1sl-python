@@ -185,6 +185,42 @@ def test_network_failure_raises_connection_error(adapter):
 
 
 @respx.mock
+def test_stale_keepalive_get_retries_then_succeeds(adapter):
+    """A GET hitting a stale server-closed keepalive retries once transparently."""
+    route = respx.get(f"{BASE}/b1s/v2/Items").mock(
+        side_effect=[
+            httpx.RemoteProtocolError("Server disconnected without sending a response."),
+            Response(200, json={"value": []}),
+        ]
+    )
+    result = adapter.get("/Items")
+    assert result.status_code == 200
+    assert route.call_count == 2  # original + one transparent retry
+
+
+@respx.mock
+def test_stale_keepalive_get_retry_exhausted_raises_connection_error(adapter):
+    """If the retry also hits RemoteProtocolError, raise B1ConnectionError."""
+    route = respx.get(f"{BASE}/b1s/v2/Items").mock(
+        side_effect=httpx.RemoteProtocolError("Server disconnected without sending a response.")
+    )
+    with pytest.raises(B1ConnectionError):
+        adapter.get("/Items")
+    assert route.call_count == 2  # original + one retry, no more
+
+
+@respx.mock
+def test_stale_keepalive_patch_not_retried_raises_connection_error(adapter):
+    """Non-idempotent writes are never auto-retried — caller decides."""
+    route = respx.patch(f"{BASE}/b1s/v2/Items('A1')").mock(
+        side_effect=httpx.RemoteProtocolError("Server disconnected without sending a response.")
+    )
+    with pytest.raises(B1ConnectionError):
+        adapter.patch("Items('A1')", data={"ItemName": "x"})
+    assert route.call_count == 1  # no retry on PATCH
+
+
+@respx.mock
 def test_412_without_sap_code_maps_to_concurrency_error(adapter):
     """412 must raise SAPConcurrencyError even when SAP omits code -2039."""
     respx.patch(f"{BASE}/b1s/v2/Items('A1')").mock(

@@ -8,6 +8,20 @@ minor versions may include breaking changes).
 
 ## [Unreleased]
 
+## [0.6.2] — 2026-06-17
+
+### Fixed
+- **Stale keepalive connections no longer surface as a generic `B1Exception`.**
+  When SAP B1 closes an idle keepalive server-side, the next request raised
+  `httpx.RemoteProtocolError` ("Server disconnected without sending a response"),
+  which is a `TransportError` (not a `NetworkError`) and so fell through to the
+  generic `B1Exception` wrapper. Both the sync and async adapters now handle it:
+  idempotent `GET`s are transparently retried once (the dead connection is
+  evicted from the pool, so the retry uses a fresh one), and non-idempotent
+  writes (`PATCH`/`POST`/`DELETE`) raise `B1ConnectionError` so the caller can
+  decide whether to retry. Note: httpx/httpcore's transport `retries=` does
+  **not** cover this case — it only retries connection establishment.
+
 ## [0.6.0] — 2026-06-10
 
 ### Breaking

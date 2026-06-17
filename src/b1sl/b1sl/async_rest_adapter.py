@@ -310,6 +310,20 @@ class AsyncRestAdapter(BaseRestAdapter):
             # by the re-login itself) — propagate without re-wrapping.
             exc_captured = e
             raise
+        except httpx.RemoteProtocolError as e:
+            # Stale server-closed keepalive: "Server disconnected without sending
+            # a response." httpcore's transport `retries` does NOT cover this (it
+            # only retries connection establishment), so handle it here. Safe to
+            # retry only for idempotent reads — a non-GET may have reached the
+            # server. httpcore evicts the dead connection from the pool, so the
+            # retry gets a fresh one automatically.
+            exc_captured = e
+            if http_method == "GET" and _retry_once and not _is_login:
+                self._logger.warning(f"[{req_id}] Stale connection - retrying GET once...")
+                return await self._do(
+                    http_method, endpoint, ep_params, data, headers, _is_login, _retry_once=False
+                )
+            raise B1ConnectionError(f"Cannot reach SAP B1: {e}") from e
         except (httpx.ConnectError, httpx.TimeoutException, httpx.NetworkError) as e:
             exc_captured = e
             raise B1ConnectionError(f"Cannot reach SAP B1: {e}") from e

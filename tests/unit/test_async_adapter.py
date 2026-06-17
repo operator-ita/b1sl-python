@@ -112,3 +112,41 @@ async def test_async_rest_adapter_hydration(b1_config):
     assert login_mock.call_count == 0  # Still no login because session worked
 
     await adapter.aclose()
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_async_stale_keepalive_get_retries_then_succeeds(b1_config):
+    """A GET hitting a stale server-closed keepalive retries once transparently."""
+    respx.post("https://sap-server:50000/b1s/v1/Login").mock(
+        return_value=httpx.Response(200, json={"SessionId": "s1", "SessionTimeout": 30})
+    )
+    route = respx.get("https://sap-server:50000/b1s/v1/Items('A0001')")
+    route.side_effect = [
+        httpx.RemoteProtocolError("Server disconnected without sending a response."),
+        httpx.Response(200, json={"ItemCode": "A0001"}),
+    ]
+
+    async with AsyncRestAdapter.from_config(b1_config) as adapter:
+        result = await adapter.get("Items('A0001')")
+        assert result.status_code == 200
+        assert route.call_count == 2  # original + one transparent retry
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_async_stale_keepalive_patch_not_retried(b1_config):
+    """Non-idempotent writes are never auto-retried — raise B1ConnectionError."""
+    from b1sl.b1sl.exceptions.exceptions import B1ConnectionError
+
+    respx.post("https://sap-server:50000/b1s/v1/Login").mock(
+        return_value=httpx.Response(200, json={"SessionId": "s1", "SessionTimeout": 30})
+    )
+    route = respx.patch("https://sap-server:50000/b1s/v1/Items('A0001')").mock(
+        side_effect=httpx.RemoteProtocolError("Server disconnected without sending a response.")
+    )
+
+    async with AsyncRestAdapter.from_config(b1_config) as adapter:
+        with pytest.raises(B1ConnectionError):
+            await adapter.patch("Items('A0001')", data={"ItemName": "x"})
+        assert route.call_count == 1  # no retry on PATCH
