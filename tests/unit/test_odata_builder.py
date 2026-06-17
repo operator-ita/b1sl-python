@@ -19,7 +19,9 @@ def test_odata_value_formatting():
     assert format_odata_value(date(2024, 1, 1)) == "'2024-01-01'"
     assert format_odata_value(datetime(2024, 1, 1, 12, 0, 0)) == "'2024-01-01T12:00:00'"
     assert format_odata_value(time(18, 30)) == "'18:30:00'"
-    assert format_odata_value(True) == "true"
+    # SAP B1 booleans are BoYesNoEnum (tYES/tNO), never Edm.Boolean.
+    assert format_odata_value(True) == "'tYES'"
+    assert format_odata_value(False) == "'tNO'"
     assert format_odata_value(None) == "null"
 
 def test_odata_field_operators():
@@ -39,6 +41,10 @@ def test_odata_field_operators():
     assert str(ItemFields.item_name.contains("QUESO")) == "contains(ItemName, 'QUESO')"
     assert str(ItemFields.item_name.startswith("Q")) == "startswith(ItemName, 'Q')"
     
+    # Boolean fields are BoYesNoEnum — Python bools must render as tYES/tNO.
+    assert str(ItemFields.frozen == True) == "Frozen eq 'tYES'"  # noqa: E712
+    assert str(ItemFields.frozen == False) == "Frozen eq 'tNO'"  # noqa: E712
+
     # Test logic composition
     expr = (ItemFields.item_code == "A001") & (ItemFields.valid == "tYES")
     assert str(expr) == "(ItemCode eq 'A001' and Valid eq 'tYES')"

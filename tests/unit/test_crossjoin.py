@@ -253,6 +253,62 @@ def test_stream_top_cap():
     assert len(rows) == 2
 
 
+def test_stream_does_not_forward_top_to_sap():
+    """crossjoin .top(N) must be enforced client-side, not forwarded to SAP. The
+    mock simulates a strict SAP that drops the nextLink under any $top — proving
+    the stream still pages correctly because we strip $top from the request."""
+    def fake_get(path, ep_params=None, headers=None, data=None):
+        ep_params = ep_params or {}
+        r = MagicMock()
+        if "$top" in ep_params:
+            r.data = {"value": [{"Orders": {"DocNum": 1}}, {"Orders": {"DocNum": 2}}]}
+            r.next_link = None
+            return r
+        skip = int(ep_params.get("$skip", 0))
+        if skip == 0:
+            r.data = {"value": [{"Orders": {"DocNum": 1}}, {"Orders": {"DocNum": 2}}]}
+            r.next_link = "http://sap/b1s/v1/$crossjoin?$skip=2"
+        else:
+            r.data = {"value": [{"Orders": {"DocNum": 3}}, {"Orders": {"DocNum": 4}}]}
+            r.next_link = None
+        return r
+
+    adapter = MagicMock()
+    adapter.get.side_effect = fake_get
+    rows = list(
+        CrossJoinQueryBuilder(adapter, "Orders", "BusinessPartners")
+        .expand({"Orders": ["DocNum"]})
+        .top(3)
+        .stream(page_size=2)
+    )
+
+    assert [r["Orders"]["DocNum"] for r in rows] == [1, 2, 3]
+    for call in adapter.get.call_args_list:
+        assert "$top" not in (call.kwargs.get("ep_params") or {})
+
+
+def test_page_size_sets_header_on_execute_and_stream():
+    adapter = _mock_adapter([{"value": []}])
+    qb = (
+        CrossJoinQueryBuilder(adapter, "Orders", "BusinessPartners")
+        .expand({"Orders": ["DocNum"]})
+        .page_size(50)
+    )
+    qb.execute()
+    assert adapter.get.call_args.kwargs["headers"] == {"B1S-PageSize": "50"}
+
+
+def test_stream_page_size_arg_overrides_builder():
+    adapter = _mock_adapter([{"value": [{"Orders": {"DocNum": 1}}]}])
+    list(
+        CrossJoinQueryBuilder(adapter, "Orders", "BusinessPartners")
+        .expand({"Orders": ["DocNum"]})
+        .page_size(50)
+        .stream(page_size=99)
+    )
+    assert adapter.get.call_args.kwargs["headers"] == {"B1S-PageSize": "99"}
+
+
 # ── first() ───────────────────────────────────────────────────────────────────
 
 def test_first_returns_first_row():
@@ -314,6 +370,41 @@ async def test_async_stream_follows_next_link():
         rows.append(row)
     assert len(rows) == 3
     assert adapter.get.call_count == 2
+
+
+@pytest.mark.asyncio
+async def test_async_stream_does_not_forward_top_to_sap():
+    """Async parity: crossjoin $top is enforced client-side, never sent to SAP."""
+    async def fake_get(path, ep_params=None, headers=None, data=None):
+        ep_params = ep_params or {}
+        r = MagicMock()
+        if "$top" in ep_params:
+            r.data = {"value": [{"Orders": {"DocNum": 1}}, {"Orders": {"DocNum": 2}}]}
+            r.next_link = None
+            return r
+        skip = int(ep_params.get("$skip", 0))
+        if skip == 0:
+            r.data = {"value": [{"Orders": {"DocNum": 1}}, {"Orders": {"DocNum": 2}}]}
+            r.next_link = "http://sap/b1s/v1/$crossjoin?$skip=2"
+        else:
+            r.data = {"value": [{"Orders": {"DocNum": 3}}, {"Orders": {"DocNum": 4}}]}
+            r.next_link = None
+        return r
+
+    adapter = MagicMock()
+    adapter.get = AsyncMock(side_effect=fake_get)
+    rows = []
+    async for row in (
+        AsyncCrossJoinQueryBuilder(adapter, "Orders", "BusinessPartners")
+        .expand({"Orders": ["DocNum"]})
+        .top(3)
+        .stream(page_size=2)
+    ):
+        rows.append(row)
+
+    assert [r["Orders"]["DocNum"] for r in rows] == [1, 2, 3]
+    for call in adapter.get.call_args_list:
+        assert "$top" not in (call.kwargs.get("ep_params") or {})
 
 
 @pytest.mark.asyncio

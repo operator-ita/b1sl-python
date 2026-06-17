@@ -74,6 +74,7 @@ class CrossJoinQueryBuilder:
         self._orderby: str | None = None
         self._top: int | None = None
         self._skip: int | None = None
+        self._page_size: int | None = None
 
     # ── path ──────────────────────────────────────────────────────────────────
 
@@ -125,6 +126,20 @@ class CrossJoinQueryBuilder:
         self._skip = value
         return self
 
+    def page_size(self, value: int) -> CrossJoinQueryBuilder:
+        """Set SAP's server-side page size via the ``B1S-PageSize`` header.
+
+        Distinct from ``.top()``: ``.top(N)`` caps the total rows yielded by
+        ``.stream()`` (and is never sent to SAP), whereas ``.page_size(N)``
+        only controls how many rows SAP returns per HTTP request.
+        """
+        self._page_size = value
+        return self
+
+    def _page_size_headers(self, override: int | None = None) -> dict[str, str]:
+        size = override if override is not None else self._page_size
+        return {"B1S-PageSize": str(size)} if size else {}
+
     # ── params ────────────────────────────────────────────────────────────────
 
     def _build_params(self) -> dict[str, str]:
@@ -160,7 +175,9 @@ class CrossJoinQueryBuilder:
     def execute(self) -> list[dict[str, Any]]:
         """Execute the crossjoin query and return all rows from the first page."""
         self._validate()
-        result = self._adapter.get(self._path, ep_params=self._build_params())
+        result = self._adapter.get(
+            self._path, ep_params=self._build_params(), headers=self._page_size_headers() or None
+        )
         data = result.data or {}
         return list(data.get("value", []))
 
@@ -169,10 +186,17 @@ class CrossJoinQueryBuilder:
         page_size: int | None = None,
         max_pages: int | None = None,
     ) -> Generator[dict[str, Any], None, None]:
-        """Execute and stream all rows, following ``odata.nextLink`` across pages."""
+        """Execute and stream all rows, following ``odata.nextLink`` across pages.
+
+        ``.top(N)`` is a global cap on total rows yielded, enforced client-side;
+        ``$top`` is deliberately NOT sent to SAP — forwarding it muddles paging
+        (it is re-applied relative to each page's ``$skip``) without changing the
+        row count, so keeping it off makes ``.top()`` an unambiguous global cap.
+        """
         self._validate()
         params = self._build_params()
-        headers = {"B1S-PageSize": str(page_size)} if page_size else {}
+        params.pop("$top", None)
+        headers = self._page_size_headers(page_size)
         global_top = self._top
         yielded = 0
 
@@ -217,6 +241,7 @@ class AsyncCrossJoinQueryBuilder:
         self._orderby: str | None = None
         self._top: int | None = None
         self._skip: int | None = None
+        self._page_size: int | None = None
 
     @property
     def _path(self) -> str:
@@ -247,6 +272,20 @@ class AsyncCrossJoinQueryBuilder:
         self._skip = value
         return self
 
+    def page_size(self, value: int) -> AsyncCrossJoinQueryBuilder:
+        """Set SAP's server-side page size via the ``B1S-PageSize`` header.
+
+        Distinct from ``.top()``: ``.top(N)`` caps the total rows yielded by
+        ``.stream()`` (and is never sent to SAP), whereas ``.page_size(N)``
+        only controls how many rows SAP returns per HTTP request.
+        """
+        self._page_size = value
+        return self
+
+    def _page_size_headers(self, override: int | None = None) -> dict[str, str]:
+        size = override if override is not None else self._page_size
+        return {"B1S-PageSize": str(size)} if size else {}
+
     def _build_params(self) -> dict[str, str]:
         p: dict[str, str] = {}
         if self._expand:
@@ -276,7 +315,9 @@ class AsyncCrossJoinQueryBuilder:
     async def execute(self) -> list[dict[str, Any]]:
         """Execute the crossjoin query and return all rows from the first page."""
         self._validate()
-        result = await self._adapter.get(self._path, ep_params=self._build_params())
+        result = await self._adapter.get(
+            self._path, ep_params=self._build_params(), headers=self._page_size_headers() or None
+        )
         data = result.data or {}
         return list(data.get("value", []))
 
@@ -285,10 +326,17 @@ class AsyncCrossJoinQueryBuilder:
         page_size: int | None = None,
         max_pages: int | None = None,
     ) -> AsyncGenerator[dict[str, Any], None]:
-        """Stream all rows asynchronously, following ``odata.nextLink``."""
+        """Stream all rows asynchronously, following ``odata.nextLink``.
+
+        ``.top(N)`` is a global cap on total rows yielded, enforced client-side;
+        ``$top`` is deliberately NOT sent to SAP — forwarding it muddles paging
+        (it is re-applied relative to each page's ``$skip``) without changing the
+        row count, so keeping it off makes ``.top()`` an unambiguous global cap.
+        """
         self._validate()
         params = self._build_params()
-        headers = {"B1S-PageSize": str(page_size)} if page_size else {}
+        params.pop("$top", None)
+        headers = self._page_size_headers(page_size)
         global_top = self._top
         yielded = 0
 

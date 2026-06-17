@@ -142,6 +142,143 @@ def test_sync_list_rejects_query_and_params_together():
 
 
 # ------------------------------------------------------------------------------
+# $top fence-post — has_more detection when SAP omits @odata.nextLink
+# ------------------------------------------------------------------------------
+
+def test_top_probe_requests_one_extra_and_detects_more():
+    # SAP returns top+1 rows and NO nextLink (its behaviour when $top is set).
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = Result(
+        status_code=200,
+        data={"value": [{"item_code": f"A{i}"} for i in range(3)]},  # top(2) -> probe 3
+    )
+    resource = _make_resource(adapter)
+
+    page = resource.list(query=ODataQuery(filter="Properties64 eq 'tYES'", top=2))
+
+    # Probe asked for top+1...
+    assert adapter.get.call_args.kwargs["ep_params"]["$top"] == "3"
+    # ...but the extra row is truncated away.
+    assert len(page) == 2
+    assert [m.item_code for m in page] == ["A0", "A1"]
+    # has_more is True even though SAP gave us no nextLink.
+    assert page.has_more is True
+    assert page.next_params is not None
+    assert page.next_params["$skip"] == "2"
+    assert page.next_params["$top"] == "2"  # original cap preserved for page 2
+    assert page.next_params["$filter"] == "Properties64 eq 'tYES'"
+
+
+def test_top_probe_last_page_reports_no_more():
+    # Fewer than top+1 rows come back -> genuinely the last page.
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = Result(
+        status_code=200,
+        data={"value": [{"item_code": "A0"}, {"item_code": "A1"}]},  # top(5) -> only 2
+    )
+    resource = _make_resource(adapter)
+
+    page = resource.list(query=ODataQuery(top=5))
+
+    assert adapter.get.call_args.kwargs["ep_params"]["$top"] == "6"
+    assert len(page) == 2
+    assert page.has_more is False
+    assert page.next_params is None
+
+
+def test_top_probe_advances_skip_cursor_for_following_page():
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = Result(
+        status_code=200,
+        data={"value": [{"item_code": f"A{i}"} for i in range(3)]},
+    )
+    resource = _make_resource(adapter)
+
+    # Caller already on page 2 (skip=2); next cursor must be skip + top.
+    page = resource.list(params={"$top": "2", "$skip": "2"})
+
+    assert len(page) == 2
+    assert page.has_more is True
+    assert page.next_params is not None
+    assert page.next_params["$skip"] == "4"
+
+
+def test_no_top_leaves_request_untouched():
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = Result(
+        status_code=200, data={"value": [{"item_code": "A0"}]}
+    )
+    resource = _make_resource(adapter)
+
+    resource.list(query=ODataQuery(filter="ItemCode ne ''"))
+
+    assert "$top" not in adapter.get.call_args.kwargs["ep_params"]
+
+
+@pytest.mark.asyncio
+async def test_async_top_probe_detects_more():
+    adapter = MagicMock(spec=AsyncRestAdapter)
+    adapter.get.return_value = Result(
+        status_code=200,
+        data={"value": [{"item_code": f"A{i}"} for i in range(3)]},
+    )
+    resource = _make_async_resource(adapter)
+
+    page = await resource.list(query=ODataQuery(top=2))
+
+    assert adapter.get.call_args.kwargs["ep_params"]["$top"] == "3"
+    assert len(page) == 2
+    assert page.has_more is True
+    assert page.next_params is not None
+    assert page.next_params["$skip"] == "2"
+
+
+# ------------------------------------------------------------------------------
+# page_size — B1S-PageSize header
+# ------------------------------------------------------------------------------
+
+def test_page_size_builder_sets_b1s_pagesize_header():
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = Result(status_code=200, data={"value": [{"item_code": "A1"}]})
+    resource = _make_resource(adapter)
+
+    resource.page_size(50).execute()
+
+    assert adapter.get.call_args.kwargs["headers"] == {"B1S-PageSize": "50"}
+
+
+def test_list_page_size_param_sets_header():
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = Result(status_code=200, data={"value": []})
+    resource = _make_resource(adapter)
+
+    resource.list(page_size=25)
+
+    assert adapter.get.call_args.kwargs["headers"] == {"B1S-PageSize": "25"}
+
+
+def test_list_without_page_size_sends_no_header():
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = Result(status_code=200, data={"value": []})
+    resource = _make_resource(adapter)
+
+    resource.list()
+
+    assert adapter.get.call_args.kwargs["headers"] is None
+
+
+@pytest.mark.asyncio
+async def test_async_page_size_builder_sets_header():
+    adapter = MagicMock(spec=AsyncRestAdapter)
+    adapter.get.return_value = Result(status_code=200, data={"value": []})
+    resource = _make_async_resource(adapter)
+
+    await resource.page_size(50).execute()
+
+    assert adapter.get.call_args.kwargs["headers"] == {"B1S-PageSize": "50"}
+
+
+# ------------------------------------------------------------------------------
 # QueryBuilder integration
 # ------------------------------------------------------------------------------
 

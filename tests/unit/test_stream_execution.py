@@ -98,6 +98,63 @@ def test_sync_stream_top_limit():
     # It should have made 2 calls (to get the 3rd item)
     assert adapter.get.call_count == 2
 
+def _make_stream_resource(adapter):
+    resource: GenericResource[MockModel] = GenericResource(adapter)
+    resource.endpoint = "Items"
+    resource.model = MockModel
+    return resource
+
+
+def test_sync_stream_does_not_forward_top_to_sap():
+    """$top must be enforced client-side and not forwarded to SAP. The mock
+    simulates a strict SAP that drops the nextLink under any $top — proving the
+    stream still pages correctly because we strip $top from the request."""
+    adapter = MagicMock(spec=RestAdapter)
+
+    def fake_get(endpoint, ep_params=None, data=None, headers=None):
+        ep_params = ep_params or {}
+        # Simulate SAP: omit nextLink whenever $top is present.
+        if "$top" in ep_params:
+            return Result(status_code=200, data={"value": [{"id": 1}, {"id": 2}]})
+        skip = int(ep_params.get("$skip", 0))
+        if skip == 0:
+            return Result(
+                status_code=200,
+                data={"value": [{"id": 1}, {"id": 2}]},
+                next_link="https://localhost/b1s/v1/Items?$skip=2",
+            )
+        return Result(status_code=200, data={"value": [{"id": 3}, {"id": 4}]})
+
+    adapter.get.side_effect = fake_get
+    resource = _make_stream_resource(adapter)
+
+    items = list(resource.top(3).stream(page_size=2))
+
+    # Crossed the page boundary and stopped at the global cap of 3.
+    assert [i.id for i in items] == [1, 2, 3]
+    # $top was never sent to SAP...
+    for call in adapter.get.call_args_list:
+        assert "$top" not in (call.kwargs.get("ep_params") or {})
+    # ...and page_size went out as the B1S-PageSize header.
+    assert adapter.get.call_args_list[0].kwargs["headers"] == {"B1S-PageSize": "2"}
+
+
+def test_sync_builder_page_size_feeds_stream_and_arg_overrides():
+    adapter = MagicMock(spec=RestAdapter)
+    adapter.get.return_value = Result(status_code=200, data={"value": [{"id": 1}]})
+    resource = _make_stream_resource(adapter)
+
+    # Builder-level .page_size() is used when stream() gets no explicit arg.
+    list(resource.page_size(7).stream())
+    assert adapter.get.call_args.kwargs["headers"] == {"B1S-PageSize": "7"}
+
+    # An explicit stream(page_size=...) argument wins over the builder setting.
+    adapter.get.reset_mock()
+    adapter.get.return_value = Result(status_code=200, data={"value": [{"id": 1}]})
+    list(resource.page_size(7).stream(page_size=99))
+    assert adapter.get.call_args.kwargs["headers"] == {"B1S-PageSize": "99"}
+
+
 # ------------------------------------------------------------------------------
 # ASYNC STREAM TESTS
 # ------------------------------------------------------------------------------
@@ -144,6 +201,39 @@ async def test_async_stream_top_limit():
     items = []
     async for item in resource.top(1).stream():
         items.append(item)
-        
+
     assert len(items) == 1
     assert adapter.get.call_count == 1
+
+
+@pytest.mark.asyncio
+async def test_async_stream_does_not_forward_top_to_sap():
+    """Async parity: $top is enforced client-side, never sent to SAP."""
+    adapter = MagicMock(spec=AsyncRestAdapter)
+
+    async def fake_get(endpoint, ep_params=None, data=None, headers=None):
+        ep_params = ep_params or {}
+        if "$top" in ep_params:
+            return Result(status_code=200, data={"value": [{"id": 1}, {"id": 2}]})
+        skip = int(ep_params.get("$skip", 0))
+        if skip == 0:
+            return Result(
+                status_code=200,
+                data={"value": [{"id": 1}, {"id": 2}]},
+                next_link="https://localhost/b1s/v1/Items?$skip=2",
+            )
+        return Result(status_code=200, data={"value": [{"id": 3}, {"id": 4}]})
+
+    adapter.get.side_effect = fake_get
+
+    resource: AsyncGenericResource[MockModel] = AsyncGenericResource(adapter)
+    resource.endpoint = "Items"
+    resource.model = MockModel
+
+    items = []
+    async for item in resource.top(3).stream(page_size=2):
+        items.append(item)
+
+    assert [i.id for i in items] == [1, 2, 3]
+    for call in adapter.get.call_args_list:
+        assert "$top" not in (call.kwargs.get("ep_params") or {})

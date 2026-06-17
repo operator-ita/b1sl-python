@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 from b1sl.b1sl.exceptions.exceptions import B1NotFoundError
 from b1sl.b1sl.models.base import B1Model
 from b1sl.b1sl.models.paginated_result import PaginatedResult
-from b1sl.b1sl.pagination import build_next_params
+from b1sl.b1sl.pagination import build_next_params, prepare_top_probe
 from b1sl.b1sl.resources.base import ODataQuery, _build_expand, format_entity_key
 
 if TYPE_CHECKING:
@@ -85,6 +85,11 @@ class AsyncGenericResource(Generic[T]):
 
         return AsyncQueryBuilder(self).skip(value)
 
+    def page_size(self, value: int) -> AsyncQueryBuilder[T]:
+        from b1sl.b1sl.resources.odata import AsyncQueryBuilder
+
+        return AsyncQueryBuilder(self).page_size(value)
+
     def orderby(
         self, expression: str | ODataField, desc: bool = False
     ) -> AsyncQueryBuilder[T]:
@@ -107,6 +112,7 @@ class AsyncGenericResource(Generic[T]):
         query: ODataQuery | None = None,
         *,
         params: dict[str, Any] | None = None,
+        page_size: int | None = None,
     ) -> PaginatedResult[T]:
         """
         Retrieve a single page of results with pagination metadata.
@@ -122,21 +128,29 @@ class AsyncGenericResource(Generic[T]):
             query: OData query options for the first page.
             params: Raw query params — pass ``page.next_params`` to fetch the
                 following page. Mutually exclusive with ``query``.
+            page_size: SAP server-side page size (``B1S-PageSize`` header). Caps
+                how many rows SAP returns per request, independent of ``$top``.
 
         Note: Use .stream() for automatic pagination across multiple pages.
         """
         if query is not None and params is not None:
             raise ValueError("Pass either 'query' or 'params', not both.")
         request_params = params if params is not None else (query.to_params() if query else {})
-        result = await self._adapter.get(f"{self.endpoint}", ep_params=request_params)
+        probe_params, top, base_skip = prepare_top_probe(request_params)
+        headers = {"B1S-PageSize": str(page_size)} if page_size else None
+        result = await self._adapter.get(f"{self.endpoint}", ep_params=probe_params, headers=headers)
         data = result.data or {}
-        items = [self.model.model_validate(item) for item in data.get("value", [])]
+        raw = data.get("value", [])
         next_link = result.next_link
-        return PaginatedResult(
-            items,
-            metadata=result.metadata,
-            next_params=build_next_params(request_params, next_link) if next_link else None,
-        )
+        if top is not None and len(raw) > top:
+            # Fence-post: SAP returned the probe's extra row, so more pages exist
+            # even though it gave us no nextLink. Truncate and synthesise a cursor.
+            raw = raw[:top]
+            next_params: dict[str, Any] | None = {**request_params, "$skip": str(base_skip + top)}
+        else:
+            next_params = build_next_params(request_params, next_link) if next_link else None
+        items = [self.model.model_validate(item) for item in raw]
+        return PaginatedResult(items, metadata=result.metadata, next_params=next_params)
 
     async def _iter_pages(
         self,
@@ -174,10 +188,20 @@ class AsyncGenericResource(Generic[T]):
         """
         Execute the query asynchronously and yield individual entities,
         automatically fetching next pages until dataset exhausted or limits hit.
+
+        Note:
+            ``.top(N)`` here is a **global cap on total rows yielded**, not a page
+            size — use ``page_size`` for the per-request batch. ``$top`` is
+            enforced client-side and deliberately NOT sent to SAP: forwarding it
+            muddles paging (OData re-applies ``$top`` relative to each page's
+            ``$skip`` cursor) without changing the row count, so keeping it off
+            makes ``.top()`` an unambiguous global cap.
         """
         params = query.to_params() if query else {}
-        headers = {"B1S-PageSize": str(page_size)} if page_size else {}
+        # $top is enforced client-side only (see Note above).
+        params.pop("$top", None)
         global_top = query.top if query else None
+        headers = {"B1S-PageSize": str(page_size)} if page_size else {}
         yielded_count = 0
 
         async for raw_item in self._iter_pages(self.endpoint, params, headers, max_pages):

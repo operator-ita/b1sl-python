@@ -24,7 +24,10 @@ def format_odata_value(value: Any) -> str:
     if isinstance(value, time):
         return f"'{value.strftime('%H:%M:%S')}'"
     if isinstance(value, bool):
-        return "true" if value else "false"
+        # SAP B1 SL has no real Edm.Boolean fields — every boolean-ish property
+        # is a BoYesNoEnum (tYES/tNO). Filters must use the enum member literal,
+        # matching what to_api_payload() serialises. `eq true` yields HTTP 400.
+        return "'tYES'" if value else "'tNO'"
     if value is None:
         return "null"
     return str(value)
@@ -130,6 +133,7 @@ class QueryBuilder(Generic[T]):
         self._orderby: str | None = None
         self._top: int | None = None
         self._skip: int | None = None
+        self._page_size: int | None = None
         self._expand: list[str] | dict[str, list[str]] | None = None
         self._schema: str | None = None
         self._apply: str | None = None
@@ -164,6 +168,18 @@ class QueryBuilder(Generic[T]):
 
     def skip(self, value: int) -> QueryBuilder[T]:
         self._skip = value
+        return self
+
+    def page_size(self, value: int) -> QueryBuilder[T]:
+        """Set SAP's server-side page size via the ``B1S-PageSize`` header.
+
+        Distinct from ``.top()``: ``.top(N)`` is a hard cap on total rows
+        (and suppresses SAP's ``@odata.nextLink``), whereas ``.page_size(N)``
+        only controls how many rows SAP returns per HTTP request — it governs
+        the nextLink page boundary for ``.list()``/``.execute()`` and the
+        per-request batch size for ``.stream()``.
+        """
+        self._page_size = value
         return self
 
     def expand(self, value: list[str] | dict[str, list[str]]) -> QueryBuilder[T]:
@@ -220,34 +236,38 @@ class QueryBuilder(Generic[T]):
         # If by_id was used, it's a single entity GET
         if self._key is not None:
             return self._resource.get(
-                key=self._key, 
-                select=self._select or None, 
+                key=self._key,
+                select=self._select or None,
                 expand=self._expand
             )
 
-        return self._resource.list(query=self._build_query())
+        return self._resource.list(query=self._build_query(), page_size=self._page_size)
 
     def stream(
-        self, 
-        page_size: int | None = None, 
+        self,
+        page_size: int | None = None,
         max_pages: int | None = None
     ) -> Generator[T, None, None]:
         """
-        Execute the query and return a generator that automatically fetches 
+        Execute the query and return a generator that automatically fetches
         next pages via odata.nextLink.
+
+        An explicit ``page_size`` argument overrides any ``.page_size()`` set
+        on the builder.
         """
         adapter = self._resource._adapter
+        effective_page_size = page_size if page_size is not None else self._page_size
         if self._schema and hasattr(adapter, "with_schema"):
             with adapter.with_schema(self._schema):
                 yield from self._resource.stream(
-                    query=self._build_query(), 
-                    page_size=page_size, 
+                    query=self._build_query(),
+                    page_size=effective_page_size,
                     max_pages=max_pages
                 )
         else:
             yield from self._resource.stream(
-                query=self._build_query(), 
-                page_size=page_size, 
+                query=self._build_query(),
+                page_size=effective_page_size,
                 max_pages=max_pages
             )
 
@@ -285,6 +305,7 @@ class AsyncQueryBuilder(Generic[T]):
         self._orderby: str | None = None
         self._top: int | None = None
         self._skip: int | None = None
+        self._page_size: int | None = None
         self._expand: list[str] | dict[str, list[str]] | None = None
         self._schema: str | None = None
         self._apply: str | None = None
@@ -318,6 +339,18 @@ class AsyncQueryBuilder(Generic[T]):
 
     def skip(self, value: int) -> AsyncQueryBuilder[T]:
         self._skip = value
+        return self
+
+    def page_size(self, value: int) -> AsyncQueryBuilder[T]:
+        """Set SAP's server-side page size via the ``B1S-PageSize`` header.
+
+        Distinct from ``.top()``: ``.top(N)`` is a hard cap on total rows
+        (and suppresses SAP's ``@odata.nextLink``), whereas ``.page_size(N)``
+        only controls how many rows SAP returns per HTTP request — it governs
+        the nextLink page boundary for ``.list()``/``.execute()`` and the
+        per-request batch size for ``.stream()``.
+        """
+        self._page_size = value
         return self
 
     def expand(self, value: list[str] | dict[str, list[str]]) -> AsyncQueryBuilder[T]:
@@ -372,32 +405,36 @@ class AsyncQueryBuilder(Generic[T]):
                 expand=self._expand
             )
 
-        return await self._resource.list(query=self._build_query())
+        return await self._resource.list(query=self._build_query(), page_size=self._page_size)
 
     def stream(
-        self, 
-        page_size: int | None = None, 
+        self,
+        page_size: int | None = None,
         max_pages: int | None = None
     ) -> AsyncGenerator[T, None]:
         """
-        Execute the query and return an async generator that automatically 
+        Execute the query and return an async generator that automatically
         fetches next pages via odata.nextLink.
+
+        An explicit ``page_size`` argument overrides any ``.page_size()`` set
+        on the builder.
         """
         adapter = self._resource._adapter
-        
+        effective_page_size = page_size if page_size is not None else self._page_size
+
         async def _generator_with_context():
             if self._schema and hasattr(adapter, "with_schema"):
                 with adapter.with_schema(self._schema):
                     async for item in self._resource.stream(
-                        query=self._build_query(), 
-                        page_size=page_size, 
+                        query=self._build_query(),
+                        page_size=effective_page_size,
                         max_pages=max_pages
                     ):
                         yield item
             else:
                 async for item in self._resource.stream(
-                    query=self._build_query(), 
-                    page_size=page_size, 
+                    query=self._build_query(),
+                    page_size=effective_page_size,
                     max_pages=max_pages
                 ):
                     yield item

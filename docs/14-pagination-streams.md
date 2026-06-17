@@ -61,6 +61,32 @@ while page.has_more:
 
 The async client is symmetric: `page = await client.items.list(...)`.
 
+### `$top` and `has_more` (fence-post)
+
+SAP B1 omits `@odata.nextLink` when the requested `$top` fits within a single
+server page (`top ≤ page size) — from its perspective the request is "satisfied"
+once `$top` rows are returned. A naive `has_more` would therefore read `False`
+under a small `.top(N)` even when more matching rows exist, silently hiding them.
+(Verified against a live 10.0 HANA server: `top=5` on a 10k-row collection
+returns 5 rows and **no** nextLink.) To avoid that, `.list()`/`.execute()`
+transparently request one
+extra row (`$top + 1`), truncate the page back to `N`, and set `has_more=True`
+when the extra row materialises — synthesising the next `$skip` cursor so manual
+paging keeps working:
+
+```python
+page = client.items.filter("Properties64 eq 'tYES'").top(20).execute()
+len(page)        # 20 (the probe's 21st row is truncated away)
+page.has_more    # True when a 21st matching row exists — no false positives
+
+while page.has_more:                                   # paginate in 20-row pages
+    page = client.items.list(params=page.next_params)
+```
+
+This costs at most one extra row over the wire per page and never affects
+requests without `$top`. `.stream()` is unaffected — it follows SAP's own
+nextLink and respects `.top(N)` as a global cap (below).
+
 ---
 
 ## Configuration & Safety Limits
@@ -68,15 +94,29 @@ The async client is symmetric: `page = await client.items.list(...)`.
 You can control the HTTP request behavior and add safety bounds to prevent runaway streams.
 
 ### `page_size`
-Controls the `B1S-PageSize` header. 
+Controls the `B1S-PageSize` header — how many rows SAP returns per HTTP request.
 - **Smaller**: Less memory per request, more HTTP calls.
 - **Larger**: More memory per request, fewer HTTP calls (more efficient).
 
+It is available three ways, all equivalent:
+
 ```python
-# Fetch 100 items at a time per HTTP request
+# As a stream() argument
 async for item in client.items.stream(page_size=100):
     pass
+
+# As a builder method (composable; also works with .list()/.execute())
+page = client.items.filter("ItemType eq 'itItems'").page_size(100).execute()
+async for item in client.items.page_size(100).stream():
+    pass
+
+# As a list() keyword
+page = client.items.list(page_size=100)
 ```
+
+An explicit `stream(page_size=...)` argument overrides any `.page_size()` set on
+the builder. Unlike `.top()`, `page_size` sets SAP's *page boundary* (so it
+emits an `@odata.nextLink`); it does not cap the total rows.
 
 ### `max_pages`
 Safety ceiling to limit the number of HTTP requests made by the stream.
@@ -88,13 +128,25 @@ async for item in client.items.stream(max_pages=3):
 ```
 
 ### Global `.top(N)`
-The `.top(N)` builder method acts as a **hard global limit** for the entire stream, regardless of page sizes.
+In stream mode, `.top(N)` acts as a **hard global cap on total rows yielded** —
+not a page size. It is enforced client-side and the stream stops once `N` rows
+have been produced, possibly mid-page.
 
 ```python
-# Will fetch exactly 25 items total, even if it requires multiple pages
+# Fetches exactly 25 items total across multiple pages (3 × page_size 10, then stops)
 async for item in client.items.top(25).stream(page_size=10):
     pass
 ```
+
+> **Why `$top` is not sent to SAP in stream mode.** `stream()` strips `$top`
+> from the server request and enforces the cap purely client-side. This keeps
+> `.top(N)` unambiguous as a *global total* and avoids forwarding a `$top` that
+> would otherwise be re-applied relative to each page's `$skip` cursor (muddled
+> semantics). In practice SAP still pages correctly either way — when
+> `top > page_size` it returns a nextLink, and when `top ≤ page_size` a single
+> page already holds all `N` rows — so this is a clarity/robustness measure, not
+> a fix for observed data loss. (`.list()`/`.execute()` *do* send `$top` and use
+> the fence-post probe above to keep `has_more` correct.)
 
 ---
 
