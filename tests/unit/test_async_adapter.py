@@ -150,3 +150,46 @@ async def test_async_stale_keepalive_patch_not_retried(b1_config):
         with pytest.raises(B1ConnectionError):
             await adapter.patch("Items('A0001')", data={"ItemName": "x"})
         assert route.call_count == 1  # no retry on PATCH
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_async_select_get_does_not_cache_body_etag(b1_config):
+    """Async parity: a $select GET must not cache the bogus body @odata.etag,
+    nor clobber a valid one cached by an earlier full GET (SAP quirk; see
+    docs/18-sap-version-quirks.md)."""
+    respx.post("https://sap-server:50000/b1s/v1/Login").mock(
+        return_value=httpx.Response(200, json={"SessionId": "s1", "SessionTimeout": 30})
+    )
+    bogus = 'W/"356A192B7913B04C54574D18C28D46E6395428AB"'  # sha1("1")
+    respx.get("https://sap-server:50000/b1s/v1/Items('A1')").mock(
+        return_value=httpx.Response(
+            200, json={"@odata.etag": bogus, "ItemCode": "A1"}
+        )
+    )
+
+    async with AsyncRestAdapter.from_config(b1_config) as adapter:
+        await adapter.get("Items('A1')", ep_params={"$select": "ItemCode"})
+        assert "/Items('A1')" not in adapter._etag_cache
+
+        adapter._etag_cache["/Items('A1')"] = '"valid-etag"'
+        await adapter.get("Items('A1')", ep_params={"$select": "ItemCode"})
+        assert adapter._etag_cache.get("/Items('A1')") == '"valid-etag"'
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_async_full_get_still_uses_body_etag_fallback(b1_config):
+    """Async parity: without $select the body @odata.etag fallback still works."""
+    respx.post("https://sap-server:50000/b1s/v1/Login").mock(
+        return_value=httpx.Response(200, json={"SessionId": "s1", "SessionTimeout": 30})
+    )
+    respx.get("https://sap-server:50000/b1s/v1/Items('A1')").mock(
+        return_value=httpx.Response(
+            200, json={"@odata.etag": '"body-etag"', "ItemCode": "A1"}
+        )
+    )
+
+    async with AsyncRestAdapter.from_config(b1_config) as adapter:
+        await adapter.get("Items('A1')")
+        assert adapter._etag_cache.get("/Items('A1')") == '"body-etag"'

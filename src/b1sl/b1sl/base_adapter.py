@@ -338,6 +338,8 @@ class BaseRestAdapter:
         endpoint: str,
         response_headers: dict,
         response_body: dict | None,
+        *,
+        trust_body: bool = True,
     ) -> str | None:
         """Extract and cache the ETag for a resource after a successful request.
 
@@ -352,13 +354,22 @@ class BaseRestAdapter:
             response_headers: Mapping of HTTP response headers.
             response_body: Parsed JSON body, or ``None`` when the response has
                 no content (e.g. 204 No Content).
+            trust_body: When ``False``, the ``@odata.etag`` body fallback is
+                skipped (only the header is honoured). Adapters pass ``False``
+                for ``$select`` requests: SAP omits the ``ETag`` header on
+                projected reads and returns a ``@odata.etag`` computed from a
+                version field it never loaded — a frozen ``sha1("1")`` that no
+                longer matches the record's real version. Caching it would
+                poison ``If-Match`` and turn the next PATCH/DELETE into a
+                false-positive 412 (SAP -2039). Verified on SAP B1 2511 (HANA);
+                full evidence in ``docs/18-sap-version-quirks.md``.
 
         Returns:
             The raw ETag string (including surrounding quotes and ``W/`` prefix)
             or ``None`` when no ETag was found.
         """
         etag = response_headers.get("ETag") or response_headers.get("etag")
-        if not etag and isinstance(response_body, dict):
+        if not etag and trust_body and isinstance(response_body, dict):
             etag = response_body.get("@odata.etag")
         if etag:
             self._set_etag(endpoint, etag)

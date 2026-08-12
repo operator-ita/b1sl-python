@@ -160,6 +160,92 @@ def test_sync_etag_not_cleared_by_dry_run(adapter):
     assert adapter._etag_cache.get("/Items('A1')") == '"v1"'
 
 
+# ── ETag vs $select projections (SAP quirk; see docs/18-sap-version-quirks.md) ─
+#
+# On $select reads SAP omits the ETag header and returns a body @odata.etag
+# computed from a version field it never loaded (frozen at sha1("1")). Caching
+# it poisons If-Match and turns the next PATCH into a false-positive 412.
+
+BOGUS_SELECT_ETAG = 'W/"356A192B7913B04C54574D18C28D46E6395428AB"'  # sha1("1")
+
+
+@respx.mock
+def test_sync_select_get_does_not_cache_body_etag(adapter):
+    """A $select GET must not cache the bogus body @odata.etag."""
+    _activate_session(adapter)
+    respx.get("https://sap-host:50000/b1s/v2/Items('A1')").mock(
+        return_value=Response(
+            200,
+            json={"@odata.etag": BOGUS_SELECT_ETAG, "ItemCode": "A1", "ItemName": "X"},
+        )
+    )
+
+    adapter.get("Items('A1')", ep_params={"$select": "ItemCode,ItemName"})
+    assert "/Items('A1')" not in adapter._etag_cache
+
+
+@respx.mock
+def test_sync_select_get_does_not_clobber_cached_etag(adapter):
+    """A $select GET must keep a valid ETag cached by an earlier full GET."""
+    _activate_session(adapter)
+    adapter._etag_cache["/Items('A1')"] = '"valid-etag"'
+    respx.get("https://sap-host:50000/b1s/v2/Items('A1')").mock(
+        return_value=Response(
+            200, json={"@odata.etag": BOGUS_SELECT_ETAG, "ItemCode": "A1"}
+        )
+    )
+
+    adapter.get("Items('A1')", ep_params={"$select": "ItemCode"})
+    assert adapter._etag_cache.get("/Items('A1')") == '"valid-etag"'
+
+
+@respx.mock
+def test_sync_select_get_still_trusts_header_etag(adapter):
+    """If SAP ever sends a header ETag on a $select read, it is authoritative."""
+    _activate_session(adapter)
+    respx.get("https://sap-host:50000/b1s/v2/Items('A1')").mock(
+        return_value=Response(
+            200,
+            headers={"ETag": '"header-etag"'},
+            json={"@odata.etag": BOGUS_SELECT_ETAG, "ItemCode": "A1"},
+        )
+    )
+
+    adapter.get("Items('A1')", ep_params={"$select": "ItemCode"})
+    assert adapter._etag_cache.get("/Items('A1')") == '"header-etag"'
+
+
+@respx.mock
+def test_sync_full_get_still_uses_body_etag_fallback(adapter):
+    """Without $select the body @odata.etag fallback keeps working."""
+    _activate_session(adapter)
+    respx.get("https://sap-host:50000/b1s/v2/Items('A1')").mock(
+        return_value=Response(200, json={"@odata.etag": '"body-etag"', "ItemCode": "A1"})
+    )
+
+    adapter.get("Items('A1')")
+    assert adapter._etag_cache.get("/Items('A1')") == '"body-etag"'
+
+
+@respx.mock
+def test_sync_patch_after_select_get_sends_no_if_match(adapter):
+    """End-to-end: $select GET then PATCH — no poisoned If-Match header."""
+    _activate_session(adapter)
+    respx.get("https://sap-host:50000/b1s/v2/Items('A1')").mock(
+        return_value=Response(
+            200, json={"@odata.etag": BOGUS_SELECT_ETAG, "ItemCode": "A1"}
+        )
+    )
+    patch_route = respx.patch("https://sap-host:50000/b1s/v2/Items('A1')").mock(
+        return_value=Response(204)
+    )
+
+    adapter.get("Items('A1')", ep_params={"$select": "ItemCode"})
+    adapter.patch("Items('A1')", data={"ItemName": "New"})
+
+    assert "If-Match" not in patch_route.calls.last.request.headers
+
+
 # ── Session license release on close() ───────────────────────────────────────
 
 @respx.mock

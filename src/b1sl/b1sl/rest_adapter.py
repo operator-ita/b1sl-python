@@ -419,8 +419,13 @@ class RestAdapter(BaseRestAdapter):
                     )
                 is_dict = isinstance(data_out, dict)
                 # ── ETag: extract from header (preferred) or body fallback ──
+                # $select responses carry a bogus body @odata.etag (see
+                # _extract_etag docstring) — only the header is trusted there.
                 self._extract_etag(
-                    endpoint_path, dict(response.headers), data_out if is_dict else None
+                    endpoint_path,
+                    dict(response.headers),
+                    data_out if is_dict else None,
+                    trust_body="$select" not in (ep_params or {}),
                 )
                 _next_link = extract_next_link(data_out) if is_dict else None
                 return Result(
