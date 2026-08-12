@@ -74,6 +74,11 @@ _SENSITIVE_FIELD_HINTS = (
 # "NNN-NNN-NNN-NNN"), independent of the field name.
 _VALUE_PATTERNS = (re.compile(r"\b\d{3}(?:-\d{3}){2,}\b"),)
 
+# SAP enum literals are never redacted, even under a sensitive-named field
+# (e.g. PaymentBlock/BlockDunning hold tYES/tNO; AddressType holds bo_BillTo).
+# Redacting them breaks model validation on cassette replay.
+_SAP_ENUM_VALUE_RE = re.compile(r"^(tYES|tNO|bo_?[A-Za-z_]+)$")
+
 
 def _is_sensitive_field(key: str) -> bool:
     """True when a field's string value should be redacted from a cassette."""
@@ -90,12 +95,18 @@ def _scrub_response_data(obj: Any) -> Any:
     and leaves identifiers/enums intact so the cassette stays valid for replay.
     """
     if isinstance(obj, dict):
+        # Drop UDFs entirely: even the field NAMES (U_*) are company-internal
+        # schema metadata and must not land in a committed cassette.
+        for key in [k for k in obj if k.lower().startswith("u_")]:
+            del obj[key]
         for key, val in obj.items():
             if key.startswith("@odata") or key in ("SessionId",):
                 continue
             if isinstance(val, (dict, list)):
                 _scrub_response_data(val)
             elif isinstance(val, str) and val:
+                if _SAP_ENUM_VALUE_RE.match(val):
+                    continue
                 if _is_sensitive_field(key):
                     obj[key] = _REDACTED
                 else:
@@ -116,15 +127,33 @@ def vcr_config() -> dict[str, Any]:
     in the recorded cassettes.
     """
 
+    placeholder_host = "sap-server.example.com"
+
+    def _scrub_hosts_in_value(value: str) -> str:
+        """Replace any real recording host inside a header/body string."""
+        for host in _real_hosts():
+            value = value.replace(host, placeholder_host)
+        return value
+
     def before_record_request_cb(request: Any) -> Any:
         # 1. Obfuscate the real Host in the recorded URI
         # We replace both common production-like domains and session tokens
-        placeholder_host = "sap-server.example.com"
 
         # Replace hostname in URI
         request.uri = re.sub(
             r"https?://[^/]+", f"https://{placeholder_host}", request.uri
         )
+
+        # 2. Scrub real hosts from request headers (httpx records Host:)
+        for hname in list(request.headers.keys()):
+            hval = request.headers[hname]
+            if isinstance(hval, str):
+                request.headers[hname] = _scrub_hosts_in_value(hval)
+            elif isinstance(hval, (list, tuple)):
+                request.headers[hname] = [
+                    _scrub_hosts_in_value(v) if isinstance(v, str) else v
+                    for v in hval
+                ]
 
         # 3. Sanitize Request Body (especially Login credentials)
         if request.body:
@@ -158,6 +187,13 @@ def vcr_config() -> dict[str, Any]:
         for header_name in list(headers.keys()):
             if header_name.lower() in sensitive_headers:
                 headers[header_name] = ["[REDACTED]"]
+            else:
+                # Scrub real hosts anywhere in header values (e.g. the
+                # Location header of a 201 Created carries the full URL)
+                headers[header_name] = [
+                    _scrub_hosts_in_value(v) if isinstance(v, str) else v
+                    for v in headers[header_name]
+                ]
 
         # 2. Sanitize Response Body (OData contexts, SessionIds, and DATA)
         try:

@@ -65,3 +65,31 @@ def _apply_test_state(client: B1Client) -> B1Client:
     client._adapter.token_expiry = datetime.now() + timedelta(days=1)
     client._adapter.reuse_token = True
     return client
+
+
+@pytest.fixture(scope="session")
+def sap_client_record_aware(request) -> B1Client:
+    """B1Client for VCR tests that also supports re-recording.
+
+    - ``--record-mode=none`` (default, `make test-vcr`): placeholder config
+      matching the scrubbed cassettes — fully offline.
+    - any recording mode (`make test-record`): real config from B1SL_* env
+      vars, so the recorded traffic hits the actual server before scrubbing.
+    """
+    record_mode = request.config.getoption("--record-mode") or "none"
+    if record_mode != "none":
+        env = B1Environment.load(strict=True)
+        return _apply_test_state(B1Client(config=env.config))
+
+    from b1sl.b1sl.config import B1Config
+    from b1sl.b1sl.environment import B1Env
+
+    config = B1Config(
+        base_url="https://sap-server.example.com:50000/b1s/v2",
+        company_db="[REDACTED]",
+        username="manager",
+        password="[REDACTED]",
+        environment=B1Env.DEV,
+        ssl_verify=False,
+    )
+    return _apply_test_state(B1Client(config=config))

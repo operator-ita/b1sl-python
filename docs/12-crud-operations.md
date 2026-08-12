@@ -85,6 +85,69 @@ await b1.business_partners.update("C0001", delta)
 > [!TIP]
 > This pattern is more efficient and significantly reduces the chance of `SAPConcurrencyError` (412) because you are only sending what needs to be changed.
 
+### Replacing child collections (`replace_collections=True`)
+
+By default, SAP **merges** child collections on PATCH — existing members
+always survive. For `DocumentLines`, SAP documents key-based matching (member
+with `LineNum` = in-place update, without = insert). For **`BPAddresses`** the
+collection is effectively **append-only** (verified live on SAP B1 2511, HANA,
+MX): `RowNum` in the payload is silently ignored, every member is treated as
+an INSERT — a new `AddressName` is appended (3 addresses + 2 sent = **5**) and
+an existing `AddressName` fails with `-2035 This entry already exists`. There
+is no row-level edit or delete without the replace header. Full evidence:
+[docs/18-sap-version-quirks.md, Q2](18-sap-version-quirks.md).
+
+To replace the collection wholesale — and therefore to edit or remove a single
+member — SAP requires the `B1S-ReplaceCollectionsOnPatch: true` header,
+exposed as a flag:
+
+```python
+bp = en.BusinessPartner(
+    bp_addresses=[
+        en.BPAddress(address_name="Warehouse", city="CDMX"),
+        en.BPAddress(address_name="Office", city="Toluca"),
+    ]
+)
+# The partner ends up with exactly these 2 addresses — no index merging.
+await b1.business_partners.update("C0001", bp, replace_collections=True)
+```
+
+To **edit one address**, fetch, modify, and send back the full collection:
+
+```python
+bp = await b1.business_partners.get("C0001")
+for a in bp.bp_addresses:
+    if a.address_name == "MEXICOAAA":
+        a.city = "Monterrey"
+await b1.business_partners.update(
+    "C0001", en.BusinessPartner(bp_addresses=bp.bp_addresses),
+    replace_collections=True,
+)
+```
+
+> [!WARNING]
+> The replace deletes and reinserts the rows: `RowNum` values are renumbered.
+> Never persist `RowNum` as a stable address identifier — documents reference
+> addresses by `AddressName` (`PayToCode`/`ShipToCode`), which is stable as
+> long as the name is kept.
+
+### Custom request headers
+
+`get()`, `create()`, `update()` and `delete()` accept a `headers=` dict that
+is passed through to the Service Layer — the escape hatch for any special
+header without touching private adapter internals. An explicit
+`B1S-ReplaceCollectionsOnPatch` in `headers` wins over `replace_collections`.
+
+```python
+await b1.business_partners.update(
+    "C0001", bp, headers={"B1S-ReplaceCollectionsOnPatch": "true"}
+)
+```
+
+Caller headers are merged on top of the SDK's own (e.g. `If-Match`), so ETag
+concurrency still applies. Inside `$batch`, headers are serialized into the
+corresponding part.
+
 ---
 
 ## 5. ETag & Concurrency

@@ -30,7 +30,8 @@ def test_scrub_redacts_business_values_keeps_identifiers():
                 "ItemType": "itItems",               # enum — kept
                 "Frozen": "tNO",                     # enum — kept
                 "CostAccount": "501-001-001-001",    # account — redacted (field)
-                "U_Secreto": "valor privado",        # UDF — redacted
+                "U_Secreto": "valor privado",        # UDF — dropped entirely
+                "U_Numerico": 42,                    # UDF — dropped even if not str
                 "Remarks": "nota interna",           # remark — redacted
             }
         ],
@@ -43,9 +44,29 @@ def test_scrub_redacts_business_values_keeps_identifiers():
     assert item["Frozen"] == "tNO"
     assert item["ItemName"] == "[REDACTED]"
     assert item["CostAccount"] == "[REDACTED]"
-    assert item["U_Secreto"] == "[REDACTED]"
+    # UDFs are removed key-and-value: even the field NAMES are company-internal
+    # schema metadata that must not land in a cassette.
+    assert "U_Secreto" not in item
+    assert "U_Numerico" not in item
     assert item["Remarks"] == "[REDACTED]"
     assert body["@odata.context"] == "https://host/$metadata#Items"  # untouched
+
+
+def test_scrub_keeps_sap_enums_under_sensitive_field_names():
+    # PaymentBlock/BlockDunning ("block") and AddressType ("address") match
+    # sensitive hints but hold SAP enum literals — redacting them breaks model
+    # validation on replay, so they must survive.
+    body: dict[str, Any] = {
+        "PaymentBlock": "tNO",
+        "BlockDunning": "tYES",
+        "AddressType": "bo_BillTo",
+        "AddressName": "Bodega Norte",  # real string under same hint — redacted
+    }
+    _scrub_response_data(body)
+    assert body["PaymentBlock"] == "tNO"
+    assert body["BlockDunning"] == "tYES"
+    assert body["AddressType"] == "bo_BillTo"
+    assert body["AddressName"] == "[REDACTED]"
 
 
 def test_scrub_redacts_account_pattern_in_non_sensitive_field():

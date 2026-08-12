@@ -144,16 +144,16 @@ class FakeAsyncRestAdapter:
         mock.status_code = 204
         return mock
 
-    async def get(self, endpoint: str, ep_params: dict | None = None, data: dict | None = None):
+    async def get(self, endpoint: str, ep_params: dict | None = None, data: dict | None = None, headers: dict | None = None):
         return self._record("GET", endpoint, data)
 
-    async def post(self, endpoint: str, ep_params: dict | None = None, data: dict | None = None):
+    async def post(self, endpoint: str, ep_params: dict | None = None, data: dict | None = None, headers: dict | None = None):
         return self._record("POST", endpoint, data)
 
-    async def patch(self, endpoint: str, ep_params: dict | None = None, data: dict | None = None):
+    async def patch(self, endpoint: str, ep_params: dict | None = None, data: dict | None = None, headers: dict | None = None):
         return self._record("PATCH", endpoint, data)
 
-    async def delete(self, endpoint: str, ep_params: dict | None = None, data: dict | None = None):
+    async def delete(self, endpoint: str, ep_params: dict | None = None, data: dict | None = None, headers: dict | None = None):
         return self._record("DELETE", endpoint, data)
 
     def _clear_etag(self, *args, **kwargs):
@@ -230,7 +230,7 @@ async def test_async_create_encodes_bool_true_as_tYES() -> None:
     """Async POST must encode Python True as 'tYES'."""
     adapter = FakeAsyncRestAdapter()
     # Override post to return a parseable response
-    async def fake_post(endpoint, ep_params=None, data=None):
+    async def fake_post(endpoint, ep_params=None, data=None, headers=None):
         adapter.calls.append({"method": "POST", "endpoint": endpoint, "data": data})
         mock = MagicMock()
         mock.data = {"ItemCode": "NEW-001", "Frozen": "tYES"}
@@ -248,7 +248,7 @@ async def test_async_create_encodes_bool_true_as_tYES() -> None:
 async def test_async_create_does_not_send_none_fields() -> None:
     """Async POST must not include None-valued fields."""
     adapter = FakeAsyncRestAdapter()
-    async def fake_post(endpoint, ep_params=None, data=None):
+    async def fake_post(endpoint, ep_params=None, data=None, headers=None):
         adapter.calls.append({"method": "POST", "endpoint": endpoint, "data": data})
         mock = MagicMock()
         mock.data = {"ItemCode": "NEW-001", "ItemName": "Widget"}

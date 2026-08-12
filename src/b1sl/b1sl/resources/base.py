@@ -35,6 +35,21 @@ def format_entity_key(key) -> str:
     return str(key)
 
 
+_REPLACE_COLLECTIONS_HEADER = "B1S-ReplaceCollectionsOnPatch"
+
+
+def merge_update_headers(headers: dict | None, replace_collections: bool) -> dict | None:
+    """Combine caller headers with the semantic ``replace_collections`` flag.
+
+    An explicit caller value for B1S-ReplaceCollectionsOnPatch wins over the flag.
+    """
+    if not replace_collections:
+        return headers
+    merged = dict(headers or {})
+    merged.setdefault(_REPLACE_COLLECTIONS_HEADER, "true")
+    return merged
+
+
 def _build_expand(expand: list[str] | dict[str, list[str]] | None) -> str | None:
     """
     Normalise $expand parameter to OData string syntax.
@@ -373,6 +388,8 @@ class GenericResource(Generic[T]):
         key: Any,
         select: list[str] | None = None,
         expand: list[str] | dict[str, list[str]] | None = None,
+        *,
+        headers: dict | None = None,
     ) -> T:
         params: dict[str, str] = {}
         if select:
@@ -382,7 +399,9 @@ class GenericResource(Generic[T]):
             params["$expand"] = _build_expand(expand)
 
         id_str = format_entity_key(key)
-        result = self._adapter.get(f"{self.endpoint}({id_str})", ep_params=params)
+        result = self._adapter.get(
+            f"{self.endpoint}({id_str})", ep_params=params, headers=headers
+        )
         return self.model.model_validate(result.data)
 
     def exists(self, key: Any) -> bool:
@@ -400,22 +419,34 @@ class GenericResource(Generic[T]):
 
     # ── Mutations ─────────────────────────────────────────────────────────────
 
-    def create(self, entity: T) -> T:
+    def create(self, entity: T, *, headers: dict | None = None) -> T:
         # POST: send all non-None fields. SAP requires a complete payload on creation.
         # model_dump returns native Python bools; re-encode them to tYES/tNO.
         from b1sl.b1sl.models.base import encode_sap_value
 
         payload = entity.model_dump(exclude_none=True, by_alias=True)
         encoded = {k: encode_sap_value(v) for k, v in payload.items()}
-        result = self._adapter.post(f"{self.endpoint}", data=encoded)
+        result = self._adapter.post(f"{self.endpoint}", data=encoded, headers=headers)
         return self.model.model_validate(result.data)
 
-    def update(self, key: Any, entity: T) -> None:
+    def update(
+        self,
+        key: Any,
+        entity: T,
+        *,
+        headers: dict | None = None,
+        replace_collections: bool = False,
+    ) -> None:
         """PATCH — partial update, SAP SL returns 204 No Content.
 
         Uses to_api_payload() (exclude_unset) so only fields explicitly set
         by the developer are sent — the correct delta semantics for PATCH.
         Booleans are automatically encoded to tYES/tNO.
+
+        ``replace_collections=True`` sends B1S-ReplaceCollectionsOnPatch so SAP
+        replaces child collections (e.g. BPAddresses) wholesale instead of
+        merging them (existing members survive a default PATCH). ``headers``
+        passes arbitrary extra request headers through to the Service Layer.
 
         After a successful PATCH, the server-side ETag is guaranteed to have
         changed (a new version was created), but SAP SL returns 204 No Content
@@ -428,11 +459,12 @@ class GenericResource(Generic[T]):
         self._adapter.patch(
             f"{self.endpoint}({id_str})",
             data=entity.to_api_payload(),
+            headers=merge_update_headers(headers, replace_collections),
         )
 
-    def delete(self, key: Any) -> None:
+    def delete(self, key: Any, *, headers: dict | None = None) -> None:
         id_str = format_entity_key(key)
-        self._adapter.delete(f"{self.endpoint}({id_str})")
+        self._adapter.delete(f"{self.endpoint}({id_str})", headers=headers)
 
     # ── Actions / Functions ───────────────────────────────────────────────────
 

@@ -9,7 +9,12 @@ from b1sl.b1sl.exceptions.exceptions import B1NotFoundError
 from b1sl.b1sl.models.base import B1Model
 from b1sl.b1sl.models.paginated_result import PaginatedResult
 from b1sl.b1sl.pagination import build_next_params, prepare_top_probe
-from b1sl.b1sl.resources.base import ODataQuery, _build_expand, format_entity_key
+from b1sl.b1sl.resources.base import (
+    ODataQuery,
+    _build_expand,
+    format_entity_key,
+    merge_update_headers,
+)
 
 if TYPE_CHECKING:
     from b1sl.b1sl.async_rest_adapter import AsyncRestAdapter
@@ -268,6 +273,8 @@ class AsyncGenericResource(Generic[T]):
         key: Any,
         select: list[str] | None = None,
         expand: list[str] | dict[str, list[str]] | None = None,
+        *,
+        headers: dict | None = None,
     ) -> T:
         params: dict[str, str] = {}
         if select:
@@ -277,7 +284,9 @@ class AsyncGenericResource(Generic[T]):
             params["$expand"] = _build_expand(expand)
 
         id_str = format_entity_key(key)
-        result = await self._adapter.get(f"{self.endpoint}({id_str})", ep_params=params)
+        result = await self._adapter.get(
+            f"{self.endpoint}({id_str})", ep_params=params, headers=headers
+        )
         return self.model.model_validate(result.data)
 
     async def exists(self, key: Any) -> bool:
@@ -289,7 +298,7 @@ class AsyncGenericResource(Generic[T]):
         except B1NotFoundError:
             return False
 
-    async def create(self, entity: T) -> T:
+    async def create(self, entity: T, *, headers: dict | None = None) -> T:
         # POST: send all fields that are not None (SAP requires complete payloads on create).
         # to_api_payload() uses exclude_unset, which is wrong for create — use model_dump
         # but still encode booleans by delegating through B1Model serialisation.
@@ -297,13 +306,25 @@ class AsyncGenericResource(Generic[T]):
         # Re-encode booleans (model_dump returns Python bools, SAP needs tYES/tNO)
         from b1sl.b1sl.models.base import encode_sap_value
         encoded = {k: encode_sap_value(v) for k, v in payload.items()}
-        result = await self._adapter.post(f"{self.endpoint}", data=encoded)
+        result = await self._adapter.post(
+            f"{self.endpoint}", data=encoded, headers=headers
+        )
         return self.model.model_validate(result.data)
 
-    async def update(self, key: Any, entity: T) -> None:
+    async def update(
+        self,
+        key: Any,
+        entity: T,
+        *,
+        headers: dict | None = None,
+        replace_collections: bool = False,
+    ) -> None:
         # PATCH: to_api_payload() is correct here — exclude_unset means only the
         # fields explicitly set by the developer are sent, which is the proper
         # delta semantics for a partial update. Booleans are also encoded.
+        #
+        # replace_collections=True sends B1S-ReplaceCollectionsOnPatch so SAP
+        # replaces child collections wholesale instead of merging them.
         #
         # After a successful PATCH, the server-side ETag changes but SAP SL
         # returns 204 No Content without a new ETag header. The adapter
@@ -313,11 +334,12 @@ class AsyncGenericResource(Generic[T]):
         await self._adapter.patch(
             f"{self.endpoint}({id_str})",
             data=entity.to_api_payload(),
+            headers=merge_update_headers(headers, replace_collections),
         )
 
-    async def delete(self, key: Any) -> None:
+    async def delete(self, key: Any, *, headers: dict | None = None) -> None:
         id_str = format_entity_key(key)
-        await self._adapter.delete(f"{self.endpoint}({id_str})")
+        await self._adapter.delete(f"{self.endpoint}({id_str})", headers=headers)
 
     # ── Actions / Functions ───────────────────────────────────────────────────
 

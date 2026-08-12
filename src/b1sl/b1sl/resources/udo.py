@@ -41,17 +41,26 @@ class UDOResource(GenericResource[B1Model]):
         """Single page of UDO records with pagination metadata."""
         return super().list(query, params=params)
 
-    def create(self, data: B1Model) -> B1Model:
+    def create(self, data: B1Model, *, headers: dict | None = None) -> B1Model:
         """POST a new UDO record. Returns the created record as a plain B1Model."""
-        return super().create(data)
+        return super().create(data, headers=headers)
 
-    def update(self, doc_entry: int, data: B1Model) -> None:
+    def update(
+        self,
+        doc_entry: int,
+        data: B1Model,
+        *,
+        headers: dict | None = None,
+        replace_collections: bool = False,
+    ) -> None:
         """PATCH a UDO record by DocEntry."""
-        super().update(doc_entry, data)
+        super().update(
+            doc_entry, data, headers=headers, replace_collections=replace_collections
+        )
 
-    def delete(self, doc_entry: int) -> None:
+    def delete(self, doc_entry: int, *, headers: dict | None = None) -> None:
         """DELETE a UDO record by DocEntry."""
-        super().delete(doc_entry)
+        super().delete(doc_entry, headers=headers)
 
 
 class AsyncUDOResource(AsyncGenericResource[B1Model]):
@@ -76,11 +85,20 @@ class AsyncUDOResource(AsyncGenericResource[B1Model]):
     ) -> PaginatedResult[B1Model]:
         return await super().list(query, params=params)
 
-    async def create(self, data: B1Model) -> B1Model:
-        return await super().create(data)
+    async def create(self, data: B1Model, *, headers: dict | None = None) -> B1Model:
+        return await super().create(data, headers=headers)
 
-    async def update(self, doc_entry: int, data: B1Model) -> None:
-        await super().update(doc_entry, data)
+    async def update(
+        self,
+        doc_entry: int,
+        data: B1Model,
+        *,
+        headers: dict | None = None,
+        replace_collections: bool = False,
+    ) -> None:
+        await super().update(
+            doc_entry, data, headers=headers, replace_collections=replace_collections
+        )
 
-    async def delete(self, doc_entry: int) -> None:
-        await super().delete(doc_entry)
+    async def delete(self, doc_entry: int, *, headers: dict | None = None) -> None:
+        await super().delete(doc_entry, headers=headers)

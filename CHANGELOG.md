@@ -8,6 +8,35 @@ minor versions may include breaking changes).
 
 ## [Unreleased]
 
+## [0.9.0] — 2026-08-12
+
+### Added
+- **Custom request headers on CRUD** — `get()`, `create()`, `update()` and
+  `delete()` (sync and async, including `UDOResource`) accept a keyword-only
+  `headers=` dict passed through to the Service Layer. Caller headers merge on
+  top of the SDK's own (`If-Match` etc.), so ETag concurrency is preserved;
+  inside `$batch` they are serialized into the corresponding part. This
+  removes the last known reason to call `client._adapter` directly.
+- **`update(..., replace_collections=True)`** — semantic flag that sends
+  `B1S-ReplaceCollectionsOnPatch: true`, making SAP replace child collections
+  (e.g. `BPAddresses`) wholesale instead of merging them (default PATCH keeps
+  existing members; verified live on SAP B1 MX). An explicit header in
+  `headers=` wins over the flag. Documented in `docs/12-crud-operations.md`.
+- **VCR integration test for BPAddresses PATCH semantics**
+  (`tests/integration/test_bp_addresses_real.py`) — pins the server behavior
+  behind `replace_collections` (append-only default, `-2035` on existing
+  `AddressName`, wholesale replace with the header) as a replayable cassette;
+  re-record after SAP upgrades to detect semantic drift. Full evidence
+  registry: `docs/18-sap-version-quirks.md` Q2.
+
+### Fixed
+- **Cassette scrubbing hardened** (`tests/conftest.py`): real hosts are now
+  scrubbed from request headers (`Host:`) and response headers (`Location:`),
+  which the httpx-based adapter records; UDFs are dropped key-and-value (even
+  `U_*` field *names* are company-internal schema metadata); SAP enum literals
+  (`tYES`/`tNO`, `bo_*`) are exempt from body redaction so replayed cassettes
+  still pass model validation.
+
 ## [0.8.0] — 2026-08-12
 
 ### Added
@@ -250,7 +279,9 @@ session management with re-auth locking, ETag concurrency, `$batch` with
 changesets, transparent pagination, dry-run mode, VCR-backed test
 infrastructure.
 
-[Unreleased]: https://github.com/operator-ita/b1sl-python/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/operator-ita/b1sl-python/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/operator-ita/b1sl-python/compare/v0.8.0...v0.9.0
+[0.8.0]: https://github.com/operator-ita/b1sl-python/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/operator-ita/b1sl-python/compare/v0.6.2...v0.7.0
 [0.6.2]: https://github.com/operator-ita/b1sl-python/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/operator-ita/b1sl-python/compare/v0.6.0...v0.6.1

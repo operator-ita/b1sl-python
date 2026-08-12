@@ -125,3 +125,80 @@ unconditionally, producing the inconsistent value.
 - Nearest `-2039` KBA
   ([3195415](https://userapps.support.sap.com/sap/support/knowledge/en/3195415))
   is a DI-API/UI scenario, unrelated to Service Layer projections.
+
+---
+
+## Q2 — `BPAddresses` PATCH ignores `RowNum`: the collection is append-only
+
+| | |
+|---|---|
+| **Observed on** | SAP Business One **2511**, HANA, Service Layer OData v4 (`/b1s/v2`), MX localization |
+| **Date verified** | 2026-08-12 |
+| **SDK mitigation** | `update(..., replace_collections=True)` (sends `B1S-ReplaceCollectionsOnPatch: true`) — the only reliable way to edit or remove a single address |
+| **Regression tests** | `tests/unit/test_update_headers.py` (header plumbing; the SAP-side behavior itself is server-dependent) |
+| **SAP acknowledgment** | None. Community advice ("send `RowNum` to update in place") does **not** hold on this version — see Evidence. |
+
+### Symptom
+
+A default PATCH on `BusinessPartners('X')` treats **every** `BPAddresses`
+member as an INSERT, regardless of any key fields in the payload:
+
+- member with a **new** `AddressName` → appended (partner with 3 addresses
+  PATCHed with 2 new ones ends with **5**);
+- member with an **existing** `AddressName` (+ same `AddressType`) → `400`,
+  `SAP Error -2035: This entry already exists in the following tables`;
+- member with `RowNum` only (no `AddressName`) → `400`, `Address is empty`;
+- member with `RowNum` **plus** an existing `AddressName` → still `-2035`;
+- member with `RowNum` plus a **renamed** `AddressName` → **`RowNum` is
+  silently ignored** and the member is appended as a brand-new row (observed:
+  sent `RowNum=2, AddressName=MEXICOBBB`; the original row 2 stayed intact and
+  a new row 3 appeared).
+
+There is no in-place edit, rename, or delete of a single `BPAddresses` row via
+default PATCH on this version. This contradicts SAP's documented pattern for
+`DocumentLines` (member with `LineNum` = update, without = insert) and the
+common community recipe for addresses.
+
+### The reliable pattern
+
+`GET` the partner, rebuild the **full desired collection**, and PATCH with the
+replace header (surgical deltas don't exist at row level for this collection):
+
+```python
+bp = client.business_partners.get("C001")
+for a in bp.bp_addresses:
+    if a.address_name == "MEXICOAAA":
+        a.city = "Monterrey"
+client.business_partners.update(
+    "C001", en.BusinessPartner(bp_addresses=bp.bp_addresses),
+    replace_collections=True,
+)
+```
+
+**Caveat**: the replace deletes and reinserts the rows — `RowNum` values are
+renumbered (observed live: `0,1,2` → `3,4,5`). Do not persist `RowNum` as a
+stable address identifier; documents reference addresses by `AddressName`
+(`PayToCode`/`ShipToCode`), which survives as long as the name is kept.
+
+### Research (2026-08)
+
+- Official SL update semantics (`LineNum` present = update, absent = insert;
+  `B1S-ReplaceCollectionsOnPatch` since 9.1H PL12): [SAP blog — Service Layer
+  Entity CRUD Update](https://community.sap.com/t5/enterprise-resource-planning-blog-posts-by-sap/sap-business-one-service-layer-entity-crud-update/ba-p/13171993).
+- Community threads recommending `RowNum` for BPAddresses updates —
+  [Existing address update error](https://community.sap.com/t5/enterprise-resource-planning-q-a/sap-b1-s-l-business-partner-existing-address-update-error/qaq-p/12418495),
+  [BP address update error](https://community.sap.com/t5/enterprise-resource-planning-q-a/sap-b1-business-partner-address-update-error/qaq-p/13682847),
+  [Codeless Platforms KB on -2035](https://www.codelessplatforms.com/docs/knowledge-base/sap-business-one-integration/sap-b1-business-partner-address-fails-to-update-with-error-this-entry-already-exists-in-the-following-tables-odbc-2035/)
+  — none shows a verified same-name in-place update; the one concrete
+  "success" was a rename, which our live test shows is actually an append on
+  2511.
+- Sub-resource writes (`PATCH .../BPAddresses(...)`) are not supported by SL
+  (collections are sub-objects, not writable navigation properties):
+  [community thread](https://community.sap.com/t5/enterprise-resource-planning-q-a/navigation-of-documentlines-collection-is-possible-through-sap-business-one/qaq-p/12224719).
+- DI API contrast: single-row edits ARE possible
+  (`Addresses.SetCurrentLine(i)` + `Update()`), but the line index is an
+  internal sort order (by `Address`+`AddrType`), **not** `RowNum`:
+  [SetCurrentLine sets the row not the line](https://community.sap.com/t5/enterprise-resource-planning-q-a/update-bp-address-setcurrentline-sets-the-row-not-the-line/qaq-p/390896).
+- Renaming an Address ID at all is gated by the B1 setting *Administration →
+  System Initialization → General Settings → BP → Allow Updating Address ID*:
+  [SAP blog — Update Address ID? It's Your Call](https://community.sap.com/t5/enterprise-resource-planning-blogs-by-sap/update-address-id-it-s-your-call/ba-p/13422346).
