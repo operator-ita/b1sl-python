@@ -8,6 +8,27 @@ minor versions may include breaking changes).
 
 ## [Unreleased]
 
+## [0.11.0] — 2026-08-12
+
+### Added
+- **`get_raw()`** on all resources (sync and async) — same parameters as
+  `get()` (key, `select`, `expand`, `headers=`) but returns the raw wire dict
+  with no model validation or value normalization (`"tYES"` strings and
+  legacy `/Date(ms)/` dates arrive untouched). The inbound counterpart of
+  `update(key, dict)`: together they close the public verbatim loop
+  (`get_raw` → edit dict → `update(dict)`), removing the last reason to read
+  through `client._adapter`. `get()` is now implemented as
+  `get_raw()` + `model_validate()` — one request path, identical behavior.
+
+### Fixed
+- **Docs**: the "Verbatim dict payloads" example in
+  `docs/12-crud-operations.md` built the payload with
+  `model_dump(by_alias=True)`, which does not apply SAP encoding (`SapBool` →
+  Python `True` instead of `"tYES"`); combined with the verbatim passthrough
+  it would put JSON `true` on the wire. The example now uses
+  `to_api_payload()` per element and carries an explicit warning.
+  (Reported by a downstream integrator — thanks!)
+
 ## [0.10.0] — 2026-08-12
 
 ### Added
@@ -298,7 +319,8 @@ session management with re-auth locking, ETag concurrency, `$batch` with
 changesets, transparent pagination, dry-run mode, VCR-backed test
 infrastructure.
 
-[Unreleased]: https://github.com/operator-ita/b1sl-python/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/operator-ita/b1sl-python/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/operator-ita/b1sl-python/compare/v0.10.0...v0.11.0
 [0.10.0]: https://github.com/operator-ita/b1sl-python/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/operator-ita/b1sl-python/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/operator-ita/b1sl-python/compare/v0.7.0...v0.8.0

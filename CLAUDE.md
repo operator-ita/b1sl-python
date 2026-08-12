@@ -60,6 +60,8 @@ The explicit `get_resource` call is a deliberate safety signal: ETag protection 
 
 Actions/functions have public escape hatches — consumers must never touch `_adapter` or underscore methods: `resource.action(key, name, ...)` (bound, e.g. `invoices.action(123, "Cancel")`; also records inside `$batch`), `resource.function(name, params)` (unkeyed GET), and `client.call_service_method(name, payload)` (unbound root operations like `SBOBobService_SetCurrencyRate`; POST-with-body covers both SL "actions" and "functions"). `_action`/`_function` remain as back-compat aliases. `client.base_url` exposes the normalized Service Layer URL.
 
+The verbatim loop is also public: `resource.get_raw(key)` returns the raw wire dict (no model validation) and `resource.update(key, dict)` sends a dict payload untouched (no `to_api_payload`, no SAP re-encoding — the caller supplies SAP aliases and SAP-encoded values). A model passed to `update()` keeps the Surgical Delta policy. All CRUD methods accept `headers=`; `update()` also takes `replace_collections=True` (`B1S-ReplaceCollectionsOnPatch`). BPAddresses PATCH semantics (identifier quartet, replace caveats) live in `docs/18-sap-version-quirks.md` Q2.
+
 ### Async/Sync symmetry
 
 `B1Client` / `AsyncB1Client`, `RestAdapter` / `AsyncRestAdapter`, `GenericResource` / `AsyncGenericResource`, `QueryBuilder` / `AsyncQueryBuilder` — every sync class has an async counterpart. Both surfaces must support the same parameters and methods. When changing one, change the other.

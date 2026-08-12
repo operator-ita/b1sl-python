@@ -268,14 +268,21 @@ class AsyncGenericResource(Generic[T]):
         result = await self._adapter.get(f"{self.endpoint}/$count")
         return int(result.data)
 
-    async def get(
+    async def get_raw(
         self,
         key: Any,
         select: list[str] | None = None,
         expand: list[str] | dict[str, list[str]] | None = None,
         *,
         headers: dict | None = None,
-    ) -> T:
+    ) -> dict[str, Any]:
+        """GET a single entity as the raw wire dict — no model validation.
+
+        Async counterpart of :meth:`GenericResource.get_raw`: values arrive
+        exactly as SAP sent them (``"tYES"`` strings, legacy ``/Date(ms)/``
+        dates, every field SAP returned). Pair with ``update(key, dict)`` for
+        byte-exact round-trips. ETag caching still applies (adapter-level).
+        """
         params: dict[str, str] = {}
         if select:
             select_fields: list[str] = list(select)
@@ -287,7 +294,19 @@ class AsyncGenericResource(Generic[T]):
         result = await self._adapter.get(
             f"{self.endpoint}({id_str})", ep_params=params, headers=headers
         )
-        return self.model.model_validate(result.data)
+        return result.data
+
+    async def get(
+        self,
+        key: Any,
+        select: list[str] | None = None,
+        expand: list[str] | dict[str, list[str]] | None = None,
+        *,
+        headers: dict | None = None,
+    ) -> T:
+        return self.model.model_validate(
+            await self.get_raw(key, select, expand, headers=headers)
+        )
 
     async def exists(self, key: Any) -> bool:
         """Check if an entity exists by attempting to fetch it."""

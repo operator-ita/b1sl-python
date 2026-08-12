@@ -383,14 +383,28 @@ class GenericResource(Generic[T]):
 
     # ── Single entity ─────────────────────────────────────────────────────────
 
-    def get(
+    def get_raw(
         self,
         key: Any,
         select: list[str] | None = None,
         expand: list[str] | dict[str, list[str]] | None = None,
         *,
         headers: dict | None = None,
-    ) -> T:
+    ) -> dict[str, Any]:
+        """GET a single entity as the raw wire dict — no model validation.
+
+        The verbatim counterpart of ``update(key, dict)``: values arrive
+        exactly as SAP sent them (``"tYES"`` strings, legacy ``/Date(ms)/``
+        dates, every field SAP returned) with no validator normalisation.
+        Use it for byte-exact round-trips::
+
+            raw = resource.get_raw("C001")
+            raw["BPAddresses"][2]["City"] = "Monterrey"
+            resource.update("C001", {"BPAddresses": raw["BPAddresses"]})
+
+        ETag caching still applies (it lives in the adapter), so a follow-up
+        ``update``/``delete`` keeps optimistic concurrency.
+        """
         params: dict[str, str] = {}
         if select:
             select_fields: list[str] = list(select)
@@ -402,7 +416,19 @@ class GenericResource(Generic[T]):
         result = self._adapter.get(
             f"{self.endpoint}({id_str})", ep_params=params, headers=headers
         )
-        return self.model.model_validate(result.data)
+        return result.data
+
+    def get(
+        self,
+        key: Any,
+        select: list[str] | None = None,
+        expand: list[str] | dict[str, list[str]] | None = None,
+        *,
+        headers: dict | None = None,
+    ) -> T:
+        return self.model.model_validate(
+            self.get_raw(key, select, expand, headers=headers)
+        )
 
     def exists(self, key: Any) -> bool:
         """Check if an entity exists by attempting to fetch it.
@@ -448,8 +474,10 @@ class GenericResource(Generic[T]):
           given: no serialization, no ``exclude_unset``, no value re-encoding.
           The caller owns the payload — keys must be SAP aliases
           (``"CardName"``) and values SAP-encoded (``"tYES"``, not ``True``).
-          Use this to round-trip raw rows fetched from SAP byte-for-byte
-          (e.g. child-collection rows where SAP matches by identifier fields).
+          Pair with ``get_raw()`` to round-trip wire data byte-for-byte
+          (e.g. child-collection rows where SAP matches by identifier
+          fields); from models, build rows with ``to_api_payload()``, never
+          ``model_dump()`` (which skips SAP encoding).
 
         ``replace_collections=True`` sends B1S-ReplaceCollectionsOnPatch so SAP
         replaces child collections (e.g. BPAddresses) wholesale instead of

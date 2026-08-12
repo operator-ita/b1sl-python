@@ -51,6 +51,23 @@ bp = await b1.business_partners.get("C0001")
 bp = b1.business_partners.get("C0001")
 ```
 
+### Raw reads (`get_raw`)
+
+`get_raw()` takes the same arguments as `get()` (key, `select`, `expand`,
+`headers`) but returns the **raw wire dict** — no model validation, no value
+normalization. Values arrive exactly as SAP sent them: `"tYES"` strings,
+legacy `/Date(ms)/` dates, and every field SAP returned (UDFs included):
+
+```python
+raw = await b1.business_partners.get_raw("C0001")
+raw["Frozen"]        # → "tYES"  (string, as on the wire — get() would give True)
+```
+
+It is the inbound counterpart of `update(key, dict)`: together they form the
+verbatim loop for byte-exact round-trips (see *Verbatim dict payloads* below).
+ETag caching still applies — it lives in the adapter — so a follow-up
+`update`/`delete` keeps optimistic concurrency.
+
 ### Checking Existence & Counting
 ```python
 # Exist check (fast GET)
@@ -144,10 +161,11 @@ pass selects the serialization policy:
 With a dict, the payload is entirely your responsibility: keys must be SAP
 aliases (`"CardName"`, not `card_name`) and values SAP-encoded (`"tYES"`, not
 `True`). This is the tool for byte-exact round-trips of data fetched from
-SAP — e.g. re-sending child-collection rows without any model transformation:
+SAP — and `get_raw()` is its natural source, closing the loop without any
+model transformation at all:
 
 ```python
-raw = (await b1.business_partners.get("C0001")).model_dump(by_alias=True)
+raw = await b1.business_partners.get_raw("C0001")   # wire dict, untouched
 rows = raw["BPAddresses"]
 for r in rows:
     if r["AddressName"] == "MEXICOAAA":
@@ -157,11 +175,28 @@ await b1.business_partners.update(
 )
 ```
 
+If you start from **models** instead (e.g. data you already fetched with
+`get()`), convert each element with `to_api_payload()` — it applies the SAP
+encoding (verified byte-exact against the real SAP wire):
+
+```python
+rows = [a.to_api_payload() for a in bp.bp_addresses]
+```
+
+> [!WARNING]
+> Never build a verbatim payload with `model_dump(by_alias=True)` — pydantic's
+> dump does **not** apply SAP encoding: `SapBool` fields come out as Python
+> `True`/`False` (SAP expects `"tYES"`/`"tNO"`) and `date` fields as `date`
+> objects. Only `to_api_payload()` applies `encode_sap_value()`. Since the
+> dict path sends the payload untouched, a `model_dump` payload would put
+> JSON `true` on the wire — the exact class of bug this feature exists to
+> avoid.
+
 ### Custom request headers
 
-`get()`, `create()`, `update()` and `delete()` accept a `headers=` dict that
-is passed through to the Service Layer — the escape hatch for any special
-header without touching private adapter internals. An explicit
+`get()`, `get_raw()`, `create()`, `update()` and `delete()` accept a
+`headers=` dict that is passed through to the Service Layer — the escape
+hatch for any special header without touching private adapter internals. An explicit
 `B1S-ReplaceCollectionsOnPatch` in `headers` wins over `replace_collections`.
 
 ```python

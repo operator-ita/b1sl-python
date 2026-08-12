@@ -166,13 +166,17 @@ extras preserved via `extra="allow"`).
 
 ### The two reliable patterns
 
-**Edit one address (surgical, no header)** — include the 4 identifiers:
+**Edit one address (surgical, no header)** — include the 4 identifiers
+(`get_raw()` is the natural way to fetch the current rows with their
+`RowNum`):
 
 ```python
+raw = client.business_partners.get_raw("C001")
+row = next(r for r in raw["BPAddresses"] if r["AddressName"] == "MEXICOAAA")
 client.business_partners.update("C001", {
     "BPAddresses": [{
-        "BPCode": "C001", "AddressName": "MEXICOAAA",
-        "AddressType": "bo_BillTo", "RowNum": 2,
+        "BPCode": row["BPCode"], "AddressName": row["AddressName"],
+        "AddressType": row["AddressType"], "RowNum": row["RowNum"],
         "City": "Monterrey",                      # the actual change
     }],
 })
