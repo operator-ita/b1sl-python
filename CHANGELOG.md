@@ -8,6 +8,42 @@ minor versions may include breaking changes).
 
 ## [Unreleased]
 
+## [0.8.0] — 2026-08-12
+
+### Added
+- **Public API for OData actions and functions** — consumers no longer need to
+  touch `_adapter` or underscore methods:
+  - `resource.action(key, name, payload=None, *, params=None, headers=None,
+    method="POST")` — bound actions/functions on a keyed entity
+    (e.g. `invoices.action(123, "Cancel")`). Also records inside `$batch`
+    blocks (`batch.orders.action(...)`). The previous `_action` name remains
+    as a backwards-compatible alias.
+  - `resource.function(name, params=None)` — unkeyed, read-only
+    `GET Endpoint/FunctionName` calls (`_function` kept as alias).
+  - `client.call_service_method(name, payload=None)` (sync and async) — the
+    low-level escape hatch for the ~1000 unbound `*Service_*` root operations
+    (e.g. `SBOBobService_SetCurrencyRate`). A single entry point covers both
+    SL "actions" and "functions", since the Service Layer invokes both as
+    POST with a JSON body. Goes through the adapter, so dry-run interception
+    and semantic exception mapping apply; no ETag concurrency (unbound).
+- **`client.base_url`** (sync and async) — public read-only property exposing
+  the normalized Service Layer base URL (including `/b1s/<version>`);
+  previously only reachable via the private `_adapter`.
+
+### Fixed
+- **False-positive `SAPConcurrencyError` (412 / SAP -2039) on PATCH/DELETE
+  after a `GET` with `$select`.** Verified on SAP B1 2511 (HANA): projected
+  reads omit the `ETag` response header but still carry a body `@odata.etag`
+  computed from a version field the projection never loaded — frozen at
+  `sha1("1")` regardless of the record's real version. The adapter's body
+  fallback cached that value and poisoned the next `If-Match`. `$select`
+  responses now never touch the ETag cache (they neither cache the bogus
+  value nor clobber a valid ETag from an earlier full GET); a header `ETag`
+  remains authoritative if SAP ever sends one. Note: an update after a
+  `$select`-only read is a blind write — do a full `GET` first when
+  optimistic concurrency matters. Full wire-level evidence in
+  `docs/18-sap-version-quirks.md`.
+
 ## [0.7.0] — 2026-06-17
 
 ### Changed

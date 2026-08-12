@@ -53,6 +53,8 @@ res = client.get_resource(en.User, "Users")
 
 The explicit `get_resource` call is a deliberate safety signal: ETag protection is **not guaranteed** for these endpoints. When adding a new alias, only promote to Elite if SAP supports ETag for that endpoint.
 
+Actions/functions have public escape hatches — consumers must never touch `_adapter` or underscore methods: `resource.action(key, name, ...)` (bound, e.g. `invoices.action(123, "Cancel")`; also records inside `$batch`), `resource.function(name, params)` (unkeyed GET), and `client.call_service_method(name, payload)` (unbound root operations like `SBOBobService_SetCurrencyRate`; POST-with-body covers both SL "actions" and "functions"). `_action`/`_function` remain as back-compat aliases. `client.base_url` exposes the normalized Service Layer URL.
+
 ### Async/Sync symmetry
 
 `B1Client` / `AsyncB1Client`, `RestAdapter` / `AsyncRestAdapter`, `GenericResource` / `AsyncGenericResource`, `QueryBuilder` / `AsyncQueryBuilder` — every sync class has an async counterpart. Both surfaces must support the same parameters and methods. When changing one, change the other.
@@ -65,6 +67,7 @@ SAP returns `204 No Content` on PATCH/DELETE without a fresh `ETag` header. The 
 2. PATCH/DELETE sends it as `If-Match`.
 3. **On success, the adapter immediately clears the cached ETag** (proactive invalidation). This lives in both adapters' `_do` success path (`_invalidate_etag_after_write` in `base_adapter.py`) and covers PATCH, DELETE, and bound-Action POSTs (which also clear the keyed parent path). Resources must NOT duplicate this; if SAP returns a fresh `ETag` header, it is kept instead. Dry-run writes never touch the cache.
 4. 412 → `SAPConcurrencyError`.
+5. **`$select` reads never touch the ETag cache** (`trust_body=False` in `_extract_etag`). Verified on SAP B1 2511 (HANA): projected GETs omit the `ETag` header and return a body `@odata.etag` hashed from a version field SAP never loaded — frozen at `sha1("1")` forever. Caching it poisons `If-Match` and turns the next PATCH/DELETE into a false-positive 412 (SAP -2039). The body fallback stays active for unprojected GETs; a header `ETag` is always trusted. Version-specific SAP behaviors like this are documented in `docs/18-sap-version-quirks.md` — add new findings there.
 
 Adapters map HTTP status to semantic exceptions via a standardized dict: 400 → `B1ValidationError`, 401 → `B1AuthError`, 404 → `B1NotFoundError`, 412 → `SAPConcurrencyError`, else `B1Exception`.
 
