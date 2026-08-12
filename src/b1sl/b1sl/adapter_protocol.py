@@ -27,6 +27,9 @@ class RestAdapterProtocol(Protocol):
     @property
     def session_id(self) -> str | None: ...
 
+    @property
+    def url(self) -> str: ...
+
     # ── HTTP verbs ────────────────────────────────────────────────────────────
 
     def get(

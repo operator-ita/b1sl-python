@@ -54,7 +54,7 @@ async def run_example():
 
     # --- CONFIGURAR MOCK USANDO RESPX ---
     # Respx intercepta todas las peticiones a httpx sin importar cuándo se crea el cliente
-    respx_mock = respx.mock(base_url=client._adapter.raw_base_url, assert_all_called=False)
+    respx_mock = respx.mock(base_url=client.base_url, assert_all_called=False)
     respx_mock.start()
 
     # Mock para Login

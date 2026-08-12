@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Any, Self
 
 from b1sl.b1sl.adapter_protocol import RestAdapterProtocol
 from b1sl.b1sl.base_adapter import ObservabilityConfig
@@ -83,6 +83,11 @@ class B1Client:
         Retrieves the current SAP session ID.
         """
         return self._adapter.session_id
+
+    @property
+    def base_url(self) -> str:
+        """The fully normalized Service Layer base URL (including /b1s/<version>)."""
+        return self._adapter.url
 
     def dry_run(self, enabled: bool = True):
         """
@@ -183,6 +188,29 @@ class B1Client:
         DynamicResource.model = model
 
         return DynamicResource(self._adapter)
+
+    def call_service_method(self, name: str, payload: dict | None = None) -> Any:
+        """Invoke an unbound Service Layer service method at the service root.
+
+        Covers SAP's ``*Service_*`` operations, e.g.
+        ``SBOBobService_SetCurrencyRate`` or ``SBOBobService_GetCurrencyRate``.
+        The Service Layer invokes both "actions" and "functions" of this kind
+        as POST with a JSON body, so a single entry point covers both.
+
+        This is the low-level escape hatch for the ~1000 service operations
+        without an Elite alias. No ETag concurrency applies to unbound
+        operations. The call goes through the adapter, so dry-run interception
+        and semantic exception mapping behave as usual.
+
+        Example::
+
+            b1.call_service_method(
+                "SBOBobService_SetCurrencyRate",
+                {"Currency": "EUR", "Rate": "4.8", "RateDate": "20260811"},
+            )
+        """
+        result = self._adapter.post(name, data=payload or {})
+        return result.data if result else None
 
     # --------------------------------------------------------------------------
     # Concurrency-Elite Aliases (First-Class Citizens with ETag support)

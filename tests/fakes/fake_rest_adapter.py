@@ -195,6 +195,10 @@ class FakeRestAdapter(RestAdapterProtocol):
     def session_id(self) -> str | None:
         return "fake-session"
 
+    @property
+    def url(self) -> str:
+        return "https://fake-sap:50000/b1s/v2"
+
     def close(self) -> None:
         pass
 
@@ -220,6 +224,10 @@ class FakeAsyncRestAdapter:
     def __init__(self) -> None:
         self._routes: dict[tuple[str, str], list[Any]] = {}
         self.calls: list[dict[str, Any]] = []
+
+    @property
+    def url(self) -> str:
+        return "https://fake-sap:50000/b1s/v2"
 
     def register(
         self,

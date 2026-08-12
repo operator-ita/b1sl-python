@@ -436,7 +436,7 @@ class GenericResource(Generic[T]):
 
     # ── Actions / Functions ───────────────────────────────────────────────────
 
-    def _action(
+    def action(
         self,
         key: Any,
         name: str,
@@ -454,6 +454,11 @@ class GenericResource(Generic[T]):
 
         The full response ``data`` dict is returned — callers needing
         ``@odata.nextLink`` should inspect it directly.
+
+        Example::
+
+            invoices = b1.get_resource(en.Document, "Invoices")
+            invoices.action(123, "Cancel")
         """
         id_str = format_entity_key(key)
         url = f"{self.endpoint}({id_str})/{name}"
@@ -465,7 +470,11 @@ class GenericResource(Generic[T]):
             )
         return result.data if result else None
 
-    def _function(self, name: str, params: dict | None = None) -> Any:
-        """GET Endpoint/FunctionName(params)"""
+    def function(self, name: str, params: dict | None = None) -> Any:
+        """GET Endpoint/FunctionName(params) — unkeyed, read-only function."""
         result = self._adapter.get(f"{self.endpoint}/{name}", ep_params=params or {})
         return result.data if result else None
+
+    # Backwards-compatible aliases (pre-public-API names).
+    _action = action
+    _function = function
