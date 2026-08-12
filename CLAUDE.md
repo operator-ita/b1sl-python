@@ -19,7 +19,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `make lint` — `ruff check .` + `mypy .` (CI parity).
 - **Single test**: `PYTHONPATH=src:. .venv/bin/pytest tests/unit/test_odata_builder.py::test_name -xvs`. The `PYTHONPATH=src:.` prefix matters — the package lives at `src/b1sl/` and tests import via `b1sl.b1sl.…`.
 - CI (`.github/workflows/ci.yml`): a `lint` job (ruff + mypy on 3.12) and a `test` job matrix over Python 3.11–3.14 running `pytest -m "not (integration or vcr)"`. `publish.yml` uses PyPI Trusted Publishing (OIDC, no token) and asserts the tag matches the pyproject version before uploading.
-- Release: `make release v=X.Y.Z` commits, tags, pushes; `publish.yml` then publishes to PyPI on tag.
+- **Release checklist** (walk the user through this whenever publishing — they've asked to be reminded):
+  1. Before anything: bump `version` in `pyproject.toml`, add the `CHANGELOG.md` entry (Keep a Changelog format), and run `uv sync` so `uv.lock` records the new version. Leave them uncommitted — the release commit sweeps them.
+  2. Pick the number by SemVer: fixes only → patch; any new backwards-compatible API → minor (even if the release also contains fixes).
+  3. Run **only** `make release v=X.Y.Z` — it lints, tests, commits everything pending (`git add -u`), tags `vX.Y.Z`, and **pushes branch + tags itself**. Do NOT `git push` separately (redundant) and do NOT tag manually. Pre-pushing feature commits beforehand is harmless but unnecessary.
+  4. The tag push triggers `publish.yml` → PyPI via Trusted Publishing (no manual GitHub Action). `publish.yml` aborts if the tag doesn't match the pyproject version — that's why step 1 precedes step 3.
+  5. Verify with `gh run list --workflow=publish.yml --limit 1` (or the Actions tab) that the publish run succeeded.
 
 ## Architecture
 
