@@ -432,16 +432,24 @@ class GenericResource(Generic[T]):
     def update(
         self,
         key: Any,
-        entity: T,
+        entity: T | dict[str, Any],
         *,
         headers: dict | None = None,
         replace_collections: bool = False,
     ) -> None:
         """PATCH — partial update, SAP SL returns 204 No Content.
 
-        Uses to_api_payload() (exclude_unset) so only fields explicitly set
-        by the developer are sent — the correct delta semantics for PATCH.
-        Booleans are automatically encoded to tYES/tNO.
+        Two payload modes, chosen by the type you pass:
+
+        * **Model (``T``) — surgical delta.** Serialized with
+          ``to_api_payload()`` (``exclude_unset``): only fields you explicitly
+          set are sent, booleans are encoded to tYES/tNO, dates to ISO.
+        * **``dict`` — verbatim passthrough.** Sent to the wire exactly as
+          given: no serialization, no ``exclude_unset``, no value re-encoding.
+          The caller owns the payload — keys must be SAP aliases
+          (``"CardName"``) and values SAP-encoded (``"tYES"``, not ``True``).
+          Use this to round-trip raw rows fetched from SAP byte-for-byte
+          (e.g. child-collection rows where SAP matches by identifier fields).
 
         ``replace_collections=True`` sends B1S-ReplaceCollectionsOnPatch so SAP
         replaces child collections (e.g. BPAddresses) wholesale instead of
@@ -456,9 +464,10 @@ class GenericResource(Generic[T]):
         fresh GET first.
         """
         id_str = format_entity_key(key)
+        payload = entity if isinstance(entity, dict) else entity.to_api_payload()
         self._adapter.patch(
             f"{self.endpoint}({id_str})",
-            data=entity.to_api_payload(),
+            data=payload,
             headers=merge_update_headers(headers, replace_collections),
         )
 

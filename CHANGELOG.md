@@ -8,6 +8,25 @@ minor versions may include breaking changes).
 
 ## [Unreleased]
 
+## [0.10.0] — 2026-08-12
+
+### Added
+- **Verbatim dict payloads in `update()`** — the signature is now
+  `update(key, entity: T | dict, ...)` (sync, async and UDO resources). A
+  typed model keeps the Surgical Delta policy (`to_api_payload()`,
+  `exclude_unset`, SAP value encoding); a `dict` is sent to the wire exactly
+  as given — no serialization, no re-encoding — for byte-exact round-trips of
+  raw SAP data. Documented in `docs/12-crud-operations.md`.
+
+### Changed
+- **`BPAddresses` PATCH semantics corrected** (docs Q2 + VCR test): live
+  bisection on SAP B1 2511 showed the collection is *not* append-only — a
+  member updates **in place** when it carries the full identifier quartet
+  `BPCode` + `AddressName` + `AddressType` + `RowNum`; with any missing it is
+  an INSERT (append or `-2035`). Under `replace_collections`, rows sent with
+  their `RowNum` keep it; rows without are renumbered. The VCR test now pins
+  the in-place path too.
+
 ## [0.9.0] — 2026-08-12
 
 ### Added
@@ -279,7 +298,8 @@ session management with re-auth locking, ETag concurrency, `$batch` with
 changesets, transparent pagination, dry-run mode, VCR-backed test
 infrastructure.
 
-[Unreleased]: https://github.com/operator-ita/b1sl-python/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/operator-ita/b1sl-python/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/operator-ita/b1sl-python/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/operator-ita/b1sl-python/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/operator-ita/b1sl-python/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/operator-ita/b1sl-python/compare/v0.6.2...v0.7.0

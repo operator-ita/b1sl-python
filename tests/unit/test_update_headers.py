@@ -11,6 +11,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 
 import pytest
+from pydantic import Field as PydanticField
 
 from b1sl.b1sl import B1Config
 from b1sl.b1sl.client import B1Client
@@ -23,7 +24,7 @@ REPLACE_HEADER = "B1S-ReplaceCollectionsOnPatch"
 
 
 class _Partner(B1Model):
-    card_name: str | None = None
+    card_name: str | None = PydanticField(None, alias="CardName")
 
 
 class _Partners(GenericResource[_Partner]):
@@ -104,6 +105,47 @@ def test_get_create_delete_pass_headers(fake):
     res.delete("C001", headers={"H": "3"})
 
     assert [c["headers"] for c in fake.calls] == [{"H": "1"}, {"H": "2"}, {"H": "3"}]
+
+
+# ── Verbatim dict payloads ───────────────────────────────────────────────────
+
+def test_update_dict_is_sent_verbatim(fake):
+    """A dict payload bypasses to_api_payload entirely: SAP aliases, SAP
+    encodings and unknown keys travel untouched."""
+    fake.register("PATCH", "BusinessPartners('C001')", status=204)
+    payload = {
+        "CardName": "ACME",              # SAP alias, not python name
+        "Frozen": "tYES",                # already SAP-encoded — must NOT re-encode
+        "CampoNoModelado": 42,           # unknown key — must survive
+        "BPAddresses": [{"BPCode": "C001", "RowNum": 2, "City": "Monterrey"}],
+    }
+    _Partners(fake).update("C001", payload)
+    assert fake.calls[-1]["data"] == payload
+
+
+def test_update_dict_composes_with_replace_collections(fake):
+    fake.register("PATCH", "BusinessPartners('C001')", status=204)
+    _Partners(fake).update(
+        "C001", {"BPAddresses": []}, replace_collections=True
+    )
+    call = fake.calls[-1]
+    assert call["data"] == {"BPAddresses": []}
+    assert call["headers"] == {REPLACE_HEADER: "true"}
+
+
+def test_update_model_still_uses_surgical_delta(fake):
+    """The typed path keeps exclude_unset semantics (regression guard)."""
+    fake.register("PATCH", "BusinessPartners('C001')", status=204)
+    _Partners(fake).update("C001", _Partner(card_name="ACME"))
+    assert fake.calls[-1]["data"] == {"CardName": "ACME"}
+
+
+@pytest.mark.asyncio
+async def test_async_update_dict_is_sent_verbatim(afake):
+    afake.register("PATCH", "BusinessPartners('C001')", status=204)
+    payload = {"Frozen": "tNO", "Extra": "x"}
+    await _AsyncPartners(afake).update("C001", payload)
+    assert afake.calls[-1]["data"] == payload
 
 
 # ── Async parity ─────────────────────────────────────────────────────────────

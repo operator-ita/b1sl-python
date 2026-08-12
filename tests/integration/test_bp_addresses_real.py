@@ -1,9 +1,12 @@
 """BPAddresses PATCH semantics against a real Service Layer (VCR-recorded).
 
 Pins the server-side behavior documented in docs/18-sap-version-quirks.md Q2
-(SAP B1 2511, HANA): the default PATCH treats every BPAddresses member as an
-INSERT (append-only, -2035 on an existing AddressName), and
-``replace_collections=True`` is the only way to edit/remove a single address.
+(SAP B1 2511, HANA): a default PATCH treats a BPAddresses member as an
+in-place UPDATE only when the full identifier set is present
+(BPCode + AddressName + AddressType + RowNum); with any of them missing the
+member is an INSERT (append, or -2035 on an existing AddressName).
+``replace_collections=True`` replaces the collection wholesale (the way to
+delete rows).
 
 Re-record with `make test-record` after a SAP upgrade — if any assertion
 breaks, SAP changed the semantics and Q2 needs an update.
@@ -61,15 +64,34 @@ def test_bp_addresses_patch_is_append_only_and_replace_flag_works(
     after_append = bps.get(CARD_CODE)
     assert len(after_append.bp_addresses or []) == 4
 
-    # 3. Default PATCH with an EXISTING AddressName fails -2035: SL tries to
-    # INSERT the member instead of updating the row.
+    # 3. Default PATCH with an EXISTING AddressName but an incomplete
+    # identifier set fails -2035: SL tries to INSERT the member.
     with pytest.raises(B1ValidationError, match="-2035"):
         bps.update(CARD_CODE, en.BusinessPartner(
             bp_addresses=[_addr("VCR-4", "CityChanged")],
         ))
 
+    # 3b. With the FULL identifier set (BPCode + AddressName + AddressType +
+    # RowNum) the same default PATCH updates the row in place — sent here as a
+    # verbatim dict payload (no model serialization). Row count and RowNum
+    # values must be unchanged.
+    rownums_before = {a.row_num for a in (after_append.bp_addresses or [])}
+    target_rownum = max(rownums_before)  # the appended VCR-4 row
+    bps.update(CARD_CODE, {
+        "BPAddresses": [{
+            "BPCode": CARD_CODE,
+            "AddressName": "VCR-4",
+            "AddressType": "bo_BillTo",
+            "RowNum": target_rownum,
+            "City": "CityPatched",
+        }],
+    })
+    after_inplace = bps.get(CARD_CODE)
+    assert len(after_inplace.bp_addresses or []) == 4
+    assert {a.row_num for a in (after_inplace.bp_addresses or [])} == rownums_before
+
     # 4. replace_collections=True replaces the collection wholesale: the BP
-    # ends up with exactly the 2 addresses sent, and the rows are
+    # ends up with exactly the 2 addresses sent. Rows sent WITHOUT RowNum are
     # re-inserted (RowNum values renumbered — do not rely on them).
     old_rownums = {a.row_num for a in (after_append.bp_addresses or [])}
     bps.update(

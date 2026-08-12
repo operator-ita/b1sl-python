@@ -26,7 +26,7 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 12 Aug 2026 09:19:15 GMT
+      - Wed, 12 Aug 2026 09:49:49 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
@@ -74,7 +74,7 @@ interactions:
       Content-Type:
       - application/json;odata.metadata=minimal;charset=utf-8
       Date:
-      - Wed, 12 Aug 2026 09:19:15 GMT
+      - Wed, 12 Aug 2026 09:49:50 GMT
       Keep-Alive:
       - timeout=5, max=100
       Server:
@@ -86,7 +86,7 @@ interactions:
       Vary:
       - Accept-Encoding
       content-length:
-      - '218'
+      - '220'
     status:
       code: 200
       message: OK
@@ -117,7 +117,7 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 12 Aug 2026 09:19:16 GMT
+      - Wed, 12 Aug 2026 09:49:51 GMT
       Keep-Alive:
       - timeout=5, max=100
       OData-Version:
@@ -241,9 +241,9 @@ interactions:
         null, "EDocDistrict": null, "EDocRepresentativeFirstName": null, "EDocRepresentativeSurname":
         null, "EDocRepresentativeCompany": null, "EDocRepresentativeFiscalCode": null,
         "EDocRepresentativeAdditionalId": null, "EDocPECAddress": null, "IPACodeForPA":
-        null, "UpdateDate": "2026-08-12T00:00:00Z", "UpdateTime": "03:19:20", "ExemptionMaxAmountValidationType":
+        null, "UpdateDate": "2026-08-12T00:00:00Z", "UpdateTime": "03:49:52", "ExemptionMaxAmountValidationType":
         "emaIndividual", "ECommerceMerchantID": null, "UseBillToAddrToDetermineTax":
-        "tNO", "CreateDate": "2026-08-12T00:00:00Z", "CreateTime": "03:19:20", "DefaultTransporterEntry":
+        "tNO", "CreateDate": "2026-08-12T00:00:00Z", "CreateTime": "03:49:52", "DefaultTransporterEntry":
         null, "DefaultTransporterLineNumber": null, "FCERelevant": "tNO", "FCEValidateBaseDelivery":
         "tNO", "MainUsage": null, "EBooksVATExemptionCause": null, "LegalText": null,
         "DataVersion": 1, "ExchangeRateForIncomingPayment": "tYES", "ExchangeRateForOutgoingPayment":
@@ -257,21 +257,21 @@ interactions:
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 0, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:20", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
         "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
         "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
         "TaxCode": null, "BuildingFloorRoom": null, "AddressType": "bo_BillTo", "AddressName2":
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 1, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:20", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
         "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
         "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
         "TaxCode": null, "BuildingFloorRoom": null, "AddressType": "bo_BillTo", "AddressName2":
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 2, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:20", "MYFType": null, "TaasEnabled": "tYES"}], "ContactEmployees":
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}], "ContactEmployees":
         [], "BPAccountReceivablePaybleCollection": [], "BPPaymentMethods": [{"PaymentMethodCode":
         "01", "RowNumber": 0, "BPCode": "CTESTB1SLVCR"}], "BPWithholdingTaxCollection":
         [], "BPPaymentDates": [], "BPBranchAssignment": [], "BPBankAccounts": [],
@@ -283,7 +283,7 @@ interactions:
       Content-Type:
       - application/json;odata.metadata=minimal;charset=utf-8
       Date:
-      - Wed, 12 Aug 2026 09:19:17 GMT
+      - Wed, 12 Aug 2026 09:49:52 GMT
       ETag:
       - W/"356A192B7913B04C54574D18C28D46E6395428AB"
       Keep-Alive:
@@ -296,8 +296,6 @@ interactions:
       - Apache/2.4.65 (Unix)
       Strict-Transport-Security:
       - max-age=63072000; includeSubdomains; preload
-      Transfer-Encoding:
-      - chunked
       Vary:
       - Accept-Encoding
       content-length:
@@ -411,9 +409,9 @@ interactions:
         null, "EDocDistrict": null, "EDocRepresentativeFirstName": null, "EDocRepresentativeSurname":
         null, "EDocRepresentativeCompany": null, "EDocRepresentativeFiscalCode": null,
         "EDocRepresentativeAdditionalId": null, "EDocPECAddress": null, "IPACodeForPA":
-        null, "UpdateDate": "2026-08-12T00:00:00Z", "UpdateTime": "03:19:20", "ExemptionMaxAmountValidationType":
+        null, "UpdateDate": "2026-08-12T00:00:00Z", "UpdateTime": "03:49:52", "ExemptionMaxAmountValidationType":
         "emaIndividual", "ECommerceMerchantID": null, "UseBillToAddrToDetermineTax":
-        "tNO", "CreateDate": "2026-08-12T00:00:00Z", "CreateTime": "03:19:20", "DefaultTransporterEntry":
+        "tNO", "CreateDate": "2026-08-12T00:00:00Z", "CreateTime": "03:49:52", "DefaultTransporterEntry":
         null, "DefaultTransporterLineNumber": null, "FCERelevant": "tNO", "FCEValidateBaseDelivery":
         "tNO", "MainUsage": null, "EBooksVATExemptionCause": null, "LegalText": null,
         "DataVersion": 1, "ExchangeRateForIncomingPayment": "tYES", "ExchangeRateForOutgoingPayment":
@@ -427,21 +425,21 @@ interactions:
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 0, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:20", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
         "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
         "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
         "TaxCode": null, "BuildingFloorRoom": null, "AddressType": "bo_BillTo", "AddressName2":
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 1, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:20", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
         "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
         "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
         "TaxCode": null, "BuildingFloorRoom": null, "AddressType": "bo_BillTo", "AddressName2":
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 2, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:20", "MYFType": null, "TaasEnabled": "tYES"}], "ContactEmployees":
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}], "ContactEmployees":
         [], "BPAccountReceivablePaybleCollection": [], "BPPaymentMethods": [{"PaymentMethodCode":
         "01", "RowNumber": 0, "BPCode": "CTESTB1SLVCR"}], "BPWithholdingTaxCollection":
         [], "BPPaymentDates": [], "BPBranchAssignment": [], "BPBankAccounts": [],
@@ -453,7 +451,7 @@ interactions:
       Content-Type:
       - application/json;odata.metadata=minimal;charset=utf-8
       Date:
-      - Wed, 12 Aug 2026 09:19:21 GMT
+      - Wed, 12 Aug 2026 09:49:52 GMT
       ETag:
       - W/"356A192B7913B04C54574D18C28D46E6395428AB"
       Keep-Alive:
@@ -464,8 +462,6 @@ interactions:
       - Apache/2.4.65 (Unix)
       Strict-Transport-Security:
       - max-age=63072000; includeSubdomains; preload
-      Transfer-Encoding:
-      - chunked
       Vary:
       - Accept-Encoding
       content-length:
@@ -501,7 +497,7 @@ interactions:
       Connection:
       - Keep-Alive
       Date:
-      - Wed, 12 Aug 2026 09:19:25 GMT
+      - Wed, 12 Aug 2026 09:49:53 GMT
       Keep-Alive:
       - timeout=5, max=100
       OData-Version:
@@ -619,9 +615,9 @@ interactions:
         null, "EDocDistrict": null, "EDocRepresentativeFirstName": null, "EDocRepresentativeSurname":
         null, "EDocRepresentativeCompany": null, "EDocRepresentativeFiscalCode": null,
         "EDocRepresentativeAdditionalId": null, "EDocPECAddress": null, "IPACodeForPA":
-        null, "UpdateDate": "2026-08-12T00:00:00Z", "UpdateTime": "03:19:25", "ExemptionMaxAmountValidationType":
+        null, "UpdateDate": "2026-08-12T00:00:00Z", "UpdateTime": "03:49:53", "ExemptionMaxAmountValidationType":
         "emaIndividual", "ECommerceMerchantID": null, "UseBillToAddrToDetermineTax":
-        "tNO", "CreateDate": "2026-08-12T00:00:00Z", "CreateTime": "03:19:20", "DefaultTransporterEntry":
+        "tNO", "CreateDate": "2026-08-12T00:00:00Z", "CreateTime": "03:49:52", "DefaultTransporterEntry":
         null, "DefaultTransporterLineNumber": null, "FCERelevant": "tNO", "FCEValidateBaseDelivery":
         "tNO", "MainUsage": null, "EBooksVATExemptionCause": null, "LegalText": null,
         "DataVersion": 2, "ExchangeRateForIncomingPayment": "tYES", "ExchangeRateForOutgoingPayment":
@@ -635,28 +631,28 @@ interactions:
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 0, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:20", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
         "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
         "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
         "TaxCode": null, "BuildingFloorRoom": null, "AddressType": "bo_BillTo", "AddressName2":
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 1, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:20", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
         "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
         "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
         "TaxCode": null, "BuildingFloorRoom": null, "AddressType": "bo_BillTo", "AddressName2":
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 2, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:20", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
         "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
         "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
         "TaxCode": null, "BuildingFloorRoom": null, "AddressType": "bo_BillTo", "AddressName2":
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 3, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:25", "MYFType": null, "TaasEnabled": "tYES"}], "ContactEmployees":
+        "CreateTime": "03:49:53", "MYFType": null, "TaasEnabled": "tYES"}], "ContactEmployees":
         [], "BPAccountReceivablePaybleCollection": [], "BPPaymentMethods": [{"PaymentMethodCode":
         "01", "RowNumber": 0, "BPCode": "CTESTB1SLVCR"}], "BPWithholdingTaxCollection":
         [], "BPPaymentDates": [], "BPBranchAssignment": [], "BPBankAccounts": [],
@@ -668,7 +664,7 @@ interactions:
       Content-Type:
       - application/json;odata.metadata=minimal;charset=utf-8
       Date:
-      - Wed, 12 Aug 2026 09:19:26 GMT
+      - Wed, 12 Aug 2026 09:49:54 GMT
       ETag:
       - W/"DA4B9237BACCCDF19C0760CAB7AEC4A8359010B0"
       Keep-Alive:
@@ -679,6 +675,8 @@ interactions:
       - Apache/2.4.65 (Unix)
       Strict-Transport-Security:
       - max-age=63072000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
       Vary:
       - Accept-Encoding
       content-length:
@@ -717,7 +715,7 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 12 Aug 2026 09:19:26 GMT
+      - Wed, 12 Aug 2026 09:49:55 GMT
       OData-Version:
       - '4.0'
       Server:
@@ -732,18 +730,16 @@ interactions:
       code: 400
       message: Bad Request
 - request:
-    body: '{"BPAddresses":[{"AddressName":"VCR-A","City":"CityA","AddressType":"bo_BillTo"},{"AddressName":"VCR-B","City":"CityB","AddressType":"bo_BillTo"}]}'
+    body: '{"BPAddresses":[{"BPCode":"CTESTB1SLVCR","AddressName":"VCR-4","AddressType":"bo_BillTo","RowNum":3,"City":"CityPatched"}]}'
     headers:
       Accept:
       - '*/*'
       Accept-Encoding:
       - gzip, deflate
-      B1S-ReplaceCollectionsOnPatch:
-      - 'true'
       Connection:
       - keep-alive
       Content-Length:
-      - '147'
+      - '123'
       Content-Type:
       - application/json
       Host:
@@ -761,7 +757,7 @@ interactions:
       Connection:
       - Keep-Alive
       Date:
-      - Wed, 12 Aug 2026 09:19:27 GMT
+      - Wed, 12 Aug 2026 09:49:56 GMT
       Keep-Alive:
       - timeout=5, max=100
       OData-Version:
@@ -794,6 +790,223 @@ interactions:
     body:
       string: '{"@odata.context": "https://sap-server.example.com/b1s/v2/$metadata#BusinessPartners/$entity",
         "@odata.etag": "W/\"77DE68DAECD823BABBB58EDB1C8E14D7106E83BB\"", "CardCode":
+        "CTESTB1SLVCR", "CardName": "[REDACTED]", "CardType": "cCustomer", "GroupCode":
+        100, "Address": null, "ZipCode": null, "MailAddress": null, "MailZipCode":
+        null, "Phone1": null, "Phone2": null, "Fax": null, "ContactPerson": null,
+        "Notes": null, "PayTermsGrpCode": 8, "CreditLimit": 0.0, "MaxCommitment":
+        0.0, "DiscountPercent": 0.0, "VatLiable": "vLiable", "FederalTaxID": "[REDACTED]",
+        "DeductibleAtSource": "tNO", "DeductionPercent": 0.0, "DeductionValidUntil":
+        null, "PriceListNum": 1, "IntrestRatePercent": 0.0, "CommissionPercent": 0.0,
+        "CommissionGroupCode": 0, "FreeText": null, "SalesPersonCode": -1, "Currency":
+        "MXN", "RateDiffAccount": null, "Cellular": null, "AvarageLate": null, "City":
+        "[REDACTED]", "County": null, "Country": "[REDACTED]", "MailCity": null, "MailCounty":
+        null, "MailCountry": null, "EmailAddress": null, "Picture": null, "DefaultAccount":
+        null, "DefaultBranch": null, "DefaultBankCode": "-1", "AdditionalID": null,
+        "Pager": null, "FatherCard": null, "CardForeignName": null, "FatherType":
+        "cPayments_sum", "DeductionOffice": null, "ExportCode": null, "MinIntrest":
+        0.0, "CurrentAccountBalance": 0.0, "OpenDeliveryNotesBalance": 0.0, "OpenOrdersBalance":
+        0.0, "OpenChecksBalance": 0.0, "VatGroup": null, "ShippingType": null, "Password":
+        null, "Indicator": null, "IBAN": null, "CreditCardCode": -1, "CreditCardNum":
+        "", "CreditCardExpiration": null, "DebitorAccount": "[REDACTED]", "OpenOpportunities":
+        null, "Valid": "tYES", "ValidFrom": null, "ValidTo": null, "ValidRemarks":
+        null, "Frozen": "tNO", "FrozenFrom": null, "FrozenTo": null, "FrozenRemarks":
+        null, "Block": null, "BillToState": null, "ShipToState": null, "ExemptNum":
+        null, "Priority": -1, "FormCode1099": null, "Box1099": null, "PeymentMethodCode":
+        "01", "BackOrder": "tYES", "PartialDelivery": "tYES", "BlockDunning": "tNO",
+        "BankCountry": null, "HouseBank": null, "HouseBankCountry": "[REDACTED]",
+        "HouseBankAccount": null, "ShipToDefault": null, "DunningLevel": null, "DunningDate":
+        null, "CollectionAuthorization": "tNO", "DME": null, "InstructionKey": null,
+        "SinglePayment": "tNO", "ISRBillerID": null, "PaymentBlock": "tNO", "ReferenceDetails":
+        null, "HouseBankBranch": null, "OwnerIDNumber": null, "PaymentBlockDescription":
+        -1, "TaxExemptionLetterNum": null, "MaxAmountOfExemption": 0.0, "ExemptionValidityDateFrom":
+        null, "ExemptionValidityDateTo": null, "LinkedBusinessPartner": null, "LastMultiReconciliationNum":
+        null, "DeferredTax": "tYES", "Equalization": "tNO", "SubjectToWithholdingTax":
+        "boYES", "CertificateNumber": null, "ExpirationDate": null, "NationalInsuranceNum":
+        null, "AccrualCriteria": "tNO", "WTCode": null, "BillToBuildingFloorRoom":
+        "", "DownPaymentClearAct": "[REDACTED]", "ChannelBP": null, "DefaultTechnician":
+        null, "BilltoDefault": "VCR-1", "CustomerBillofExchangDisc": null, "Territory":
+        null, "ShipToBuildingFloorRoom": null, "CustomerBillofExchangPres": null,
+        "ProjectCode": null, "VatGroupLatinAmerica": null, "DunningTerm": null, "Website":
+        null, "OtherReceivablePayable": null, "BillofExchangeonCollection": null,
+        "CompanyPrivate": "cCompany", "LanguageCode": 25, "UnpaidBillofExchange":
+        null, "WithholdingTaxDeductionGroup": -1, "ClosingDateProcedureNumber": null,
+        "Profession": null, "BankChargesAllocationCode": null, "TaxRoundingRule":
+        "trr_CompanyDefault", "Properties1": "tNO", "Properties2": "tNO", "Properties3":
+        "tNO", "Properties4": "tNO", "Properties5": "tNO", "Properties6": "tNO", "Properties7":
+        "tNO", "Properties8": "tNO", "Properties9": "tNO", "Properties10": "tNO",
+        "Properties11": "tNO", "Properties12": "tNO", "Properties13": "tNO", "Properties14":
+        "tNO", "Properties15": "tNO", "Properties16": "tNO", "Properties17": "tNO",
+        "Properties18": "tNO", "Properties19": "tNO", "Properties20": "tNO", "Properties21":
+        "tNO", "Properties22": "tNO", "Properties23": "tNO", "Properties24": "tNO",
+        "Properties25": "tNO", "Properties26": "tNO", "Properties27": "tNO", "Properties28":
+        "tNO", "Properties29": "tNO", "Properties30": "tNO", "Properties31": "tNO",
+        "Properties32": "tNO", "Properties33": "tNO", "Properties34": "tNO", "Properties35":
+        "tNO", "Properties36": "tNO", "Properties37": "tNO", "Properties38": "tNO",
+        "Properties39": "tNO", "Properties40": "tNO", "Properties41": "tNO", "Properties42":
+        "tNO", "Properties43": "tNO", "Properties44": "tNO", "Properties45": "tNO",
+        "Properties46": "tNO", "Properties47": "tNO", "Properties48": "tNO", "Properties49":
+        "tNO", "Properties50": "tNO", "Properties51": "tNO", "Properties52": "tNO",
+        "Properties53": "tNO", "Properties54": "tNO", "Properties55": "tNO", "Properties56":
+        "tNO", "Properties57": "tNO", "Properties58": "tNO", "Properties59": "tNO",
+        "Properties60": "tNO", "Properties61": "tNO", "Properties62": "tNO", "Properties63":
+        "tNO", "Properties64": "tNO", "CompanyRegistrationNumber": null, "VerificationNumber":
+        null, "DiscountBaseObject": "dgboNone", "DiscountRelations": "dgrLowestDiscount",
+        "TypeReport": "atCompany", "ThresholdOverlook": "tNO", "SurchargeOverlook":
+        "tNO", "Remark1": null, "ConCerti": null, "DownPaymentInterimAccount": null,
+        "OperationCode347": "ocSalesOrServicesRevenues", "InsuranceOperation347":
+        "tNO", "HierarchicalDeduction": "tNO", "ShaamGroup": "sgServicesAndAsset",
+        "WithholdingTaxCertified": "tNO", "BookkeepingCertified": "tNO", "PlanningGroup":
+        null, "Affiliate": "tNO", "Industry": null, "VatIDNum": null, "DatevAccount":
+        null, "DatevFirstDataEntry": "tYES", "UseShippedGoodsAccount": "tNO", "GTSRegNo":
+        null, "GTSBankAccountNo": null, "GTSBillingAddrTel": null, "ETaxWebSite":
+        null, "HouseBankIBAN": "", "VATRegistrationNumber": null, "RepresentativeName":
+        null, "IndustryType": null, "BusinessType": null, "Series": 1, "AutomaticPosting":
+        "apNo", "InterestAccount": null, "FeeAccount": null, "CampaignNumber": null,
+        "AliasName": null, "DefaultBlanketAgreementNumber": null, "EffectiveDiscount":
+        "dgrLowestDiscount", "NoDiscounts": "tNO", "EffectivePrice": "epDefaultPriority",
+        "EffectivePriceConsidersPriceBeforeDiscount": "tNO", "GlobalLocationNumber":
+        null, "EDISenderID": null, "EDIRecipientID": null, "ResidenNumber": "rntSpanishFiscalID",
+        "RelationshipCode": null, "RelationshipDateFrom": null, "RelationshipDateTill":
+        null, "UnifiedFederalTaxID": null, "AttachmentEntry": null, "TypeOfOperation":
+        null, "EndorsableChecksFromBP": "tYES", "AcceptsEndorsedChecks": "tNO", "OwnerCode":
+        null, "BlockSendingMarketingContent": "tNO", "AgentCode": null, "PriceMode":
+        null, "EDocGenerationType": null, "EDocStreet": null, "EDocStreetNumber":
+        null, "EDocBuildingNumber": null, "EDocZipCode": null, "EDocCity": null, "EDocCountry":
+        null, "EDocDistrict": null, "EDocRepresentativeFirstName": null, "EDocRepresentativeSurname":
+        null, "EDocRepresentativeCompany": null, "EDocRepresentativeFiscalCode": null,
+        "EDocRepresentativeAdditionalId": null, "EDocPECAddress": null, "IPACodeForPA":
+        null, "UpdateDate": "2026-08-12T00:00:00Z", "UpdateTime": "03:49:55", "ExemptionMaxAmountValidationType":
+        "emaIndividual", "ECommerceMerchantID": null, "UseBillToAddrToDetermineTax":
+        "tNO", "CreateDate": "2026-08-12T00:00:00Z", "CreateTime": "03:49:52", "DefaultTransporterEntry":
+        null, "DefaultTransporterLineNumber": null, "FCERelevant": "tNO", "FCEValidateBaseDelivery":
+        "tNO", "MainUsage": null, "EBooksVATExemptionCause": null, "LegalText": null,
+        "DataVersion": 3, "ExchangeRateForIncomingPayment": "tYES", "ExchangeRateForOutgoingPayment":
+        "tYES", "CertificateDetails": null, "DefaultCurrency": null, "EORINumber":
+        null, "FCEAsPaymentMeans": "tNO", "NotRelevantForMonthlyInvoice": "tNO", "NaturalPer":
+        "tNO", "SirenNumber": null, "SiretNumber": null, "VATExemptionReason": null,
+        "RoutingCode": null, "ElectronicProtocols": [], "BPAddresses": [{"AddressName":
+        "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
+        "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
+        "TaxCode": null, "BuildingFloorRoom": "", "AddressType": "bo_BillTo", "AddressName2":
+        null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
+        "CTESTB1SLVCR", "RowNum": 0, "GlobalLocationNumber": null, "Nationality":
+        null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
+        "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
+        "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
+        "TaxCode": null, "BuildingFloorRoom": null, "AddressType": "bo_BillTo", "AddressName2":
+        null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
+        "CTESTB1SLVCR", "RowNum": 1, "GlobalLocationNumber": null, "Nationality":
+        null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
+        "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
+        "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
+        "TaxCode": null, "BuildingFloorRoom": null, "AddressType": "bo_BillTo", "AddressName2":
+        null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
+        "CTESTB1SLVCR", "RowNum": 2, "GlobalLocationNumber": null, "Nationality":
+        null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
+        "CreateTime": "03:49:52", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
+        "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
+        "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
+        "TaxCode": null, "BuildingFloorRoom": null, "AddressType": "bo_BillTo", "AddressName2":
+        null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
+        "CTESTB1SLVCR", "RowNum": 3, "GlobalLocationNumber": null, "Nationality":
+        null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
+        "CreateTime": "03:49:53", "MYFType": null, "TaasEnabled": "tYES"}], "ContactEmployees":
+        [], "BPAccountReceivablePaybleCollection": [], "BPPaymentMethods": [{"PaymentMethodCode":
+        "01", "RowNumber": 0, "BPCode": "CTESTB1SLVCR"}], "BPWithholdingTaxCollection":
+        [], "BPPaymentDates": [], "BPBranchAssignment": [], "BPBankAccounts": [],
+        "BPFiscalTaxIDCollection": [], "DiscountGroups": [], "BPIntrastatExtension":
+        {}, "BPBlockSendingMarketingContents": [], "BPCurrenciesCollection": []}'
+    headers:
+      Connection:
+      - Keep-Alive
+      Content-Type:
+      - application/json;odata.metadata=minimal;charset=utf-8
+      Date:
+      - Wed, 12 Aug 2026 09:49:56 GMT
+      ETag:
+      - W/"77DE68DAECD823BABBB58EDB1C8E14D7106E83BB"
+      Keep-Alive:
+      - timeout=5, max=100
+      OData-Version:
+      - '4.0'
+      Server:
+      - Apache/2.4.65 (Unix)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains; preload
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Accept-Encoding
+      content-length:
+      - '14383'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"BPAddresses":[{"AddressName":"VCR-A","City":"CityA","AddressType":"bo_BillTo"},{"AddressName":"VCR-B","City":"CityB","AddressType":"bo_BillTo"}]}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      B1S-ReplaceCollectionsOnPatch:
+      - 'true'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '147'
+      Content-Type:
+      - application/json
+      Host:
+      - sap-server.example.com
+      If-Match:
+      - W/"77DE68DAECD823BABBB58EDB1C8E14D7106E83BB"
+      User-Agent:
+      - python-httpx/0.28.1
+    method: PATCH
+    uri: https://sap-server.example.com/b1s/v2/BusinessPartners('CTESTB1SLVCR')
+  response:
+    body:
+      string: ''
+    headers:
+      Connection:
+      - Keep-Alive
+      Date:
+      - Wed, 12 Aug 2026 09:50:00 GMT
+      Keep-Alive:
+      - timeout=5, max=100
+      OData-Version:
+      - '4.0'
+      Server:
+      - Apache/2.4.65 (Unix)
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubdomains; preload
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: ''
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      Host:
+      - sap-server.example.com
+      User-Agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://sap-server.example.com/b1s/v2/BusinessPartners('CTESTB1SLVCR')
+  response:
+    body:
+      string: '{"@odata.context": "https://sap-server.example.com/b1s/v2/$metadata#BusinessPartners/$entity",
+        "@odata.etag": "W/\"1B6453892473A467D07372D45EB05ABC2031647A\"", "CardCode":
         "CTESTB1SLVCR", "CardName": "[REDACTED]", "CardType": "cCustomer", "GroupCode":
         100, "Address": null, "ZipCode": null, "MailAddress": null, "MailZipCode":
         null, "Phone1": null, "Phone2": null, "Fax": null, "ContactPerson": null,
@@ -879,12 +1092,12 @@ interactions:
         null, "EDocDistrict": null, "EDocRepresentativeFirstName": null, "EDocRepresentativeSurname":
         null, "EDocRepresentativeCompany": null, "EDocRepresentativeFiscalCode": null,
         "EDocRepresentativeAdditionalId": null, "EDocPECAddress": null, "IPACodeForPA":
-        null, "UpdateDate": "2026-08-12T00:00:00Z", "UpdateTime": "03:19:26", "ExemptionMaxAmountValidationType":
+        null, "UpdateDate": "2026-08-12T00:00:00Z", "UpdateTime": "03:50:00", "ExemptionMaxAmountValidationType":
         "emaIndividual", "ECommerceMerchantID": null, "UseBillToAddrToDetermineTax":
-        "tNO", "CreateDate": "2026-08-12T00:00:00Z", "CreateTime": "03:19:20", "DefaultTransporterEntry":
+        "tNO", "CreateDate": "2026-08-12T00:00:00Z", "CreateTime": "03:49:52", "DefaultTransporterEntry":
         null, "DefaultTransporterLineNumber": null, "FCERelevant": "tNO", "FCEValidateBaseDelivery":
         "tNO", "MainUsage": null, "EBooksVATExemptionCause": null, "LegalText": null,
-        "DataVersion": 3, "ExchangeRateForIncomingPayment": "tYES", "ExchangeRateForOutgoingPayment":
+        "DataVersion": 4, "ExchangeRateForIncomingPayment": "tYES", "ExchangeRateForOutgoingPayment":
         "tYES", "CertificateDetails": null, "DefaultCurrency": null, "EORINumber":
         null, "FCEAsPaymentMeans": "tNO", "NotRelevantForMonthlyInvoice": "tNO", "NaturalPer":
         "tNO", "SirenNumber": null, "SiretNumber": null, "VATExemptionReason": null,
@@ -895,14 +1108,14 @@ interactions:
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 4, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:26", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
+        "CreateTime": "03:50:00", "MYFType": null, "TaasEnabled": "tYES"}, {"AddressName":
         "[REDACTED]", "Street": null, "Block": null, "ZipCode": null, "City": "[REDACTED]",
         "County": null, "Country": "[REDACTED]", "State": null, "FederalTaxID": null,
         "TaxCode": null, "BuildingFloorRoom": null, "AddressType": "bo_BillTo", "AddressName2":
         null, "AddressName3": null, "TypeOfAddress": null, "StreetNo": null, "BPCode":
         "CTESTB1SLVCR", "RowNum": 5, "GlobalLocationNumber": null, "Nationality":
         null, "TaxOffice": null, "GSTIN": null, "GstType": null, "CreateDate": "2026-08-12T00:00:00Z",
-        "CreateTime": "03:19:26", "MYFType": null, "TaasEnabled": "tYES"}], "ContactEmployees":
+        "CreateTime": "03:50:00", "MYFType": null, "TaasEnabled": "tYES"}], "ContactEmployees":
         [], "BPAccountReceivablePaybleCollection": [], "BPPaymentMethods": [{"PaymentMethodCode":
         "01", "RowNumber": 0, "BPCode": "CTESTB1SLVCR"}], "BPWithholdingTaxCollection":
         [], "BPPaymentDates": [], "BPBranchAssignment": [], "BPBankAccounts": [],
@@ -914,9 +1127,9 @@ interactions:
       Content-Type:
       - application/json;odata.metadata=minimal;charset=utf-8
       Date:
-      - Wed, 12 Aug 2026 09:19:28 GMT
+      - Wed, 12 Aug 2026 09:50:01 GMT
       ETag:
-      - W/"77DE68DAECD823BABBB58EDB1C8E14D7106E83BB"
+      - W/"1B6453892473A467D07372D45EB05ABC2031647A"
       Keep-Alive:
       - timeout=5, max=100
       OData-Version:
@@ -946,7 +1159,7 @@ interactions:
       Host:
       - sap-server.example.com
       If-Match:
-      - W/"77DE68DAECD823BABBB58EDB1C8E14D7106E83BB"
+      - W/"1B6453892473A467D07372D45EB05ABC2031647A"
       User-Agent:
       - python-httpx/0.28.1
     method: DELETE
@@ -958,7 +1171,7 @@ interactions:
       Connection:
       - Keep-Alive
       Date:
-      - Wed, 12 Aug 2026 09:19:28 GMT
+      - Wed, 12 Aug 2026 09:50:02 GMT
       Keep-Alive:
       - timeout=5, max=100
       OData-Version:
@@ -997,7 +1210,7 @@ interactions:
       Content-Type:
       - application/json;charset=utf-8
       Date:
-      - Wed, 12 Aug 2026 09:19:29 GMT
+      - Wed, 12 Aug 2026 09:50:03 GMT
       Keep-Alive:
       - timeout=5, max=100
       OData-Version:

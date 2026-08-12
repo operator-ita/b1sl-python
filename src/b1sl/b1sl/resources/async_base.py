@@ -314,14 +314,15 @@ class AsyncGenericResource(Generic[T]):
     async def update(
         self,
         key: Any,
-        entity: T,
+        entity: T | dict[str, Any],
         *,
         headers: dict | None = None,
         replace_collections: bool = False,
     ) -> None:
-        # PATCH: to_api_payload() is correct here — exclude_unset means only the
-        # fields explicitly set by the developer are sent, which is the proper
-        # delta semantics for a partial update. Booleans are also encoded.
+        # PATCH: a model (T) is a surgical delta — to_api_payload()
+        # (exclude_unset) sends only the fields explicitly set, with SAP
+        # value encoding. A dict is a verbatim passthrough — sent exactly as
+        # given (SAP aliases + SAP-encoded values are the caller's job).
         #
         # replace_collections=True sends B1S-ReplaceCollectionsOnPatch so SAP
         # replaces child collections wholesale instead of merging them.
@@ -331,9 +332,10 @@ class AsyncGenericResource(Generic[T]):
         # proactively invalidates the stale cache entry on every successful
         # write, so the next PATCH or DELETE does not hit a predictable 412.
         id_str = format_entity_key(key)
+        payload = entity if isinstance(entity, dict) else entity.to_api_payload()
         await self._adapter.patch(
             f"{self.endpoint}({id_str})",
-            data=entity.to_api_payload(),
+            data=payload,
             headers=merge_update_headers(headers, replace_collections),
         )
 

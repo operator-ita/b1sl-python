@@ -48,12 +48,12 @@ class UDOResource(GenericResource[B1Model]):
     def update(
         self,
         doc_entry: int,
-        data: B1Model,
+        data: B1Model | dict,
         *,
         headers: dict | None = None,
         replace_collections: bool = False,
     ) -> None:
-        """PATCH a UDO record by DocEntry."""
+        """PATCH a UDO record by DocEntry (model = delta, dict = verbatim)."""
         super().update(
             doc_entry, data, headers=headers, replace_collections=replace_collections
         )
@@ -91,7 +91,7 @@ class AsyncUDOResource(AsyncGenericResource[B1Model]):
     async def update(
         self,
         doc_entry: int,
-        data: B1Model,
+        data: B1Model | dict,
         *,
         headers: dict | None = None,
         replace_collections: bool = False,

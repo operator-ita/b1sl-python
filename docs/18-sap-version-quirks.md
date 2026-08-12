@@ -128,57 +128,63 @@ unconditionally, producing the inconsistent value.
 
 ---
 
-## Q2 — `BPAddresses` PATCH ignores `RowNum`: the collection is append-only
+## Q2 — `BPAddresses` PATCH: a member is an UPDATE only with the full identifier set; otherwise an INSERT
 
 | | |
 |---|---|
 | **Observed on** | SAP Business One **2511**, HANA, Service Layer OData v4 (`/b1s/v2`), MX localization |
-| **Date verified** | 2026-08-12 |
-| **SDK mitigation** | `update(..., replace_collections=True)` (sends `B1S-ReplaceCollectionsOnPatch: true`) — the only reliable way to edit or remove a single address |
-| **Regression tests** | `tests/unit/test_update_headers.py` (header plumbing; the SAP-side behavior itself is server-dependent) |
-| **SAP acknowledgment** | None. Community advice ("send `RowNum` to update in place") does **not** hold on this version — see Evidence. |
+| **Date verified** | 2026-08-12 (identifier-set bisection same day) |
+| **SDK mitigation** | Surgical row update: include the 4 identifiers in the member (works with a typed model or a verbatim `dict` payload). Collection reshaping/deletes: `update(..., replace_collections=True)`. |
+| **Regression tests** | `tests/integration/test_bp_addresses_real.py` (VCR, pins the server semantics), `tests/unit/test_update_headers.py` (SDK plumbing) |
+| **SAP acknowledgment** | None. Community advice ("send `RowNum` to update in place") is **incomplete** on this version — `BPCode` is also required. |
 
-### Symptom
+### Semantics (bisected live)
 
-A default PATCH on `BusinessPartners('X')` treats **every** `BPAddresses`
-member as an INSERT, regardless of any key fields in the payload:
+A default PATCH on `BusinessPartners('X')` treats a `BPAddresses` member as an
+**in-place UPDATE** only when the member carries the full identifier set:
 
-- member with a **new** `AddressName` → appended (partner with 3 addresses
-  PATCHed with 2 new ones ends with **5**);
-- member with an **existing** `AddressName` (+ same `AddressType`) → `400`,
-  `SAP Error -2035: This entry already exists in the following tables`;
-- member with `RowNum` only (no `AddressName`) → `400`, `Address is empty`;
-- member with `RowNum` **plus** an existing `AddressName` → still `-2035`;
-- member with `RowNum` plus a **renamed** `AddressName` → **`RowNum` is
-  silently ignored** and the member is appended as a brand-new row (observed:
-  sent `RowNum=2, AddressName=MEXICOBBB`; the original row 2 stayed intact and
-  a new row 3 appeared).
+> `BPCode` + `AddressName` + `AddressType` + `RowNum`
 
-There is no in-place edit, rename, or delete of a single `BPAddresses` row via
-default PATCH on this version. This contradicts SAP's documented pattern for
-`DocumentLines` (member with `LineNum` = update, without = insert) and the
-common community recipe for addresses.
+With all four present, only the other fields you send change; row count and
+`RowNum` values stay intact. With **any of them missing**, the member is
+treated as an **INSERT**:
 
-### The reliable pattern
+| Member sent (plus changed fields) | Result |
+|---|---|
+| all 4 identifiers | ✅ in-place update |
+| `AddressName`+`AddressType`+`RowNum` (no `BPCode`) | ❌ `-2035 This entry already exists` |
+| `AddressName`+`AddressType`+`BPCode` (no `RowNum`) | ❌ `-2035` |
+| `AddressName`+`AddressType`+`RowNum`+`CreateDate`+`CreateTime` | ❌ `-2035` (`CreateDate` is not the key) |
+| `AddressName`+`BPCode`+`RowNum` (no `AddressType`) | ⚠️ silently **appended** as a new row (type defaulted) |
+| new `AddressName`, no identifiers | appended (a 3-address partner PATCHed with 2 new = **5**) |
+| `RowNum` only, no `AddressName` | ❌ `Address is empty` |
 
-`GET` the partner, rebuild the **full desired collection**, and PATCH with the
-replace header (surgical deltas don't exist at row level for this collection):
+Round-tripping the **full raw row** (all ~41 fields) also updates in place —
+that superset naturally contains the 4 identifiers. Verified byte-exact:
+`BPAddress.model_validate(raw_row).to_api_payload() == raw_row` (empty diff,
+extras preserved via `extra="allow"`).
+
+### The two reliable patterns
+
+**Edit one address (surgical, no header)** — include the 4 identifiers:
 
 ```python
-bp = client.business_partners.get("C001")
-for a in bp.bp_addresses:
-    if a.address_name == "MEXICOAAA":
-        a.city = "Monterrey"
-client.business_partners.update(
-    "C001", en.BusinessPartner(bp_addresses=bp.bp_addresses),
-    replace_collections=True,
-)
+client.business_partners.update("C001", {
+    "BPAddresses": [{
+        "BPCode": "C001", "AddressName": "MEXICOAAA",
+        "AddressType": "bo_BillTo", "RowNum": 2,
+        "City": "Monterrey",                      # the actual change
+    }],
+})
 ```
 
-**Caveat**: the replace deletes and reinserts the rows — `RowNum` values are
-renumbered (observed live: `0,1,2` → `3,4,5`). Do not persist `RowNum` as a
-stable address identifier; documents reference addresses by `AddressName`
-(`PayToCode`/`ShipToCode`), which survives as long as the name is kept.
+**Delete/reshape the collection** — `replace_collections=True` with the full
+desired collection; members absent from the payload are **deleted**.
+
+**Caveat**: under replace, members sent *without* `RowNum` are re-inserted and
+renumbered (observed live: `0,1,2` → `3,4,5`); members sent with their full
+row keep their `RowNum`. Do not persist `RowNum` as a stable identifier;
+documents reference addresses by `AddressName` (`PayToCode`/`ShipToCode`).
 
 ### Research (2026-08)
 
@@ -189,9 +195,10 @@ stable address identifier; documents reference addresses by `AddressName`
   [Existing address update error](https://community.sap.com/t5/enterprise-resource-planning-q-a/sap-b1-s-l-business-partner-existing-address-update-error/qaq-p/12418495),
   [BP address update error](https://community.sap.com/t5/enterprise-resource-planning-q-a/sap-b1-business-partner-address-update-error/qaq-p/13682847),
   [Codeless Platforms KB on -2035](https://www.codelessplatforms.com/docs/knowledge-base/sap-business-one-integration/sap-b1-business-partner-address-fails-to-update-with-error-this-entry-already-exists-in-the-following-tables-odbc-2035/)
-  — none shows a verified same-name in-place update; the one concrete
-  "success" was a rename, which our live test shows is actually an append on
-  2511.
+  — none states the full identifier set. Our bisection reconciles the
+  contradictory reports: threads whose payloads happened to include `BPCode`
+  (e.g. full-row round-trips) worked; "just send `RowNum`" recipes did not.
+  A rename attempt without `BPCode` is silently an append on 2511.
 - Sub-resource writes (`PATCH .../BPAddresses(...)`) are not supported by SL
   (collections are sub-objects, not writable navigation properties):
   [community thread](https://community.sap.com/t5/enterprise-resource-planning-q-a/navigation-of-documentlines-collection-is-possible-through-sap-business-one/qaq-p/12224719).

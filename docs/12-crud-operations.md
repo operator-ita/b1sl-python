@@ -88,18 +88,30 @@ await b1.business_partners.update("C0001", delta)
 ### Replacing child collections (`replace_collections=True`)
 
 By default, SAP **merges** child collections on PATCH — existing members
-always survive. For `DocumentLines`, SAP documents key-based matching (member
-with `LineNum` = in-place update, without = insert). For **`BPAddresses`** the
-collection is effectively **append-only** (verified live on SAP B1 2511, HANA,
-MX): `RowNum` in the payload is silently ignored, every member is treated as
-an INSERT — a new `AddressName` is appended (3 addresses + 2 sent = **5**) and
-an existing `AddressName` fails with `-2035 This entry already exists`. There
-is no row-level edit or delete without the replace header. Full evidence:
-[docs/18-sap-version-quirks.md, Q2](18-sap-version-quirks.md).
+always survive. A member is treated as an **in-place update** only when it
+carries the collection's full identifier set; otherwise it is an **insert**.
+For `DocumentLines` the identifier is `LineNum`; for **`BPAddresses`**
+(verified live on SAP B1 2511, HANA, MX) it is the full quartet
+**`BPCode` + `AddressName` + `AddressType` + `RowNum`** — with any of them
+missing, the member is inserted: a new `AddressName` is appended (3 addresses
++ 2 sent = **5**) and an existing one fails with `-2035 This entry already
+exists`. Full evidence: [docs/18-sap-version-quirks.md, Q2](18-sap-version-quirks.md).
 
-To replace the collection wholesale — and therefore to edit or remove a single
-member — SAP requires the `B1S-ReplaceCollectionsOnPatch: true` header,
-exposed as a flag:
+**To edit one address**, send the 4 identifiers plus the fields to change —
+no header needed:
+
+```python
+await b1.business_partners.update("C0001", {
+    "BPAddresses": [{
+        "BPCode": "C0001", "AddressName": "MEXICOAAA",
+        "AddressType": "bo_BillTo", "RowNum": 2,
+        "City": "Monterrey",                      # the actual change
+    }],
+})
+```
+
+To replace the collection wholesale — reshape it or **remove** members — SAP
+requires the `B1S-ReplaceCollectionsOnPatch: true` header, exposed as a flag:
 
 ```python
 bp = en.BusinessPartner(
@@ -112,24 +124,38 @@ bp = en.BusinessPartner(
 await b1.business_partners.update("C0001", bp, replace_collections=True)
 ```
 
-To **edit one address**, fetch, modify, and send back the full collection:
-
-```python
-bp = await b1.business_partners.get("C0001")
-for a in bp.bp_addresses:
-    if a.address_name == "MEXICOAAA":
-        a.city = "Monterrey"
-await b1.business_partners.update(
-    "C0001", en.BusinessPartner(bp_addresses=bp.bp_addresses),
-    replace_collections=True,
-)
-```
-
 > [!WARNING]
-> The replace deletes and reinserts the rows: `RowNum` values are renumbered.
+> Under replace, members **absent from the payload are deleted**, and members
+> sent without their `RowNum` are re-inserted with renumbered `RowNum` values.
 > Never persist `RowNum` as a stable address identifier — documents reference
 > addresses by `AddressName` (`PayToCode`/`ShipToCode`), which is stable as
 > long as the name is kept.
+
+### Verbatim dict payloads (`update(key, dict)`)
+
+`update()` accepts either a typed model or a plain `dict`, and the type you
+pass selects the serialization policy:
+
+| You pass | Policy |
+|---|---|
+| a model (`en.Item(...)`) | **Surgical delta** — `to_api_payload()` sends only the fields you explicitly set; Python values are SAP-encoded (`True` → `"tYES"`, `date` → ISO). |
+| a `dict` | **Verbatim passthrough** — sent to the wire exactly as given. No `exclude_unset`, no re-encoding. |
+
+With a dict, the payload is entirely your responsibility: keys must be SAP
+aliases (`"CardName"`, not `card_name`) and values SAP-encoded (`"tYES"`, not
+`True`). This is the tool for byte-exact round-trips of data fetched from
+SAP — e.g. re-sending child-collection rows without any model transformation:
+
+```python
+raw = (await b1.business_partners.get("C0001")).model_dump(by_alias=True)
+rows = raw["BPAddresses"]
+for r in rows:
+    if r["AddressName"] == "MEXICOAAA":
+        r["City"] = "Monterrey"
+await b1.business_partners.update(
+    "C0001", {"BPAddresses": rows}, replace_collections=True
+)
+```
 
 ### Custom request headers
 
