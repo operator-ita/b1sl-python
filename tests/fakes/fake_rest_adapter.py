@@ -202,7 +202,6 @@ class FakeRestAdapter(RestAdapterProtocol):
         endpoint: str,
         files: Any,
         headers: dict[str, Any] | None = None,
-        _retry_once: bool = True,
     ) -> Result:
         """Simulate a multipart POST, recording the file parts sent."""
         result = self._handle_request("POST", endpoint, None, None, headers)
@@ -214,7 +213,6 @@ class FakeRestAdapter(RestAdapterProtocol):
         endpoint: str,
         ep_params: dict[str, Any] | None = None,
         headers: dict[str, Any] | None = None,
-        _retry_once: bool = True,
     ) -> bytes:
         """Simulate a raw binary GET, returning bytes registered via register_binary()."""
         result = self._handle_request("GET_BINARY", endpoint, ep_params, None, headers)
@@ -364,7 +362,6 @@ class FakeAsyncRestAdapter:
         endpoint: str,
         files: Any,
         headers: dict[str, Any] | None = None,
-        _retry_once: bool = True,
     ) -> Result:
         """Simulate a multipart POST, recording the file parts sent."""
         result = self._handle_request("POST", endpoint, None, None, headers)
@@ -376,7 +373,6 @@ class FakeAsyncRestAdapter:
         endpoint: str,
         ep_params: dict[str, Any] | None = None,
         headers: dict[str, Any] | None = None,
-        _retry_once: bool = True,
     ) -> bytes:
         """Simulate a raw binary GET, returning bytes registered via register_binary()."""
         result = self._handle_request("GET_BINARY", endpoint, ep_params, None, headers)

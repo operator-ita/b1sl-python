@@ -39,21 +39,12 @@ from __future__ import annotations
 from collections.abc import Sequence
 from typing import TYPE_CHECKING, Any
 
-from b1sl.b1sl.models.multipart import MultipartFile
+from b1sl.b1sl.models.multipart import MultipartFile, normalize_files
 from b1sl.b1sl.resources.async_base import AsyncGenericResource
-from b1sl.b1sl.resources.base import GenericResource
+from b1sl.b1sl.resources.base import GenericResource, format_entity_key
 
 if TYPE_CHECKING:
     from b1sl.b1sl.models._generated.entities.general import Attachments2  # noqa: F401
-
-
-def _normalize_files(
-    files: MultipartFile | Sequence[MultipartFile],
-) -> list[MultipartFile]:
-    """Accept a single part or a sequence, always return a list."""
-    if isinstance(files, MultipartFile):
-        return [files]
-    return list(files)
 
 
 def _build_filename(file_name: str, file_extension: str | None) -> str:
@@ -87,7 +78,10 @@ class AttachmentsResource(GenericResource["Attachments2"]):
         super().__init__(adapter)
 
     def upload(
-        self, files: MultipartFile | Sequence[MultipartFile]
+        self,
+        files: MultipartFile | Sequence[MultipartFile],
+        *,
+        headers: dict | None = None,
     ) -> "Attachments2":
         """Upload one or more files as a single new attachment entry.
 
@@ -102,12 +96,14 @@ class AttachmentsResource(GenericResource["Attachments2"]):
 
         Args:
             files: One ``MultipartFile`` or a sequence of them.
+            headers: Extra per-request headers.
 
         Returns:
             The created ``Attachments2`` entry, including ``AbsoluteEntry``.
         """
-        parts = _normalize_files(files)
-        result = self._adapter.post_multipart(self.endpoint, parts)
+        result = self._adapter.post_multipart(
+            self.endpoint, normalize_files(files), headers=headers
+        )
         return self.model.model_validate(result.data or {})
 
     def download(
@@ -115,6 +111,8 @@ class AttachmentsResource(GenericResource["Attachments2"]):
         attachment_entry: int,
         file_name: str,
         file_extension: str | None = None,
+        *,
+        headers: dict | None = None,
     ) -> bytes:
         """Download one file from an attachment entry.
 
@@ -123,6 +121,7 @@ class AttachmentsResource(GenericResource["Attachments2"]):
             file_name: File name, extension included (``"invoice.pdf"``) — or
                 the bare name when ``file_extension`` is given separately.
             file_extension: Extension without the dot, as SAP stores it.
+            headers: Extra per-request headers.
 
         Returns:
             The file's raw bytes.
@@ -135,7 +134,10 @@ class AttachmentsResource(GenericResource["Attachments2"]):
         target = _build_filename(file_name, file_extension)
         return self._adapter.get_binary(
             f"{self.endpoint}({attachment_entry})/$value",
-            ep_params={"filename": f"'{target}'"},
+            # format_entity_key single-quotes and doubles embedded quotes, so a
+            # file name with an apostrophe stays a valid OData string literal.
+            ep_params={"filename": format_entity_key(target)},
+            headers=headers,
         )
 
 
@@ -151,11 +153,15 @@ class AsyncAttachmentsResource(AsyncGenericResource["Attachments2"]):
         super().__init__(adapter)
 
     async def upload(
-        self, files: MultipartFile | Sequence[MultipartFile]
+        self,
+        files: MultipartFile | Sequence[MultipartFile],
+        *,
+        headers: dict | None = None,
     ) -> "Attachments2":
         """Async variant of :meth:`AttachmentsResource.upload`."""
-        parts = _normalize_files(files)
-        result = await self._adapter.post_multipart(self.endpoint, parts)
+        result = await self._adapter.post_multipart(
+            self.endpoint, normalize_files(files), headers=headers
+        )
         return self.model.model_validate(result.data or {})
 
     async def download(
@@ -163,11 +169,16 @@ class AsyncAttachmentsResource(AsyncGenericResource["Attachments2"]):
         attachment_entry: int,
         file_name: str,
         file_extension: str | None = None,
+        *,
+        headers: dict | None = None,
     ) -> bytes:
         """Async variant of :meth:`AttachmentsResource.download`."""
         target = _build_filename(file_name, file_extension)
         data: Any = await self._adapter.get_binary(
             f"{self.endpoint}({attachment_entry})/$value",
-            ep_params={"filename": f"'{target}'"},
+            # format_entity_key single-quotes and doubles embedded quotes, so a
+            # file name with an apostrophe stays a valid OData string literal.
+            ep_params={"filename": format_entity_key(target)},
+            headers=headers,
         )
         return data

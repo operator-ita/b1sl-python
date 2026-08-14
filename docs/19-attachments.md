@@ -84,15 +84,36 @@ blob = client.get_binary("Attachments2(12)/$value",
                          {"filename": "'invoice.pdf'"})
 ```
 
-Both keep the SDK's usual guarantees: session handling, the 401 re-login retry,
-and semantic exception mapping (404 → `B1NotFoundError`, 400 →
-`B1ValidationError`). `post_multipart()` also honours dry-run, returning a
-synthetic 204 without sending anything.
+Both run through the adapters' full request pipeline — the same one every JSON
+call uses — so all of the SDK's guarantees hold:
 
-`get_binary()` exists because `get()` funnels every body through
-`response.json()` with a `response.text` fallback, which corrupts binary
-payloads. It also never sends `If-None-Match` — a cached ETag would make SAP
-answer `304` with an empty body.
+- **Session lifecycle**: automatic login, and with `reuse_token=False` the
+  session license is released after every transfer (no leaked sessions).
+- **Resilience**: the 401 re-login retry, the one-shot retry of idempotent
+  GETs on stale server-closed keepalives, and network errors mapped to
+  `B1ConnectionError` (never raw httpx exceptions).
+- **Semantic errors**: 404 → `B1NotFoundError`, 400 → `B1ValidationError`, etc.
+- **Observability**: `req_id`, duration timing, structured logs, and
+  `ObservabilityConfig` `on_response`/`on_error` hooks fire for file transfers
+  exactly like for JSON writes.
+- **Dry-run**: `post_multipart()` returns a synthetic 204 without sending
+  anything. (`get_binary()` is a read; dry-run does not apply.)
+- **Headers**: every public method (client and resource, sync and async)
+  accepts `headers=` for per-request headers, forwarded to the wire.
+
+ETag handling is deliberately special-cased:
+
+- `post_multipart()` **never sends `If-Match`** — multipart has no concurrency
+  semantics (same rule as `$batch`) — and a successful upload proactively
+  invalidates any cached ETag for the path.
+- `get_binary()` exists because `get()` funnels every body through
+  `response.json()` with a `response.text` fallback, which corrupts binary
+  payloads. It never sends `If-None-Match` (a cached ETag would make SAP
+  answer `304` with an empty body) and never touches the ETag cache — a
+  `$value` read is a file fetch, not a basis for optimistic concurrency.
+
+File names are escaped as proper OData string literals: an apostrophe in the
+name (`o'brien contract.pdf`) is doubled on the wire, same as entity keys.
 
 ## Limitations
 

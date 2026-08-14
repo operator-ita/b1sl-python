@@ -70,13 +70,13 @@ class _RecordingAdapter:
     # part, and a binary $value response cannot be encoded in a batch part.
     # Fail loudly at record time instead of at execute time.
 
-    def post_multipart(self, endpoint, files, headers=None, _retry_once=True):
+    def post_multipart(self, endpoint, files, headers=None):
         raise NotImplementedError(
             "File uploads cannot be recorded inside a $batch — a batch body is "
             "already multipart. Call client.attachments.upload() outside the batch."
         )
 
-    def get_binary(self, endpoint, ep_params=None, headers=None, _retry_once=True):
+    def get_binary(self, endpoint, ep_params=None, headers=None):
         raise NotImplementedError(
             "Binary downloads cannot be recorded inside a $batch — a batch part "
             "cannot carry a raw file body. Call client.attachments.download() "

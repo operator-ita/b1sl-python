@@ -9,27 +9,15 @@ from urllib.parse import urlencode, urlsplit
 
 import httpx
 
-from b1sl.b1sl.base_adapter import BaseRestAdapter, HookContext
+from b1sl.b1sl.base_adapter import _HTTP_STATUS_TO_EXC, BaseRestAdapter, HookContext
 from b1sl.b1sl.exceptions.exceptions import (
     B1AuthError,
     B1ConnectionError,
     B1Exception,
-    B1NotFoundError,
-    B1ValidationError,
-    SAPConcurrencyError,
 )
 from b1sl.b1sl.models.multipart import MultipartFile
 from b1sl.b1sl.models.result import Result
 from b1sl.b1sl.pagination import extract_next_link, extract_odata_count
-
-_HTTP_STATUS_TO_EXC: dict[int, type] = {
-    400: B1ValidationError,
-    401: B1AuthError,
-    404: B1NotFoundError,
-    # 412 with SAP code -2039 raises earlier via _raise_if_concurrency_error
-    # (richer context); this entry guarantees the semantic type either way.
-    412: SAPConcurrencyError,
-}
 
 
 class AsyncRestAdapter(BaseRestAdapter):
@@ -213,17 +201,6 @@ class AsyncRestAdapter(BaseRestAdapter):
             self._logger.warning(f"[{self._username}] Logout failed: {e}")
             return Result(status_code=500, message=str(e))
 
-    @staticmethod
-    def _parse_sap_error(response: httpx.Response) -> tuple[str, str]:
-        """Parses error information from an Httpx response object."""
-        try:
-            body = response.json()
-        except Exception:
-            body = None
-        return AsyncRestAdapter._parse_sap_error_shared(
-            response.status_code, response.reason_phrase, body
-        )
-
     async def _do(
         self,
         http_method: str,
@@ -233,10 +210,17 @@ class AsyncRestAdapter(BaseRestAdapter):
         headers: dict | None = None,
         _is_login: bool = False,
         _retry_once=True,
+        files: list | None = None,
+        raw_response: bool = False,
     ) -> Result:
         """
         Dispatches an asynchronous HTTP request to SAP SL.
         Implements Senior Observability (Timing + Structured Logging + Async Hooks).
+
+        ``files`` sends a ``multipart/form-data`` body instead of JSON;
+        ``raw_response`` returns the body as untouched bytes in ``Result.data``
+        (no JSON decoding, no ETag caching). Both modes keep the full pipeline:
+        dry-run, 401 re-login retry, semantic errors, logging and hooks.
         """
         if not _is_login:
             await self.ensure_session()
@@ -266,6 +250,20 @@ class AsyncRestAdapter(BaseRestAdapter):
             req_headers = self._build_headers(http_method, endpoint_path)
             if headers:
                 req_headers.update(headers)
+            if files is not None:
+                # httpx must own Content-Type so the boundary matches the body,
+                # and multipart carries no concurrency semantics — mirror $batch
+                # and never send If-Match. Case-insensitive: caller headers may
+                # differ.
+                req_headers = {
+                    k: v for k, v in req_headers.items()
+                    if k.lower() not in {"content-type", "if-match"}
+                }
+            if raw_response:
+                # A cached ETag would turn the read into a 304 with an empty body.
+                req_headers = {
+                    k: v for k, v in req_headers.items() if k.lower() != "if-none-match"
+                }
 
             if is_dry_run:
                 self._logger.info(f"[{req_id}] [DRY RUN] Intercepting {http_method} {full_url}")
@@ -275,7 +273,7 @@ class AsyncRestAdapter(BaseRestAdapter):
             else:
                 response = await self._client.request(
                     method=http_method, url=full_url, params=ep_params, json=data,
-                    headers=req_headers,
+                    files=files, headers=req_headers,
                 )
 
             if response.status_code == 401 and _retry_once and not _is_login:
@@ -284,7 +282,8 @@ class AsyncRestAdapter(BaseRestAdapter):
                 # Recursive call will handle its own finally block,
                 # but we need to return here to avoid double-logging/hooking.
                 return await self._do(
-                    http_method, endpoint, ep_params, data, headers, _is_login, _retry_once=False
+                    http_method, endpoint, ep_params, data, headers, _is_login,
+                    _retry_once=False, files=files, raw_response=raw_response,
                 )
 
             response.raise_for_status()
@@ -323,7 +322,8 @@ class AsyncRestAdapter(BaseRestAdapter):
             if http_method == "GET" and _retry_once and not _is_login:
                 self._logger.warning(f"[{req_id}] Stale connection - retrying GET once...")
                 return await self._do(
-                    http_method, endpoint, ep_params, data, headers, _is_login, _retry_once=False
+                    http_method, endpoint, ep_params, data, headers, _is_login,
+                    _retry_once=False, files=files, raw_response=raw_response,
                 )
             raise B1ConnectionError(f"Cannot reach SAP B1: {e}") from e
         except (httpx.ConnectError, httpx.TimeoutException, httpx.NetworkError) as e:
@@ -379,6 +379,15 @@ class AsyncRestAdapter(BaseRestAdapter):
             # ── ETag: proactively drop stale entries after a real write ──
             if http_method in {"PATCH", "DELETE", "POST"} and not _is_login and not is_dry_run:
                 self._invalidate_etag_after_write(endpoint_path, dict(response.headers))
+            if raw_response:
+                # Binary body: no JSON decoding, and never touch the ETag
+                # cache — a $value read is a file fetch, not a concurrency
+                # basis.
+                return Result(
+                    status_code=response.status_code,
+                    message=response.reason_phrase,
+                    data=response.content,
+                )
             if response.content:
                 try:
                     data_out = response.json()
@@ -415,7 +424,16 @@ class AsyncRestAdapter(BaseRestAdapter):
                 f"HTTP Error {response.status_code if response else 'Unknown'}"
             )
 
-    async def _request(self, http_method: str, endpoint, ep_params=None, data=None, headers=None):
+    async def _request(
+        self,
+        http_method: str,
+        endpoint,
+        ep_params=None,
+        data=None,
+        headers=None,
+        files: list | None = None,
+        raw_response: bool = False,
+    ):
         """Run one public request, honouring per-request logout (reuse_token=False).
 
         Parity with the sync adapter's ``handle_token`` decorator: when
@@ -423,7 +441,10 @@ class AsyncRestAdapter(BaseRestAdapter):
         request instead of being held between calls.
         """
         try:
-            return await self._do(http_method, endpoint, ep_params, data, headers=headers)
+            return await self._do(
+                http_method, endpoint, ep_params, data, headers=headers,
+                files=files, raw_response=raw_response,
+            )
         finally:
             if not self.reuse_token:
                 await self.logout()
@@ -444,24 +465,6 @@ class AsyncRestAdapter(BaseRestAdapter):
         """Execute an asynchronous DELETE request."""
         return await self._request("DELETE", endpoint, ep_params, data, headers=headers)
 
-    def _raise_for_sap_status(self, response: httpx.Response) -> None:
-        """Map a non-2xx raw response to the SDK's semantic exceptions.
-
-        Shared by the raw-transport methods (``post_batch``, ``post_multipart``,
-        ``get_binary``) that bypass ``_do()``'s JSON request/response path but
-        must still fail like every other call (404 → B1NotFoundError, …).
-        """
-        try:
-            response.raise_for_status()
-        except httpx.HTTPStatusError as e:
-            sap_code, sap_msg = self._parse_sap_error(e.response)
-            try:
-                err_body = e.response.json() if e.response.content else None
-            except Exception:
-                err_body = None
-            exc_cls = _HTTP_STATUS_TO_EXC.get(e.response.status_code, B1Exception)
-            raise exc_cls(f"SAP Error {sap_code}: {sap_msg}", details=err_body) from e
-
     async def post_batch(
         self, body: str, headers: dict, _retry_once: bool = True
     ) -> httpx.Response:
@@ -473,44 +476,52 @@ class AsyncRestAdapter(BaseRestAdapter):
         404 → B1NotFoundError, etc.). Per-part failures inside a successful
         batch never raise — they surface via BatchResults.
         """
-        await self.ensure_session()
-        if not self._client:
-             raise B1Exception("AsyncRestAdapter not initialized.")
+        try:
+            await self.ensure_session()
+            if not self._client:
+                 raise B1Exception("AsyncRestAdapter not initialized.")
 
-        url = f"{self.raw_base_url}/$batch"
-        # Combine with session headers if necessary,
-        # although httpx already handles them via cookies.
-        response = await self._client.post(url, content=body, headers=headers)
+            url = f"{self.raw_base_url}/$batch"
+            # Combine with session headers if necessary,
+            # although httpx already handles them via cookies.
+            response = await self._client.post(url, content=body, headers=headers)
 
-        if response.status_code == 401 and _retry_once:
-            self._logger.warning("401 Unauthorized on $batch - retrying login...")
-            await self.ensure_session(
-                force_refresh_if_expiry=self.token_expiry, force_refresh=True
-            )
-            return await self.post_batch(body, headers, _retry_once=False)
+            if response.status_code == 401 and _retry_once:
+                self._logger.warning("401 Unauthorized on $batch - retrying login...")
+                await self.ensure_session(
+                    force_refresh_if_expiry=self.token_expiry, force_refresh=True
+                )
+                return await self.post_batch(body, headers, _retry_once=False)
 
-        self._raise_for_sap_status(response)
-        return response
+            self._raise_for_sap_status(response)
+            return response
+        finally:
+            # Release the per-request session (reuse_token=False), mirroring
+            # _request(). Guarded by _retry_once so the 401-retry recursion
+            # does not release the session twice.
+            if _retry_once and not self.reuse_token:
+                await self.logout()
 
     async def post_multipart(
         self,
         endpoint: str,
         files: Sequence[MultipartFile],
         headers: dict | None = None,
-        _retry_once: bool = True,
     ) -> Result:
         """POST ``multipart/form-data`` to any Service Layer endpoint.
 
         The file-upload escape hatch: ``post()`` and the typed builder only
-        speak JSON, while SAP's file endpoints require a multipart body. Like
-        ``post_batch``, this bypasses ``_do()``'s JSON path but keeps session
-        handling, the 401 re-login retry, and semantic error mapping.
+        speak JSON, while SAP's file endpoints require a multipart body. Goes
+        through ``_do()``'s full pipeline: session lifecycle, dry-run, 401
+        re-login retry, semantic error mapping, logging and hooks. ``If-Match``
+        is never sent (multipart has no concurrency semantics, mirroring
+        ``$batch``) and ``Content-Type`` is always left to httpx, which owns
+        the multipart boundary.
 
         Args:
             endpoint: Relative Service Layer path, e.g. ``"Attachments2"``.
             files: File parts to send. One request may carry several.
-            headers: Extra headers. ``Content-Type`` is always left to httpx,
-                which appends the generated multipart boundary.
+            headers: Extra headers.
 
         Returns:
             Result: the parsed JSON body SAP returns (for ``Attachments2``, the
@@ -521,64 +532,24 @@ class AsyncRestAdapter(BaseRestAdapter):
         """
         if not files:
             raise ValueError("post_multipart() requires at least one file.")
-
-        endpoint_path = endpoint if endpoint.startswith("/") else f"/{endpoint}"
-
-        if self._dry_run_active:
-            self._logger.info(f"[DRY RUN] Intercepting multipart POST {endpoint_path}")
-            return Result(status_code=204, message="No Content (dry run)", data=None)
-
-        await self.ensure_session()
-        if not self._client:
-            raise B1Exception("AsyncRestAdapter not initialized.")
-
-        req_headers = self._build_headers("POST", endpoint_path, headers)
-        # httpx must own Content-Type here so the boundary matches the body.
-        req_headers.pop("Content-Type", None)
-
-        response = await self._client.post(
-            self.raw_base_url + endpoint_path,
-            files=[f.as_httpx_tuple() for f in files],
-            headers=req_headers,
-        )
-
-        if response.status_code == 401 and _retry_once:
-            self._logger.warning("401 Unauthorized on multipart POST - retrying login...")
-            await self.ensure_session(
-                force_refresh_if_expiry=self.token_expiry, force_refresh=True
-            )
-            return await self.post_multipart(endpoint, files, headers, _retry_once=False)
-
-        self._raise_for_sap_status(response)
-
-        data_out = None
-        if response.content:
-            try:
-                data_out = response.json()
-            except Exception:
-                data_out = response.text
-        return Result(
-            status_code=response.status_code,
-            message=response.reason_phrase,
-            data=data_out,
-        )
+        parts = [f.as_httpx_tuple() for f in files]
+        return await self._request("POST", endpoint, headers=headers, files=parts)
 
     async def get_binary(
         self,
         endpoint: str,
         ep_params: dict | None = None,
         headers: dict | None = None,
-        _retry_once: bool = True,
     ) -> bytes:
         """GET a raw binary body, with no JSON/text decoding.
 
         The download counterpart of ``post_multipart``. ``get()`` routes every
         body through ``response.json()`` with a ``response.text`` fallback,
-        which corrupts binary payloads — this returns ``response.content``
-        untouched.
-
-        The ETag cache is deliberately not touched: a ``$value`` read is a file
-        fetch, not a basis for optimistic concurrency.
+        which corrupts binary payloads — this returns the body bytes untouched.
+        Goes through ``_do()``'s full pipeline (session lifecycle, retries,
+        semantic errors, logging and hooks), but the ETag cache is never
+        touched and ``If-None-Match`` is never sent — a cached ETag would turn
+        the read into a 304 with an empty body.
 
         Args:
             endpoint: Relative path including any key and suffix, e.g.
@@ -589,29 +560,8 @@ class AsyncRestAdapter(BaseRestAdapter):
         Returns:
             The response body as raw bytes.
         """
-        endpoint_path = endpoint if endpoint.startswith("/") else f"/{endpoint}"
-
-        await self.ensure_session()
-        if not self._client:
-            raise B1Exception("AsyncRestAdapter not initialized.")
-
-        req_headers = self._build_headers("GET", endpoint_path, headers)
-        req_headers.pop("Content-Type", None)
-        # A cached ETag would make SAP answer 304 with an empty body.
-        req_headers.pop("If-None-Match", None)
-
-        response = await self._client.get(
-            self.raw_base_url + endpoint_path,
-            params=ep_params,
-            headers=req_headers,
+        result = await self._request(
+            "GET", endpoint, ep_params, headers=headers, raw_response=True
         )
-
-        if response.status_code == 401 and _retry_once:
-            self._logger.warning("401 Unauthorized on binary GET - retrying login...")
-            await self.ensure_session(
-                force_refresh_if_expiry=self.token_expiry, force_refresh=True
-            )
-            return await self.get_binary(endpoint, ep_params, headers, _retry_once=False)
-
-        self._raise_for_sap_status(response)
-        return response.content
+        data = result.data
+        return data if isinstance(data, bytes) else b""

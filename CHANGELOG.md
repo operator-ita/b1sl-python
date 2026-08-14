@@ -8,22 +8,48 @@ minor versions may include breaking changes).
 
 ## [Unreleased]
 
+## [0.12.0] — 2026-08-14
+
 ### Added
 - **Attachments2 support** — file upload and download, the last core operation
   that forced consumers into `client._adapter`'s private httpx client:
   - `client.attachments.upload(files)` / `.download(entry, name)` (sync and
     async) — typed convenience over the `Attachments2` entity. One request may
-    carry several files, producing one entry with one line per file.
+    carry several files, producing one entry with one `Attachments2_Line` per
+    file. File names are escaped as proper OData string literals (apostrophes
+    doubled, same rule as entity keys).
   - `client.post_multipart(endpoint, files)` and
     `client.get_binary(endpoint, params)` — public generic primitives for any
-    Service Layer endpoint needing a non-JSON body. Both keep session handling,
-    the 401 re-login retry, and semantic exception mapping;
-    `post_multipart()` honours dry-run.
+    Service Layer endpoint needing a non-JSON body.
   - `MultipartFile` (exported from `b1sl`) — one file part, defaulting to the
     fixed `files` field name SAP requires, with `MultipartFile.from_path()`.
+  - Every public method (client and resource, sync and async) accepts
+    `headers=` for per-request headers, matching the CRUD convention.
+
+  Both primitives run through the adapters' full `_do()` request pipeline
+  (`files=` body mode and `raw_response=` bytes mode, both adapters), so all
+  standard guarantees hold: session lifecycle (with `reuse_token=False` the
+  session license is released after every transfer), 401 re-login retry,
+  one-shot retry of idempotent GETs on stale keepalives, network errors mapped
+  to `B1ConnectionError`, semantic status mapping, dry-run interception on
+  uploads, structured logs, and `ObservabilityConfig` hooks. ETag
+  special-casing: multipart POSTs never send `If-Match` (no concurrency
+  semantics, same rule as `$batch`) and invalidate the cached ETag on success;
+  binary GETs never send `If-None-Match` and never touch the ETag cache.
+
   The wire format is **not** the two-part JSON+binary body SAP's manual
-  documents (that shape returns `400 -1000`); see `docs/19-attachments.md` and
-  `docs/18-sap-version-quirks.md` Q4.
+  documents (that shape returns `400 -1000`); the working format is files-only
+  parts named `files`. SAP also never implemented `DELETE` for `Attachments2`,
+  and `$batch` cannot nest a file upload or carry a binary body (recording one
+  raises a clear `NotImplementedError`). Guide: `docs/19-attachments.md`;
+  evidence: `docs/18-sap-version-quirks.md` Q4.
+
+### Changed
+- **`$batch` releases the per-request session** when `reuse_token=False` —
+  `post_batch` logged in per call but never paired the logout, orphaning one
+  SAP session license per batch until server-side timeout.
+- Internal: the HTTP status → exception mapping and SAP error parsing are now
+  defined once in `BaseRestAdapter` instead of duplicated per adapter.
 
 ### Fixed
 - **`get_udf_schema()` silently dropped UDFs past the first page.** It issued
@@ -33,6 +59,14 @@ minor versions may include breaking changes).
   no `has_more` signal, just a shorter list. Both sync and async now page
   through the full `UserFieldsMD` result set. (Found via live testing
   against a real SAP B1 tenant — thanks!)
+
+### Documentation
+- `docs/18-sap-version-quirks.md` gained two entries: **Q3** — the
+  `SerialNumberDetail.MFrWarrantyEnd` casing asymmetry is genuine (declared
+  that way in SAP's own `$metadata`; do not "fix" the generated alias), and
+  **Q4** — the Attachments2 upload wire format and the never-implemented
+  `DELETE`.
+- New guide `docs/19-attachments.md` and runnable `examples/25_attachments.py`.
 
 ## [0.11.0] — 2026-08-12
 

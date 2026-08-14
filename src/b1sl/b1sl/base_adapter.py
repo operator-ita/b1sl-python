@@ -17,12 +17,29 @@ from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional
 from urllib.parse import parse_qs, urlencode, urlparse
 
+import httpx
+
 from b1sl.b1sl.exceptions.exceptions import (
+    B1AuthError,
+    B1Exception,
+    B1NotFoundError,
     B1SqlNotAllowedError,
     B1SqlParamError,
     B1SqlSyntaxError,
+    B1ValidationError,
     SAPConcurrencyError,
 )
+
+# Standardized HTTP status → semantic exception mapping, shared by both
+# adapters (and every raw-transport path). 412 with SAP code -2039 raises
+# earlier via _raise_if_concurrency_error (richer context); the entry here
+# guarantees the semantic type either way.
+_HTTP_STATUS_TO_EXC: dict[int, type] = {
+    400: B1ValidationError,
+    401: B1AuthError,
+    404: B1NotFoundError,
+    412: SAPConcurrencyError,
+}
 
 
 @dataclass
@@ -550,6 +567,35 @@ class BaseRestAdapter:
         return {k: ",".join(v) for k, v in query_params.items()}
 
     # ── SAP OData error parsing ──────────────────────────────────────────── #
+
+    @staticmethod
+    def _parse_sap_error(response: httpx.Response) -> tuple[str, str]:
+        """Parses error information from an httpx response object."""
+        try:
+            body = response.json()
+        except Exception:
+            body = None
+        return BaseRestAdapter._parse_sap_error_shared(
+            response.status_code, response.reason_phrase, body
+        )
+
+    def _raise_for_sap_status(self, response: httpx.Response) -> None:
+        """Map a non-2xx raw response to the SDK's semantic exceptions.
+
+        Shared by the raw-transport methods (``post_batch``) that bypass
+        ``_do()``'s JSON request/response path but must still fail like every
+        other call (404 → B1NotFoundError, …).
+        """
+        try:
+            response.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            sap_code, sap_msg = self._parse_sap_error(e.response)
+            try:
+                err_body = e.response.json() if e.response.content else None
+            except Exception:
+                err_body = None
+            exc_cls = _HTTP_STATUS_TO_EXC.get(e.response.status_code, B1Exception)
+            raise exc_cls(f"SAP Error {sap_code}: {sap_msg}", details=err_body) from e
 
     @staticmethod
     def _parse_sap_error_shared(

@@ -10,6 +10,7 @@ through ``adapter.post_multipart()`` with these parts.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -69,3 +70,17 @@ class MultipartFile:
     def as_httpx_tuple(self) -> tuple[str, tuple[str, bytes, str]]:
         """Render as the ``(field, (filename, content, type))`` shape httpx expects."""
         return (self.field_name, (self.filename, self.content, self.content_type))
+
+
+def normalize_files(
+    files: MultipartFile | Sequence[MultipartFile],
+) -> list[MultipartFile]:
+    """Accept a single part or a sequence, always return a list.
+
+    The single acceptance rule for every public upload surface
+    (``client.post_multipart``, ``client.attachments.upload``, sync and
+    async) — one place to extend if more input shapes are ever accepted.
+    """
+    if isinstance(files, MultipartFile):
+        return [files]
+    return list(files)

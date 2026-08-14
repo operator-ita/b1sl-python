@@ -59,7 +59,6 @@ class RestAdapterProtocol(Protocol):
         endpoint: str,
         files: Sequence[MultipartFile],
         headers: dict | None = None,
-        _retry_once: bool = True,
     ) -> Result: ...
 
     def get_binary(
@@ -67,7 +66,6 @@ class RestAdapterProtocol(Protocol):
         endpoint: str,
         ep_params: dict | None = None,
         headers: dict | None = None,
-        _retry_once: bool = True,
     ) -> bytes: ...
 
     # ── Lifecycle & per-context modes ────────────────────────────────────────

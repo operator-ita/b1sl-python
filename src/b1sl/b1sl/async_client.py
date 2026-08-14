@@ -210,7 +210,11 @@ class AsyncB1Client:
         return result.data if result else None
 
     async def post_multipart(
-        self, endpoint: str, files: "Sequence[MultipartFile] | MultipartFile"
+        self,
+        endpoint: str,
+        files: "Sequence[MultipartFile] | MultipartFile",
+        *,
+        headers: dict | None = None,
     ) -> Any:
         """POST ``multipart/form-data`` to any Service Layer endpoint.
 
@@ -225,13 +229,20 @@ class AsyncB1Client:
 
             await b1.post_multipart("Attachments2", MultipartFile("a.pdf", data))
         """
-        from b1sl.b1sl.models.multipart import MultipartFile
+        from b1sl.b1sl.models.multipart import normalize_files
 
-        parts = [files] if isinstance(files, MultipartFile) else list(files)
-        result = await self._adapter.post_multipart(endpoint, parts)
+        result = await self._adapter.post_multipart(
+            endpoint, normalize_files(files), headers=headers
+        )
         return result.data if result else None
 
-    async def get_binary(self, endpoint: str, params: dict | None = None) -> bytes:
+    async def get_binary(
+        self,
+        endpoint: str,
+        params: dict | None = None,
+        *,
+        headers: dict | None = None,
+    ) -> bytes:
         """GET a raw binary body from any Service Layer endpoint.
 
         The download counterpart of :meth:`post_multipart`. Ordinary reads
@@ -243,7 +254,9 @@ class AsyncB1Client:
             await b1.get_binary("Attachments2(12)/$value",
                                 {"filename": "'invoice.pdf'"})
         """
-        return await self._adapter.get_binary(endpoint, ep_params=params)
+        return await self._adapter.get_binary(
+            endpoint, ep_params=params, headers=headers
+        )
 
     # --------------------------------------------------------------------------
     # Concurrency-Elite Aliases (First-Class Citizens with ETag support)

@@ -127,10 +127,45 @@ async def test_async_download_parity():
     assert adapter.calls[-1]["params"] == {"filename": "'invoice.pdf'"}
 
 
+def test_download_escapes_apostrophes_in_filename():
+    """OData string literals double embedded quotes — same rule as entity keys."""
+    adapter = FakeRestAdapter()
+    adapter.register_binary("Attachments2(12)/$value", PDF_BYTES)
+    res = AttachmentsResource(adapter)
+
+    res.download(12, "o'brien contract.pdf")
+
+    assert adapter.calls[-1]["params"] == {"filename": "'o''brien contract.pdf'"}
+
+
+@pytest.mark.asyncio
+async def test_async_download_escapes_apostrophes_in_filename():
+    adapter = FakeAsyncRestAdapter()
+    adapter.register_binary("Attachments2(12)/$value", PDF_BYTES)
+    res = AsyncAttachmentsResource(adapter)
+
+    await res.download(12, "o'brien contract.pdf")
+
+    assert adapter.calls[-1]["params"] == {"filename": "'o''brien contract.pdf'"}
+
+
+def test_resource_forwards_headers():
+    adapter = FakeRestAdapter()
+    adapter.register("POST", "Attachments2", response_data=SAP_UPLOAD_RESPONSE)
+    adapter.register_binary("Attachments2(12)/$value", PDF_BYTES)
+    res = AttachmentsResource(adapter)
+
+    res.upload(MultipartFile("a.pdf", b"a"), headers={"B1S-CaseInsensitive": "true"})
+    assert adapter.calls[-1]["headers"] == {"B1S-CaseInsensitive": "true"}
+
+    res.download(12, "a.pdf", headers={"X-Trace": "1"})
+    assert adapter.calls[-1]["headers"] == {"X-Trace": "1"}
+
+
 # ── Adapter primitives (real adapter, mocked transport) ────────────────────────
 
-def _adapter(monkeypatch, handler):
-    """Build a real RestAdapter whose transport is a MockTransport."""
+def _bare_adapter(handler, observability=None):
+    """Build a real RestAdapter on a MockTransport, session lifecycle intact."""
     from b1sl.b1sl.config import B1Config
     from b1sl.b1sl.rest_adapter import RestAdapter
 
@@ -140,9 +175,16 @@ def _adapter(monkeypatch, handler):
             username="manager",
             password="password",
             company_db="SBODemoES",
-        )
+        ),
+        observability=observability,
     )
     adapter.session = httpx.Client(transport=httpx.MockTransport(handler))
+    return adapter
+
+
+def _adapter(monkeypatch, handler, observability=None):
+    """Build a real RestAdapter whose transport is a MockTransport."""
+    adapter = _bare_adapter(handler, observability=observability)
     # Skip login entirely: the session is treated as already valid.
     monkeypatch.setattr(adapter, "_handle_token_login", lambda: None)
     monkeypatch.setattr(adapter, "_handle_token_logout", lambda: None)
@@ -254,6 +296,182 @@ def test_get_binary_does_not_send_if_none_match(monkeypatch):
     adapter.get_binary("Attachments2(12)/$value")
 
     assert "if-none-match" not in seen["headers"]
+
+
+# ── Hardened transport: full _do() pipeline integration ───────────────────────
+
+def test_post_multipart_maps_network_errors_to_b1connectionerror(monkeypatch):
+    """A network drop mid-upload must surface as the SDK's semantic type."""
+    from b1sl.b1sl.exceptions.exceptions import B1ConnectionError
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("boom", request=request)
+
+    adapter = _adapter(monkeypatch, handler)
+
+    with pytest.raises(B1ConnectionError):
+        adapter.post_multipart("Attachments2", [MultipartFile("a.pdf", b"a")])
+
+
+def test_get_binary_maps_timeouts_to_b1connectionerror(monkeypatch):
+    from b1sl.b1sl.exceptions.exceptions import B1ConnectionError
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ReadTimeout("slow", request=request)
+
+    adapter = _adapter(monkeypatch, handler)
+
+    with pytest.raises(B1ConnectionError):
+        adapter.get_binary("Attachments2(12)/$value")
+
+
+def test_get_binary_retries_stale_keepalive_once(monkeypatch):
+    """Idempotent GETs absorb a server-closed keepalive, binary path included."""
+    calls = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        if calls["n"] == 1:
+            raise httpx.RemoteProtocolError(
+                "Server disconnected without sending a response.", request=request
+            )
+        return httpx.Response(200, content=PDF_BYTES)
+
+    adapter = _adapter(monkeypatch, handler)
+
+    blob = adapter.get_binary("Attachments2(12)/$value")
+
+    assert blob == PDF_BYTES
+    assert calls["n"] == 2
+
+
+def test_post_multipart_never_sends_if_match_and_invalidates_etag(monkeypatch):
+    """Multipart has no concurrency semantics: no If-Match out, cache dropped."""
+    seen: dict = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["headers"] = request.headers
+        return httpx.Response(201, json=SAP_UPLOAD_RESPONSE)
+
+    adapter = _adapter(monkeypatch, handler)
+    adapter._etag_cache["/Attachments2(12)"] = 'W/"stale"'
+
+    adapter.post_multipart("Attachments2(12)", [MultipartFile("a.pdf", b"a")])
+
+    assert "if-match" not in seen["headers"]
+    # The write proactively invalidated the cached ETag for the path.
+    assert "/Attachments2(12)" not in adapter._etag_cache
+
+
+def test_post_multipart_content_type_strip_is_case_insensitive(monkeypatch):
+    """A caller-supplied lowercase content-type must not suppress the boundary."""
+    seen: dict = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["content_type"] = request.headers["content-type"]
+        return httpx.Response(201, json=SAP_UPLOAD_RESPONSE)
+
+    adapter = _adapter(monkeypatch, handler)
+
+    adapter.post_multipart(
+        "Attachments2",
+        [MultipartFile("a.pdf", b"a")],
+        headers={"content-type": "multipart/form-data"},
+    )
+
+    assert seen["content_type"].startswith("multipart/form-data; boundary=")
+
+
+def test_multipart_and_binary_fire_observability_hooks(monkeypatch):
+    """File transfers must be as auditable as JSON writes."""
+    from b1sl.b1sl.base_adapter import ObservabilityConfig
+
+    seen: list = []
+
+    def hook(ctx):
+        seen.append((ctx.http_method, ctx.endpoint, ctx.status_code))
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.method == "POST":
+            return httpx.Response(201, json=SAP_UPLOAD_RESPONSE)
+        return httpx.Response(200, content=PDF_BYTES)
+
+    adapter = _adapter(
+        monkeypatch,
+        handler,
+        observability=ObservabilityConfig(hooks={"on_response": [hook]}),
+    )
+
+    adapter.post_multipart("Attachments2", [MultipartFile("a.pdf", b"a")])
+    adapter.get_binary("Attachments2(12)/$value")
+
+    assert ("POST", "/Attachments2", 201) in seen
+    assert ("GET", "/Attachments2(12)/$value", 200) in seen
+
+
+def test_sync_lifecycle_pairs_login_with_logout(monkeypatch):
+    """reuse_token=False must release the session after each transfer."""
+    adapter = _bare_adapter(lambda r: httpx.Response(201, json=SAP_UPLOAD_RESPONSE))
+    adapter.reuse_token = False
+    events: list = []
+    monkeypatch.setattr(adapter, "_login", lambda: events.append("login"))
+    monkeypatch.setattr(adapter, "_logout", lambda: events.append("logout"))
+
+    adapter.post_multipart("Attachments2", [MultipartFile("a.pdf", b"a")])
+    assert events == ["login", "logout"]
+
+    events.clear()
+    adapter.get_binary("Attachments2(12)/$value")
+    assert events == ["login", "logout"]
+
+    events.clear()
+    adapter.post_batch("--b--", {"Content-Type": "multipart/mixed"})
+    assert events == ["login", "logout"]
+
+
+@pytest.mark.asyncio
+async def test_async_lifecycle_releases_session(monkeypatch):
+    """Async parity: per-request logout when reuse_token=False."""
+    from b1sl.b1sl.async_rest_adapter import AsyncRestAdapter
+    from b1sl.b1sl.config import B1Config
+
+    adapter = AsyncRestAdapter(
+        B1Config(
+            base_url="https://sap-server:50000/b1s/v2",
+            username="manager",
+            password="password",
+            company_db="SBODemoES",
+        )
+    )
+    adapter._client = httpx.AsyncClient(
+        transport=httpx.MockTransport(
+            lambda r: httpx.Response(201, json=SAP_UPLOAD_RESPONSE)
+            if r.method == "POST"
+            else httpx.Response(200, content=PDF_BYTES)
+        )
+    )
+    adapter.reuse_token = False
+    events: list = []
+
+    async def fake_ensure(*args, **kwargs):
+        events.append("ensure")
+
+    async def fake_logout():
+        events.append("logout")
+
+    monkeypatch.setattr(adapter, "ensure_session", fake_ensure)
+    monkeypatch.setattr(adapter, "logout", fake_logout)
+
+    await adapter.post_multipart("Attachments2", [MultipartFile("a.pdf", b"a")])
+    assert events == ["ensure", "logout"]
+
+    events.clear()
+    await adapter.get_binary("Attachments2(12)/$value")
+    assert events == ["ensure", "logout"]
+
+    events.clear()
+    await adapter.post_batch("--b--", {"Content-Type": "multipart/mixed"})
+    assert events == ["ensure", "logout"]
 
 
 # ── Async adapter primitives (parity with the sync transport tests) ────────────
@@ -374,6 +592,23 @@ def test_client_exposes_multipart_and_binary_publicly():
     blob = client.get_binary("Attachments2(12)/$value", {"filename": "'a.pdf'"})
     assert blob == PDF_BYTES
     assert adapter.calls[-1]["params"] == {"filename": "'a.pdf'"}
+
+
+def test_client_forwards_headers_publicly():
+    """headers= must ride every public path — no _adapter access needed."""
+    adapter = FakeRestAdapter()
+    adapter.register("POST", "Attachments2", response_data=SAP_UPLOAD_RESPONSE)
+    adapter.register_binary("Attachments2(12)/$value", PDF_BYTES)
+    client = _client_with(adapter)
+
+    client.post_multipart(
+        "Attachments2", MultipartFile("a.pdf", b"a"),
+        headers={"B1S-CaseInsensitive": "true"},
+    )
+    assert adapter.calls[-1]["headers"] == {"B1S-CaseInsensitive": "true"}
+
+    client.get_binary("Attachments2(12)/$value", headers={"X-Trace": "1"})
+    assert adapter.calls[-1]["headers"] == {"X-Trace": "1"}
 
 
 def test_client_attachments_property_returns_typed_resource():
