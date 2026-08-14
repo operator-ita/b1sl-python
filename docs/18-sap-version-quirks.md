@@ -213,3 +213,42 @@ documents reference addresses by `AddressName` (`PayToCode`/`ShipToCode`).
 - Renaming an Address ID at all is gated by the B1 setting *Administration →
   System Initialization → General Settings → BP → Allow Updating Address ID*:
   [SAP blog — Update Address ID? It's Your Call](https://community.sap.com/t5/enterprise-resource-planning-blogs-by-sap/update-address-id-it-s-your-call/ba-p/13422346).
+
+---
+
+## Q3 — `SerialNumberDetail.MFrWarrantyEnd`: inconsistent casing is genuine, not a typo
+
+| | |
+|---|---|
+| **Observed on** | SAP Business One Service Layer, `$metadata` document (verified against a live SAP B1 2511 tenant, HANA) |
+| **Date verified** | 2026-08-13 |
+| **SDK behavior** | Generator/model faithfully mirror SAP's own casing — no normalization applied |
+| **Evidence** | `metadata/1.27/metadata_document.real.xml` (gitignored, local), lines ~16560-16561 |
+| **SAP acknowledgment** | N/A — not a bug to report, just an irregularity in SAP's own schema |
+
+### Symptom
+
+`SerialNumberDetail` declares a matched pair of warranty date properties with
+inconsistent capitalization on the `Mfr`/`MFr` prefix — only the `End`
+property capitalizes the `F`:
+
+```xml
+<Property Name="MfrWarrantyStart" Type="Edm.DateTimeOffset"/>
+<Property Name="MFrWarrantyEnd" Type="Edm.DateTimeOffset"/>
+```
+
+At a glance this reads as a copy-paste typo in the SDK's generated model
+(`models/_generated/entities/general.py`:
+`mfr_warranty_start: alias='MfrWarrantyStart'`,
+`m_fr_warranty_end: alias='MFrWarrantyEnd'`). It is not — the asymmetry
+originates in SAP's own `$metadata` document, not in the generator. Sending
+the "corrected" spelling (`MfrWarrantyEnd`, lowercase `f`) is rejected by
+Service Layer as an unknown property.
+
+### SDK behavior
+
+The generator emits whatever alias SAP's metadata declares, verbatim — no
+casing normalization is applied to property names anywhere in the pipeline.
+This is why the pair looks asymmetric in the generated model: it correctly
+reproduces an asymmetry that exists on SAP's side. Do not "fix" this alias to
+match `MfrWarrantyStart`'s casing; doing so breaks the wire contract.
