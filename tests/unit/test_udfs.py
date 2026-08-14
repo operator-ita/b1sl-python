@@ -130,6 +130,63 @@ def test_sync_get_udf_schema():
     instance = DynamicModel(**{"U_Segmento": "abc"})
     assert instance.model_dump(by_alias=True, exclude_none=True) == {"U_Segmento": "abc"}
 
+def test_sync_get_udf_schema_follows_next_link():
+    # Simulate SAP paging UserFieldsMD across two pages
+    mock_adapter = MagicMock()
+    page1 = MagicMock()
+    page1.data = {
+        "value": [{"Name": "Segmento", "Type": "db_Alpha", "Size": 10}],
+        "@odata.nextLink": "UserFieldsMD?$filter=TableName+eq+%27OCRD%27&$skip=1",
+    }
+    page2 = MagicMock()
+    page2.data = {"value": [{"Name": "Region", "Type": "db_Alpha", "Size": 10}]}
+    mock_adapter.get.side_effect = [page1, page2]
+
+    res: GenericResource[MockItem] = GenericResource(mock_adapter)
+    res.endpoint = "BusinessPartners"
+    res.model = MockItem
+
+    schema = res.get_udf_schema()
+
+    assert mock_adapter.get.call_count == 2
+    first_params = mock_adapter.get.call_args_list[0].kwargs["ep_params"]
+    second_params = mock_adapter.get.call_args_list[1].kwargs["ep_params"]
+    assert first_params == {"$filter": "TableName eq 'OCRD'"}
+    assert second_params["$skip"] == "1"
+    assert second_params["$filter"] == "TableName eq 'OCRD'"
+
+    assert "U_Segmento" in schema
+    assert "U_Region" in schema
+
+
+@pytest.mark.asyncio
+async def test_async_get_udf_schema_follows_next_link():
+    mock_adapter = AsyncMock()
+    page1 = MagicMock()
+    page1.data = {
+        "value": [{"Name": "U_Priority", "Type": "db_Numeric", "Size": 2}],
+        "@odata.nextLink": "UserFieldsMD?$filter=TableName+eq+%27OITM%27&$skip=1",
+    }
+    page2 = MagicMock()
+    page2.data = {"value": [{"Name": "U_Batch", "Type": "db_Numeric", "Size": 2}]}
+    mock_adapter.get.side_effect = [page1, page2]
+
+    res: AsyncGenericResource[MockItem] = AsyncGenericResource(mock_adapter)
+    res.endpoint = "Items"
+    res.model = MockItem
+
+    schema = await res.get_udf_schema()
+
+    assert mock_adapter.get.call_count == 2
+    first_params = mock_adapter.get.call_args_list[0].kwargs["ep_params"]
+    second_params = mock_adapter.get.call_args_list[1].kwargs["ep_params"]
+    assert first_params == {"$filter": "TableName eq 'OITM'"}
+    assert second_params["$skip"] == "1"
+
+    assert "U_Priority" in schema
+    assert "U_Batch" in schema
+
+
 @pytest.mark.asyncio
 async def test_async_get_udf_schema():
     # Setup mock adapter

@@ -17,7 +17,7 @@ from b1sl.b1sl.adapter_protocol import RestAdapterProtocol
 from b1sl.b1sl.exceptions.exceptions import B1NotFoundError
 from b1sl.b1sl.models.base import B1Model
 from b1sl.b1sl.models.paginated_result import PaginatedResult
-from b1sl.b1sl.pagination import build_next_params, prepare_top_probe
+from b1sl.b1sl.pagination import build_next_params, extract_next_link, prepare_top_probe
 
 T = TypeVar("T", bound=B1Model)
 
@@ -165,10 +165,16 @@ class GenericResource(Generic[T]):
             )
 
         params = {"$filter": f"TableName eq '{target_table}'"}
-        result = self._adapter.get("UserFieldsMD", ep_params=params)
-        data = result.data or {}
+        raw_list: list[UserFieldMD] = []
+        while True:
+            result = self._adapter.get("UserFieldsMD", ep_params=params)
+            data = result.data or {}
+            raw_list.extend(UserFieldMD.model_validate(item) for item in data.get("value", []))
+            next_link = extract_next_link(data)
+            if not next_link:
+                break
+            params = build_next_params(params, next_link)
 
-        raw_list = [UserFieldMD.model_validate(item) for item in data.get("value", [])]
         return UDFSchema(target_table, raw_list)
 
     # ── fluent query builder ────────────────────────────────────────────────

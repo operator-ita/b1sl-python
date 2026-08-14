@@ -8,6 +8,15 @@ minor versions may include breaking changes).
 
 ## [Unreleased]
 
+### Fixed
+- **`get_udf_schema()` silently dropped UDFs past the first page.** It issued
+  a single raw GET against `UserFieldsMD` without following
+  `@odata.nextLink`, so a table with more UDFs than SAP's server page size
+  (e.g. 24 UDFs on a table SAP pages at 20) came back truncated — no error,
+  no `has_more` signal, just a shorter list. Both sync and async now page
+  through the full `UserFieldsMD` result set. (Found via live testing
+  against a real SAP B1 tenant — thanks!)
+
 ## [0.11.0] — 2026-08-12
 
 ### Added

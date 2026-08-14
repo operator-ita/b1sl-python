@@ -140,6 +140,8 @@ except Exception as e:
 
 The returned `UDFSchema` object is a powerful meta-container that can also generate dedicated Pydantic models on-the-fly (`to_pydantic_model()`).
 
+`get_udf_schema()` transparently follows `@odata.nextLink`, so it always returns the full UDF set for the table even when SAP paginates the `UserFieldsMD` response (a table with more UDFs than SAP's default server page size).
+
 
 ## Architecture Policy
 - **Prefer Overrides for Calculations**: Keep business logic in `_overrides/`.

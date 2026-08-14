@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 from b1sl.b1sl.exceptions.exceptions import B1NotFoundError
 from b1sl.b1sl.models.base import B1Model
 from b1sl.b1sl.models.paginated_result import PaginatedResult
-from b1sl.b1sl.pagination import build_next_params, prepare_top_probe
+from b1sl.b1sl.pagination import build_next_params, extract_next_link, prepare_top_probe
 from b1sl.b1sl.resources.base import (
     ODataQuery,
     _build_expand,
@@ -53,10 +53,16 @@ class AsyncGenericResource(Generic[T]):
             )
 
         params = {"$filter": f"TableName eq '{target_table}'"}
-        result = await self._adapter.get("UserFieldsMD", ep_params=params)
-        data = result.data or {}
+        raw_list: list[UserFieldMD] = []
+        while True:
+            result = await self._adapter.get("UserFieldsMD", ep_params=params)
+            data = result.data or {}
+            raw_list.extend(UserFieldMD.model_validate(item) for item in data.get("value", []))
+            next_link = extract_next_link(data)
+            if not next_link:
+                break
+            params = build_next_params(params, next_link)
 
-        raw_list = [UserFieldMD.model_validate(item) for item in data.get("value", [])]
         return UDFSchema(target_table, raw_list)
 
     # ── fluent query builder ────────────────────────────────────────────────
