@@ -20,6 +20,7 @@ from b1sl.b1sl.exceptions.exceptions import (
     B1SqlSyntaxError,
     SAPConcurrencyError,
 )
+from b1sl.b1sl.models.multipart import MultipartFile
 from b1sl.b1sl.models.paginated_result import PaginatedResult
 from b1sl.b1sl.resources.async_base import AsyncGenericResource
 from b1sl.b1sl.resources.base import GenericResource, ODataQuery
@@ -82,6 +83,7 @@ __all__ = [
     "GenericResource",
     "ODataQuery",
     "PaginatedResult",
+    "MultipartFile",
     "DEFAULT_ACCESSIBLE_TABLES",
     "KNOWN_INACCESSIBLE_PATTERNS",
     "SQLQueryInfo",

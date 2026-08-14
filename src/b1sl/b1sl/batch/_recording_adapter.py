@@ -65,6 +65,24 @@ class _RecordingAdapter:
     async def delete(self, endpoint, ep_params=None, data=None, headers=None):
         return self._record("DELETE", endpoint, ep_params, data, headers)
 
+    # ── Raw transport: not representable inside $batch ────────────────────────
+    # A $batch body is itself multipart; SAP has no nesting for a file upload
+    # part, and a binary $value response cannot be encoded in a batch part.
+    # Fail loudly at record time instead of at execute time.
+
+    def post_multipart(self, endpoint, files, headers=None, _retry_once=True):
+        raise NotImplementedError(
+            "File uploads cannot be recorded inside a $batch — a batch body is "
+            "already multipart. Call client.attachments.upload() outside the batch."
+        )
+
+    def get_binary(self, endpoint, ep_params=None, headers=None, _retry_once=True):
+        raise NotImplementedError(
+            "Binary downloads cannot be recorded inside a $batch — a batch part "
+            "cannot carry a raw file body. Call client.attachments.download() "
+            "outside the batch."
+        )
+
 
 class _SyncRecordingAdapter(_RecordingAdapter):
     """

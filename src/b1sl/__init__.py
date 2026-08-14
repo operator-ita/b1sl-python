@@ -26,6 +26,7 @@ _FORWARDED = (
     "B1Environment",
     "B1Env",
     "PaginatedResult",
+    "MultipartFile",
     "entities",
     "fields",
 )

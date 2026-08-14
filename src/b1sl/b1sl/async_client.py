@@ -8,6 +8,8 @@ from b1sl.b1sl.base_adapter import ObservabilityConfig
 from b1sl.b1sl.config import B1Config
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from b1sl.b1sl.batch.client import BatchClient
     from b1sl.b1sl.models._generated.entities.businesspartners import (
         Activity,
@@ -16,7 +18,9 @@ if TYPE_CHECKING:
     from b1sl.b1sl.models._generated.entities.general import Document
     from b1sl.b1sl.models._generated.entities.inventory import Item
     from b1sl.b1sl.models.base import B1Model
+    from b1sl.b1sl.models.multipart import MultipartFile
     from b1sl.b1sl.resources.async_base import AsyncGenericResource
+    from b1sl.b1sl.resources.attachments import AsyncAttachmentsResource
     from b1sl.b1sl.resources.crossjoin import (
         AsyncCrossJoinQueryBuilder,
         AsyncQueryServiceBuilder,
@@ -204,6 +208,42 @@ class AsyncB1Client:
         """
         result = await self._adapter.post(name, data=payload or {})
         return result.data if result else None
+
+    async def post_multipart(
+        self, endpoint: str, files: "Sequence[MultipartFile] | MultipartFile"
+    ) -> Any:
+        """POST ``multipart/form-data`` to any Service Layer endpoint.
+
+        The public file-upload escape hatch: the typed builder and
+        ``call_service_method`` only speak JSON, while SAP's file endpoints
+        need a multipart body. For ``Attachments2`` prefer the typed
+        ``client.attachments.upload()``.
+
+        Dry-run interception and semantic exception mapping behave as usual.
+
+        Example::
+
+            await b1.post_multipart("Attachments2", MultipartFile("a.pdf", data))
+        """
+        from b1sl.b1sl.models.multipart import MultipartFile
+
+        parts = [files] if isinstance(files, MultipartFile) else list(files)
+        result = await self._adapter.post_multipart(endpoint, parts)
+        return result.data if result else None
+
+    async def get_binary(self, endpoint: str, params: dict | None = None) -> bytes:
+        """GET a raw binary body from any Service Layer endpoint.
+
+        The download counterpart of :meth:`post_multipart`. Ordinary reads
+        decode every body as JSON (falling back to text), which corrupts binary
+        payloads. For ``Attachments2`` prefer ``client.attachments.download()``.
+
+        Example::
+
+            await b1.get_binary("Attachments2(12)/$value",
+                                {"filename": "'invoice.pdf'"})
+        """
+        return await self._adapter.get_binary(endpoint, ep_params=params)
 
     # --------------------------------------------------------------------------
     # Concurrency-Elite Aliases (First-Class Citizens with ETag support)
@@ -394,6 +434,19 @@ class AsyncB1Client:
         """Access the 'SQLQueries' endpoint (supports ETags, run() / run_stream())."""
         from b1sl.b1sl.resources.sql_queries import AsyncSQLQueriesResource
         resource = AsyncSQLQueriesResource(self._adapter)
+        return resource
+
+    # --- Attachments ---
+
+    @property
+    def attachments(self) -> "AsyncAttachmentsResource":
+        """Access the 'Attachments2' endpoint (upload() / download()).
+
+        Specialized resource, not an Elite alias: SAP offers no ETag
+        concurrency here, and ``delete()`` is unsupported server-side.
+        """
+        from b1sl.b1sl.resources.attachments import AsyncAttachmentsResource
+        resource = AsyncAttachmentsResource(self._adapter)
         return resource
 
     def udo(self, table_name: str) -> "AsyncUDOResource":

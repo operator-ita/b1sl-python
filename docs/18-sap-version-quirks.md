@@ -252,3 +252,81 @@ casing normalization is applied to property names anywhere in the pipeline.
 This is why the pair looks asymmetric in the generated model: it correctly
 reproduces an asymmetry that exists on SAP's side. Do not "fix" this alias to
 match `MfrWarrantyStart`'s casing; doing so breaks the wire contract.
+
+---
+
+## Q4 — `Attachments2`: multipart upload ignores the documented body shape, and `DELETE` never works
+
+| | |
+|---|---|
+| **Observed on** | SAP Business One Service Layer OData v4 (`/b1s/v2`), verified live against a SAP B1 2511 tenant (HANA) |
+| **Date verified** | 2026-08-13 |
+| **SDK mitigation** | `adapter.post_multipart()` / `adapter.get_binary()` primitives; `client.attachments.upload()` / `.download()` convenience |
+| **Regression tests** | `tests/unit/test_attachments.py` |
+| **SAP acknowledgment** | Upload shape: undocumented (the manual is wrong). DELETE: SAP Note 2499014 + DI API reference confirm it was never implemented. |
+
+### Q4a — the manual's two-part upload body is rejected
+
+"*Working with SAP Business One Service Layer*" §3.17.3 describes a
+`multipart/form-data` POST with **two** parts: a JSON metadata part
+(`Attachments2_Lines` carrying `FileName`/`FileExtension`/`SourcePath`) plus
+the binary part. That body is rejected:
+
+```http
+POST /b1s/v2/Attachments2       (parts: JSON "Attachments2" + binary)
+HTTP/1.1 400 Bad Request
+{"code":"-1000","message":"Property 'Attachments2' of 'Attachments2_Line' is invalid"}
+```
+
+The shape that works carries **no JSON part at all** — only file parts, each
+using the fixed field name `files` (the real name travels in `filename`):
+
+```http
+POST /b1s/v2/Attachments2
+Content-Type: multipart/form-data; boundary=...
+
+--boundary
+Content-Disposition: form-data; name="files"; filename="invoice.pdf"
+Content-Type: application/octet-stream
+
+<bytes>
+--boundary--
+
+HTTP/1.1 201 Created
+{"AbsoluteEntry": 12, "Attachments2_Lines": [{"FileName":"invoice","FileExtension":"pdf",...}]}
+```
+
+One POST may carry **several** `files` parts; SAP creates a single
+`Attachments2` entry with one `Attachments2_Line` per file. `MultipartFile`
+defaults `field_name` to `"files"` precisely so callers cannot get this wrong.
+
+Download is a binary `$value` read, with the file named as an OData string
+literal:
+
+```http
+GET /b1s/v2/Attachments2(12)/$value?filename='invoice.pdf'
+→ 200, raw bytes (SAP infers Content-Type from the extension)
+```
+
+A `404` with code `-2028` means the entry exists but the file is gone from the
+attachments share (deleted outside SAP). A `404` reading *"Fail to get the
+LINUX mount point for AttachmentsFolderPath"* is different — that is the
+Service Layer's CIFS mount missing at the infrastructure level, not an SDK or
+payload problem.
+
+### Q4b — `DELETE Attachments2(N)` is not implemented, in any version
+
+```http
+DELETE /b1s/v2/Attachments2(12)
+→ 400 {"code": 220, "message": "Attachments2 is not allowed to remove"}
+```
+
+This is **not** a company-database or Service Layer configuration issue: the
+DI API's `Attachments2` object never exposed a `Remove`/`Delete` method either
+(only `Add`, `GetAsXML`, `GetByKey`, `SaveToFile`, `SaveXML`, `Update` — see
+SAP Note 2499014). No version or setting enables it.
+
+The SDK does not special-case this: `AttachmentsResource` inherits the generic
+`delete()` from `GenericResource`, so calling it produces SAP's raw `400`. To
+drop a file from an entry, `update()` the entry's `Attachments2_Lines`
+collection instead.

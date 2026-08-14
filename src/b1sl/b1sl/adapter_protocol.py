@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from contextlib import AbstractContextManager
 from datetime import datetime
 from typing import Any, Protocol
 
+from b1sl.b1sl.models.multipart import MultipartFile
 from b1sl.b1sl.models.result import Result
 
 
@@ -49,6 +51,24 @@ class RestAdapterProtocol(Protocol):
     ) -> Result: ...
 
     def post_batch(self, body: str, headers: dict, _retry_once: bool = True) -> Any: ...
+
+    # ── Raw transport (non-JSON bodies) ───────────────────────────────────────
+
+    def post_multipart(
+        self,
+        endpoint: str,
+        files: Sequence[MultipartFile],
+        headers: dict | None = None,
+        _retry_once: bool = True,
+    ) -> Result: ...
+
+    def get_binary(
+        self,
+        endpoint: str,
+        ep_params: dict | None = None,
+        headers: dict | None = None,
+        _retry_once: bool = True,
+    ) -> bytes: ...
 
     # ── Lifecycle & per-context modes ────────────────────────────────────────
 

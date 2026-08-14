@@ -185,6 +185,42 @@ class FakeRestAdapter(RestAdapterProtocol):
         """Simulate a DELETE request."""
         return self._handle_request("DELETE", endpoint, ep_params, data, headers)
 
+    def register_binary(self, endpoint: str, content: bytes) -> None:
+        """Register a raw binary body returned by a get_binary() call.
+
+        Args:
+            endpoint: Target path, e.g. "Attachments2(12)/$value".
+            content: The bytes to return verbatim.
+        """
+        key = ("GET_BINARY", endpoint.lstrip("/"))
+        self._routes.setdefault(key, []).append(
+            Result(status_code=200, message="OK", data=content)
+        )
+
+    def post_multipart(
+        self,
+        endpoint: str,
+        files: Any,
+        headers: dict[str, Any] | None = None,
+        _retry_once: bool = True,
+    ) -> Result:
+        """Simulate a multipart POST, recording the file parts sent."""
+        result = self._handle_request("POST", endpoint, None, None, headers)
+        self.calls[-1]["files"] = list(files)
+        return result
+
+    def get_binary(
+        self,
+        endpoint: str,
+        ep_params: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
+        _retry_once: bool = True,
+    ) -> bytes:
+        """Simulate a raw binary GET, returning bytes registered via register_binary()."""
+        result = self._handle_request("GET_BINARY", endpoint, ep_params, None, headers)
+        data = result.data
+        return data if isinstance(data, bytes) else b""
+
     def _clear_etag(self, *args, **kwargs):
         """Mock ETag invalidation."""
         pass
@@ -315,6 +351,37 @@ class FakeAsyncRestAdapter:
         headers: dict[str, Any] | None = None,
     ) -> Result:
         return self._handle_request("DELETE", endpoint, ep_params, data, headers)
+
+    def register_binary(self, endpoint: str, content: bytes) -> None:
+        """Register a raw binary body returned by a get_binary() call."""
+        key = ("GET_BINARY", endpoint.lstrip("/"))
+        self._routes.setdefault(key, []).append(
+            Result(status_code=200, message="OK", data=content)
+        )
+
+    async def post_multipart(
+        self,
+        endpoint: str,
+        files: Any,
+        headers: dict[str, Any] | None = None,
+        _retry_once: bool = True,
+    ) -> Result:
+        """Simulate a multipart POST, recording the file parts sent."""
+        result = self._handle_request("POST", endpoint, None, None, headers)
+        self.calls[-1]["files"] = list(files)
+        return result
+
+    async def get_binary(
+        self,
+        endpoint: str,
+        ep_params: dict[str, Any] | None = None,
+        headers: dict[str, Any] | None = None,
+        _retry_once: bool = True,
+    ) -> bytes:
+        """Simulate a raw binary GET, returning bytes registered via register_binary()."""
+        result = self._handle_request("GET_BINARY", endpoint, ep_params, None, headers)
+        data = result.data
+        return data if isinstance(data, bytes) else b""
 
     def _clear_etag(self, *args, **kwargs):
         pass

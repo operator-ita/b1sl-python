@@ -8,6 +8,23 @@ minor versions may include breaking changes).
 
 ## [Unreleased]
 
+### Added
+- **Attachments2 support** — file upload and download, the last core operation
+  that forced consumers into `client._adapter`'s private httpx client:
+  - `client.attachments.upload(files)` / `.download(entry, name)` (sync and
+    async) — typed convenience over the `Attachments2` entity. One request may
+    carry several files, producing one entry with one line per file.
+  - `client.post_multipart(endpoint, files)` and
+    `client.get_binary(endpoint, params)` — public generic primitives for any
+    Service Layer endpoint needing a non-JSON body. Both keep session handling,
+    the 401 re-login retry, and semantic exception mapping;
+    `post_multipart()` honours dry-run.
+  - `MultipartFile` (exported from `b1sl`) — one file part, defaulting to the
+    fixed `files` field name SAP requires, with `MultipartFile.from_path()`.
+  The wire format is **not** the two-part JSON+binary body SAP's manual
+  documents (that shape returns `400 -1000`); see `docs/19-attachments.md` and
+  `docs/18-sap-version-quirks.md` Q4.
+
 ### Fixed
 - **`get_udf_schema()` silently dropped UDFs past the first page.** It issued
   a single raw GET against `UserFieldsMD` without following
