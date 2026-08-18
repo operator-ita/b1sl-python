@@ -272,6 +272,9 @@ Rules the client enforces (all learned from the live gateway, none in SAP's manu
 - Document-bound layout codes (`QUT200xx`…) are **not** discoverable by API — read them
   in Print Layout Designer and version the mapping in your app.
 - `max_concurrent_exports` (default 3) bounds parallel renders per client.
+- Layout-specific required parameters (fiscal folios, ext params…) are **never guessed**:
+  `missing_required_parameters(params, values)` lists what a layout still needs, and
+  `export_pdf(..., resolver=fn)` lets the application supply them (`fn(param) -> value | None`).
 
 ## Transparent Pagination Streams
 

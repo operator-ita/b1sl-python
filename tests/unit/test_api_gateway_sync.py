@@ -217,3 +217,32 @@ def test_sync_login_error_envelope_and_sentinel_retry(cfg):
     with APIGatewayClient(cfg) as gw:
         assert gw.export_pdf_raw("QUT20020", []) == PDF_BYTES
     assert route.call_count == 2  # sentinel once, then the PDF
+
+
+@respx.mock
+def test_sync_export_pdf_with_resolver(cfg):
+    _mock_session()
+    respx.get(LOADCR).mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "error": False,
+                "resultSet": [
+                    {
+                        "name": "showInactive",
+                        "type": "xsd:string",
+                        "currentvalues": [],
+                        "allowNullValue": "false",
+                    },
+                ],
+            },
+        )
+    )
+    export = respx.post(EXPORT).mock(return_value=httpx.Response(201, text=PDF_B64))
+    with APIGatewayClient(cfg) as gw:
+        gw.export_pdf(
+            "RPT00001", resolver=lambda p: "N" if p.name == "showInactive" else None
+        )
+    assert json.loads(export.calls.last.request.read()) == [
+        {"name": "showInactive", "type": "xsd:string", "value": [["N"]]}
+    ]

@@ -796,3 +796,236 @@ async def test_loadcr_error_flag_and_error_false_shape(cfg):
         assert len(await gw.get_report_parameters("QUT20020")) == 3
         with pytest.raises(APIGatewayResponseError, match="boom"):
             await gw.get_report_parameters("QUT20020")
+
+
+# ── Real-layout variants (from a 49-layout survey on a live tenant) ───────────
+
+
+def _layout(*rows):
+    return {"error": False, "resultSet": list(rows)}
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_export_document_pdf_resolves_objectid_case_variant(cfg):
+    """Some layouts spell it ``ObjectID@``; object_id must land on that name."""
+    respx.post(LOGIN).mock(return_value=LOGIN_OK)
+    respx.post(LOGOUT).mock(return_value=httpx.Response(200))
+    respx.get(LOADCR).mock(
+        return_value=httpx.Response(
+            200,
+            json=_layout(
+                _param("DocKey@", "xsd:decimal", [], "true"),
+                _param("ObjectID@", "xsd:decimal", [], "true"),
+            ),
+        )
+    )
+    export = respx.post(EXPORT).mock(return_value=httpx.Response(201, text=PDF_B64))
+    async with AsyncAPIGatewayClient(cfg) as gw:
+        await gw.export_document_pdf("RDR10003", doc_entry=5, object_id=17)
+    import json
+
+    assert json.loads(export.calls.last.request.read()) == [
+        {"name": "DocKey@", "type": "xsd:decimal", "value": [["5"]]},
+        {"name": "ObjectID@", "type": "xsd:decimal", "value": [["17"]]},
+    ]
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_export_document_pdf_ignores_object_id_when_layout_has_none(cfg):
+    """DocKey@-only layouts: object_id is dropped, not an error."""
+    respx.post(LOGIN).mock(return_value=LOGIN_OK)
+    respx.post(LOGOUT).mock(return_value=httpx.Response(200))
+    respx.get(LOADCR).mock(
+        return_value=httpx.Response(
+            200, json=_layout(_param("DocKey@", "xsd:decimal", ["1"], "true"))
+        )
+    )
+    export = respx.post(EXPORT).mock(return_value=httpx.Response(201, text=PDF_B64))
+    async with AsyncAPIGatewayClient(cfg) as gw:
+        await gw.export_document_pdf("RDR20001", doc_entry=9, object_id=17)
+    import json
+
+    assert json.loads(export.calls.last.request.read()) == [
+        {"name": "DocKey@", "type": "xsd:decimal", "value": [["9"]]}
+    ]
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_export_document_pdf_reports_missing_required_extra_params(cfg):
+    """Invoice-style layouts requiring ExtParam@/FolioPref@/FolioNum@ fail
+    locally with the missing name unless supplied via values=."""
+    respx.post(LOGIN).mock(return_value=LOGIN_OK)
+    respx.post(LOGOUT).mock(return_value=httpx.Response(200))
+    respx.get(LOADCR).mock(
+        return_value=httpx.Response(
+            200,
+            json=_layout(
+                _param("DocKey@", "xsd:decimal", [], "true"),
+                _param("ObjectId@", "xsd:decimal", [], "true"),
+                _param("FolioPref@", "xsd:string", [], "false"),
+            ),
+        )
+    )
+    export = respx.post(EXPORT).mock(return_value=httpx.Response(201, text=PDF_B64))
+    async with AsyncAPIGatewayClient(cfg) as gw:
+        with pytest.raises(APIGatewayParameterError, match="FolioPref@"):
+            await gw.export_document_pdf("INV20011", doc_entry=1, object_id=13)
+        assert export.call_count == 0
+        await gw.export_document_pdf(
+            "INV20011", doc_entry=1, object_id=13, values={"foliopref@": "A"}
+        )
+    import json
+
+    assert json.loads(export.calls.last.request.read())[-1] == {
+        "name": "FolioPref@",
+        "type": "xsd:string",
+        "value": [["A"]],
+    }
+
+
+def test_resolve_names_case_insensitive():
+    from b1sl.api_gateway.payload import resolve_names
+
+    known = {"DocKey@", "ObjectID@", "RangeDate@"}
+    assert resolve_names({"ObjectId@": 1, "dockey@": 2, "Nope": 3}, known) == {
+        "ObjectID@": 1,
+        "DocKey@": 2,
+        "Nope": 3,
+    }
+    assert resolve_names(None, known) == {}
+
+
+# ── Extension point: required-parameter introspection + resolver hook ────────
+
+
+def _fiscal_layout_params():
+    return [
+        ReportParameter.from_wire(r)
+        for r in (
+            _param("DocKey@", "xsd:decimal", [], "true"),
+            _param("ObjectId@", "xsd:decimal", ["13"], "true"),
+            _param("FolioPref@", "xsd:string", [], "false"),
+            _param("FolioNum@", "xsd:decimal", [], "false"),
+            _param("Pm-Optional.Text", "xsd:string", [], "true"),
+            _param("RangeDate@", "xsd:date", ["Date(2026, 1, 1) to Date(2026, 1, 31)"]),
+        )
+    ]
+
+
+def test_is_required_and_missing_required_parameters():
+    from b1sl.api_gateway import missing_required_parameters
+
+    params = _fiscal_layout_params()
+    by_name = {p.name: p for p in params}
+    assert by_name["FolioPref@"].is_required is True
+    assert by_name["Pm-Optional.Text"].is_required is False  # nullable
+    assert by_name["ObjectId@"].is_required is False  # preloaded
+
+    missing = [p.name for p in missing_required_parameters(params)]
+    # DocKey@ is nullable+empty (omittable), dates always need a value
+    assert missing == ["FolioPref@", "FolioNum@", "RangeDate@"]
+
+    # values cover names case-insensitively
+    missing = missing_required_parameters(
+        params,
+        {"foliopref@": "A", "FolioNum@": 7, "RangeDate@": ("2026-01-01", "2026-01-31")},
+    )
+    assert missing == []
+
+
+def test_build_payload_resolver_precedence_and_decline():
+    """values → resolver → preloaded → omit/raise; None means 'no opinion'."""
+    params = _fiscal_layout_params()
+    seen: list[str] = []
+
+    def resolver(p):
+        seen.append(p.name)
+        return {"FolioPref@": "A", "FolioNum@": 42, "ObjectId@": 99}.get(p.name)
+
+    payload = build_export_payload(
+        params,
+        {
+            "DocKey@": 5,
+            "FolioNum@": 7,
+            "RangeDate@": (date(2026, 1, 1), date(2026, 1, 31)),
+        },
+        resolver=resolver,
+    )
+    assert payload == [
+        {"name": "DocKey@", "type": "xsd:decimal", "value": [["5"]]},
+        {
+            "name": "ObjectId@",
+            "type": "xsd:decimal",
+            "value": [["99"]],
+        },  # resolver beats preloaded
+        {"name": "FolioPref@", "type": "xsd:string", "value": [["A"]]},  # from resolver
+        {
+            "name": "FolioNum@",
+            "type": "xsd:decimal",
+            "value": [["7"]],
+        },  # values beat resolver
+        {
+            "name": "RangeDate@",
+            "type": "xsd:date",
+            "value": [["2026-01-01", "2026-01-31"]],
+        },
+    ]
+    # resolver is only asked about parameters values did not cover; the
+    # optional-empty one was asked (declined with None) and then omitted.
+    assert seen == ["ObjectId@", "FolioPref@", "Pm-Optional.Text"]
+
+    # declining a required parameter still fails loudly, naming it
+    with pytest.raises(APIGatewayParameterError, match="FolioPref@.*resolver"):
+        build_export_payload(
+            params, {"RangeDate@": "2026-01-01"}, resolver=lambda p: None
+        )
+
+
+@pytest.mark.asyncio
+@respx.mock
+async def test_export_document_pdf_with_resolver_async(cfg):
+    respx.post(LOGIN).mock(return_value=LOGIN_OK)
+    respx.post(LOGOUT).mock(return_value=httpx.Response(200))
+    respx.get(LOADCR).mock(
+        return_value=httpx.Response(
+            200,
+            json={
+                "error": False,
+                "resultSet": [
+                    _param("DocKey@", "xsd:decimal", [], "true"),
+                    _param("ObjectID@", "xsd:decimal", [], "true"),
+                    _param("FolioPref@", "xsd:string", [], "false"),
+                    _param("FolioNum@", "xsd:decimal", [], "false"),
+                ],
+            },
+        )
+    )
+    export = respx.post(EXPORT).mock(return_value=httpx.Response(201, text=PDF_B64))
+
+    # An application-owned mapping: the library knows nothing about folios.
+    document = {"SeriesString": "A", "DocNum": 1234}
+    lookup = {
+        "FolioPref@": lambda d: d["SeriesString"],
+        "FolioNum@": lambda d: d["DocNum"],
+    }
+
+    def resolver(p):
+        fn = lookup.get(p.name)
+        return fn(document) if fn else None
+
+    async with AsyncAPIGatewayClient(cfg) as gw:
+        pdf = await gw.export_document_pdf(
+            "INV20011", doc_entry=1, object_id=13, resolver=resolver
+        )
+    assert pdf == PDF_BYTES
+    import json
+
+    assert json.loads(export.calls.last.request.read()) == [
+        {"name": "DocKey@", "type": "xsd:decimal", "value": [["1"]]},
+        {"name": "ObjectID@", "type": "xsd:decimal", "value": [["13"]]},
+        {"name": "FolioPref@", "type": "xsd:string", "value": [["A"]]},
+        {"name": "FolioNum@", "type": "xsd:decimal", "value": [["1234"]]},
+    ]

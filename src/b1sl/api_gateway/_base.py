@@ -190,23 +190,41 @@ class BaseAPIGatewayClient:
 
     # ── Request builders (shared by both twins) ──────────────────────────── #
 
-    @staticmethod
     def _document_values(
+        self,
         doc_code: str,
         doc_entry: int | str,
         object_id: int | str | None,
         values: Mapping[str, Any] | None,
         parameters: Sequence[ReportParameter],
     ) -> dict[str, Any]:
-        merged: dict[str, Any] = dict(values or {})
-        merged[DOC_KEY_PARAM] = doc_entry
-        if object_id is not None:
-            merged[OBJECT_ID_PARAM] = object_id
-        if DOC_KEY_PARAM not in {p.name for p in parameters}:
+        """Merge ``doc_entry`` / ``object_id`` into ``values`` for a layout.
+
+        Parameter names are resolved case-insensitively against what the
+        layout declares (real layouts use both ``ObjectId@`` and
+        ``ObjectID@``). ``object_id`` is dropped, with a debug log, when the
+        layout has no object-type parameter at all — several document layouts
+        take only ``DocKey@``.
+        """
+        by_lower = {p.name.lower(): p.name for p in parameters}
+        doc_key_name = by_lower.get(DOC_KEY_PARAM.lower())
+        if doc_key_name is None:
             raise APIGatewayParameterError(
                 f"Layout {doc_code!r} has no {DOC_KEY_PARAM!r} parameter — it is "
                 "not a document-bound layout. Use export_pdf() instead."
             )
+        merged: dict[str, Any] = dict(values or {})
+        merged[doc_key_name] = doc_entry
+        if object_id is not None:
+            object_name = by_lower.get(OBJECT_ID_PARAM.lower())
+            if object_name is None:
+                self._logger.debug(
+                    "Layout %r declares no ObjectId@ parameter; ignoring object_id=%r",
+                    doc_code,
+                    object_id,
+                )
+            else:
+                merged[object_name] = object_id
         return merged
 
 

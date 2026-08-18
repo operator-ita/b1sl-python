@@ -19,7 +19,11 @@ from b1sl.api_gateway import (
     APIGatewayConfig,
     APIGatewayError,
     AsyncAPIGatewayClient,
+    missing_required_parameters,
 )
+
+# Values for parameters your layouts require, owned by your application.
+MY_LAYOUT_VALUES: dict[str, object] = {}
 
 
 async def main(doc_code: str, doc_entry: int) -> None:
@@ -35,9 +39,22 @@ async def main(doc_code: str, doc_entry: int) -> None:
             flag = " (optional, empty → omitted)" if p.is_optional_empty else ""
             print(f"  {p.name:22} {p.type:12} {p.current_values}{flag}")
 
-        # 3. Render — DocKey@ is always set explicitly, never trusted from LoadCR
+        # 3. Layout-specific required parameters are the application's call —
+        #    ask first, then supply them through a resolver.
+        params = await gw.get_report_parameters(doc_code)
+        needed = missing_required_parameters(params, {"DocKey@": doc_entry})
+        if needed:
+            print("Layout needs:", [p.name for p in needed])
+
+        def resolver(p):
+            # e.g. {"FolioPref@": doc.series_string, "FolioNum@": doc.doc_num}
+            return MY_LAYOUT_VALUES.get(p.name)
+
+        # 4. Render — DocKey@ is always set explicitly, never trusted from LoadCR
         try:
-            pdf = await gw.export_document_pdf(doc_code, doc_entry=doc_entry)
+            pdf = await gw.export_document_pdf(
+                doc_code, doc_entry=doc_entry, parameters=params, resolver=resolver
+            )
         except APIGatewayError as e:
             print(f"API Gateway failure ({type(e).__name__}): {e}")
             return

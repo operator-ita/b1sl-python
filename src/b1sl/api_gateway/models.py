@@ -98,6 +98,17 @@ class ReportParameter:
         return not self.current_values
 
     @property
+    def is_required(self) -> bool:
+        """Empty **and not** nullable — the caller must supply a value.
+
+        Real document layouts do declare such parameters (e.g. fiscal
+        invoice layouts wanting a folio prefix/number); the library never
+        guesses them — see ``missing_required_parameters`` and the
+        ``resolver`` hook.
+        """
+        return self.is_empty and not self.allow_null
+
+    @property
     def is_optional_empty(self) -> bool:
         """Empty **and** nullable — must be omitted from the export payload.
 

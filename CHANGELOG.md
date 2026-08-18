@@ -8,6 +8,37 @@ minor versions may include breaking changes).
 
 ## [Unreleased]
 
+## [0.14.0] — 2026-08-17
+
+### Added
+- **API Gateway: extension point for layout-specific parameters.** Layouts
+  differ per installation (some invoice layouts require a fiscal folio,
+  `ExtParam@`, …) and the library never guesses their values. New tools let
+  the application supply them cleanly:
+  - `ReportParameter.is_required` and `missing_required_parameters(parameters,
+    values)` — introspect what a layout still needs without raising.
+  - `resolver=` on `export_pdf()`, `export_document_pdf()` and
+    `build_export_payload()` — a `ParameterResolver`
+    (`fn(param) -> value | None`) consulted for every parameter `values` does
+    not cover; precedence `values` → `resolver` → preloaded value.
+  - `resolve_names()` exported (case-insensitive name mapping).
+  Guide: `docs/20-api-gateway.md` § "Resolving layout-specific parameters".
+
+### Fixed
+- **API Gateway: layouts spelling the object-type parameter `ObjectID@`**
+  (capital D) were unprintable through `export_document_pdf()` — the hard-coded
+  `ObjectId@` did not match and strict payload building rejected it. Parameter
+  names (`DocKey@`, `ObjectId@`, and every key in `values=`) are now resolved
+  case-insensitively against what `LoadCR` declares. `object_id` is ignored
+  (debug log) when a layout declares no object-type parameter at all instead
+  of raising. Found by a survey of 49 real document layouts.
+
+### Changed
+- **API Gateway docs/docstrings**: `ObjectId@` is *not* usually preloaded by
+  `LoadCR` (7 of 49 surveyed layouts) — pass `object_id`; some invoice layouts
+  require extra parameters (`ExtParam@`, `FolioPref@`, `FolioNum@`) via
+  `values=`, and the local strict check names the missing one.
+
 ## [0.13.0] — 2026-08-17
 
 ### Added

@@ -33,7 +33,13 @@ from b1sl.api_gateway.exceptions import (
     APIGatewayResponseError,
 )
 from b1sl.api_gateway.models import ReportInfo, ReportParameter
-from b1sl.api_gateway.payload import build_export_payload, format_value
+from b1sl.api_gateway.payload import (
+    ParameterResolver,
+    build_export_payload,
+    format_value,
+    missing_required_parameters,
+    resolve_names,
+)
 from b1sl.api_gateway.sync_client import APIGatewayClient
 
 __all__ = [
@@ -44,6 +50,9 @@ __all__ = [
     "ReportParameter",
     "build_export_payload",
     "format_value",
+    "missing_required_parameters",
+    "resolve_names",
+    "ParameterResolver",
     "DOC_KEY_PARAM",
     "OBJECT_ID_PARAM",
     "MALFORMED_PAYLOAD_SENTINEL",

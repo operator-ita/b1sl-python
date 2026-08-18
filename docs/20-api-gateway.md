@@ -115,9 +115,18 @@ Prints one SAP document. It **always sets `DocKey@` explicitly**:
 > (or nonexistent) document. Relying on it means silently printing the wrong
 > document with a `200 OK`.
 
-`ObjectId@` is taken from `LoadCR` unless `object_id` is given. Pass
-`parameters=` (a cached `get_report_parameters()` result) to skip the `LoadCR`
-round-trip when printing many documents with the same layout.
+**Pass `object_id`** (SAP object type: 23 quotations, 17 orders, 15
+deliveries, 13 invoices …) unless you know the layout preloads it: in a survey
+of 49 real document layouts on one system only 7 preloaded `ObjectId@`. Real
+layouts spell the parameter both `ObjectId@` and `ObjectID@` — names are
+resolved case-insensitively, so callers never need to know which — and some
+declare no object-type parameter at all (`DocKey@` only), in which case
+`object_id` is ignored. Layouts with further **required** parameters (some
+invoice layouts want `ExtParam@`, `FolioPref@`, `FolioNum@`) need them in
+`values=`; otherwise `APIGatewayParameterError` names the missing parameter
+locally, before any call. Pass `parameters=` (a cached
+`get_report_parameters()` result) to skip the `LoadCR` round-trip when
+printing many documents with the same layout.
 
 ### `export_pdf(doc_code, values=None, *, parameters=None, strict=True)`
 
@@ -163,14 +172,16 @@ SAP's manual:
    parameters on document layouts are the canonical case.)
 2. **Empty + not nullable** without a supplied value → `APIGatewayParameterError`
    locally (`strict=True`), before hitting the wire.
-3. **`xsd:date` needs an explicit value.** `LoadCR` echoes dates as
+3. **`xsd:date` needs an explicit value** (from `values` or a `resolver`). `LoadCR` echoes dates as
    `"Date(2026, 6, 7) to Date(2026, 6, 13)"`; sending that back (or Crystal
    formula syntax) fails with `Unparseable date`. What works: ISO strings, a
    range as two ISO strings **in the same inner array** —
    `[["2026-06-07", "2026-06-13"]]`. Pass `date` objects and the builder
    formats them.
 4. **Unknown names** in `values` are rejected (`strict=True`) — a typo would
-   otherwise be dropped silently.
+   otherwise be dropped silently. Case differences are not typos: keys are
+   resolved case-insensitively against the layout's names first
+   (`ObjectId@` → `ObjectID@`).
 5. Everything else resends `current_values` as-is. `xsd:decimal` accepts
    strings or JSON numbers; strings are sent.
 
@@ -180,6 +191,55 @@ SAP's manual:
 > declared a multi-value parameter, so those shapes are inferred from the
 > verified date-range form, not measured. There is a `TODO(unverified)` in
 > `payload.py`; verify against a real multi-value layout before relying on it.
+
+## Resolving layout-specific parameters (the extension point)
+
+Layouts differ per installation: one company's invoice layout takes only
+`DocKey@`, another's requires a fiscal folio (`FolioPref@`, `FolioNum@`) or an
+`ExtParam@`. The library deliberately **never guesses** those values — what a
+parameter means is knowledge of your SAP installation and your layout, and a
+wrong guess prints a wrong document with `201 OK`. Instead it gives you two
+tools so *your* application can supply them cleanly:
+
+1. **Ask before printing** — `missing_required_parameters(parameters, values)`
+   returns the `ReportParameter`s that `build_export_payload` would still
+   reject (empty and not nullable, or a date without an explicit value),
+   without raising. `ReportParameter.is_required` is the per-parameter flag.
+   Use it to decide up front: refuse, look the values up, or ask a person.
+2. **Plug in a resolver** — `export_pdf(..., resolver=fn)` /
+   `export_document_pdf(..., resolver=fn)` /
+   `build_export_payload(..., resolver=fn)` accept a
+   `ParameterResolver`: `fn(param: ReportParameter) -> value | None`. It is
+   consulted for every parameter `values` does not cover; `None` means "no
+   opinion" and the default rules apply (preloaded value → omitted if
+   nullable → error naming the parameter). Precedence: `values` → `resolver`
+   → preloaded `current_values`.
+
+```python
+from b1sl.api_gateway import missing_required_parameters
+
+# Application-owned knowledge, per installation — not the library's.
+doc = await b1.invoices.get(doc_entry)          # Service Layer, fetched up front
+MY_RESOLVERS = {
+    "FolioPref@": lambda: doc.series_string,
+    "FolioNum@": lambda: doc.doc_num,
+}
+
+params = await gw.get_report_parameters(layout)
+needed = missing_required_parameters(params, {"DocKey@": doc_entry})
+if any(p.name not in MY_RESOLVERS for p in needed):
+    raise ValueError(f"layout {layout} needs {[p.name for p in needed]}")
+
+pdf = await gw.export_document_pdf(
+    layout, doc_entry=doc_entry, object_id=13, parameters=params,
+    resolver=lambda p: MY_RESOLVERS[p.name]() if p.name in MY_RESOLVERS else None,
+)
+```
+
+The resolver is synchronous on purpose: values usually derive from data the
+caller already holds; fetch anything I/O-bound before the call (the
+`missing_required_parameters` step tells you what to fetch). Resolver keys
+match layout names case-insensitively like `values` do.
 
 ## Failure detection — the gateway does not use HTTP status codes
 

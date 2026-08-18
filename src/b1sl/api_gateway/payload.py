@@ -37,7 +37,7 @@ SAP's manual (see ``docs/20-api-gateway.md``):
 
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
@@ -86,18 +86,81 @@ def format_value(value: Any) -> list[list[str]]:
     return [[format_scalar(v) for v in value]]
 
 
+def resolve_names(values: Mapping[str, Any] | None, known: set[str]) -> dict[str, Any]:
+    """Map caller keys onto the layout's real parameter names.
+
+    Exact matches win; otherwise a case-insensitive match is used — real
+    layouts spell the object-type parameter both ``ObjectId@`` and
+    ``ObjectID@``, and callers should not have to know which. Keys that match
+    nothing are returned unchanged (``build_export_payload`` decides whether
+    that is an error).
+    """
+    if not values:
+        return {}
+    by_lower: dict[str, str] = {}
+    for name in known:
+        by_lower.setdefault(name.lower(), name)
+    out: dict[str, Any] = {}
+    for key, value in values.items():
+        if key in known:
+            out[key] = value
+        else:
+            out[by_lower.get(key.lower(), key)] = value
+    return out
+
+
+#: A caller-supplied hook consulted for every parameter ``values`` does not
+#: cover: it receives the :class:`ReportParameter` and returns a value, or
+#: ``None`` for "no opinion" (the default rules then apply). This is how an
+#: application plugs in *its* knowledge of what a layout's parameters mean
+#: (e.g. that a fiscal layout's ``FolioNum@`` is the document number in one
+#: installation) without that knowledge living in this library.
+ParameterResolver = Callable[[ReportParameter], Any]
+
+
+def missing_required_parameters(
+    parameters: Sequence[ReportParameter],
+    values: Mapping[str, Any] | None = None,
+) -> list[ReportParameter]:
+    """Which parameters ``build_export_payload`` would still reject.
+
+    Lets an application ask "what does this layout need from me?" *without*
+    triggering the exception — to decide up front whether to print, to look
+    the values up, or to ask a person. A parameter is listed when ``values``
+    does not cover it (case-insensitively) and it is either empty and not
+    nullable, or an ``xsd:date`` (whose preloaded value cannot be resent).
+    """
+    known = {p.name for p in parameters}
+    covered = set(resolve_names(values, known))
+    return [
+        p
+        for p in parameters
+        if p.name not in covered and (p.is_required or (p.is_date and not p.is_empty))
+    ]
+
+
 def build_export_payload(
     parameters: Sequence[ReportParameter],
     values: Mapping[str, Any] | None = None,
     *,
+    resolver: ParameterResolver | None = None,
     strict: bool = True,
 ) -> list[dict[str, Any]]:
     """Merge ``LoadCR`` definitions with explicit ``values`` into the body.
 
+    Value precedence per parameter: ``values`` → ``resolver(param)`` (when
+    it returns something other than ``None``) → the layout's preloaded
+    ``current_values`` → omitted if empty and nullable → error.
+
     Args:
         parameters: What ``LoadCR`` returned for the layout.
         values: ``{param_name: value}`` overrides/fill-ins. Names must match
-            the gateway's (``DocKey@``, not ``DocKey``).
+            the gateway's (``DocKey@``, not ``DocKey``); case differences are
+            tolerated (``ObjectId@`` resolves to a layout's ``ObjectID@``).
+        resolver: Optional :data:`ParameterResolver` consulted for every
+            parameter ``values`` does not cover. Return ``None`` to decline.
+            The hook is synchronous on purpose — resolve I/O-dependent values
+            beforehand (see :func:`missing_required_parameters`).
         strict: When ``True`` (default), reject unknown names in ``values``
             (typos would otherwise be silently dropped… or silently break
             the call) and parameters that end up with no value but are not
@@ -111,8 +174,8 @@ def build_export_payload(
             or values the gateway cannot accept (dates without an explicit
             value, bools, unsupported types).
     """
-    values = dict(values or {})
     known = {p.name for p in parameters}
+    values = resolve_names(values, known)
     unknown = sorted(set(values) - known)
     if unknown and strict:
         raise APIGatewayParameterError(
@@ -123,13 +186,15 @@ def build_export_payload(
     for param in parameters:
         if param.name in values:
             wire_value = format_value(values[param.name])
+        elif resolver is not None and (resolved := resolver(param)) is not None:
+            wire_value = format_value(resolved)
         elif param.is_optional_empty:
             continue  # gotcha: including it (even as "") breaks the call
         elif param.is_empty:
             if strict:
                 raise APIGatewayParameterError(
                     f"Parameter {param.name!r} ({param.type}) is required but has "
-                    "no value; supply it via values={...}."
+                    "no value; supply it via values={...} or a resolver."
                 )
             continue
         elif param.is_date:

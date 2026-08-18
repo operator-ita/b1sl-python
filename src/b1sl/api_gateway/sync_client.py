@@ -66,7 +66,7 @@ from b1sl.api_gateway.exceptions import (
     APIGatewayResponseError,
 )
 from b1sl.api_gateway.models import ReportInfo, ReportParameter
-from b1sl.api_gateway.payload import build_export_payload
+from b1sl.api_gateway.payload import ParameterResolver, build_export_payload
 
 
 class APIGatewayClient(BaseAPIGatewayClient):
@@ -399,6 +399,7 @@ class APIGatewayClient(BaseAPIGatewayClient):
         values: Mapping[str, Any] | None = None,
         *,
         parameters: Sequence[ReportParameter] | None = None,
+        resolver: ParameterResolver | None = None,
         strict: bool = True,
     ) -> bytes:
         """Render a layout to PDF.
@@ -413,11 +414,17 @@ class APIGatewayClient(BaseAPIGatewayClient):
                 (a date range is ``(start, end)``).
             parameters: Reuse a previous ``get_report_parameters()`` result
                 to skip the ``LoadCR`` round-trip.
+            resolver: Hook consulted for parameters ``values`` does not
+                cover (``resolver(param) -> value | None``); how an
+                application supplies layout-specific parameters without the
+                library guessing them. See ``missing_required_parameters``.
             strict: Reject unknown names / missing required values locally.
         """
         if parameters is None:
             parameters = self.get_report_parameters(doc_code)
-        payload = build_export_payload(parameters, values, strict=strict)
+        payload = build_export_payload(
+            parameters, values, resolver=resolver, strict=strict
+        )
         return self.export_pdf_raw(doc_code, payload)
 
     def export_document_pdf(
@@ -428,24 +435,39 @@ class APIGatewayClient(BaseAPIGatewayClient):
         object_id: int | str | None = None,
         values: Mapping[str, Any] | None = None,
         parameters: Sequence[ReportParameter] | None = None,
+        resolver: ParameterResolver | None = None,
     ) -> bytes:
         """Print one SAP document with a document-bound layout.
 
         Always sets ``DocKey@`` explicitly — the value ``LoadCR`` preloads
         travels with the layout definition and may point at an arbitrary
         document, so relying on it would silently print the wrong one.
-        ``ObjectId@`` is taken from ``LoadCR`` unless ``object_id`` is given.
+
+        ``ObjectId@`` (SAP object type: 23 quotations, 17 orders, 15
+        deliveries, 13 invoices …): pass ``object_id`` unless you know the
+        layout preloads it — in a survey of 49 real document layouts only 7
+        did. Layouts spell it ``ObjectId@`` or ``ObjectID@``; the name is
+        resolved case-insensitively. Layouts that declare no such parameter
+        ignore ``object_id``. Layouts with further required parameters
+        (e.g. ``ExtParam@``, ``FolioPref@``, ``FolioNum@`` on some invoice
+        layouts) need them in ``values`` or from ``resolver`` — otherwise
+        ``APIGatewayParameterError`` names the missing one before any call
+        (``missing_required_parameters()`` lists them without raising).
 
         Args:
             doc_code: Layout code from Print Layout Designer (``QUT20020``).
             doc_entry: ``DocEntry`` of the document to print.
-            object_id: SAP object type (``23`` = Quotations …). Optional.
+            object_id: SAP object type of the document. Recommended.
             values: Extra parameter values for the layout.
             parameters: Cached ``get_report_parameters()`` result.
+            resolver: Hook for parameters ``values`` does not cover
+                (``resolver(param) -> value | None``).
         """
         if parameters is None:
             parameters = self.get_report_parameters(doc_code)
         merged = self._document_values(
             doc_code, doc_entry, object_id, values, parameters
         )
-        return self.export_pdf(doc_code, merged, parameters=parameters)
+        return self.export_pdf(
+            doc_code, merged, parameters=parameters, resolver=resolver
+        )
