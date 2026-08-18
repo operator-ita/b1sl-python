@@ -14,7 +14,7 @@ Provide a high-performance, async-first, and metadata-driven Python SDK for SAP 
   - `make lint`: Run Ruff and Mypy.
 
 ## Repository Architecture
-- `src/b1sl/`: The core package. This is what gets published to PyPI.
+- `src/b1sl/`: The core package. This is what gets published to PyPI. `src/b1sl/b1sl/` is the Service Layer SDK; `src/b1sl/api_gateway/` is the companion API Gateway client (Crystal Reports → PDF, sync + async, opt-in import — see `docs/20-api-gateway.md`).
 - `scripts/sap_metadata_generator/`: The engine that generates models and resources from OData XML/JSON metadata.
 - `metadata/`: Versioned SAP metadata files (XML, JSON, HTML).
 - `_generated/` folders: **NEVER** edit files inside these. Any change must be done in the generator script or as an override in `_overrides/`.

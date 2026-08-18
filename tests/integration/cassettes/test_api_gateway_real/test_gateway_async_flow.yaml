@@ -1,0 +1,195 @@
+interactions:
+- request:
+    body: '{"CompanyDB": "[REDACTED]", "UserName": "[REDACTED]", "Password": "[REDACTED]"}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '72'
+      Content-Type:
+      - application/json
+      Host:
+      - sap-server.example.com
+      User-Agent:
+      - python-httpx/0.28.1
+    method: POST
+    uri: https://sap-server.example.com/login
+  response:
+    body:
+      string: '{"Version":"0.0.1","SessionTimeout":30}'
+    headers:
+      CompanyID:
+      - '[REDACTED]'
+      Content-Length:
+      - '39'
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 18 Aug 2026 01:11:50 GMT
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Vary:
+      - Origin
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      set-cookie:
+      - '[REDACTED]'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: ''
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Host:
+      - sap-server.example.com
+      User-Agent:
+      - python-httpx/0.28.1
+    method: GET
+    uri: https://sap-server.example.com/rs/v1/LoadCR?DocCode=LAY00001
+  response:
+    body:
+      string: '{"error": false, "resultSet": [{"parameterType": "ReportParameter",
+        "values": [], "defaultValuesDescription": {}, "length": "131070", "isOptionalPrompt":
+        "false", "description": "Param1", "allowNullValue": "true", "isShownOnPanel":
+        "false", "type": "xsd:string", "editMask": "", "minimumValue": "", "initialValues":
+        [], "isEditableOnPanel": "false", "valueRangeKind": "Discrete", "allowMultiValue":
+        "false", "name": "Param1", "defaultValues": [], "currentvalues": [], "maximumValue":
+        "", "allowCustomCurrentValues": "true"}, {"parameterType": "StoredProcedureParameter",
+        "values": ["1001"], "defaultValuesDescription": {}, "length": "8", "isOptionalPrompt":
+        "false", "description": "", "allowNullValue": "true", "isShownOnPanel": "false",
+        "type": "xsd:decimal", "editMask": "", "minimumValue": "", "initialValues":
+        [], "isEditableOnPanel": "false", "valueRangeKind": "Discrete", "allowMultiValue":
+        "false", "name": "DocKey@", "defaultValues": [], "currentvalues": ["1001"],
+        "maximumValue": "", "allowCustomCurrentValues": "true"}, {"parameterType":
+        "StoredProcedureParameter", "values": ["23"], "defaultValuesDescription":
+        {}, "length": "8", "isOptionalPrompt": "false", "description": "", "allowNullValue":
+        "true", "isShownOnPanel": "false", "type": "xsd:decimal", "editMask": "",
+        "minimumValue": "", "initialValues": [], "isEditableOnPanel": "false", "valueRangeKind":
+        "Discrete", "allowMultiValue": "false", "name": "ObjectId@", "defaultValues":
+        [], "currentvalues": ["23"], "maximumValue": "", "allowCustomCurrentValues":
+        "true"}]}'
+    headers:
+      Cache-Control:
+      - private
+      Content-Length:
+      - '1535'
+      Content-Type:
+      - application/json;charset=UTF-8
+      Date:
+      - Tue, 18 Aug 2026 01:11:51 GMT
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      - max-age=63072000;includeSubDomains
+      Vary:
+      - Origin
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '[{"name": "DocKey@", "type": "xsd:decimal", "value": [["1001"]]}, {"name":
+      "ObjectId@", "type": "xsd:decimal", "value": [["23"]]}]'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '120'
+      Content-Type:
+      - application/json
+      Host:
+      - sap-server.example.com
+      User-Agent:
+      - python-httpx/0.28.1
+    method: POST
+    uri: https://sap-server.example.com/rs/v1/ExportPDFData?DocCode=LAY00001
+  response:
+    body:
+      string: JVBERi0xLjQKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqCjIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagozIDAgb2JqPDwvVHlwZS9QYWdlL1BhcmVudCAyIDAgUi9NZWRpYUJveFswIDAgMjAwIDIwMF0+PmVuZG9iagp0cmFpbGVyPDwvUm9vdCAxIDAgUj4+CiUlRU9GCg==
+    headers:
+      Content-Disposition:
+      - form-data; name="attachment"; filename="LAY00001.pdf"
+      Content-Length:
+      - '260'
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Tue, 18 Aug 2026 01:11:53 GMT
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      - max-age=63072000;includeSubDomains
+      Vary:
+      - Origin
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-XSS-Protection:
+      - 1; mode=block
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '{}'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '2'
+      Content-Type:
+      - application/json
+      Host:
+      - sap-server.example.com
+      User-Agent:
+      - python-httpx/0.28.1
+    method: POST
+    uri: https://sap-server.example.com/logout
+  response:
+    body:
+      string: '{"timestamp":"2026-08-18T01:11:53.819+00:00","status":400,"error":"Bad
+        Request","path":"/auth/oidc.logout"}'
+    headers:
+      Content-Disposition:
+      - inline;filename=f.txt
+      Content-Type:
+      - application/json
+      Date:
+      - Tue, 18 Aug 2026 01:11:53 GMT
+      Strict-Transport-Security:
+      - max-age=63072000; includeSubDomains; preload
+      Vary:
+      - Origin
+      - Access-Control-Request-Method
+      - Access-Control-Request-Headers
+      transfer-encoding:
+      - chunked
+    status:
+      code: 400
+      message: Bad Request
+version: 1

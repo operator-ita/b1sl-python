@@ -56,6 +56,17 @@ Subclass of `B1ValidationError`. Raised when a `/List` invocation fails due to p
 
 See [15-sql-queries.md](./15-sql-queries.md) for full usage and error-handling examples.
 
+### 8. `APIGatewayError` (API Gateway client)
+
+Everything raised by `b1sl.api_gateway` derives from `APIGatewayError`
+(itself a `B1Exception`), so a gateway outage is never mistaken for a Service
+Layer failure. `APIGatewayConnectionError` and `APIGatewayAuthError` also
+inherit from `B1ConnectionError` / `B1AuthError`. Because the gateway signals
+most failures with `200 OK` and sentinel bodies, the specialised subclasses
+(`APIGatewayParameterError`, `APIGatewayLayoutNotFoundError`,
+`APIGatewayPDFError`, `APIGatewayResponseError`) map body-level signals — see
+[20-api-gateway.md](20-api-gateway.md#failure-detection--the-gateway-does-not-use-http-status-codes).
+
 ## Automatic Mapping
 
 The SDK's adapters (`RestAdapter` and `AsyncRestAdapter`) automatically map HTTP status codes to these specialized exceptions:

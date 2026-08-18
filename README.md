@@ -1,5 +1,5 @@
 # b1sl-python
-### Modern, async-first Python SDK for SAP Business One Service Layer.
+### Modern, async-first Python SDK for SAP Business One — Service Layer and API Gateway.
 
 ![b1sl Banner](docs/assets/hero-banner.png.png)
 
@@ -8,7 +8,7 @@
 [![Pydantic v2](https://img.shields.io/badge/Pydantic-v2-orange.svg)](https://docs.pydantic.dev/)
 [![Built with httpx](https://img.shields.io/badge/HTTP-httpx-blueviolet.svg)](https://www.python-httpx.org/)
 
-b1sl is a high-performance SDK for the SAP B1 Service Layer, designed around concurrency, type safety, and developer experience. It covers the full lifecycle of a SAP integration — from single-record reads to transactional batch operations over large paginated datasets.
+b1sl is a high-performance SDK for SAP Business One, designed around concurrency, type safety, and developer experience. Its core is the **Service Layer** (OData) client — from single-record reads to transactional batch operations over large paginated datasets — and it ships a companion client for SAP's **API Gateway** (`b1sl.api_gateway`) to render Crystal Reports print layouts to PDF.
 
 ---
 
@@ -25,6 +25,7 @@ b1sl is a high-performance SDK for the SAP B1 Service Layer, designed around con
 - **Dynamic UDFs**: Schema-aware proxy for type-safe interaction with User Defined Fields, including opt-in Pydantic validation.
 - **Observability**: Structured logging and event hooks for performance monitoring.
 - **Safe Development**: Global and per-request Dry Run mode to intercept write operations without hitting SAP.
+- **Official print layouts (API Gateway)**: `b1sl.api_gateway` renders SAP's Crystal Reports layouts to PDF over REST — the same document the SAP client prints — with the gateway's undocumented failure modes mapped to typed exceptions. See [docs/20-api-gateway.md](https://github.com/operator-ita/b1sl-python/blob/main/docs/20-api-gateway.md).
 
 ---
 

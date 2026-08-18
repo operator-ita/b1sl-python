@@ -78,6 +78,31 @@ By swapping `dev` for `prod` (via `B1SL_ENV`), the same script will dynamically 
 ## Best Practice: `.real` Files
 To protect production metadata, the repository is configured to ignore files with the `.real.xml` or `.real.json` extension. You can place your production metadata in `metadata/<version>/metadata_document.real.xml`, and the generator will automatically prioritize it over the generic files for that version.
 
+## API Gateway (Crystal Reports → PDF)
+
+The companion `b1sl.api_gateway` client (see [20-api-gateway.md](20-api-gateway.md))
+has its own connection object, `APIGatewayConfig`, because the gateway is a
+separate SAP service (own host:port, own session). It reads `B1SL_GATEWAY_*`
+variables and falls back to the Service Layer's `B1SL_*` for everything but
+the URL, so a deployment that already configures `b1sl` only adds one line:
+
+| Variable | Fallback | Meaning |
+|---|---|---|
+| `B1SL_GATEWAY_BASE_URL` | — (required) | `https://host:60000` |
+| `B1SL_GATEWAY_USERNAME` / `_PASSWORD` / `_COMPANY_DB` | `B1SL_USERNAME` / `B1SL_PASSWORD` / `B1SL_COMPANY_DB` | SAP credentials + tenant |
+| `B1SL_GATEWAY_SSL_VERIFY` | `B1SL_SSL_VERIFY` | `0`/`1` |
+| `B1SL_GATEWAY_CONNECT_TIMEOUT` / `_READ_TIMEOUT` | `10` / `120` | seconds |
+| `B1SL_GATEWAY_SESSION_TTL` | — | seconds; overrides the server's `SessionTimeout` |
+| `B1SL_GATEWAY_MAX_CONCURRENT_EXPORTS` | `3` | parallel `ExportPDFData` bound (`0` disables) |
+
+```python
+from b1sl.api_gateway import APIGatewayConfig
+
+cfg = APIGatewayConfig.from_env()                       # env vars
+cfg = APIGatewayConfig.from_b1_config(b1_config, base_url="https://host:60000")
+cfg = APIGatewayConfig.from_django_settings()           # B1SL_GATEWAY_* in settings.py
+```
+
 ## Django Integration
 
 For projects using Django, the SDK provides first-class support for loading configuration directly from your `settings.py`.

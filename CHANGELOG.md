@@ -8,6 +8,49 @@ minor versions may include breaking changes).
 
 ## [Unreleased]
 
+## [0.13.0] — 2026-08-17
+
+### Added
+- **`b1sl.api_gateway` — sync + async clients for the SAP B1 API Gateway** (Crystal
+  Reports layouts → PDF over REST). A sibling of the Service Layer SDK, not a
+  subclass of it: the gateway is a separate SAP service (port `60000`,
+  `/rs/v1/`, own session cookies, *Report Layout API* authorization) whose
+  responses do not follow OData semantics.
+  - `AsyncAPIGatewayClient` / `APIGatewayClient` (sync twin, same surface,
+    enrolled in the parity test) — `list_reports()`, `get_report_parameters()`,
+    `export_pdf()`, `export_document_pdf(doc_code, doc_entry)` (always sets
+    `DocKey@` explicitly — the preloaded value is unreliable), and the
+    verbatim `export_pdf_raw()`. Session lifecycle mirrors the SL adapters:
+    lock-guarded login, reactive re-login (one re-login + retry on
+    `401`/`403`/`3xx` — the gateway's `SessionTimeout: 30` is not minutes and
+    its unit is unknown, so no TTL is guessed; `session_ttl` opts into
+    proactive refresh), bad-credential detection on the
+    gateway's `200` + `{"code":-1}` envelope, one retry when an export
+    answers `(---)`, and a per-client bound on parallel exports
+    (`max_concurrent_exports`, default 3 — the gateway drops renders under
+    load). Same `ObservabilityConfig` hooks.
+  - `APIGatewayConfig` — `from_env()` (`B1SL_GATEWAY_*` with `B1SL_*`
+    fallbacks for credentials) and `from_b1_config()`.
+  - `build_export_payload()` — encodes the gateway's undocumented rules:
+    empty nullable parameters are omitted, `xsd:date` needs explicit ISO
+    values (ranges as two strings in one inner array), unknown names rejected.
+  - Typed failures for the gateway's status-less error signalling:
+    `APIGatewayParameterError` (`200` + `(---)`), `APIGatewayLayoutNotFoundError`
+    (`200` + `{}`), `APIGatewayPDFError` (magic bytes check),
+    `APIGatewayAuthError`, `APIGatewayConnectionError`, `APIGatewayResponseError`
+    — all under `APIGatewayError` (a `B1Exception`), so a gateway outage is
+    never mistaken for a Service Layer failure.
+  - `APIGatewayConfig.from_django_settings()`; VCR cassettes recorded against
+    a real gateway (test tenant, fully scrubbed) replayed by `make test-vcr`.
+  - Guide: `docs/20-api-gateway.md`. Example: `examples/26_api_gateway_print.py`.
+  - Known gap, documented in code and docs: multi-value (`allowMultiValue`)
+    and multi-range parameter shapes are emitted but **not verified live**.
+
+### Changed
+- Package positioning: `b1sl-python` is now described as an SDK for SAP
+  Business One (Service Layer **and** API Gateway) rather than Service Layer
+  only. No API changes to `b1sl.b1sl`.
+
 ## [0.12.0] — 2026-08-14
 
 ### Added

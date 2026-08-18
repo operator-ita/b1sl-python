@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-`b1sl-python` — an async-first, metadata-driven Python SDK for the SAP Business One Service Layer (OData v4). Published to PyPI.
+`b1sl-python` — an async-first, metadata-driven Python SDK for SAP Business One. The core is the Service Layer (OData v4) client in `src/b1sl/b1sl/`; `src/b1sl/api_gateway/` is a companion async client for SAP's API Gateway (Crystal Reports → PDF). Published to PyPI.
 
 ## Tooling and commands
 
@@ -107,12 +107,13 @@ Adapters map HTTP status to semantic exceptions via a standardized dict: 400 →
 - **Run `make lint` before proposing changes** — CI enforces both ruff and mypy, so a local pass avoids red pipelines. mypy runs with the pydantic plugin and `attr-defined`/`arg-type`/`call-arg`/`union-attr` armed; don't re-disable codes to silence an error — fix the type.
 - **Surgical deltas only**: write `client.items.update("A001", en.Item(item_name="New"))`, never round-trip a fetched object.
 - **Don't promote endpoints to Elite without verifying ETag support** — Elite aliases imply concurrency safety.
-- **VCR cassette hygiene**: `tests/conftest.py` redacts hosts, sessions, credentials, OData context URLs, **and business-data/PII field values in response bodies** (`_scrub_response_data`: names, accounts, UDFs `U_*`, barcodes/freetext, addresses, GL account codes — identifiers/enums kept). Before pushing recorded cassettes, sanity-check with `grep -r "B1SESSION" tests/integration/cassettes/`.
+- **VCR cassette hygiene**: `tests/conftest.py` redacts hosts, sessions, credentials, OData context URLs, **and business-data/PII field values in response bodies** (`_scrub_response_data`: names, accounts, UDFs `U_*`, barcodes/freetext, addresses, GL account codes — identifiers/enums kept). Before pushing recorded cassettes, sanity-check with `grep -r "B1SESSION" tests/integration/cassettes/`. API Gateway cassettes (`tests/integration/cassettes/test_api_gateway_real/`) have their own scrubber in `tests/integration/test_api_gateway_real.py` (module-level `vcr_config`): host, tenant, credentials, cookies, `CompanyID`, layout codes, catalog/param names, `DocKey`, and the PDF body (synthetic replacement); re-record needs `B1SL_GATEWAY_*` + `B1SL_GATEWAY_TEST_DOC_CODE`, then grep the cassettes for the real host/tenant/codes.
 - Pytest markers: `integration` (live SAP), `vcr` (cassette playback). Default `make test` excludes both.
 
 ## Where things live
 
 - `src/b1sl/b1sl/` — Service Layer SDK (the main product). The outer `b1sl/__init__.py` lazily re-exports the public surface (`from b1sl import B1Client, entities` works); keep `_FORWARDED` in sync when adding top-level names.
+- `src/b1sl/api_gateway/` — sync + async clients (`APIGatewayClient` / `AsyncAPIGatewayClient`, shared `_base.py`) for the SAP B1 **API Gateway** (Crystal Reports layouts → PDF; port 60000, `/rs/v1/`, own cookie session, *Report Layout API* authorization). Sibling of the SL SDK — reuses `APIGatewayConfig`/`ObservabilityConfig`/`B1Exception` but does **not** inherit from the SL adapter (incompatible response semantics: `200 OK` + `(---)` means malformed payload, `200 {}` means unknown layout, exports are base64 text). `export_document_pdf()` always sets `DocKey@` explicitly (the preloaded one is unreliable); `build_export_payload()` omits empty-nullable params and requires explicit ISO dates. Both twins are enrolled in `test_sync_async_parity.py`. Guide: `docs/20-api-gateway.md`.
 - `src/b1sl/contrib/` — framework integrations (Django, etc.).
 - `src/b1sl/contrib/mcp/` — MCP helper toolkit (framework-agnostic, no MCP SDK import).
   Seven modules: `discovery.py` (Elite resource catalog + field introspection),

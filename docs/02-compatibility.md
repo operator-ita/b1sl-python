@@ -10,6 +10,16 @@ The development and verification of the `v0.1.0` release were performed against:
 
 ---
 
+## 🖨️ API Gateway (`b1sl.api_gateway`)
+
+The Crystal Reports → PDF client targets SAP's **API Gateway** service, not
+the Service Layer. Verified against API Gateway `Version: "0.0.1"` on SAP
+Business One 2511 (HANA): `/login`, `LoadAuthorizedCRList`, `LoadCR`,
+`ExportPDFData`, plus the behaviours catalogued in
+[20-api-gateway.md](20-api-gateway.md). Availability on older SAP B1
+feature packs has not been verified — check that the *Report Layout API*
+authorization exists in your installation before relying on it.
+
 ## 📜 Full Feature Timeline
 
 | Version | Date | Key Changes & Features |

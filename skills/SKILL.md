@@ -22,6 +22,7 @@ full type safety, IDE autocompletion, and production-grade session management.
 - **Verified Baseline**: Service Layer **1.27** (SAP 10.0 FP 2405)
 - **Protocol**: OData V4 (`v2` endpoint)
 - **Minimum for ETags**: Service Layer **1.21+**
+- **Companion**: `b1sl.api_gateway` — SAP **API Gateway** client (Crystal Reports layouts → PDF, port 60000, `/rs/v1/`); separate service, separate session, opt-in import. See `docs/20-api-gateway.md`.
 
 ---
 
@@ -245,6 +246,32 @@ await b1.items.delete("A0001")
 ```
 
 ---
+
+## Official Print Layouts to PDF (API Gateway)
+
+Not Service Layer: SAP's **API Gateway** renders Crystal Reports layouts to PDF —
+the same document the SAP client prints. Sync and async twins, same surface.
+
+```python
+from b1sl.api_gateway import APIGatewayConfig, AsyncAPIGatewayClient
+
+cfg = APIGatewayConfig.from_env()   # B1SL_GATEWAY_BASE_URL + B1SL_* credentials
+async with AsyncAPIGatewayClient(cfg) as gw:
+    reports = await gw.list_reports()                       # catalog RCRI00xx only
+    params = await gw.get_report_parameters("QUT20020")     # layout definition
+    pdf = await gw.export_document_pdf("QUT20020", doc_entry=12345)  # DocKey@ set explicitly
+```
+
+Rules the client enforces (all learned from the live gateway, none in SAP's manual):
+- Failure is signalled by **body**, not HTTP status: `(---)` → `APIGatewayParameterError`
+  (retried once — also appears under concurrent exports), `{}` from `LoadCR` →
+  `APIGatewayLayoutNotFoundError`, non-`%PDF-` → `APIGatewayPDFError`, bad login →
+  `200` + `{"code":-1}` → `APIGatewayAuthError`.
+- Empty nullable parameters are omitted; `xsd:date` needs explicit ISO values
+  (ranges = two strings in one inner array); never trust the preloaded `DocKey@`.
+- Document-bound layout codes (`QUT200xx`…) are **not** discoverable by API — read them
+  in Print Layout Designer and version the mapping in your app.
+- `max_concurrent_exports` (default 3) bounds parallel renders per client.
 
 ## Transparent Pagination Streams
 

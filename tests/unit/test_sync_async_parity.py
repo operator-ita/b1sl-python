@@ -11,6 +11,7 @@ import inspect
 
 import pytest
 
+from b1sl.api_gateway import APIGatewayClient, AsyncAPIGatewayClient
 from b1sl.b1sl.async_client import AsyncB1Client
 from b1sl.b1sl.async_rest_adapter import AsyncRestAdapter
 from b1sl.b1sl.client import B1Client
@@ -57,6 +58,7 @@ PAIRS = [
     (GenericResource, AsyncGenericResource),
     (QueryBuilder, AsyncQueryBuilder),
     (RestAdapter, AsyncRestAdapter),
+    (APIGatewayClient, AsyncAPIGatewayClient),
 ]
 
 
